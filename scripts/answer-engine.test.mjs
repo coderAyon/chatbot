@@ -75,6 +75,20 @@ test("seats and eligibility do not trigger fee or faculty replies", () => {
   assert.equal(requiresVerifiedStructuredAnswer("pharmacy total tuition fee koto?"), true);
 });
 
+test("duration questions are not mistaken for course-list requests", () => {
+  const knowledge = { ...fixture, programs: [
+    ...fixture.programs,
+    { name: "Bachelor of Pharmacy (B.Pharm)", department: "Department of Pharmacy", aliases: ["B.Pharm", "Pharmacy"], duration: "4 years", source: root },
+    { name: "M. Pharm. (Master of Pharmacy)", department: "Department of Pharmacy", aliases: ["M.Pharm", "Pharmacy"], duration: "1 year", source: root },
+  ], pages: [
+    { title: "Pharmacy syllabus", url: `${root}pharmacy/syllabus/`, department: "Department of Pharmacy", chunks: ["PHR1101 Introduction to Pharmacy 36 2 50"] },
+  ] };
+  const answer = directAnswer("ফার্মেসি কোর্স কত বছর?", knowledge);
+  assert.equal(answer.mode, "clarify");
+  assert.match(answer.text, /Bachelor of Pharmacy.*Master of Pharmacy/s);
+  assert.doesNotMatch(answer.text, /course records|Representative courses/i);
+});
+
 test("common department abbreviations resolve to the intended department", () => {
   const faculty = directAnswer("vet faculty list", fixture);
   assert.equal(faculty.mode, "structured");
@@ -85,6 +99,10 @@ test("common department abbreviations resolve to the intended department", () =>
   assert.equal(head.mode, "structured");
   assert.match(head.text, /Example Vet Dean/);
   assert.doesNotMatch(head.text, /Example Animal Production Head/);
+
+  const dean = directAnswer("vet er dean ke?", fixture);
+  assert.match(dean.text, /official dean \*\*Example Vet Dean\*\*/);
+  assert.doesNotMatch(dean.text, /Example Animal Production Head/);
 
   const program = directAnswer("DVM duration koto?", fixture);
   assert.equal(program.mode, "structured");
@@ -105,6 +123,34 @@ test("common department abbreviations resolve to the intended department", () =>
     { role: "assistant", text: contextualHead.text },
   ]);
   assert.match(contextualDuration.text, /5 years/);
+
+  const biomedical = "Department of Medical Physics and Biomedical Engineering";
+  const aliasKnowledge = {
+    ...fixture,
+    faculty: [
+      ...fixture.faculty,
+      { name: "Example Biochem Head", department: "Department of Biochemistry and Molecular Biology", designation: "Head", source: root },
+      { name: "Example Biomedical Teacher", department: biomedical, designation: "Lecturer", source: root },
+    ],
+    pages: [
+      { title: "Message from Head of MPBME", url: `${root}mpbme/message/message-from-hod/`, department: biomedical, chunks: ["Professor Dr. Example Biomedical Head\nProfessor & Head of the Department\nDepartment of Medical Physics & Biomedical Engineering"] },
+    ],
+  };
+  assert.match(directAnswer("bio chem head ke?", aliasKnowledge).text, /Example Biochem Head/);
+  assert.doesNotMatch(directAnswer("bio chem head ke?", aliasKnowledge).text, /Chemistry Head/);
+  assert.match(directAnswer("bio medical head ke?", aliasKnowledge).text, /Example Biomedical Head/);
+  assert.match(directAnswer("বায়োমেডিকেল বিভাগের প্রধান কে?", aliasKnowledge).text, /Example Biomedical Head/);
+  assert.match(directAnswer("ভেটেরিনারি বিভাগের প্রধান কে?", fixture).text, /Example Vet Dean/);
+  assert.match(directAnswer("veterenary duration", fixture).text, /5 years/);
+});
+
+test("people counts are not mistaken for admission seats", () => {
+  const answer = directAnswer("CSE te koyjon teacher", fixture);
+  assert.match(answer.text, /1 (?:jon )?record/i);
+  assert.doesNotMatch(answer.text, /Seats:/i);
+  const bengali = directAnswer("সিএসই তে কতজন শিক্ষক?", fixture);
+  assert.match(bengali.text, /1 (?:jon )?record/i);
+  assert.doesNotMatch(bengali.text, /Seats:/i);
 });
 
 test("credits work for departments other than CSE, with department evidence", () => {
@@ -196,6 +242,24 @@ test("official course lookup returns code and credits", () => {
   const concise = directAnswer("CSE te Data Structures course code and credit koto?", knowledge);
   assert.match(concise.text, /CSE2301.*3 credits/s);
   assert.doesNotMatch(concise.text, /course records|Representative courses/i);
+  const singular = directAnswer("CSE data structure credit", knowledge);
+  assert.match(singular.text, /CSE2301.*3 credits/s);
+  assert.doesNotMatch(singular.text, /60 course records|Representative courses/i);
+  const lab = directAnswer("CSE data structures lab credit", knowledge);
+  assert.match(lab.text, /CSE2302L.*2 credits/s);
+  assert.doesNotMatch(lab.text, /CSE2301:/);
+  const bengali = directAnswer("সিএসই ডাটা স্ট্রাকচার ক্রেডিট কত?", knowledge);
+  assert.match(bengali.text, /CSE2301.*3 credits/s);
+});
+
+test("course tables without course codes are still searchable", () => {
+  const knowledge = { ...fixture, pages: [
+    { title: "Veterinary Course Curriculum", url: `${root}veterinary/curriculum/`, department: veterinary, chunks: ["Course Title | Credit (T+P) | Contact Hr. (T+P)\nGeneral Animal Science | 2+1 | 2+2\nLivestock Management | 2+1 | 2+2\nSubTotal | 4+2=6 | 4+4=8"] },
+  ] };
+  const answer = directAnswer("vet course list", knowledge);
+  assert.match(answer.text, /General Animal Science.*2\+1 credits \(theory\+practical\)/s);
+  assert.match(answer.text, /Livestock Management/);
+  assert.doesNotMatch(answer.text, /SubTotal/);
 });
 
 test("program catalog excludes malformed and duplicate crawler records", () => {

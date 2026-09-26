@@ -14,7 +14,7 @@ const SETTINGS_FILE = new URL("../data/settings.json", import.meta.url);
 const CACHE_FILE = new URL("../data/response-cache.json", import.meta.url);
 const CONVERSATION_FILE = new URL("../data/conversation-memory.json", import.meta.url);
 const NOT_VERIFIED = "I couldn't find verified information from the official university data.";
-const ANSWER_ENGINE_VERSION = "2026-09-26-viva-hardening-v45";
+const ANSWER_ENGINE_VERSION = "2026-09-26-viva-hardening-v48";
 
 async function loadLocalEnv() {
   try {
@@ -85,6 +85,18 @@ const languagePatterns = [
   [/কবে/g, " when "],
   [/এবং/g, " and "],
   [/[কক]ি|কী/g, " ki "],
+  [/ভেটেরিনারি|ভেট\b/g, " veterinary vet "],
+  [/বায়োমেডিকেল|বায়োমেডিকেল/g, " biomedical "],
+  [/মেডিকেল\s+ফিজিক্স/g, " medical physics "],
+  [/মাইক্রোবায়োলজি|মাইক্রোবায়োলজি/g, " microbiology "],
+  [/বায়োকেমিস্ট্রি|বায়োকেমিস্ট্রি/g, " biochemistry "],
+  [/কৃষি/g, " agriculture "],
+  [/ডাটা\s+স্ট্রাকচার|ডেটা\s+স্ট্রাকচার/g, " data structure "],
+  [/ক্রেডিট/g, " credit "],
+  [/কোর্স/g, " course "],
+  [/সাবজেক্ট|বিষয়|বিষয়/g, " subject "],
+  [/সিট|আসন/g, " seat "],
+  [/বছর/g, " year "],
   [/কে/g, " ke "],
   [/কার/g, " kar "],
   [/কোথায়|কোথায়/g, " kothay "],
@@ -109,6 +121,8 @@ const languagePatterns = [
   [/বিভাগ|ডিপার্টমেন্ট/g, " department dept "],
   [/শিক্ষক|শিক্ষিকা|টিচার/g, " teacher faculty "],
   [/ফ্যাকাল্টি/g, " faculty "],
+  [/অনুষদ/g, " faculty "],
+  [/ডিন/g, " dean "],
   [/ফোন|মোবাইল|কল/g, " phone mobile contact "],
   [/ইমেইল|মেইল/g, " email "],
   [/ছবি|ইমেজ|ফটো/g, " image photo chobi "],
@@ -138,6 +152,7 @@ const banglishPatterns = [
   [/\b(chobi|pic|photo|image)\b/g, " image photo chobi "],
   [/\b(saransho|sarangsho|songkhep|summery)\b/g, " summary "],
   [/\b(pharma|farmacy)\b/g, " pharmacy "],
+  [/\b(veterenary|vetenary|vetrinary|veterinery)\b/g, " veterinary "],
 ];
 
 function normalizeQuestion(text) {
@@ -902,6 +917,7 @@ function rankedPrograms(question, programs = []) {
         program.name,
         program.department,
         String(program.department || "").replace(/^(?:Department|Faculty) of\s+/i, ""),
+        ...departmentAliases(program.department || ""),
         ...(program.aliases || []),
       ].filter(Boolean);
       const name = normalizeQuestion(program.name || "");
@@ -920,7 +936,8 @@ function directProgramAdmissionAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   const asksRequirement = /\b(admission|apply|eligibility|eligible|required|requirement|qualification|gpa|ssc|hsc|vorti)\b/i.test(q);
   const asksDuration = /\b(duration|year|years|semester|semesters|koto\s+bochor)\b/i.test(q);
-  const asksSeats = /\b(seat|seats|capacity|intake|koyjon|kojon)\b/i.test(q);
+  const asksPeople = /\b(teacher|teachers|faculty|member|members|head|dean|sir|mam|person|people|staff)\b/i.test(q);
+  const asksSeats = /\b(seat|seats|capacity|intake)\b/i.test(q) || (!asksPeople && /\b(koyjon|kojon)\b/i.test(q));
   if (!asksRequirement && !asksDuration && !asksSeats) return null;
   const ranked = rankedPrograms(q, knowledge.programs || []);
   if (!ranked.length) return null;
@@ -2213,7 +2230,7 @@ function directFollowupAnswer(question, knowledge, history = []) {
 
 function directDepartmentLeaderAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
-  const asksLeader = /\b(chairman|chairperson|chair|head|hod|department\s+head|dept\s+head)\b/i.test(q);
+  const asksLeader = /\b(chairman|chairperson|chair|head|hod|dean|department\s+head|dept\s+head)\b/i.test(q);
   if (!asksLeader) return null;
   const matchedDepartment = matchedDepartmentFromQuestion(q, knowledge);
   if (!matchedDepartment) {
@@ -2230,8 +2247,19 @@ function directDepartmentLeaderAnswer(question, knowledge) {
   }
 
   const displayDepartment = displayDepartmentName(matchedDepartment);
-  const leaders = departmentLeaders(departmentPeople(knowledge, matchedDepartment), matchedDepartment);
-  if (!leaders.length) return null;
+  const people = departmentPeople(knowledge, matchedDepartment);
+  const asksDean = /\bdean\b/i.test(q);
+  const deans = people.filter((person) => /\bdean\b/i.test(person.designation || ""));
+  const leaders = asksDean ? deans : departmentLeaderRecords(knowledge, matchedDepartment, people);
+  if (!leaders.length) {
+    return {
+      text: prefersBanglish(question)
+        ? `**${displayDepartment}**-er current head/dean official indexed source theke verify korte parini, tai kono nam guess korchi na.`
+        : `I could not verify the current head or dean of **${displayDepartment}** from the indexed official sources, so I will not guess a name.`,
+      sources: [],
+      mode: "not_found",
+    };
+  }
 
   if (/\b(room|office\s+room|room\s+number|building|floor)\b/i.test(q)) {
     return {
@@ -2251,7 +2279,7 @@ function directDepartmentLeaderAnswer(question, knowledge) {
     if (asksPhone) return `**${person.name}**: ${person.phone ? `**${person.phone}**` : "phone number not listed in official data"}`;
     if (asksEmail) return `**${person.name}**: ${person.email ? `**${person.email}**` : "email not listed in official data"}`;
     const title = person.designation || "Department Head";
-    const role = /\bhead\b/i.test(title) ? "department head" : title;
+    const role = /\bdean\b/i.test(q) && /\bdean\b/i.test(title) ? "dean" : /\bhead\b/i.test(title) ? "department head" : title;
     return prefersBanglish(question)
       ? `${displayDepartment}-er official ${role} **${person.name}**.`
       : `The official ${role} for ${displayDepartment} is **${person.name}**.`;
@@ -2356,7 +2384,9 @@ function departmentAliases(department) {
     aliases
       .add("medical physics")
       .add("biomedical")
+      .add("bio medical")
       .add("biomedical engineering")
+      .add("bio medical engineering")
       .add("medical physics and biomedical engineering")
       .add("mpbme")
       .add("bme");
@@ -2366,7 +2396,7 @@ function departmentAliases(department) {
   if (/\bMathematics\b/i.test(department)) aliases.add("math").add("mathematics").add("applied math").add("applied mathematics");
   if (/\bChemistry\b/i.test(department)) aliases.add("chemistry").add("chem");
   if (/\bPhysics\b/i.test(department)) aliases.add("physics").add("phy");
-  if (/\bBiochemistry\b/i.test(department)) aliases.add("bmb").add("biochem").add("biochemistry").add("molecular biology");
+  if (/\bBiochemistry\b/i.test(department)) aliases.add("bmb").add("biochem").add("bio chem").add("biochemistry").add("molecular biology");
   if (/Applied Mathematics/i.test(department)) aliases.add("math").add("maths").add("applied math").add("applied mathematics");
   if (/Sociology|Social Work/i.test(department)) aliases.add("sociology").add("social work").add("sociology and social work");
   if (/\bLaw\b/i.test(department)) aliases.add("law").add("llb").add("llm");
@@ -2391,6 +2421,29 @@ function departmentLeaders(people, department) {
   if (!/^Faculty of\b/i.test(displayDepartmentName(department))) return heads;
   const deans = people.filter((person) => /\bdean\b/i.test(person.designation || ""));
   return deans.length ? deans : heads;
+}
+
+function inferredDepartmentLeaders(knowledge, department) {
+  const wanted = displayDepartmentName(department).toLowerCase();
+  const candidates = pageRecords(knowledge)
+    .filter((record) => displayDepartmentName(record.department || "").toLowerCase() === wanted)
+    .filter((record) => /head|hod|message/i.test(`${record.title} ${record.url} ${record.text}`))
+    .sort((a, b) => Number(/message-from-hod|departmental-head/i.test(`${b.title} ${b.url}`)) - Number(/message-from-hod|departmental-head/i.test(`${a.title} ${a.url}`)));
+  const leaders = [];
+  for (const record of candidates) {
+    const matches = String(record.text || "").matchAll(/(?:^|\n)([^\n|]{3,100})\n((?:Professor\s*(?:&|and)\s*)?Head(?:\s+of\s+the\s+Department)?)/gim);
+    for (const match of matches) {
+      const name = cleanPersonName(match[1]);
+      if (/^(?:message|faculty|department|welcome|profile|archive|list|head)\b/i.test(name)) continue;
+      leaders.push({ name, designation: match[2].trim(), department, source: record.url, sourceTitle: record.title });
+    }
+  }
+  return dedupePeople(leaders).slice(0, 1);
+}
+
+function departmentLeaderRecords(knowledge, department, people = departmentPeople(knowledge, department)) {
+  const structured = departmentLeaders(people, department);
+  return structured.length ? structured : inferredDepartmentLeaders(knowledge, department);
 }
 
 function isTeachingFaculty(person) {
@@ -2443,10 +2496,25 @@ function extractCoursesFromText(text) {
       continue;
     }
     match = line.match(/^([A-Z]{2,8}\s*\d{3,4}[A-Z]?)\s+(.+?)\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s+(\d+)$/i);
-    if (match) courses.push({ code: match[1].replace(/\s+/g, " "), title: match[2].trim(), credits: match[4] });
+    if (match) {
+      courses.push({ code: match[1].replace(/\s+/g, " "), title: match[2].trim(), credits: match[4] });
+      continue;
+    }
+    match = line.match(/^([A-Za-z][^|]{2,100}?)\s*\|\s*(\d+(?:\.\d+)?(?:\s*\+\s*\d+(?:\.\d+)?)?)\s*\|/);
+    if (match && !/^(?:course\s+title|sub\s*total|total)/i.test(match[1].trim())) {
+      courses.push({ code: "", title: match[1].trim(), credits: match[2].replace(/\s+/g, "") });
+    }
   }
-  return [...new Map(courses.map((course) => [course.code.replace(/\s/g, "").toUpperCase(), course])).values()]
+  return [...new Map(courses.map((course) => [course.code ? course.code.replace(/\s/g, "").toUpperCase() : normalizeQuestion(course.title), course])).values()]
     .filter((course) => course.title.length >= 3 && course.title.length <= 110 && !/^total$/i.test(course.title));
+}
+
+function formatCourse(course) {
+  const label = course.code ? `${course.code}: ${course.title}` : course.title;
+  const creditLabel = String(course.credits || "").includes("+")
+    ? `${course.credits} credits (theory+practical)`
+    : `${course.credits} ${String(course.credits) === "1" ? "credit" : "credits"}`;
+  return { label, creditLabel };
 }
 
 function departmentCourses(knowledge, department) {
@@ -2627,8 +2695,8 @@ function directCourseCatalogAnswer(question, knowledge) {
 
   const ignored = new Set(["course", "courses", "subject", "subjects", "curriculum", "syllabus", "what", "study", "department", "list", "show", "gono", "university", "detail", "details", "official", "code", "credit", "credits", "koto", "hours", "hour"]);
   for (const alias of departmentAliases(matchedDepartment)) tokenize(alias).forEach((token) => ignored.add(token));
-  const topicTerms = tokenize(q).filter((token) => token.length >= 4 && !ignored.has(token));
-  const stem = (token) => token.replace(/(?:es|s)$/i, "");
+  const topicTerms = tokenize(q).filter((token) => (token.length >= 4 || token === "lab") && !ignored.has(token));
+  const stem = (token) => token.replace(/s$/i, "");
   const matchedCourses = topicTerms.length
     ? courses.filter((course) => {
         const titleTerms = tokenize(course.title).map(stem);
@@ -2636,7 +2704,10 @@ function directCourseCatalogAnswer(question, knowledge) {
       })
     : [];
   if (matchedCourses.length && explicitCourseTopic) {
-    const lines = matchedCourses.slice(0, 6).map((course) => `- **${course.code}: ${course.title}** - ${course.credits} credits`);
+    const lines = matchedCourses.slice(0, 6).map((course) => {
+      const { label, creditLabel } = formatCourse(course);
+      return `- **${label}** - ${creditLabel}`;
+    });
     return {
       text: `The official **${displayDepartmentName(matchedDepartment)}** syllabus includes:\n${lines.join("\n")}\n\nThese are syllabus records; the exact semester/session should be checked against the linked official course plan.`,
       sources,
@@ -2647,8 +2718,9 @@ function directCourseCatalogAnswer(question, knowledge) {
   const wantsFull = /\b(all|full|complete|sob|shob)\b/i.test(q);
   const limit = wantsFull ? 36 : 16;
   const shown = courses.slice(0, limit);
+  const recordLabel = courses.length === 1 ? "course record" : "course records";
   return {
-    text: `I found **${courses.length} course records** in the indexed official **${displayDepartmentName(matchedDepartment)}** curriculum. ${wantsFull && courses.length > limit ? `Showing the first ${limit}:` : "Representative courses:"}\n${shown.map((course) => `- **${course.code}** - ${course.title} (${course.credits} credits)`).join("\n")}${courses.length > limit ? `\n- Plus ${courses.length - limit} more in the linked official syllabus.` : ""}`,
+    text: `I found **${courses.length} ${recordLabel}** in the indexed official **${displayDepartmentName(matchedDepartment)}** curriculum. ${wantsFull && courses.length > limit ? `Showing the first ${limit}:` : "Representative courses:"}\n${shown.map((course) => { const { label, creditLabel } = formatCourse(course); return `- **${label}** (${creditLabel})`; }).join("\n")}${courses.length > limit ? `\n- Plus ${courses.length - limit} more in the linked official syllabus.` : ""}`,
     sources,
     mode: "structured",
   };
@@ -2661,7 +2733,7 @@ function directDepartmentProfileAnswer(question, knowledge) {
   if (!matchedDepartment || !asksOverview || asksFeeDetail(q) || asksContactDetail(q) || asksProgramDetail(q)) return null;
   const program = programForDepartment(knowledge, matchedDepartment, /\b(master|msc|graduate|postgraduate)\b/i.test(q));
   const people = departmentPeople(knowledge, matchedDepartment).filter(isTeachingFaculty);
-  const heads = departmentLeaders(people, matchedDepartment);
+  const heads = departmentLeaderRecords(knowledge, matchedDepartment, people);
   const credit = departmentCreditFact(knowledge, matchedDepartment);
   const { courses, sources: courseSources } = departmentCourses(knowledge, matchedDepartment);
   const facts = [
@@ -2708,7 +2780,7 @@ function directDepartmentOverviewAnswer(question, knowledge) {
   const people = /\b(faculty|teacher|teachers)\b/i.test(q) ? allPeople.filter(isTeachingFaculty) : allPeople;
   if (!asksFaculty || !people.length) return null;
 
-  const leaders = departmentLeaders(people, matchedDepartment);
+  const leaders = departmentLeaderRecords(knowledge, matchedDepartment, people);
   const leadText = leaders.length
     ? ` Head: ${leaders.map((person) => person.name).join(", ")}.`
     : "";
@@ -2864,7 +2936,7 @@ function directProgramDetailAnswer(question, knowledge) {
         url: record.url,
       }));
     const asksCredit = /\bcredit|credits|credit\s+hour|credit\s+hours\b/i.test(q);
-    const asksLeader = /\b(chairman|chairperson|chair|head|hod)\b/i.test(q);
+    const asksLeader = /\b(chairman|chairperson|chair|head|hod|dean)\b/i.test(q);
     const leaderAnswer = asksLeader ? directDepartmentLeaderAnswer(question, knowledge) : null;
     const missingFact = prefersBanglish(question)
       ? `**${displayDepartment}**-er exact ${asksCredit ? "total credits" : "duration"} indexed official source theke verify korte parini. Applicable degree/session ba syllabus dile check korte parbo.`
@@ -2891,7 +2963,7 @@ function directProgramDetailAnswer(question, knowledge) {
   const baseText = prefersBanglish(question)
       ? `Official course-plan onujayi **${displayDepartmentName(matchedDepartment)}**-er ${parts.join(" and ")}.`
       : `The official course plan for **${displayDepartmentName(matchedDepartment)}** lists ${parts.join(" and ")}.`;
-  const asksLeader = /\b(chairman|chairperson|chair|head|hod)\b/i.test(q);
+  const asksLeader = /\b(chairman|chairperson|chair|head|hod|dean)\b/i.test(q);
   const leaderAnswer = asksLeader ? directDepartmentLeaderAnswer(question, knowledge) : null;
   const leaderText = leaderAnswer?.text || (asksLeader
     ? (prefersBanglish(question)
@@ -3180,7 +3252,7 @@ function directCampusFacilitiesAnswer(question, knowledge, history = []) {
 
 function directAnswer(question, knowledge, history = []) {
   const q = normalizeQuestion(question);
-  const departmentFollowup = /\b(chairman|chairperson|head|hod|credits?|duration|seats?|eligibility|requirements?|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|waiver|scholarship|stipend|admission|vorti|apply|qualification|gpa|career|job|future|scope|details?|bistarito)\b/i.test(q);
+  const departmentFollowup = /\b(chairman|chairperson|head|hod|dean|credits?|duration|seats?|eligibility|requirements?|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|waiver|scholarship|stipend|admission|vorti|apply|qualification|gpa|career|job|future|scope|details?|bistarito)\b/i.test(q);
   const comparativeFollowup = /\b(which|which\s+one|more|less|higher|lower|shorter|longer|better|konta|kontar|beshi|kom)\b/i.test(q);
   if (history.length && departmentFollowup && !comparativeFollowup && !matchedDepartmentFromQuestion(q, knowledge)) {
     const priorDept = activeContextDepartment(history, question, knowledge);
@@ -3245,10 +3317,10 @@ function directAnswer(question, knowledge, history = []) {
     directProgramComparisonAnswer(question, knowledge, history) ||
     directComparisonFollowupAnswer(question, knowledge, history) ||
     directCareerGuidanceAnswer(question, knowledge, history) ||
+    directProgramAdmissionAnswer(question, knowledge) ||
     directCourseCatalogAnswer(question, knowledge) ||
     directDepartmentProfileAnswer(question, knowledge) ||
     directRoleAnswer(question, knowledge) ||
-    directProgramAdmissionAnswer(question, knowledge) ||
     directProgramDetailAnswer(question, knowledge) ||
     directNoticeAnswer(question, knowledge) ||
     directOfficeContactAnswer(question, knowledge) ||
