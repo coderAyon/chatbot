@@ -14,7 +14,7 @@ const SETTINGS_FILE = new URL("../data/settings.json", import.meta.url);
 const CACHE_FILE = new URL("../data/response-cache.json", import.meta.url);
 const CONVERSATION_FILE = new URL("../data/conversation-memory.json", import.meta.url);
 const NOT_VERIFIED = "I couldn't find verified information from the official university data.";
-const ANSWER_ENGINE_VERSION = "2026-09-26-external-knowledge-v38";
+const ANSWER_ENGINE_VERSION = "2026-09-26-viva-hardening-v41";
 
 async function loadLocalEnv() {
   try {
@@ -45,7 +45,7 @@ const openAiModel = process.env.OPENAI_MODEL || (openAiProviderName === "Groq" ?
 const maxRequestBytes = Number(process.env.MAX_REQUEST_BYTES || 36 * 1024 * 1024);
 const maxAttachmentBytes = Number(process.env.MAX_ATTACHMENT_BYTES || 12 * 1024 * 1024);
 const rateWindowMs = Number(process.env.RATE_WINDOW_MS || 60_000);
-const rateLimit = Number(process.env.RATE_LIMIT || 50);
+const rateLimit = Number(process.env.RATE_LIMIT || 60);
 const responseCache = new Map();
 const rateBuckets = new Map();
 const attachmentSessions = new Map();
@@ -79,6 +79,11 @@ function envSecret(name) {
 }
 
 const languagePatterns = [
+  [/গণ\s*বিশ্ববিদ্যাল(?:য়|য়)(?:ের)?/g, " gono bishwabidyalay university "],
+  [/প্রতিষ্ঠাতা/g, " founder "],
+  [/প্রতিষ্ঠিত|প্রতিষ্ঠা/g, " established "],
+  [/কবে/g, " when "],
+  [/এবং/g, " and "],
   [/[কক]ি|কী/g, " ki "],
   [/কে/g, " ke "],
   [/কার/g, " kar "],
@@ -175,8 +180,7 @@ function clientIp(req) {
   return String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "local").split(",")[0].trim();
 }
 
-function rateLimitOk(req) {
-  const key = clientIp(req);
+function consumeRateBucket(key, limit) {
   const now = Date.now();
   const bucket = rateBuckets.get(key) || { resetAt: now + rateWindowMs, count: 0 };
   if (now > bucket.resetAt) {
@@ -185,7 +189,14 @@ function rateLimitOk(req) {
   }
   bucket.count += 1;
   rateBuckets.set(key, bucket);
-  return bucket.count <= rateLimit;
+  return bucket.count <= limit;
+}
+
+function rateLimitOk(req, sessionId = "") {
+  const ip = clientIp(req);
+  const publicIpOk = consumeRateBucket(`ip:${ip}`, rateLimit * 5);
+  const sessionOk = sessionId ? consumeRateBucket(`session:${ip}:${sessionId}`, rateLimit) : true;
+  return publicIpOk && sessionOk;
 }
 
 async function readJson(url, fallback) {
@@ -1016,8 +1027,9 @@ function directNoticeAnswer(question, knowledge) {
     ));
   }
   if (requestedCategory) {
+    const categoryTerms = requestedCategory === "admission" ? /\b(admission|admissions|admit|ভর্তি)\b/i : new RegExp(`\\b${requestedCategory}\\b`, "i");
     matching = matching.filter((notice) =>
-      new RegExp(requestedCategory, "i").test(`${notice.category || ""} ${notice.title || ""} ${notice.summary || ""}`),
+      categoryTerms.test(`${notice.category || ""} ${notice.title || ""} ${notice.summary || ""}`),
     );
   }
   matching.sort((a, b) => Date.parse(b.publishedAt || 0) - Date.parse(a.publishedAt || 0));
@@ -1267,10 +1279,22 @@ function directPeopleAnswer(question, knowledge) {
     (/\bnumber\b/i.test(q) && !/\b(room|class|seat|serial)\s+number\b/i.test(q));
   const asksEmail = /\b(email|mail)\b/i.test(q);
   const asksGeneralContact = /\bcontact\b/i.test(q);
+  const asksQualification = /\b(qualification|education|degree|study|porashona)\b/i.test(q);
   const asksProfile = /\b(chino|cheno|know|who|ke|about|details|info|profile|sir|mam|maam|madam|teacher|faculty)\b/i.test(q);
   const matches = findPeople(q, knowledge.faculty, knowledge);
-  if (!matches.length || !(asksPhone || asksEmail || asksGeneralContact || asksProfile)) return null;
+  if (!matches.length || !(asksPhone || asksEmail || asksGeneralContact || asksProfile || asksQualification)) return null;
   if (asksPhone || asksEmail || asksGeneralContact) return formatPeopleContact(question, matches);
+  if (asksQualification) {
+    return {
+      text: matches
+        .map((person) => person.qualification
+          ? `**${cleanPersonName(person.name)}**\n**Qualification:** ${person.qualification}`
+          : `The official profile for **${cleanPersonName(person.name)}** does not list a qualification.`)
+        .join("\n\n"),
+      sources: matches.map((person) => ({ title: person.name, url: person.profileUrl || person.source })).filter((source) => source.url),
+      mode: matches.some((person) => person.qualification) ? "structured" : "not_found",
+    };
+  }
   const lines = matches.map((person) => personIdentityLine(question, person));
   return {
     text: lines.join("\n"),
@@ -1419,10 +1443,12 @@ function directInstitutionFactAnswer(question, knowledge) {
   if (/\b(?:who\s+(?:is|was)\s+(?:the\s+)?founder|who\s+founded|founder|protishthata|protisthata)\b/i.test(q)) {
     const founder = institution.founder || "Dr. Zafrullah Chowdhury";
     const organization = institution.foundingOrganization || "Gonoshasthaya Kendra (GK) Public Charitable Trust";
+    const established = institution.establishedDate || "14 July 1998";
+    const asksWhen = /\b(when|date|year|kobe|established|founded)\b/i.test(q);
     return {
       text: prefersBanglish(question)
-        ? `Gono Bishwabidyalay-এর প্রতিষ্ঠাতা বীর মুক্তিযোদ্ধা **${founder}**। এটি ${organization}-এর অধীনে পরিচালিত।`
-        : `Gono Bishwabidyalay was founded by the **${organization}**, under the vision of **${founder}**.`,
+        ? `Gono Bishwabidyalay-এর প্রতিষ্ঠাতা বীর মুক্তিযোদ্ধা **${founder}**। এটি ${organization}-এর অধীনে পরিচালিত${asksWhen ? ` এবং **${established}** তারিখে আনুষ্ঠানিকভাবে প্রতিষ্ঠিত` : ""}।`
+        : `Gono Bishwabidyalay was founded by the **${organization}**, under the vision of **${founder}**${asksWhen ? `, and was formally established on **${established}**` : ""}.`,
       sources: [homeSource, generalSource],
       mode: "structured",
     };
@@ -1662,7 +1688,23 @@ function directAcademicUnitsAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   const asksList = /\b(what|which|ki\s+ki|list|show|all|sob|shob|koyta|koto|how\s+many|available|offer)\b/i.test(q);
   const asksUnits = /\b(departments?|facult(?:y|ies)|academic\s+units?|programs?|degrees?)\b/i.test(q);
-  if (!asksList || !asksUnits || asksProgramDetail(q) || matchedDepartmentFromQuestion(q, knowledge)) return null;
+  if (!asksList || !asksUnits || asksProgramDetail(q)) return null;
+
+  const facultyGroups = knowledge.institution?.faculties || [];
+  const normalizedQuestion = q.replace(/\s*&\s*/g, " and ");
+  const requestedFaculty = /\bfacult(?:y|ies)\b/i.test(q) && facultyGroups.find((faculty) => {
+    const name = normalizeQuestion(faculty.name || "").replace(/\s*&\s*/g, " and ");
+    const core = name.replace(/^faculty\s+of\s+/, "");
+    return termInQuestion(normalizedQuestion, name) || (core.length > 4 && normalizedQuestion.includes(core));
+  });
+  if (requestedFaculty?.departments?.length) {
+    return {
+      text: `**${requestedFaculty.name}** has **${requestedFaculty.departments.length} departments/program groups**:\n${requestedFaculty.departments.map((department) => `- ${department}`).join("\n")}`,
+      sources: [universitySources.academics],
+      mode: "structured",
+    };
+  }
+  if (matchedDepartmentFromQuestion(q, knowledge)) return null;
 
   const departments = academicDepartments(knowledge);
   if (!departments.length) return null;
@@ -2193,6 +2235,16 @@ function directDepartmentLeaderAnswer(question, knowledge) {
   );
   if (!leaders.length) return null;
 
+  if (/\b(room|office\s+room|room\s+number|building|floor)\b/i.test(q)) {
+    return {
+      text: prefersBanglish(question)
+        ? `**${displayDepartment}**-er head ${leaders.map((person) => `**${person.name}**`).join(", ")}, kintu official profile-e office room/building/floor number publish kora nei.`
+        : `The head of **${displayDepartment}** is ${leaders.map((person) => `**${person.name}**`).join(", ")}, but the official profile does not publish an office room, building, or floor number.`,
+      sources: leaders.map((person) => ({ title: person.name, url: person.profileUrl || person.source })).filter((source) => source.url),
+      mode: "not_found",
+    };
+  }
+
   const asksPhone =
     /\b(phone|mobile|contact|cell|call)\b/i.test(q) ||
     (/\bnumber\b/i.test(q) && !/\b(room|class|seat|serial)\s+number\b/i.test(q));
@@ -2488,8 +2540,18 @@ function directProgramComparisonAnswer(question, knowledge, history = []) {
       ...catalog.sources,
     ].filter(Boolean);
   }).filter((source, index, list) => source.url && list.findIndex((item) => item.url === source.url) === index).slice(0, 5);
+  const interestMap = [
+    { pattern: /\b(programming|coding|software|data|ai|artificial\s+intelligence|web|computer)\b/i, department: /Computer Science/i, focus: "coding, software, data, or AI" },
+    { pattern: /\b(circuit|electronics|electrical|power|telecom|communication)\b/i, department: /Electrical and Electronic/i, focus: "circuits, electronics, power, or communications" },
+    { pattern: /\b(medicine|drug|pharma|pharmacy|chemistry|healthcare|hospital)\b/i, department: /Pharmacy/i, focus: "medicines, pharmaceutical science, or healthcare" },
+  ];
+  const interest = interestMap.find((item) => item.pattern.test(q));
+  const recommended = interest && departments.find((department) => interest.department.test(department));
+  const recommendation = recommended
+    ? `\n\n**Best fit for your stated interest:** **${displayDepartmentName(recommended)}**, because you mentioned ${interest.focus}. This is an interest-based recommendation, not a universal ranking.`
+    : `\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking.`;
   return {
-    text: `${sections.join("\n\n")}\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking.`,
+    text: `${sections.join("\n\n")}${recommendation}`,
     sources,
     mode: "structured",
   };
@@ -2554,7 +2616,7 @@ function directCourseCatalogAnswer(question, knowledge) {
   const { courses, sources } = departmentCourses(knowledge, matchedDepartment);
   if (!courses.length) return null;
 
-  const ignored = new Set(["course", "courses", "subject", "subjects", "curriculum", "syllabus", "what", "study", "department", "list", "show", "gono", "university", "detail", "details", "official"]);
+  const ignored = new Set(["course", "courses", "subject", "subjects", "curriculum", "syllabus", "what", "study", "department", "list", "show", "gono", "university", "detail", "details", "official", "code", "credit", "credits", "koto", "hours", "hour"]);
   for (const alias of departmentAliases(matchedDepartment)) tokenize(alias).forEach((token) => ignored.add(token));
   const topicTerms = tokenize(q).filter((token) => token.length >= 4 && !ignored.has(token));
   const stem = (token) => token.replace(/(?:es|s)$/i, "");
@@ -2720,6 +2782,19 @@ function extractProgramPlanFacts(text) {
   return { credit, duration };
 }
 
+function recordConflictsWithDepartment(record, matchedDepartment) {
+  const identity = normalizeQuestion(`${record.title || ""} ${record.url || ""}`);
+  const expected = normalizeQuestion(displayDepartmentName(matchedDepartment));
+  const markers = [
+    { pattern: /\bcse\b|computer\s+science/i, expected: /\bcse\b|computer\s+science/i },
+    { pattern: /\beee\b|electrical\s+and\s+electronic/i, expected: /\beee\b|electrical\s+and\s+electronic/i },
+    { pattern: /\bpharmacy\b|\bbpharm\b|\bmpharm\b/i, expected: /\bpharmacy\b/i },
+    { pattern: /\bmicrobiology\b/i, expected: /\bmicrobiology\b/i },
+    { pattern: /\bmedical\s+physics\b|\bbiomedical\b|\bmpbme\b/i, expected: /\bmedical\s+physics\b|\bbiomedical\b/i },
+  ];
+  return markers.some((marker) => marker.pattern.test(identity) && !marker.expected.test(expected));
+}
+
 function directProgramDetailAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   if (!asksProgramDetail(q)) return null;
@@ -2730,6 +2805,7 @@ function directProgramDetailAnswer(question, knowledge) {
   const records = pageRecords(knowledge)
     .filter((record) => {
       if (record.textQuality === "low" || record.textQuality === "none") return false;
+      if (recordConflictsWithDepartment(record, matchedDepartment)) return false;
       const identity = `${record.title} ${record.url} ${record.department || ""}`;
       return (
         departmentTerms.some((term) => term.length >= 3 && termInQuestion(identity, term)) &&
@@ -2756,6 +2832,7 @@ function directProgramDetailAnswer(question, knowledge) {
     const displayDepartment = displayDepartmentName(matchedDepartment);
     const departmentTerms = departmentAliases(matchedDepartment).map((alias) => normalizeQuestion(alias));
     const sourceRecords = pageRecords(knowledge).filter((record) => {
+      if (recordConflictsWithDepartment(record, matchedDepartment)) return false;
       const combined = normalizeQuestion(`${record.title} ${record.url} ${record.text}`);
       return departmentTerms.some((term) => term.length >= 3 && termInQuestion(combined, term));
     });
@@ -2777,12 +2854,21 @@ function directProgramDetailAnswer(question, knowledge) {
         url: record.url,
       }));
     const asksCredit = /\bcredit|credits|credit\s+hour|credit\s+hours\b/i.test(q);
+    const asksLeader = /\b(chairman|chairperson|chair|head|hod)\b/i.test(q);
+    const leaderAnswer = asksLeader ? directDepartmentLeaderAnswer(question, knowledge) : null;
+    const missingFact = prefersBanglish(question)
+      ? `**${displayDepartment}**-er exact ${asksCredit ? "total credits" : "duration"} indexed official source theke verify korte parini. Applicable degree/session ba syllabus dile check korte parbo.`
+      : `I could not verify the exact ${asksCredit ? "total credits" : "duration"} for **${displayDepartment}** from the indexed official sources. Specify the degree/session or share its syllabus so I can check.`;
+    const leaderText = asksLeader
+      ? (leaderAnswer?.text || (prefersBanglish(question)
+        ? `**${displayDepartment}**-er current head structured official record theke ekokvabe verify kora jayni.`
+        : `The current head of **${displayDepartment}** could not be verified unambiguously from the structured official records.`))
+      : "";
 
     return {
-      text: prefersBanglish(question)
-        ? `**${displayDepartment}**-er exact ${asksCredit ? "total credits" : "duration"} indexed official source theke verify korte parini. Applicable degree/session ba syllabus dile check korte parbo.`
-        : `I could not verify the exact ${asksCredit ? "total credits" : "duration"} for **${displayDepartment}** from the indexed official sources. Specify the degree/session or share its syllabus so I can check.`,
-      sources,
+      text: leaderText ? `${leaderText}\n${missingFact}` : missingFact,
+      sources: [...(leaderAnswer?.sources || []), ...sources]
+        .filter((source, index, list) => source.url && list.findIndex((item) => item.url === source.url) === index),
       mode: "not_found",
     };
   }
@@ -2792,12 +2878,23 @@ function directProgramDetailAnswer(question, knowledge) {
   if (best.facts.duration && (asksDuration || !asksCredit)) parts.push(`duration **${best.facts.duration}**`);
   if (!parts.length && best.facts.credit) parts.push(`total credits **${best.facts.credit}**`);
 
-  return {
-    text: prefersBanglish(question)
+  const baseText = prefersBanglish(question)
       ? `Official course-plan onujayi **${displayDepartmentName(matchedDepartment)}**-er ${parts.join(" and ")}.`
-      : `The official course plan for **${displayDepartmentName(matchedDepartment)}** lists ${parts.join(" and ")}.`,
-    sources: [{ title: best.record.title || "Official course plan", url: best.record.url }],
-    mode: "structured",
+      : `The official course plan for **${displayDepartmentName(matchedDepartment)}** lists ${parts.join(" and ")}.`;
+  const asksLeader = /\b(chairman|chairperson|chair|head|hod)\b/i.test(q);
+  const leaderAnswer = asksLeader ? directDepartmentLeaderAnswer(question, knowledge) : null;
+  const leaderText = leaderAnswer?.text || (asksLeader
+    ? (prefersBanglish(question)
+      ? `**${displayDepartmentName(matchedDepartment)}**-er current head structured official record theke ekokvabe verify kora jayni.`
+      : `The current head of **${displayDepartmentName(matchedDepartment)}** could not be verified unambiguously from the structured official records.`)
+    : "");
+  return {
+    text: leaderText ? `${leaderText}\n${baseText}` : baseText,
+    sources: [
+      ...(leaderAnswer?.sources || []),
+      { title: best.record.title || "Official course plan", url: best.record.url },
+    ].filter((source, index, list) => source.url && list.findIndex((item) => item.url === source.url) === index),
+    mode: asksLeader && !leaderAnswer ? "source_aware" : "structured",
   };
 }
 
@@ -2892,6 +2989,7 @@ function directAdmissionEligibilityAnswer(question, knowledge, history = []) {
   const q = normalizeQuestion(question);
   const asksEligibility = /\b(qualification|eligibility|requirements?|joggota|lagbe|hsc|ssc|apply\s+korte\s+ki\s+lagbe|admission\s+requirement|vortir\s+joggota)\b/i.test(q);
   if (!asksEligibility) return null;
+  if (findPeople(q, knowledge.faculty || [], knowledge).length) return null;
   const banglish = prefersBanglish(question);
   const activeDept = matchedDepartmentFromQuestion(q, knowledge) || activeContextDepartment(history, question, knowledge);
 
@@ -2930,6 +3028,19 @@ function directAdmissionProcedureAnswer(question, knowledge, history = []) {
   const asksTimingOrProcess = /\b(kobe|shuru|start|dates?|timing|deadline|schedule|apply\s+kivabe|procedure|process|kivabe\s+vorti|vorti\s+hobo|vorti\s+prokriya|kivabe\s+apply)\b/i.test(q);
   if (!asksTimingOrProcess) return null;
   const banglish = prefersBanglish(question);
+
+  if (/\b(deadline|last\s+date|closing\s+date|শেষ\s+তারিখ)\b/i.test(q)) {
+    return {
+      text: banglish
+        ? "বর্তমান admission-এর **exact application deadline** indexed official তথ্য থেকে নিশ্চিত করা যাচ্ছে না। Deadline session ও program অনুযায়ী বদলায়, তাই latest Admission notice দেখুন বা **01950003314 / 01950003319** নম্বরে নিশ্চিত করুন।"
+        : "The indexed official information does not confirm one **current application deadline**. Deadlines vary by session and program, so check the latest Admission notice or confirm with **01950003314 / 01950003319**.",
+      sources: [
+        { title: "Admission - Gono Bishwabidyalay", url: `${officialSiteUrl}admission/` },
+        { title: "Official notices", url: `${officialSiteUrl}category/notice/` },
+      ],
+      mode: "not_found",
+    };
+  }
 
   return {
     text: banglish
@@ -2982,8 +3093,13 @@ function directCareerGuidanceAnswer(question, knowledge, history = []) {
       mode: "structured",
     };
   }
-
-  return null;
+  return {
+    text: banglish
+      ? "কোনো degree একা চাকরির guarantee দেয় না। চাকরির সুযোগ নির্ভর করে **department, practical skills, internship/project, communication এবং portfolio**-র ওপর। তুমি কোন subject বা career পছন্দ করো (যেমন coding, healthcare, business, law) বললে আমি GB-এর programগুলোর মধ্যে evidence-based recommendation দিতে পারি।"
+      : "A degree alone does not guarantee a job. Outcomes depend on the **department, practical skills, internships/projects, communication, and portfolio**. Tell me whether you prefer coding, healthcare, business, law, or another field and I can recommend the closest GB program using its published curriculum.",
+    sources: [],
+    mode: "general_academic",
+  };
 }
 
 function directCampusFacilitiesAnswer(question, knowledge, history = []) {
@@ -3110,9 +3226,9 @@ function directAnswer(question, knowledge, history = []) {
     directAcademicUnitsAnswer(question, knowledge) ||
     directMissionVisionAnswer(question) ||
     directResearchAndCampusLifeAnswer(question) ||
-    directCampusFacilitiesAnswer(question, knowledge, history) ||
     directFacilitiesAnswer(question) ||
     directAdmissionOverviewAnswer(question, knowledge) ||
+    directPeopleAnswer(question, knowledge) ||
     directAdmissionProcedureAnswer(question, knowledge, history) ||
     directAdmissionEligibilityAnswer(question, knowledge, history) ||
     directWaiverAndFinancialAidAnswer(question, knowledge, history) ||
@@ -3131,7 +3247,6 @@ function directAnswer(question, knowledge, history = []) {
     directDepartmentLeaderAnswer(question, knowledge) ||
     directAllPeopleOverviewAnswer(question, knowledge) ||
     directDepartmentOverviewAnswer(question, knowledge) ||
-    directPeopleAnswer(question, knowledge) ||
     directUnknownPersonAnswer(question, knowledge) ||
     null
   );
@@ -3509,7 +3624,7 @@ function attachmentFallbackAnswer(question, contexts) {
 }
 
 function safeAnswer(text) {
-  const trimmed = cleanExtractedText(text);
+  const trimmed = cleanExtractedText(text).replace(/【[^】]+】/g, "").replace(/[ \t]+\n/g, "\n").trim();
   if (!trimmed) return NOT_VERIFIED;
   if (/not (in|available|provided|found)|no verified|do not have verified|don't have verified|cannot verify/i.test(trimmed)) {
     return NOT_VERIFIED;
@@ -3534,6 +3649,7 @@ function aiSystemInstruction(question) {
     `For notices and time-sensitive facts, prefer the newest dated source and mention the date. If official sources conflict, say so and identify both values instead of silently choosing one. ` +
     `Do not answer a different nearby question when a requested university-specific fact is missing. Instead, say briefly that you cannot confirm it from the available official information, provide any genuinely useful related fact, and ask one precise follow-up question when that could resolve the ambiguity. ` +
     `Never invent names, phone numbers, fees, room numbers, deadlines, departments, or policies. ` +
+    `Do not emit inline citation markers such as [1], source IDs, or bracketed line references; the interface renders source links separately. ` +
     `Never use phrases such as "exact match", "no official match", "indexed data", or expose retrieval-system status to the user.`
   );
 }
@@ -3863,6 +3979,7 @@ async function handleChat(req, res) {
   const hasAttachments = Array.isArray(body.attachments) && body.attachments.length > 0;
   const message = String(body.message || (hasAttachments ? "Read this attachment and answer from it." : "")).trim();
   const sessionId = String(body.sessionId || clientIp(req)).slice(0, 120);
+  if (!rateLimitOk(req, sessionId)) return json(res, 429, { error: "Too many messages in a short time. Please wait a minute and try again." });
   if (!message) return json(res, 400, { error: "Message is required" });
   if (message.length > 2000) return json(res, 400, { error: "Message is too long" });
 
@@ -3988,7 +4105,10 @@ async function handleChat(req, res) {
 
 function requireAdmin(req, res) {
   const configuredToken = envSecret("ADMIN_TOKEN");
-  if (!configuredToken) return true;
+  if (!configuredToken) {
+    json(res, 403, { error: "Admin endpoints are disabled until ADMIN_TOKEN is configured" });
+    return false;
+  }
   if (req.headers["x-admin-token"] === configuredToken) return true;
   json(res, 401, { error: "Admin token required" });
   return false;
@@ -4103,7 +4223,6 @@ async function adminRefresh(req, res) {
 
 async function route(req, res) {
   if (req.method === "OPTIONS") return json(res, 200, {});
-  if (!rateLimitOk(req)) return json(res, 429, { error: "Too many requests" });
 
   const url = new URL(req.url, `http://${req.headers.host || "127.0.0.1"}`);
   if (req.method === "GET" && url.pathname === "/api/health") {
@@ -4121,7 +4240,10 @@ async function route(req, res) {
   if (url.pathname.startsWith("/api/admin") && !requireAdmin(req, res)) return;
   if (req.method === "GET" && url.pathname === "/api/admin/logs") return adminLogs(req, res);
   if ((req.method === "GET" || req.method === "POST") && url.pathname === "/api/admin/settings") return adminSettings(req, res);
-  if (req.method === "POST" && url.pathname === "/api/admin/refresh") return adminRefresh(req, res);
+  if (req.method === "POST" && url.pathname === "/api/admin/refresh") {
+    if (!rateLimitOk(req)) return json(res, 429, { error: "Too many requests" });
+    return adminRefresh(req, res);
+  }
   if (!url.pathname.startsWith("/api")) {
     return serveStatic(req, res, url.pathname);
   }

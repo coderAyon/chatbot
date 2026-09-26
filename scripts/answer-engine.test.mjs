@@ -20,6 +20,10 @@ const fixture = {
     foundingOrganization: "Gonoshasthaya Kendra (GK) Public Charitable Trust",
     address: "Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344",
     statistics: { undergraduateStudents: "4200+", graduateStudents: "500+", facultyMembers: "180+", officeStaff: "120+" },
+    faculties: [
+      { name: "Faculty of Health Sciences", departments: ["Pharmacy", "Microbiology", "Biochemistry and Molecular Biology"] },
+      { name: "Faculty of Science & Engineering", departments: ["Computer Science and Engineering (CSE)", "Electrical and Electronic Engineering (EEE)", "Chemistry"] },
+    ],
   },
   faculty: [
     { name: "Example Chemistry Head", department: chemistry, designation: "Professor and Head", phone: "01000000000", email: "head@example.edu", source: `${root}chemistry/faculty-members/` },
@@ -153,6 +157,9 @@ test("official course lookup returns code and credits", () => {
   const answer = directAnswer("CSE data structures course details", knowledge);
   assert.match(answer.text, /CSE2301.*3 credits/s);
   assert.match(answer.text, /CSE2302L.*2 credits/s);
+  const concise = directAnswer("CSE te Data Structures course code and credit koto?", knowledge);
+  assert.match(concise.text, /CSE2301.*3 credits/s);
+  assert.doesNotMatch(concise.text, /course records|Representative courses/i);
 });
 
 test("program catalog excludes malformed and duplicate crawler records", () => {
@@ -172,6 +179,18 @@ test("conflicting official totals ask for the applicable session", () => {
     { title: "EEE course plan 2025", url: `${root}eee/course-plan-2025/`, chunks: ["Total Credits: 160"] },
   ] };
   assert.equal(directAnswer("EEE total credits?", knowledge).mode, "clarify");
+});
+
+test("a syllabus named for another department cannot supply credits", () => {
+  const mpbme = "Department of Medical Physics and Biomedical Engineering";
+  const knowledge = {
+    ...fixture,
+    faculty: [...fixture.faculty, { name: "Example MPBME Teacher", department: mpbme, designation: "Lecturer", source: `${root}mpbme/faculty-members/` }],
+    pages: [{ title: "PDF document: CSE-Syllabus-2018.pdf", url: `${root}mpbme/CSE-Syllabus-2018.pdf`, department: mpbme, chunks: ["Grand Total 2088/1296 160 4750"] }],
+  };
+  const answer = directAnswer("medical physics total credits koto?", knowledge);
+  assert.equal(answer.mode, "not_found");
+  assert.doesNotMatch(answer.text, /\b160\b/);
 });
 
 test("department follow-up keeps the last user's department", () => {
@@ -277,6 +296,42 @@ test("academic-unit and program lists come from structured knowledge", () => {
   assert.match(departments.text, /Pharmacy/);
   const programs = directAnswer("show all programs", fixture);
   assert.match(programs.text, /B\.Sc\. in Electrical and Electronic Engineering/);
+  const health = directAnswer("List all departments under Faculty of Health Sciences", fixture);
+  assert.match(health.text, /3 departments.*Pharmacy.*Microbiology.*Biochemistry/s);
+  assert.doesNotMatch(health.text, /people records/i);
+});
+
+test("person qualifications never fall through to admission eligibility", () => {
+  const knowledge = { ...fixture, faculty: [
+    ...fixture.faculty,
+    { name: "Sharif Ahamed", department: "Department of Computer Science and Engineering (CSE)", designation: "Lecturer", qualification: "M.Sc. in CSE", source: `${root}cse/employees/sharif-ahamed/` },
+  ] };
+  const answer = directAnswer("Sharif sir er qualification ki?", knowledge);
+  assert.match(answer.text, /Sharif Ahamed.*M\.Sc\. in CSE/s);
+  assert.doesNotMatch(answer.text, /SSC|HSC|GPA 2\.50/);
+});
+
+test("combined founder questions include both founder and establishment date", () => {
+  const answer = directAnswer("Who founded Gono Bishwabidyalay and when?", fixture);
+  assert.match(answer.text, /Dr\. Zafrullah Chowdhury.*14 July 1998/s);
+  const bengali = directAnswer("গণ বিশ্ববিদ্যালয়ের প্রতিষ্ঠাতা কে এবং কবে প্রতিষ্ঠিত?", fixture);
+  assert.match(bengali.text, /Dr\. Zafrullah Chowdhury.*14 July 1998/s);
+});
+
+test("deadline and hostel questions do not invent current availability", () => {
+  assert.equal(directAnswer("What is the admission deadline?", fixture).mode, "not_found");
+  assert.match(directAnswer("Does the university provide hostel facilities?", fixture).text, /not publish verified hostel/i);
+});
+
+test("compound department questions answer each supported intent", () => {
+  const knowledge = { ...fixture, pages: [
+    { title: "CSE Course Plan", url: `${root}cse/course-plan/`, department: "Department of Computer Science and Engineering (CSE)", chunks: ["Total Credits: 160. Duration 4 years."] },
+  ] };
+  const combined = directAnswer("CSE department head and total credit koto?", knowledge);
+  assert.match(combined.text, /Example CSE Head.*160/s);
+  const room = directAnswer("What is the exact room number of the CSE head?", knowledge);
+  assert.equal(room.mode, "not_found");
+  assert.match(room.text, /does not publish an office room/i);
 });
 
 test("a department faculty-list request is not mistaken for an unknown person", () => {

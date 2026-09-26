@@ -30,53 +30,8 @@ import "./styles.css";
 
 const GB_LOGO_URL = "/gb-logo.png";
 const CHAT_HISTORY_KEY = "university-chat-history-v3";
+const ACTIVE_CHAT_KEY = "university-active-chat-v3";
 const LEGACY_CHAT_HISTORY_KEYS = ["university-chat-history", "university-chat-history-v2"];
-
-const QUICK_PROMPTS = [
-  {
-    icon: "🎓",
-    badge: "Programs & Fees",
-    title: "B.Sc. in CSE Tuition & Waiver",
-    desc: "Tk. 4,50,000/- total fee, initial payment & semester waivers",
-    prompt: "CSE total tuition fee, admission cost and waiver koto?",
-  },
-  {
-    icon: "💊",
-    badge: "Health Sciences",
-    title: "Bachelor of Pharmacy (B.Pharm)",
-    desc: "Tk. 6,00,000/- fee, 70 seats & Council eligibility",
-    prompt: "Pharmacy course fee and admission requirements ki?",
-  },
-  {
-    icon: "💰",
-    badge: "Financial Aid",
-    title: "Waivers & Scholarships",
-    desc: "10%–50% GPA merit waiver, female stipend & quotas",
-    prompt: "Gono Bishwabidyalay-te scholarship and waiver kivabe pabo?",
-  },
-  {
-    icon: "📋",
-    badge: "Admissions",
-    title: "Admission Schedule & Steps",
-    desc: "Spring/Fall intake, required documents & hotline support",
-    prompt: "Admission kobe shuru hobe and kivabe apply korbo?",
-  },
-  {
-    icon: "🏫",
-    badge: "Campus Life",
-    title: "Campus, Transport & Hostels",
-    desc: "Green Savar campus, student buses & digital library",
-    prompt: "Savar campus facilities, transport bus route and hostel kemon?",
-  },
-  {
-    icon: "💡",
-    badge: "Career Guide",
-    title: "Career Prospects in CSE",
-    desc: "Software engineering, AI, tech jobs & next steps",
-    prompt: "CSE porle career scope and future demand kemon? Tar por ki korbo?",
-  },
-];
-
 
 function createNewConversation() {
   const id = `chat_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -88,6 +43,27 @@ function createNewConversation() {
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
+}
+
+function loadStoredConversations() {
+  for (const key of [CHAT_HISTORY_KEY, ...LEGACY_CHAT_HISTORY_KEYS]) {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(key) || "null");
+      if (!Array.isArray(parsed)) continue;
+      const valid = parsed
+        .filter((chat) => chat?.id && Array.isArray(chat.messages))
+        .slice(0, 40)
+        .map((chat) => ({
+          ...chat,
+          sessionId: chat.sessionId || chat.id,
+          messages: chat.messages.slice(-120),
+        }));
+      if (valid.length) return valid;
+    } catch {
+      // Ignore malformed legacy browser data.
+    }
+  }
+  return [createNewConversation()];
 }
 
 function generateChatTitle(userText, attachments = []) {
@@ -103,9 +79,11 @@ function generateChatTitle(userText, attachments = []) {
 }
 
 function App() {
-  // Pure in-memory temporary conversations (cleared completely on refresh)
-  const [conversations, setConversations] = useState(() => [createNewConversation()]);
-  const [activeChatId, setActiveChatId] = useState(() => conversations[0]?.id);
+  const [conversations, setConversations] = useState(loadStoredConversations);
+  const [activeChatId, setActiveChatId] = useState(() => {
+    const stored = localStorage.getItem(ACTIVE_CHAT_KEY);
+    return conversations.some((chat) => chat.id === stored) ? stored : conversations[0]?.id;
+  });
   const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== "undefined" ? window.innerWidth > 820 : true);
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState([]);
@@ -122,12 +100,16 @@ function App() {
   const endRef = useRef(null);
   const activeRequestRef = useRef(null);
 
-  // Clear any legacy storage keys on mount so that no past chats persist across refresh
   useEffect(() => {
-    [CHAT_HISTORY_KEY, ...LEGACY_CHAT_HISTORY_KEYS, "university-assistant-session"].forEach((key) =>
-      localStorage.removeItem(key),
-    );
-  }, []);
+    try {
+      const bounded = conversations.slice(0, 40).map((chat) => ({ ...chat, messages: chat.messages.slice(-120) }));
+      localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(bounded));
+      localStorage.setItem(ACTIVE_CHAT_KEY, activeChatId || "");
+      LEGACY_CHAT_HISTORY_KEYS.forEach((key) => localStorage.removeItem(key));
+    } catch {
+      // The chat remains usable in memory if browser storage is unavailable or full.
+    }
+  }, [conversations, activeChatId]);
 
   const activeConversation =
     conversations.find((c) => c.id === activeChatId) || conversations[0] || createNewConversation();
@@ -227,7 +209,6 @@ function App() {
     localStorage.setItem("university-theme", theme);
   }, [theme]);
 
-  // Purely in-memory scroll effect without localStorage writes
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, isThinking, activeChatId]);
@@ -501,7 +482,7 @@ function App() {
 
   return (
     <main className={`app-shell ${sidebarOpen ? "" : "sidebar-collapsed"}`}>
-      {/* ChatGPT-style Left Sidebar with Temporary Chat History */}
+      {/* Chat history is stored locally so conversations survive refreshes. */}
       <aside className={`chat-sidebar ${sidebarOpen ? "mobile-open" : ""}`} aria-label="Chat history">
         <div className="sidebar-top">
           <div className="sidebar-brand">
@@ -544,7 +525,7 @@ function App() {
               <div className="sidebar-empty">
                 <MessageSquare size={20} className="sidebar-empty-icon" />
                 <p className="sidebar-empty-title">No chat history yet</p>
-                <span className="sidebar-empty-desc">Your temporary chats will appear here until refresh</span>
+                <span className="sidebar-empty-desc">Your conversations will appear here</span>
               </div>
             ) : (
               validHistoryChats.map((chat) => (
@@ -581,9 +562,9 @@ function App() {
         </div>
 
         <div className="sidebar-footer">
-          <div className="sidebar-session-notice" title="Chat history is stored temporarily in memory and is wiped on browser or tab reload">
+          <div className="sidebar-session-notice" title="Chat history is saved only in this browser">
             <Clock size={13} />
-            <span>Temporary session (clears on refresh)</span>
+            <span>Saved on this device</span>
           </div>
           {validHistoryChats.length > 1 && (
             <button
@@ -669,23 +650,6 @@ function App() {
                   <p>Explore verified admissions, tuition fees, waivers, campus life & academic advice.</p>
                 </div>
                 <div className="center-composer">{composer}</div>
-                <div className="welcome-cards-grid">
-                  {QUICK_PROMPTS.map((card, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      className="welcome-card"
-                      onClick={() => sendMessage(card.prompt)}
-                    >
-                      <div className="welcome-card-header">
-                        <span className="welcome-card-icon">{card.icon}</span>
-                        <span className="welcome-card-badge">{card.badge}</span>
-                      </div>
-                      <h4 className="welcome-card-title">{card.title}</h4>
-                      <p className="welcome-card-desc">{card.desc}</p>
-                    </button>
-                  ))}
-                </div>
               </section>
             )}
 
