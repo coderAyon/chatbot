@@ -76,125 +76,7 @@ const QUICK_PROMPTS = [
     prompt: "CSE porle career scope and future demand kemon? Tar por ki korbo?",
   },
 ];
-function waitForPuter(timeoutMs = 8000) {
-  if (window.puter?.ai?.chat) return Promise.resolve(window.puter);
-  return new Promise((resolve, reject) => {
-    const startedAt = Date.now();
-    const timer = setInterval(() => {
-      if (window.puter?.ai?.chat) {
-        clearInterval(timer);
-        resolve(window.puter);
-      } else if (Date.now() - startedAt >= timeoutMs) {
-        clearInterval(timer);
-        reject(new Error("Puter AI did not load"));
-      }
-    }, 120);
-  });
-}
 
-function aiResponseText(response) {
-  const content = response?.message?.content;
-  if (typeof content === "string") return content.trim();
-  if (Array.isArray(content)) {
-    return content.map((item) => (typeof item === "string" ? item : item?.text || "")).join("\n").trim();
-  }
-  return "";
-}
-
-let puterModelCandidatesPromise;
-
-function puterModelId(model) {
-  if (typeof model === "string") return model;
-  return String(model?.id || model?.model || model?.name || "").trim();
-}
-
-function modelRank(id) {
-  const value = id.toLowerCase();
-  let score = value.includes(":free") ? 1000 : 0;
-  if (/gpt|gemini|claude|qwen|deepseek|llama|mistral/.test(value)) score += 100;
-  if (/nano|mini|flash|lite|small|8b|free/.test(value)) score += 40;
-  if (/image|video|audio|speech|tts|embedding|moderation|whisper/.test(value)) score -= 2000;
-  return score;
-}
-
-async function availablePuterModels(puter, configured = []) {
-  if (!puterModelCandidatesPromise) {
-    puterModelCandidatesPromise = (async () => {
-      try {
-        if (typeof puter.ai.listModels !== "function") return [];
-        const response = await Promise.race([
-          puter.ai.listModels(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error("Model catalog timed out")), 8000)),
-        ]);
-        const models = Array.isArray(response) ? response : response?.models || response?.data || [];
-        return [...new Set(models.map(puterModelId).filter(Boolean))]
-          .filter((id) => modelRank(id) > -1000)
-          .sort((a, b) => modelRank(b) - modelRank(a));
-      } catch (error) {
-        console.warn("Puter model catalog unavailable:", error);
-        return [];
-      }
-    })();
-  }
-  const discovered = await puterModelCandidatesPromise;
-  if (!discovered.length) puterModelCandidatesPromise = undefined;
-  const freeModels = discovered.filter((id) => id.toLowerCase().includes(":free"));
-  const preferred = freeModels.length ? freeModels : discovered.slice(0, 4);
-  return [...new Set([...preferred, ...configured].filter(Boolean))].slice(0, 6);
-}
-
-function withTimeout(promise, timeoutMs, label) {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => setTimeout(() => reject(new Error(`${label} timed out`)), timeoutMs)),
-  ]);
-}
-
-async function enhanceWithPuter(data, onProgress) {
-  if (!data?.aiAssist?.messages?.length) return data;
-  const { aiAssist, ...fallback } = data;
-  try {
-    const puter = await waitForPuter();
-    const configured = aiAssist.modelCandidates || (aiAssist.model ? [aiAssist.model] : []);
-    const candidates = await availablePuterModels(puter, configured);
-    let lastError;
-    for (const model of candidates.slice(0, 3)) {
-      try {
-        onProgress?.(`Reasoning with ${model.replace(/:free$/i, "")}...`);
-        const response = await withTimeout(
-          puter.ai.chat(aiAssist.messages, {
-            model,
-            normalize: true,
-            temperature: 0.3,
-            max_tokens: 900,
-          }),
-          35000,
-          model,
-        );
-        const text = aiResponseText(response);
-        if (!text) throw new Error(`${model} returned an empty response`);
-        return {
-          ...fallback,
-          text,
-          mode: "puter_ai",
-          aiModel: model,
-          profile: {
-            label: model.toLowerCase().includes(":free") ? "Free AI assisted" : "Puter AI assisted",
-            confidence: fallback.sources?.length ? "Official-context guided" : "General knowledge",
-          },
-        };
-      } catch (error) {
-        lastError = error;
-        console.warn(`Puter model ${model} unavailable:`, error);
-      }
-    }
-    if (lastError) throw lastError;
-    return fallback;
-  } catch (error) {
-    console.warn("Puter AI fallback unavailable:", error);
-    return fallback;
-  }
-}
 
 function createNewConversation() {
   const id = `chat_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -474,10 +356,6 @@ function App() {
       let data = await response.json();
       if (activeRequestRef.current !== request) return;
       setConnectionState("online");
-      data = await enhanceWithPuter(data, (label) => {
-        if (activeRequestRef.current === request) setThinkingLabel(label);
-      });
-      if (activeRequestRef.current !== request) return;
 
       const assistantMessage = { role: "assistant", ...data };
       setConversations((prev) =>

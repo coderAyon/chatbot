@@ -14,3 +14,9 @@ services:
         value: 0.0.0.0
       - key: OFFICIAL_SITE_URL
         value: https://gonouniversity.edu.bd/
+      - key: OPENAI_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: OPENAI_MODEL
+        value: openai/gpt-oss-120b
+      - key: OPENAI_PROVIDER_NAME
+        value: Groq

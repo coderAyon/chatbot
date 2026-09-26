@@ -39,9 +39,9 @@ const officialSiteUrl = normalizeBaseUrl(process.env.OFFICIAL_SITE_URL || "https
 const ollamaUrl = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
 const ollamaModel = process.env.OLLAMA_MODEL || "qwen2.5:3b";
 const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-const openAiModel = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const openAiBaseUrl = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/+$/, "");
-const openAiProviderName = process.env.OPENAI_PROVIDER_NAME || (openAiBaseUrl.includes("openrouter.ai") ? "OpenRouter" : "OpenAI");
+const openAiProviderName = process.env.OPENAI_PROVIDER_NAME || (openAiBaseUrl.includes("groq.com") ? "Groq" : openAiBaseUrl.includes("openrouter.ai") ? "OpenRouter" : "OpenAI");
+const openAiModel = process.env.OPENAI_MODEL || (openAiProviderName === "Groq" ? "openai/gpt-oss-120b" : "gpt-4o-mini");
 const maxRequestBytes = Number(process.env.MAX_REQUEST_BYTES || 36 * 1024 * 1024);
 const maxAttachmentBytes = Number(process.env.MAX_ATTACHMENT_BYTES || 12 * 1024 * 1024);
 const rateWindowMs = Number(process.env.RATE_WINDOW_MS || 60_000);
@@ -3661,25 +3661,39 @@ function clientAiPackage(question, contexts, history = []) {
 async function askOpenAI(question, contexts, history = []) {
   const apiKey = envSecret("OPENAI_API_KEY");
   if (!apiKey) return null;
-  const response = await fetch(`${openAiBaseUrl}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: openAiModel,
-      temperature: 0.15,
-      max_tokens: 650,
-      messages: [
-        { role: "system", content: aiSystemInstruction(question) },
-        { role: "user", content: aiUserPrompt(question, contexts, history) },
-      ],
-    }),
-  });
-  if (!response.ok) throw new Error(`OpenAI unavailable: ${response.status}`);
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content?.trim() || null;
+  const isGroq = openAiBaseUrl.includes("groq.com");
+  const models = isGroq ? [openAiModel, "openai/gpt-oss-120b", "qwen/qwen3.8-27b"] : [openAiModel];
+  const uniqueModels = [...new Set(models.filter(Boolean))];
+  for (const model of uniqueModels) {
+    try {
+      const response = await fetch(`${openAiBaseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          temperature: 0.15,
+          max_tokens: 800,
+          messages: [
+            { role: "system", content: aiSystemInstruction(question) },
+            { role: "user", content: aiUserPrompt(question, contexts, history) },
+          ],
+        }),
+      });
+      if (!response.ok) {
+        const errText = await response.text().catch(() => "");
+        throw new Error(`${openAiProviderName} unavailable (${response.status}): ${errText.slice(0, 120)}`);
+      }
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content?.trim();
+      if (content) return content;
+    } catch (err) {
+      if (model === uniqueModels[uniqueModels.length - 1]) throw err;
+    }
+  }
+  return null;
 }
 
 async function askGemini(question, contexts, history = []) {
@@ -3813,7 +3827,7 @@ function responseProfile(result, question) {
   if (mode.includes("attachment")) return { label: "Attachment answer", confidence: "Extracted content" };
   if (mode === "not_found") return { label: "Needs verification", confidence: "More context may help" };
   if (mode === "ai_fallback") return { label: "AI answer", confidence: "General knowledge" };
-  if (mode === "gemini" || mode === "openai" || mode === "openrouter" || mode === "ollama") {
+  if (mode === "gemini" || mode === "openai" || mode === "openrouter" || mode === "ollama" || mode === "groq") {
     return { label: `${mode} assisted`, confidence: result.sources?.length ? "Source-guided" : "AI fallback" };
   }
   return { label: mode || "Answer", confidence: result.sources?.length ? "Sources attached" : "Fallback" };
