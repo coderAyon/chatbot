@@ -4140,6 +4140,7 @@ async function adminStatus(req, res) {
   }
   return json(res, 200, {
     ok: true,
+    engineVersion: ANSWER_ENGINE_VERSION,
     officialSiteUrl: settings.officialSiteUrl,
     builtAt: knowledge.builtAt || null,
     pageCount,
@@ -4230,6 +4231,7 @@ async function route(req, res) {
     const knowledge = await loadKnowledge();
     return json(res, 200, {
       ok: true,
+      engineVersion: ANSWER_ENGINE_VERSION,
       builtAt: knowledge.builtAt,
       pageCount: knowledge.pageCount || knowledge.pages.length,
       openAiConfigured: Boolean(envSecret("OPENAI_API_KEY")),
