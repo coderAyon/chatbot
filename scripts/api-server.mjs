@@ -1,10 +1,11 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
-import { copyFile, mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rename, stat, unlink, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { basename, dirname, join, resolve } from "node:path";
+import { basename, dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+const DIST_DIR = new URL("../dist/", import.meta.url);
 const DATA_DIR = new URL("../data/", import.meta.url);
 const KNOWLEDGE_FILE = new URL(process.env.KNOWLEDGE_FILE || "../data/knowledge.json", import.meta.url);
 const CHAT_FILE = new URL("../data/chat-history.json", import.meta.url);
@@ -4188,7 +4189,68 @@ async function route(req, res) {
   if (req.method === "GET" && url.pathname === "/api/admin/logs") return adminLogs(req, res);
   if ((req.method === "GET" || req.method === "POST") && url.pathname === "/api/admin/settings") return adminSettings(req, res);
   if (req.method === "POST" && url.pathname === "/api/admin/refresh") return adminRefresh(req, res);
+  if (!url.pathname.startsWith("/api")) {
+    return serveStatic(req, res, url.pathname);
+  }
   return json(res, 404, { error: "Not found" });
+}
+
+const STATIC_MIME_TYPES = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "application/javascript; charset=utf-8",
+  ".mjs": "application/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".svg": "image/svg+xml",
+  ".ico": "image/x-icon",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+  ".webp": "image/webp",
+};
+
+async function serveStatic(req, res, pathname) {
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    return json(res, 405, { error: "Method not allowed" });
+  }
+  const cleanPath = pathname.replace(/^\/+/, "").replace(/\.\./g, "");
+  const distPath = fileURLToPath(DIST_DIR);
+  let targetFile = resolve(distPath, cleanPath || "index.html");
+  if (!existsSync(targetFile)) {
+    targetFile = resolve(distPath, "index.html");
+  } else {
+    try {
+      const stats = await stat(targetFile);
+      if (stats.isDirectory()) {
+        targetFile = resolve(distPath, "index.html");
+      }
+    } catch {
+      targetFile = resolve(distPath, "index.html");
+    }
+  }
+  if (!existsSync(targetFile)) {
+    return json(res, 404, { error: "Frontend build not found" });
+  }
+  try {
+    const ext = extname(targetFile).toLowerCase();
+    const contentType = STATIC_MIME_TYPES[ext] || "application/octet-stream";
+    const data = await readFile(targetFile);
+    res.writeHead(200, {
+      "content-type": contentType,
+      "content-length": Buffer.byteLength(data),
+      "cache-control": ext === ".html" ? "no-cache" : "public, max-age=31536000, immutable",
+    });
+    if (req.method === "HEAD") {
+      res.end();
+      return;
+    }
+    res.end(data);
+  } catch (error) {
+    json(res, 500, { error: "Failed to read file" });
+  }
 }
 
 const server = http.createServer(async (req, res) => {

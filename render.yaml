@@ -3,7 +3,7 @@ services:
     name: gono-university-chatbot-api
     runtime: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm install && npm run build
     startCommand: npm run api
     envVars:
       - key: NODE_VERSION
