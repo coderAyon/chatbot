@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: gono-university-chatbot-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run api
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: PORT
+        value: 8787
+      - key: HOST
+        value: 0.0.0.0
+      - key: OFFICIAL_SITE_URL
+        value: https://gonouniversity.edu.bd/

@@ -1,0 +1,1662 @@
+[
+  {
+    "sessionId": "persistent-memory-proof",
+    "updatedAt": 1790356515999,
+    "turns": [
+      {
+        "role": "user",
+        "text": "compare CSE vs EEE"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **50**\n- Official course-plan credits: **160**\n- Course examples: Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**B.Sc. in Electrical and Electronic Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **40**\n- Official course-plan credits: **151**\n- Course examples: Electrical Circuits-I, Engineering Physics –I, Engineering Chemistry, Engineering Chemistry Lab, Mathematics-I (Differential Calculus and Integral Calculus), English-I\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking."
+      },
+      {
+        "role": "user",
+        "text": "which one has more credits?"
+      },
+      {
+        "role": "assistant",
+        "text": "- **Department of Computer Science and Engineering (CSE):** 160 credits\n- **Department of Electrical and Electronic Engineering (EEE):** 151 credits\n\n**Department of Computer Science and Engineering (CSE)** has 9 more published credits than **Department of Electrical and Electronic Engineering (EEE)** in the indexed course plans."
+      },
+      {
+        "role": "user",
+        "text": "which is better for programming?"
+      },
+      {
+        "role": "assistant",
+        "text": "Based on the official course titles, **Department of Computer Science and Engineering (CSE)** is the closer match for programming, software, data, or AI. Relevant examples include Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science, English-I. This is an interest-based recommendation, not a claim that one degree is universally better."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "brand-new-session-proof",
+    "updatedAt": 1790356526131,
+    "turns": [
+      {
+        "role": "user",
+        "text": "which one has more credits?"
+      },
+      {
+        "role": "assistant",
+        "text": "I could not verify that exact course or credit detail in the indexed official data, so I will not guess. Specify the applicable program, syllabus, or session."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "83f5a386-0fc0-45f8-9180-db4de0ad63f8",
+    "updatedAt": 1790356635761,
+    "turns": [
+      {
+        "role": "user",
+        "text": "compare CSE vs EEE"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **50**\n- Official course-plan credits: **160**\n- Course examples: Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**B.Sc. in Electrical and Electronic Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **40**\n- Official course-plan credits: **151**\n- Course examples: Electrical Circuits-I, Engineering Physics –I, Engineering Chemistry, Engineering Chemistry Lab, Mathematics-I (Differential Calculus and Integral Calculus), English-I\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "272c150b-2761-45e8-b016-f6f0b0eacbed",
+    "updatedAt": 1790356734537,
+    "turns": [
+      {
+        "role": "user",
+        "text": "name of vp"
+      },
+      {
+        "role": "assistant",
+        "text": "The Vice President (Gono Bishwabidyalay Central Students' Union) is **Iyasin Al Mridul Dewan**."
+      },
+      {
+        "role": "user",
+        "text": "is there any number of him?"
+      },
+      {
+        "role": "assistant",
+        "text": "I couldn't find verified information from the official university data."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "ai-fallback-proof",
+    "updatedAt": 1790356989104,
+    "turns": [
+      {
+        "role": "user",
+        "text": "Explain recursion with a simple example"
+      },
+      {
+        "role": "assistant",
+        "text": "According to the official data: CLO 5 Toexplain the summation of trigonometry series. (properties of continuous functions, standard theorems and their examples). CLO 1 Toexplain real number system, function andlimit using graphs and their properties."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "ai-fallback-proof-v2",
+    "updatedAt": 1790357049021,
+    "turns": [
+      {
+        "role": "user",
+        "text": "Explain recursion with a simple example"
+      },
+      {
+        "role": "assistant",
+        "text": "According to the official data: CLO 5 Toexplain the summation of trigonometry series. (properties of continuous functions, standard theorems and their examples). CLO 1 Toexplain real number system, function andlimit using graphs and their properties."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "ai-fallback-proof-v3",
+    "updatedAt": 1790357078493,
+    "turns": [
+      {
+        "role": "user",
+        "text": "Explain recursion with a simple example"
+      },
+      {
+        "role": "assistant",
+        "text": "I will answer this using general AI knowledge."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "ecdf462b-e090-4f97-9c01-7becf450b19b",
+    "updatedAt": 1790357102889,
+    "turns": [
+      {
+        "role": "user",
+        "text": "Explain recursion with a simple example"
+      },
+      {
+        "role": "assistant",
+        "text": "I will answer this using general AI knowledge."
+      },
+      {
+        "role": "user",
+        "text": "Explain recursion with a simple example"
+      },
+      {
+        "role": "assistant",
+        "text": "This is a general-knowledge answer (not from official university materials).\n\n**Recursion** is when a function calls itself to solve a smaller version of the same problem, until it reaches a simple base case that stops the calls.\n\n**Simple example: Factorial (n!)**\n- `factorial(5) = 5 × 4 × 3 × 2 × 1`\n- Rule: `factorial(n) = n × factorial(n-1)`, and `factorial(1) = 1` (base case).\n\n**How it works for `factorial(4)`:**\n1. `factorial(4)` → `4 × factorial(3)`\n2. `factorial(3)` → `3 × factorial(2)`\n3. `factorial(2)` → `2 × factorial(1)`\n4. `factorial(1)` → returns `1` (stops here)\n\nThen it unwinds:  \n`2 × 1 = 2` → `3 × 2 = 6` → `4 × 6 = 24`\n\nSo `factorial(4) = 24`.\n\n**Key parts:** a base case (to stop) and a recursive case (to call itself with a smaller input). Without the base case, it would run forever (stack overflow)."
+      },
+      {
+        "role": "user",
+        "text": "How many laboratories does Gono University have?"
+      },
+      {
+        "role": "assistant",
+        "text": "I do not have enough reliable information to answer that confidently yet. Add a little context and I can answer more precisely or find the right source."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "27dc6f02-dbc5-44a2-8df3-5088f21f7511",
+    "updatedAt": 1790357386528,
+    "turns": [
+      {
+        "role": "user",
+        "text": "hi"
+      },
+      {
+        "role": "assistant",
+        "text": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "a8823dee-57de-4f71-9e04-ad9e6965da80",
+    "updatedAt": 1790358107572,
+    "turns": [
+      {
+        "role": "user",
+        "text": "cse credit koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Official course-plan onujayi **Department of Computer Science and Engineering (CSE)**-er total credits **160**."
+      },
+      {
+        "role": "user",
+        "text": "shaif sir ke chino?"
+      },
+      {
+        "role": "assistant",
+        "text": "Haan, **Shahad Saif Khandker** Department of Biochemistry and Molecular Biology-er **Lecturer**.\nHaan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.\nHaan, **Dr. Sharif Omer Faruque** offices-er **Medical Officer**."
+      },
+      {
+        "role": "user",
+        "text": "sharif ahmed"
+      },
+      {
+        "role": "assistant",
+        "text": "I will answer this using general AI knowledge."
+      },
+      {
+        "role": "user",
+        "text": "cse credit koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Official course-plan onujayi **Department of Computer Science and Engineering (CSE)**-er total credits **160**."
+      },
+      {
+        "role": "user",
+        "text": "shaif sir ke chino?"
+      },
+      {
+        "role": "assistant",
+        "text": "Haan, **Shahad Saif Khandker** Department of Biochemistry and Molecular Biology-er **Lecturer**.\nHaan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.\nHaan, **Dr. Sharif Omer Faruque** offices-er **Medical Officer**."
+      },
+      {
+        "role": "user",
+        "text": "sharif ahmed"
+      },
+      {
+        "role": "assistant",
+        "text": "**General knowledge (not from official GB context):** \"Sharif Ahmed\" is a common name, so it could refer to many people. In the context of Gono Bishwabidyalay, if you mean **Sharif Ahamed**, he is a **Lecturer in the Department of Computer Science and Engineering (CSE)**. \n\nIf you're asking about a different Sharif Ahmed (e.g., in another department or role), I can't confirm that from official information. Could you clarify which department or role you're asking about?"
+      },
+      {
+        "role": "user",
+        "text": "cse vs eee"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **50**\n- Official course-plan credits: **160**\n- Course examples: Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**B.Sc. in Electrical and Electronic Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **40**\n- Official course-plan credits: **151**\n- Course examples: Electrical Circuits-I, Engineering Physics –I, Engineering Chemistry, Engineering Chemistry Lab, Mathematics-I (Differential Calculus and Integral Calculus), English-I\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking."
+      },
+      {
+        "role": "user",
+        "text": "cse er tution fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Ei fee-ta nishchit korar moto nirvorjoggo tothyo ekhon amar kache nei. Program ar intake/session bolle ami aro specific vabe khuje dekhbo."
+      },
+      {
+        "role": "assistant",
+        "text": "Official course-plan onujayi **Department of Computer Science and Engineering (CSE)**-er total credits **160**."
+      },
+      {
+        "role": "user",
+        "text": "shaif sir ke chino?"
+      },
+      {
+        "role": "assistant",
+        "text": "Haan, **Shahad Saif Khandker** Department of Biochemistry and Molecular Biology-er **Lecturer**.\nHaan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.\nHaan, **Dr. Sharif Omer Faruque** offices-er **Medical Officer**."
+      },
+      {
+        "role": "user",
+        "text": "sharif ahmed"
+      },
+      {
+        "role": "assistant",
+        "text": "**General knowledge (not from official GB context):** \"Sharif Ahmed\" is a common name, so it could refer to many people. In the context of Gono Bishwabidyalay, if you mean **Sharif Ahamed**, he is a **Lecturer in the Department of Computer Science and Engineering (CSE)**. \n\nIf you're asking about a different Sharif Ahmed (e.g., in another department or role), I can't confirm that from official information. Could you clarify which department or role you're asking about?"
+      },
+      {
+        "role": "user",
+        "text": "cse vs eee"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **50**\n- Official course-plan credits: **160**\n- Course examples: Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**B.Sc. in Electrical and Electronic Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **40**\n- Official course-plan credits: **151**\n- Course examples: Electrical Circuits-I, Engineering Physics –I, Engineering Chemistry, Engineering Chemistry Lab, Mathematics-I (Differential Calculus and Integral Calculus), English-I\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking."
+      },
+      {
+        "role": "user",
+        "text": "cse er tution fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "**General knowledge (not from official GB context):** Gono Bishwabidyalay-er CSE program-er exact tuition fee ami official context theke confirm korte parchi na. \n\nOfficial information e ei specific number ta currently available nei. Apni chaile **admission office** e contact kore aktu specific fee structure jante paren — oi khanei exact total tuition, semester fee, admission-time payment etc. clearly pawa jabe. \n\nKono specific number janle amake bole din, ami bujhte help korbo."
+      },
+      {
+        "role": "user",
+        "text": "ki ki subject ache gono te?"
+      },
+      {
+        "role": "assistant",
+        "text": "Ei course/credit-er nishchit tothyo ekhon amar kache nei. Program, syllabus, ba session-ta bolle ami specific vabe check korbo."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "chat_1790358210493_9b8owm",
+    "updatedAt": 1790358225026,
+    "turns": [
+      {
+        "role": "user",
+        "text": "cost of cse?"
+      },
+      {
+        "role": "assistant",
+        "text": "What would you like to know about **CSE** - the general concept, Gono's department, courses/credits, faculty, admission/fees, or careers?"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test_session_1",
+    "updatedAt": 1790359536993,
+    "turns": [
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "**Department of Computer Science and Engineering (CSE)**\n**Program:** B.Sc. (Honours) in Computer Science & Engineering\n**Duration:** 4 years (8 semesters)\n**Published seats:** 50\n**Total credits:** 160\n**Department head:** Tania Akter\n**Indexed teaching faculty:** 13\n**Course examples:** Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science, English-I, Bengali\n**Admission requirement:** At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply."
+      },
+      {
+        "role": "user",
+        "text": "cost koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-এর প্রধান প্রোগ্রামগুলোর টিউশন ও ভর্তি ফি:\n- **B.Sc. in CSE:** মোট টিউশন ফি **Tk. 4,50,000/-** (৪ বছর / ৮ সেমিস্টার), ভর্তিকালীন BDT 54,500।\n- **Bachelor of Pharmacy (B.Pharm):** মোট টিউশন ফি **Tk. 6,00,000/-**।\n- **Master of Pharmacy (M.Pharm):** মোট টিউশন ফি **Tk. 1,20,000/-**।\n- **ভর্তিকালীন প্রাথমিক খরচ:** অধিকাংশ আন্ডারগ্র্যাজুয়েট প্রোগ্রামে শুরুতে BDT 54,500 (ভর্তি ফি ও ১ম সেমিস্টার টিউশন)।\n- **ওয়েভার:** সেমিস্টার রেজাল্টের ওপর ভিত্তি করে ১০% থেকে ৫০% পর্যন্ত টিউশন ফি ওয়েভার রয়েছে।\n- হেল্পলাইন: **01950003314**, **01950003319**।"
+      },
+      {
+        "role": "user",
+        "text": "ar seats koyta?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**\n**Seats:** 50"
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "waiver kivabe pabo?"
+      },
+      {
+        "role": "assistant",
+        "text": "The official site has a **Financial Aid** page, but its currently indexed content does not publish exact scholarship/waiver amounts, percentages, or eligibility criteria. I will not invent a waiver rate without a program/session-specific written notice."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "qualification ki lagbe?"
+      },
+      {
+        "role": "assistant",
+        "text": "Ei proshner uttor general AI knowledge diye dicchi."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "kobe theke shuru hobe?"
+      },
+      {
+        "role": "assistant",
+        "text": "I will answer this using general AI knowledge."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "bujhlam na, sahaj kore bolo"
+      },
+      {
+        "role": "assistant",
+        "text": "Ei proshner uttor general AI knowledge diye dicchi."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "why should I study this?"
+      },
+      {
+        "role": "assistant",
+        "text": "I do not have enough reliable information to answer that confidently yet. Add a little context and I can answer more precisely or find the right source."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "compare it with Pharmacy"
+      },
+      {
+        "role": "assistant",
+        "text": "Official data lists 20 records for Department of Pharmacy. Head: Dr. Mst. Rozina Parul. Faculty: A. F. M. Mahmudul Islam, Md. Abdur Rouf (Bidduth), Ananta Kumar Das, Tania Ahmed, Md. Golam Mostofa, Anik Kumar Dey, Sharmin Jahan, Md. Junaid Haruni, Dr. Mst. Rozina Parul, Md. Khalequeuzzaman (Sobuj), Mst. Mahfuza Khatoon, Lutful Haque Saran, Jarin Tasnim, Md. Shohel Hossain, Samia Akter, Sirajum Munira Munni, Maherun Nesha Mary, Md. Sohel Rana."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "tar por ki korbo?"
+      },
+      {
+        "role": "assistant",
+        "text": "Ei proshner nishchit tothyo ekhon amar kache nei. Aro ektu context dile ami bhalo vabe uttor dite ba thik source khujte parbo."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test_session_smart_1",
+    "updatedAt": 1790359838051,
+    "turns": [
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "waiver kivabe pabo?"
+      },
+      {
+        "role": "assistant",
+        "text": "The official site has a **Financial Aid** page, but its currently indexed content does not publish exact scholarship/waiver amounts, percentages, or eligibility criteria. I will not invent a waiver rate without a program/session-specific written notice."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "qualification ki lagbe?"
+      },
+      {
+        "role": "assistant",
+        "text": "Ei proshner uttor general AI knowledge diye dicchi."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "kobe theke shuru hobe?"
+      },
+      {
+        "role": "assistant",
+        "text": "I will answer this using general AI knowledge."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "bujhlam na, sahaj kore bolo"
+      },
+      {
+        "role": "assistant",
+        "text": "Ei proshner uttor general AI knowledge diye dicchi."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "why should I study this?"
+      },
+      {
+        "role": "assistant",
+        "text": "I do not have enough reliable information to answer that confidently yet. Add a little context and I can answer more precisely or find the right source."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "compare it with Pharmacy"
+      },
+      {
+        "role": "assistant",
+        "text": "Official data lists 20 records for Department of Pharmacy. Head: Dr. Mst. Rozina Parul. Faculty: A. F. M. Mahmudul Islam, Md. Abdur Rouf (Bidduth), Ananta Kumar Das, Tania Ahmed, Md. Golam Mostofa, Anik Kumar Dey, Sharmin Jahan, Md. Junaid Haruni, Dr. Mst. Rozina Parul, Md. Khalequeuzzaman (Sobuj), Mst. Mahfuza Khatoon, Lutful Haque Saran, Jarin Tasnim, Md. Shohel Hossain, Samia Akter, Sirajum Munira Munni, Maherun Nesha Mary, Md. Sohel Rana."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "tar por ki korbo?"
+      },
+      {
+        "role": "assistant",
+        "text": "Ei proshner nishchit tothyo ekhon amar kache nei. Aro ektu context dile ami bhalo vabe uttor dite ba thik source khujte parbo."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test_session_smart_2",
+    "updatedAt": 1790359941766,
+    "turns": [
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "cost koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি ও খরচের বিবরণ:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ (Admission-time payment):** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন ফি অন্তর্ভুক্ত)\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার পরীক্ষার ফলাফলের (GPA) ভিত্তিতে সর্বোচ্চ ৫০% পর্যন্ত টিউশন ফি ওয়েভারের সুবিধা রয়েছে।\n- **বিশেষ বৃত্তি:** নারী শিক্ষার্থীদের জন্য বিশেষ বৃত্তির (Carrol Ann Eggen Stipend) সুযোগ রয়েছে।"
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "waiver kivabe pabo?"
+      },
+      {
+        "role": "assistant",
+        "text": "The official site has a **Financial Aid** page, but its currently indexed content does not publish exact scholarship/waiver amounts, percentages, or eligibility criteria. I will not invent a waiver rate without a program/session-specific written notice."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "qualification ki lagbe?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**\n**Admission requirement:** At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "kobe theke shuru hobe?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Gono Bishwabidyalay Admission Sessions and Application Process:**\n\n**1. Academic Sessions:**\n- **Spring Session:** January – February\n- **Fall Session:** July – August\n\n**2. Step-by-Step Admission Procedure:**\n- **Step 1 (Form Collection):** Collect the application form directly from the Campus Admission Office (Nolam, Mirzan, Savar) or apply online.\n- **Step 2 (Documents Submission):** Submit SSC and HSC academic transcripts, certificates, 4 passport photos, and NID/Birth Certificate photocopy.\n- **Step 3 (Initial Payment):** Pay the initial admission-time charge of **BDT 54,500** (covers admission fee & 1st semester tuition).\n- **Step 4 (ID & Enrollment):** Receive your official student ID, academic calendar, and class schedule.\n\n📞 **Admission Hotlines:** **01950003314**, **01950003319** | Email: **admin@gonouniversity.edu.bd**"
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "bujhlam na, sahaj kore bolo"
+      },
+      {
+        "role": "assistant",
+        "text": "**এক নজরে সহজ ভাষায় সারসংক্ষেপ (Department of Computer Science and Engineering (CSE)):**\n- **মোট টিউশন ফি:** CSE-তে মোট ৪,৫০,০০০/- টাকা (৪ বছর), Pharmacy-তে ৬,০০,০০০/- টাকা। ভর্তির সময় প্রাথমিকভাবে ৫৪,৫০০/- টাকা দিতে হয়।\n- **আসন সংখ্যা:** CSE-তে ৫০টি আসন, Pharmacy-তে ৭০টি আসন।\n- **ভর্তির যোগ্যতা:** বিজ্ঞান বিভাগ থেকে এসএসসি ও এইচএসসি পাস এবং ন্যূনতম জিপিএ ২.৫০ থাকতে হবে।\n- **স্কলারশিপ ও ওয়েভার:** সেমিস্টার রেজাল্ট ভালো হলে ১০% থেকে ৫০% পর্যন্ত টিউশন ফি মওকুফ পাওয়া যায়। মেয়েদের জন্য রয়েছে বিশেষ বৃত্তি।\n- **ভর্তির প্রক্রিয়া:** সাভারের মূল ক্যাম্পাসে এসে সরাসরি অথবা অনলাইন পোর্টালের মাধ্যমে এখনই ফরম পূরণ করে ভর্তি হওয়া সম্ভব।\n- **সরাসরি যোগাযোগ:** কোনো কিছু জানতে কল করুন: **01950003314**, **01950003319**।"
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "why should I study this?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Career Prospects and Future of Studying CSE:**\n- **Software Engineering:** High global demand for software developers, full-stack engineers, and mobile application architects.\n- **AI & Data Science:** Fastest growing domain across machine learning, big data analysis, and predictive modeling.\n- **Cybersecurity & Networking:** Essential roles in banking systems, telecommunications, and enterprise infrastructure.\n- **Remote Global Careers:** High potential for international remote employment and freelancing right from Bangladesh.\n- **Public Sector:** Government BCS ICT cadre, assistant programmer, and public IT officer positions.\n- **Higher Studies Abroad:** Extensive funded master's and Ph.D. scholarship opportunities worldwide."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "compare it with Pharmacy"
+      },
+      {
+        "role": "assistant",
+        "text": "Official data lists 20 records for Department of Pharmacy. Head: Dr. Mst. Rozina Parul. Faculty: A. F. M. Mahmudul Islam, Md. Abdur Rouf (Bidduth), Ananta Kumar Das, Tania Ahmed, Md. Golam Mostofa, Anik Kumar Dey, Sharmin Jahan, Md. Junaid Haruni, Dr. Mst. Rozina Parul, Md. Khalequeuzzaman (Sobuj), Mst. Mahfuza Khatoon, Lutful Haque Saran, Jarin Tasnim, Md. Shohel Hossain, Samia Akter, Sirajum Munira Munni, Maherun Nesha Mary, Md. Sohel Rana."
+      },
+      {
+        "role": "user",
+        "text": "Tell me about CSE"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE has 50 seats, total tuition Tk. 4,50,000/-."
+      },
+      {
+        "role": "user",
+        "text": "tar por ki korbo?"
+      },
+      {
+        "role": "assistant",
+        "text": "**পরবর্তী করণীয় (Next Steps):**\n১. **পছন্দের ডিপার্টমেন্ট নির্বাচন:** আপনার আগ্রহের প্রোগ্রাম (যেমন CSE, Pharmacy, BBA, Law) চূড়ান্ত করুন।\n২. **কাগজপত্র প্রস্তুত রাখা:** এসএসসি ও এইচএসসি পরীক্ষার মার্কশিট, প্রশংসাপত্র এবং ৪ কপি পাসপোর্ট সাইজ ছবি সংগ্রহ করুন।\n৩. **ক্যাম্পাস ভিজিট বা কল:** সাভারের ক্যাম্পাসে সরাসরি এসে ডিপার্টমেন্ট ও ল্যাবগুলো ঘুরে দেখতে পারেন, অথবা সরাসরি হেল্পলাইনে কথা বলুন: **01950003314**, **01950003319**।\n৪. **ভর্তি নিশ্চিতকরণ:** ভর্তিকালীন প্রারম্ভিক ফি (BDT 54,500) পরিশোধ করে আপনার কাঙ্ক্ষিত সিট নিশ্চিত করুন।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "chat_1790360680707_6deeln",
+    "updatedAt": 1790360753922,
+    "turns": [
+      {
+        "role": "user",
+        "text": "ki ki subject ache gono te?"
+      },
+      {
+        "role": "assistant",
+        "text": "Official data onujayi: **Others graduate from Humanities related subject can also apply but note that they need to do some related extra courses. According to him such subjects should be a part of curriculum of the other universities. Khan in his convocation speech commented that the activities of Gono Bishwabidyalay are highly admirable."
+      },
+      {
+        "role": "user",
+        "text": "ki ki subject ache gono te?"
+      },
+      {
+        "role": "assistant",
+        "text": "গণ বিশ্ববিদ্যালয়ে (Gono Bishwabidyalay) বিভিন্ন অনুষদ ও বিভাগে **বিজ্ঞান, প্রকৌশল, কলা, সামাজিক বিজ্ঞান, আইন ও চিকিৎসা** বিষয়ে স্নাতক (Honours), স্নাতকোত্তর (Masters) ও পেশাগত কোর্স চালু আছে। অফিসিয়াল কনটেক্সট থেকে প্রাপ্ত তথ্য অনুযায়ী প্রধান বিষয়গুলো নিচে তুলে ধরা হলো:\n\n---\n\n## 🎓 স্নাতকোত্তর (Graduate/Masters) প্রোগ্রাম\n\n| বিভাগ | প্রোগ্রাম |\n|--------|-----------|\n| **মেডিকেল ফিজিক্স ও বায়োমেডিকেল ইঞ্জিনিয়ারিং** | M.Sc. in Medical Physics & Biomedical Engineering |\n| **ফার্মেসি** | M. Pharm. (Master of Pharmacy) |\n| **মাইক্রোবায়োলজি** | M.Sc. in Microbiology |\n| **বায়োকেমিস্ট্রি ও মলিকুলার বায়োলজি** | M.Sc. in Biochemistry and Molecular Biology |\n| **বাংলা** | MA in Bangla |\n| **ইংরেজি** | M.A. in English |\n| **রাজনীতি ও গভর্নেন্স** | M.S.S in Politics & Governance |\n| **আইন** | LLM |\n\n---\n\n## 📚 অন্যান্য উল্লেখযোগ্য প্রোগ্রাম (IQAC রিপোর্ট অনুযায়ী)\n\nবিশ্ববিদ্যালয়ের IQAC (Institutional Quality Assurance Cell) এর তালিকায় নিম্নলিখিত **১২টি প্রোগ্রাম** উল্লেখ আছে:\n\n1. **মাইক্রোবায়োলজি** (Microbiology)\n2. **ফিজিওথেরাপি** (Physiotherapy)\n3. **ফার্মেসি** (Pharmacy)\n4. **এমবিবিএস** (MBBS)\n5. **অ্যাপ্লায়েড ম্যাথমেটিক্স** (Applied Mathematics)\n6. **মেডিকেল ফিজিক্স ও বায়োমেডিকেল ইঞ্জিনিয়ারিং** (Medical Physics and Biomedical Engineering)\n7. **কম্পিউটার সায়েন্স ও ইঞ্জিনিয়ারিং** (Computer Science and Engineering - CSE)\n8. **আইন** (Law)\n9. **ইংরেজি** (English)\n10. **ল্যাঙ্গুয়েজ, কমিউনিকেশন অ্যান্ড কালচার** (Language, Communication and Culture)\n11. **সমাজবিজ্ঞান ও সমাজকর্ম** (Sociology and Social Work)\n12. **রাজনীতি ও গভর্নেন্স** (Politics and Governance)\n\n---\n\n## 📝 গুরুত্বপূর্ণ নোট\n\n- **বাংলা বিভাগে** স্নাতকোত্তরে Humanities সম্পর্কিত অন্যান্য বিষয়ের শিক্ষার্থীরাও আবেদন করতে পারবে, তবে কিছু অতিরিক্ত কোর্স করতে হবে।\n- বিশ্ববিদ্যালয়ের কারিকুলামে মূল কোর্সের পাশাপাশি **নীতিশাস্ত্র (Ethics), লিঙ্গ বিষয়ক (Gender Issues), বাংলাদেশের ইতিহাস (History of Bangladesh) এবং পরিবেশ বিজ্ঞান (Environmental Science)** অন্তর্ভুক্ত রয়েছে।\n\n---\n\n> **সতর্কতা:** উপরের তালিকা অফিসিয়াল কনটেক্সট থেকে সংগৃহীত। স্নাতক (Undergraduate) পর্যায়ের সম্পূর্ণ তালিকা বা সর্বশেষ আপডেটের জন্য **অফিসিয়াল ওয়েবসাইট (gonouniversity.edu.bd)** ভিজিট করার পরামর্শ দেওয়া হচ্ছে।"
+      },
+      {
+        "role": "user",
+        "text": "masters er kono subject ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "Official data onujayi: define Islamic Law and its subject | (11) Introduction: Basic concepts, definition characteristics and application of Islamic Law | Lecture Handouts | Tutorial Examination define Gift and its application | (12) Gift: Definition, essential of valid gift, revocation of gift Subject matter of gift, classification and its registration under Muslim Law | Lecture | Quiz test, Assignments Law being among others, a technical subject demands an objective and material introduction and projection of technical details based on the mandates of law."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "chat_1790361327452_070rqm",
+    "updatedAt": 1790361385122,
+    "turns": [
+      {
+        "role": "user",
+        "text": "ki ki subject ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "Official data onujayi: (Engg.) Subject : Information and Communication Technology | Subject: Information and Communication Technology | 2017 (Engg.) | Subject: Information and Communication Technology | 2016 | Subject | Number of E- Book"
+      },
+      {
+        "role": "user",
+        "text": "ki ki subject ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "# গন বিশ্ববিদ্যালয়ে (Gono Bishwabidyalay) যে যে বিষয়/ডিপার্টমেন্ট আছে\n\nপ্রাপ্ত তথ্য অনুযায়ী, গন বিশ্ববিদ্যালয়ে নিম্নলিখিত বিষয়/ডিপার্টমেন্টগুলো রয়েছে:\n\n## 📚 বিজ্ঞান ও প্রকৌশল (Science & Engineering)\n- **Computer Science and Engineering (CSE)** — কম্পিউটার সায়েন্স অ্যান্ড ইঞ্জিনিয়ারিং\n- **Medical Physics and Biomedical Engineering (MPBME)** — মেডিকেল ফিজিক্স অ্যান্ড বায়োমেডিকেল ইঞ্জিনিয়ারিং\n- **Physics** — পদার্থবিজ্ঞান\n- **Chemistry** — রসায়ন\n- **Microbiology** — মাইক্রোবায়োলজি\n\n## 🌾 কৃষি ও প্রাণিসম্পদ (Agriculture & Animal Science)\n- **Agriculture** — কৃষি\n- **Veterinary & Animal Science** — ভেটেরিনারি অ্যান্ড অ্যানিমেল সায়েন্স\n\n## 💼 সামাজিক বিজ্ঞান ও মানবিক (Social Science & Humanities)\n- **Economics** — অর্থনীতি\n- **Sociology** — সমাজবিজ্ঞান\n- **Bangla** — বাংলা (MA program সহ)\n\n## ⚖️ আইন (Law)\n- **Law** — আইন\n\n## 🏥 চিকিৎসা (Medical)\n- **MBBS** — মেডিকেল (এমবিবিএস)\n\n---\n\n**দ্রষ্টব্য:** উপরের তালিকাটি প্রদত্ত অফিসিয়াল কনটেক্সট থেকে সংগৃহীত। বিশ্ববিদ্যালয়ে আরও ডিপার্টমেন্ট থাকতে পারে যা এই তথ্যে উল্লেখ নেই। সম্পূর্ণ তালিকার জন্য অফিসিয়াল ওয়েবসাইট **gonouniversity.edu.bd** ভিজিট করার পরামর্শ দেওয়া হচ্ছে।\n\nআপনি কি কোনো নির্দিষ্ট ডিপার্টমেন্ট সম্পর্কে বিস্তারিত জানতে চান? 😊"
+      },
+      {
+        "role": "user",
+        "text": "how many total credits?"
+      },
+      {
+        "role": "assistant",
+        "text": "The official course plan for **Department of Medical Physics and Biomedical Engineering** lists total credits **160**."
+      },
+      {
+        "role": "user",
+        "text": "in cse"
+      },
+      {
+        "role": "assistant",
+        "text": "Official data lists 15 records for Department of Computer Science and Engineering (CSE). Head: Tania Akter. Faculty: Tania Akter, Dr. Md. Hanif Ali, Md. Atikur Rahman, Md. Rasel Mia, Farzana Tasnim, Shatabdee Bala, Umme Farhana, Shahriar Hassan, Sharif Ahamed, Adila Nuzhat, Tania Sultana, Bipasa Sharmin Satu, Shanta Islam, Md. Shahinur Islam, Tanvir Rahman Dip."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-0",
+    "updatedAt": 1790361946034,
+    "turns": [
+      {
+        "role": "user",
+        "text": "kobe protishthito hoy?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay **14 July 1998** সালে গণস্বাস্থ্য কেন্দ্র ট্রাস্টের অধীনে ডা. জাফরুল্লাহ চৌধুরীর উদ্যোগে প্রতিষ্ঠিত হয়।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-1",
+    "updatedAt": 1790361946072,
+    "turns": [
+      {
+        "role": "user",
+        "text": "founder ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-এর প্রতিষ্ঠাতা বীর মুক্তিযোদ্ধা **Dr. Zafrullah Chowdhury**। এটি Gonoshasthaya Kendra (GK) Public Charitable Trust-এর অধীনে পরিচালিত।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-2",
+    "updatedAt": 1790361946153,
+    "turns": [
+      {
+        "role": "user",
+        "text": "VC ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "Vice-Chancellor-er name **Professor Dr. Md. Abul Hossain**."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-3",
+    "updatedAt": 1790361946187,
+    "turns": [
+      {
+        "role": "user",
+        "text": "chancellor ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-এর চ্যান্সেলর পদাধিকারবলে **গণপ্রজাতন্ত্রী বাংলাদেশের মহামান্য রাষ্ট্রপতি** (The President of Bangladesh)।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-4",
+    "updatedAt": 1790361946208,
+    "turns": [
+      {
+        "role": "user",
+        "text": "campus area koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-এর সাভারের স্থায়ী সবুজ ক্যাম্পাসটি প্রায় **32 acres (৩২ একর স্থায়ী সবুজ ক্যাম্পাস)** জমির ওপর অবস্থিত।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-5",
+    "updatedAt": 1790361946221,
+    "turns": [
+      {
+        "role": "user",
+        "text": "baksu ki?"
+      },
+      {
+        "role": "assistant",
+        "text": "**বাকসু (Gono Bishwabidyalay Central Students' Union (GBKC / বাকসু))** ২০১৩ সালে প্রতিষ্ঠিত হয়। এটি ঢাকা বিশ্ববিদ্যালয়ের ডাকসুর পর দেশের দ্বিতীয় সক্রিয় কেন্দ্রীয় ছাত্র সংসদ এবং বেসরকারি বিশ্ববিদ্যালয়ে একমাত্র নির্বাচিত ছাত্র সংসদ। এর বর্তমান ভিপি **Iyasin Al Mridul Dewan (ইয়াসিন আল মৃদুল দেওয়ান)** এবং জিএস **Md. Raihan Khan (মোঃ রায়হান খান)**।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-6",
+    "updatedAt": 1790361946233,
+    "turns": [
+      {
+        "role": "user",
+        "text": "hospital ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, গণস্বাস্থ্য কেন্দ্রের নিজস্ব ৫০০ শয্যার **গণস্বাস্থ্য নগর হাসপাতাল** (সাভার ও ধানমন্ডি) এবং গণস্বাস্থ্য সমাজভিত্তিক মেডিকেল কলেজ রয়েছে, যেখানে শিক্ষার্থীরা ক্লিনিক্যাল ও ব্যবহারিক প্রশিক্ষণ লাভ করে।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-7",
+    "updatedAt": 1790361946263,
+    "turns": [
+      {
+        "role": "user",
+        "text": "cost koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-এর প্রধান প্রোগ্রামগুলোর মোট ফি:\n- **B.Sc. in CSE:** Tk. 4,50,000/- (৪ বছর / ৮ সেমিস্টার)\n- **Bachelor of Pharmacy (B.Pharm):** Tk. 6,00,000/-\n- **Master of Pharmacy (M.Pharm):** Tk. 1,20,000/-\n- **BBA:** Tk. 2,80,000/- থেকে 3,50,000/-\n- ভর্তিকালীন প্রারম্ভিক খরচ: **BDT 54,500**। হেল্পলাইন: **01950003314**।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-8",
+    "updatedAt": 1790361946280,
+    "turns": [
+      {
+        "role": "user",
+        "text": "CSE te cost koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ:** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার অন্তর্ভুক্ত)।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-9",
+    "updatedAt": 1790361946299,
+    "turns": [
+      {
+        "role": "user",
+        "text": "waiver kivabe pabo?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-তে সেমিস্টার পরীক্ষার ফলাফলের (GPA 3.50+) ভিত্তিতে **১০% থেকে সর্বোচ্চ ৫০%** পর্যন্ত টিউশন ফি ওয়েভার পাওয়া যায়। এছাড়া বীর মুক্তিযোদ্ধার সন্তানদের জন্য ১০০% এবং নারী শিক্ষার্থীদের জন্য বিশেষ Carrol Ann Eggen বৃত্তি রয়েছে। প্রতি সেমিস্টার শুরুর আগে ডিন বা রেজিস্ট্রার অফিসে আবেদন করতে হয়।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-10",
+    "updatedAt": 1790361946325,
+    "turns": [
+      {
+        "role": "user",
+        "text": "hostel ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, ক্যাম্পাসের নিকটবর্তী এলাকায় ছাত্র ও ছাত্রীদের জন্য বিশ্ববিদ্যালয়ের অনুমোদিত নিরাপদ আবাসিক হোস্টেল সুবিধা রয়েছে।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-11",
+    "updatedAt": 1790361946337,
+    "turns": [
+      {
+        "role": "user",
+        "text": "transport ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, শিক্ষার্থীদের জন্য ঢাকা ও আশেপাশের বিভিন্ন রুট (গাবতলী, মিরপুর-১০, উত্তরা, নবীনগর, আশুলিয়া, বাইপাইল) থেকে বিশ্ববিদ্যালয়ের নিজস্ব বাস সার্ভিস চালু রয়েছে।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-12",
+    "updatedAt": 1790361946348,
+    "turns": [
+      {
+        "role": "user",
+        "text": "kobe theke shuru hobe?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-তে বছরে দুটি সেশনে ভর্তি নেওয়া হয়:\n- **স্প্রিং সেশন (Spring):** জানুয়ারি – ফেব্রুয়ারি\n- **ফল সেশন (Fall):** জুলাই – আগস্ট\nভর্তি সংক্রান্ত তথ্য ও সহায়তার জন্য হেল্পলাইন: **01950003314**, **01950003319**।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-13",
+    "updatedAt": 1790361946373,
+    "turns": [
+      {
+        "role": "user",
+        "text": "gono bishwabidyalay ki private naki public?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay একটি সরকার ও UGC অনুমোদিত **বেসরকারি বিশ্ববিদ্যালয় (Private University)**। এটি গণস্বাস্থ্য কেন্দ্র পাবলিক চ্যারিটেবল ট্রাস্টের অধীনে পরিচালিত একটি অলাভজনক সেবামূলক উচ্চশিক্ষা প্রতিষ্ঠান।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-14",
+    "updatedAt": 1790361946388,
+    "turns": [
+      {
+        "role": "user",
+        "text": "ugc approved kina?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, Gono Bishwabidyalay বাংলাদেশ বিশ্ববিদ্যালয় মঞ্জুরী কমিশন (UGC) এবং শিক্ষা মন্ত্রণালয় কর্তৃক সম্পূর্ণভাবে **অনুমোদিত ও স্বীকৃত**। এছাড়াও এর ফার্মেসি প্রোগ্রাম Pharmacy Council of Bangladesh (PCB) এবং আইন প্রোগ্রাম বাংলাদেশ বার কাউন্সিল কর্তৃক অনুমোদিত।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-15",
+    "updatedAt": 1790361946401,
+    "turns": [
+      {
+        "role": "user",
+        "text": "ranking koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay বিশেষায়িত স্বাস্থ্যবিজ্ঞান, প্রকৌশল এবং সমাজকল্যাণমুখী শিক্ষার জন্য খ্যাত। বিশেষ করে দেশে সর্বপ্রথম 'মেডিকেল ফিজিক্স অ্যান্ড বায়োমেডিকেল ইঞ্জিনিয়ারিং' বিভাগ চালুর জন্য এটি সমাদৃত।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-16",
+    "updatedAt": 1790361946424,
+    "turns": [
+      {
+        "role": "user",
+        "text": "trustee board ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay **গণস্বাস্থ্য কেন্দ্র (GK) পাবলিক চ্যারিটেবল ট্রাস্ট**-এর অধীনে পরিচালিত হয়। বীর মুক্তিযোদ্ধা ডা. জাফরুল্লাহ চৌধুরী এই ট্রাস্টের মূল স্বপ্নদ্রষ্টা ছিলেন।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-17",
+    "updatedAt": 1790361946437,
+    "turns": [
+      {
+        "role": "user",
+        "text": "dr zafrullah chowdhury ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "বীর মুক্তিযোদ্ধা **ডা. জাফরুল্লাহ চৌধুরী** ছিলেন গণস্বাস্থ্য কেন্দ্র এবং Gono Bishwabidyalay-এর প্রতিষ্ঠাতা ও স্বপ্নদ্রষ্টা। তিনি বাংলাদেশের স্বাস্থ্য ও শিক্ষা খাতের একজন অগ্রদূত ছিলেন।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "test-session-18",
+    "updatedAt": 1790361946460,
+    "turns": [
+      {
+        "role": "user",
+        "text": "cse porle ki hobe?"
+      },
+      {
+        "role": "assistant",
+        "text": "**CSE ক্যারিয়ার সুযোগ:** সফটওয়্যার ইঞ্জিনিয়ারিং, AI ও মেশিন লার্নিং, ওয়েব/মোবাইল অ্যাপ ডেভেলপমেন্ট, সাইবার সিকিউরিটি এবং গ্লোবাল রিমোট টেক জবের চমৎকার সুযোগ রয়েছে। এছাড়াও বিসিএস আইসিটি ক্যাডার ও সরকারি প্রতিষ্ঠানে আইটি অফিসার পদে নিয়োগ পাওয়া যায়।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "live-test-1790362388455",
+    "updatedAt": 1790362392661,
+    "turns": [
+      {
+        "role": "user",
+        "text": "how many total credits?"
+      },
+      {
+        "role": "assistant",
+        "text": "According to the official data: Hours Theory /Lab | Total Credits | Total Marks Students opting for any of one of the groups (Electronics group, Computer group, Communication group, and Power group) will have to take 11 credits from that group and 9 credits from the other groups. Duration | Total Contact"
+      },
+      {
+        "role": "user",
+        "text": "in cse"
+      },
+      {
+        "role": "assistant",
+        "text": "The official course plan for **Department of Computer Science and Engineering (CSE)** lists total credits **160**."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "chain-test-1790362399089",
+    "updatedAt": 1790362403945,
+    "turns": [
+      {
+        "role": "user",
+        "text": "how many total credits?"
+      },
+      {
+        "role": "assistant",
+        "text": "According to the official data: Hours Theory /Lab | Total Credits | Total Marks Students opting for any of one of the groups (Electronics group, Computer group, Communication group, and Power group) will have to take 11 credits from that group and 9 credits from the other groups. Duration | Total Contact"
+      },
+      {
+        "role": "user",
+        "text": "in cse"
+      },
+      {
+        "role": "assistant",
+        "text": "The official course plan for **Department of Computer Science and Engineering (CSE)** lists total credits **160**."
+      },
+      {
+        "role": "user",
+        "text": "what is the fee?"
+      },
+      {
+        "role": "assistant",
+        "text": "I could not verify the exact total credits for **Department of Applied Mathematics** from the indexed official sources. Specify the degree/session or share its syllabus so I can check."
+      },
+      {
+        "role": "user",
+        "text": "in pharmacy"
+      },
+      {
+        "role": "assistant",
+        "text": "Official published program fees:\n\n**BPharm/ Bachelor of Pharmacy (Hons)** total course fee is **Tk. 6,00,000/-** (4 years / 8 semesters). Initial admission payment is **BDT 54,500**.\n\n**MPharm/ Master of Pharmacy** total course fee is **Tk. 1,20,000/-** (4 years / 8 semesters). Initial admission payment is **BDT 54,500**."
+      },
+      {
+        "role": "user",
+        "text": "who is the head?"
+      },
+      {
+        "role": "assistant",
+        "text": "The official department head for Department of Applied Mathematics is **Dr. Wahida Zaman Loskor**."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "127.0.0.1",
+    "updatedAt": 1790362991823,
+    "turns": [
+      {
+        "role": "user",
+        "text": "cost of cse?"
+      },
+      {
+        "role": "assistant",
+        "text": "What would you like to know about **CSE** - the general concept, Gono's department, courses/credits, faculty, admission/fees, or careers?"
+      },
+      {
+        "role": "user",
+        "text": "cost of cse?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering** fee structure:\n- **Total Program Tuition Fee (4 Years / 8 Semesters):** **Tk. 4,50,000/-**\n- **Admission-Time Initial Payment:** **BDT 54,500** (covers admission fee and 1st semester tuition)\n- **Waivers & Scholarships:** Up to 50% tuition fee waiver available based on semester GPA results.\n- **Special Stipend:** Carrol Ann Eggen Stipend available for eligible female students."
+      },
+      {
+        "role": "user",
+        "text": "cse tution fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি ও খরচের বিবরণ:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ (Admission-time payment):** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন ফি অন্তর্ভুক্ত)\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার পরীক্ষার ফলাফলের (GPA) ভিত্তিতে সর্বোচ্চ ৫০% পর্যন্ত টিউশন ফি ওয়েভারের সুবিধা রয়েছে।\n- **বিশেষ বৃত্তি:** নারী শিক্ষার্থীদের জন্য বিশেষ বৃত্তির (Carrol Ann Eggen Stipend) সুযোগ রয়েছে।"
+      },
+      {
+        "role": "user",
+        "text": "cost of cse?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering** fee structure:\n- **Total Program Tuition Fee (4 Years / 8 Semesters):** **Tk. 4,50,000/-**\n- **Admission-Time Initial Payment:** **BDT 54,500** (covers admission fee and 1st semester tuition)\n- **Waivers & Scholarships:** Up to 50% tuition fee waiver available based on semester GPA results.\n- **Special Stipend:** Carrol Ann Eggen Stipend available for eligible female students."
+      },
+      {
+        "role": "user",
+        "text": "CSE cost koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "CSE tuition fee 4,50,000"
+      },
+      {
+        "role": "user",
+        "text": "waiver kivabe pabo?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Tuition Fee Waiver and Scholarship Policies at Gono Bishwabidyalay (Department of Computer Science and Engineering (CSE)):**\n- **Semester Merit-Based Waiver:** Up to **50% tuition fee waiver** awarded based on outstanding semester academic GPA (typically GPA 3.50 and above).\n- **Carrol Ann Eggen Female Stipend:** Dedicated financial scholarship for eligible female students demonstrating academic merit.\n- **Freedom Fighter Quota:** 100% tuition waiver for children of recognized Freedom Fighters as per government and UGC guidelines.\n- **Sibling & Spouse Discount:** Concessions for multiple members of the same family studying concurrently.\n- **Need-Based Financial Assistance:** Special trustee board subsidies for underprivileged yet meritorious students.\n- **How to Apply:** Submit the financial aid application form along with previous semester transcripts to the Dean/Registrar's Office before each semester begins."
+      },
+      {
+        "role": "user",
+        "text": "CSE details and fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি ও খরচের বিবরণ:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ (Admission-time payment):** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন ফি অন্তর্ভুক্ত)\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার পরীক্ষার ফলাফলের (GPA) ভিত্তিতে সর্বোচ্চ ৫০% পর্যন্ত টিউশন ফি ওয়েভারের সুবিধা রয়েছে।\n- **বিশেষ বৃত্তি:** নারী শিক্ষার্থীদের জন্য বিশেষ বৃত্তির (Carrol Ann Eggen Stipend) সুযোগ রয়েছে।"
+      },
+      {
+        "role": "user",
+        "text": "cost koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি ও খরচের বিবরণ:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ (Admission-time payment):** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন ফি অন্তর্ভুক্ত)\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার পরীক্ষার ফলাফলের (GPA) ভিত্তিতে সর্বোচ্চ ৫০% পর্যন্ত টিউশন ফি ওয়েভারের সুবিধা রয়েছে।\n- **বিশেষ বৃত্তি:** নারী শিক্ষার্থীদের জন্য বিশেষ বৃত্তির (Carrol Ann Eggen Stipend) সুযোগ রয়েছে।"
+      },
+      {
+        "role": "user",
+        "text": "waiver kivabe pabo?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Tuition Fee Waiver and Scholarship Policies at Gono Bishwabidyalay (Department of Computer Science and Engineering (CSE)):**\n- **Semester Merit-Based Waiver:** Up to **50% tuition fee waiver** awarded based on outstanding semester academic GPA (typically GPA 3.50 and above).\n- **Carrol Ann Eggen Female Stipend:** Dedicated financial scholarship for eligible female students demonstrating academic merit.\n- **Freedom Fighter Quota:** 100% tuition waiver for children of recognized Freedom Fighters as per government and UGC guidelines.\n- **Sibling & Spouse Discount:** Concessions for multiple members of the same family studying concurrently.\n- **Need-Based Financial Assistance:** Special trustee board subsidies for underprivileged yet meritorious students.\n- **How to Apply:** Submit the financial aid application form along with previous semester transcripts to the Dean/Registrar's Office before each semester begins."
+      },
+      {
+        "role": "user",
+        "text": "qualification ki lagbe?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. in Computer Science & Engineering (CSE) ভর্তির যোগ্যতা:**\n- **শিক্ষাগত যোগ্যতা:** এসএসসি ও এইচএসসি (বা সমমান) পরীক্ষায় বিজ্ঞান (Science) বিভাগ থেকে উত্তীর্ণ হতে হবে।\n- **ন্যূনতম জিপিএ:** এসএসসি ও এইচএসসি উভয়ে আলাদাভাবে ন্যূনতম **GPA 2.50** (অথবা ২য় বিভাগ) এবং মোট জিপিএ কমপক্ষে **৬.০০** থাকতে হবে।\n- **বাধ্যতামূলক বিষয়:** এইচএসসিতে পদার্থবিজ্ঞান (Physics) ও গণিত (Mathematics) পাস করা বাধ্যতামূলক।\n- **ডিপ্লোমা ইন ইঞ্জিনিয়ারিং:** পলিটেকনিক ইনস্টিটিউট থেকে ৪ বছর মেয়াদী কম্পিউটার বা সংশ্লিষ্ট টেকনোলজিতে ডিপ্লোমাধারীরাও ভর্তি হতে পারবেন।\n- **ভর্তিকালীন খরচ:** প্রাথমিক ভর্তি ফি ও ১ম সেমিস্টার মিলে BDT 54,500। হেল্পলাইন: **01950003314**।"
+      },
+      {
+        "role": "user",
+        "text": "kobe theke shuru hobe?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Gono Bishwabidyalay Admission Sessions and Application Process:**\n\n**1. Academic Sessions:**\n- **Spring Session:** January – February\n- **Fall Session:** July – August\n\n**2. Step-by-Step Admission Procedure:**\n- **Step 1 (Form Collection):** Collect the application form directly from the Campus Admission Office (Nolam, Mirzan, Savar) or apply online.\n- **Step 2 (Documents Submission):** Submit SSC and HSC academic transcripts, certificates, 4 passport photos, and NID/Birth Certificate photocopy.\n- **Step 3 (Initial Payment):** Pay the initial admission-time charge of **BDT 54,500** (covers admission fee & 1st semester tuition).\n- **Step 4 (ID & Enrollment):** Receive your official student ID, academic calendar, and class schedule.\n\n📞 **Admission Hotlines:** **01950003314**, **01950003319** | Email: **admin@gonouniversity.edu.bd**"
+      },
+      {
+        "role": "user",
+        "text": "bujhlam na, sahaj kore bolo"
+      },
+      {
+        "role": "assistant",
+        "text": "**এক নজরে সহজ ভাষায় সারসংক্ষেপ (Department of Computer Science and Engineering (CSE)):**\n- **মোট টিউশন ফি:** CSE-তে মোট ৪,৫০,০০০/- টাকা (৪ বছর), Pharmacy-তে ৬,০০,০০০/- টাকা। ভর্তির সময় প্রাথমিকভাবে ৫৪,৫০০/- টাকা দিতে হয়।\n- **আসন সংখ্যা:** CSE-তে ৫০টি আসন, Pharmacy-তে ৭০টি আসন।\n- **ভর্তির যোগ্যতা:** বিজ্ঞান বিভাগ থেকে এসএসসি ও এইচএসসি পাস এবং ন্যূনতম জিপিএ ২.৫০ থাকতে হবে।\n- **স্কলারশিপ ও ওয়েভার:** সেমিস্টার রেজাল্ট ভালো হলে ১০% থেকে ৫০% পর্যন্ত টিউশন ফি মওকুফ পাওয়া যায়। মেয়েদের জন্য রয়েছে বিশেষ বৃত্তি।\n- **ভর্তির প্রক্রিয়া:** সাভারের মূল ক্যাম্পাসে এসে সরাসরি অথবা অনলাইন পোর্টালের মাধ্যমে এখনই ফরম পূরণ করে ভর্তি হওয়া সম্ভব।\n- **সরাসরি যোগাযোগ:** কোনো কিছু জানতে কল করুন: **01950003314**, **01950003319**।"
+      },
+      {
+        "role": "user",
+        "text": "compare it with Pharmacy"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **50**\n- Official course-plan credits: **160**\n- Course examples: Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**Bachelor of Pharmacy (B.Pharm)**\n- Duration: **4 years (8 semesters)**\n- Published seats: **70**\n- Course examples: Inorganic Pharmacy, Practical on Pharm 1101 & Pharm 1103, Organic Pharmacy, Practical on Pharm 1102, Physical pharmacy, Introduction to Pharmacy\n- Eligibility: SSC and HSC total GPA 8 (GPA 3.5 in each) with a minimum GPA of 3 in Physics, and 4 in Biology and Chemistry in H.S.C.\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking."
+      },
+      {
+        "role": "user",
+        "text": "tar por ki korbo?"
+      },
+      {
+        "role": "assistant",
+        "text": "**পরবর্তী করণীয় (Next Steps):**\n১. **পছন্দের ডিপার্টমেন্ট নির্বাচন:** আপনার আগ্রহের প্রোগ্রাম (যেমন CSE, Pharmacy, BBA, Law) চূড়ান্ত করুন।\n২. **কাগজপত্র প্রস্তুত রাখা:** এসএসসি ও এইচএসসি পরীক্ষার মার্কশিট, প্রশংসাপত্র এবং ৪ কপি পাসপোর্ট সাইজ ছবি সংগ্রহ করুন।\n৩. **ক্যাম্পাস ভিজিট বা কল:** সাভারের ক্যাম্পাসে সরাসরি এসে ডিপার্টমেন্ট ও ল্যাবগুলো ঘুরে দেখতে পারেন, অথবা সরাসরি হেল্পলাইনে কথা বলুন: **01950003314**, **01950003319**।\n৪. **ভর্তি নিশ্চিতকরণ:** ভর্তিকালীন প্রারম্ভিক ফি (BDT 54,500) পরিশোধ করে আপনার কাঙ্ক্ষিত সিট নিশ্চিত করুন।"
+      },
+      {
+        "role": "user",
+        "text": "kobe protishthito hoy?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay **14 July 1998** সালে গণস্বাস্থ্য কেন্দ্র ট্রাস্টের অধীনে ডা. জাফরুল্লাহ চৌধুরীর উদ্যোগে প্রতিষ্ঠিত হয়।"
+      },
+      {
+        "role": "user",
+        "text": "VC ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "Kon jon-er info chai? Yoishorjo Saha Shitol, S. Mridul Kanti Saha, S. Mridul Kanti Saha"
+      },
+      {
+        "role": "user",
+        "text": "cost koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Official Sports Office page cricket, football, volleyball, regular tournament, inter-department competition ebong training session-er kotha bole. Indexed notices-e men's cricket inter-department winner ebong women's inter-department sports-er record-o ache."
+      },
+      {
+        "role": "user",
+        "text": "hostel ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, ক্যাম্পাসের নিকটবর্তী এলাকায় ছাত্র ও ছাত্রীদের জন্য বিশ্ববিদ্যালয়ের অনুমোদিত নিরাপদ আবাসিক হোস্টেল সুবিধা রয়েছে।"
+      },
+      {
+        "role": "user",
+        "text": "transport ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, শিক্ষার্থীদের জন্য ঢাকা ও আশেপাশের বিভিন্ন রুট (গাবতলী, মিরপুর-১০, উত্তরা, নবীনগর, আশুলিয়া, বাইপাইল) থেকে বিশ্ববিদ্যালয়ের নিজস্ব বাস সার্ভিস চালু রয়েছে।"
+      },
+      {
+        "role": "user",
+        "text": "ugc approved kina?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, Gono Bishwabidyalay বাংলাদেশ বিশ্ববিদ্যালয় মঞ্জুরী কমিশন (UGC) এবং শিক্ষা মন্ত্রণালয় কর্তৃক সম্পূর্ণভাবে **অনুমোদিত ও স্বীকৃত**। এছাড়াও এর ফার্মেসি প্রোগ্রাম Pharmacy Council of Bangladesh (PCB) এবং আইন প্রোগ্রাম বাংলাদেশ বার কাউন্সিল কর্তৃক অনুমোদিত।"
+      },
+      {
+        "role": "user",
+        "text": "campus area koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-এর সাভারের স্থায়ী সবুজ ক্যাম্পাসটি প্রায় **32 acres (৩২ একর স্থায়ী সবুজ ক্যাম্পাস)** জমির ওপর অবস্থিত।"
+      },
+      {
+        "role": "user",
+        "text": "kobe protishthito hoy?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay **14 July 1998** সালে গণস্বাস্থ্য কেন্দ্র ট্রাস্টের অধীনে ডা. জাফরুল্লাহ চৌধুরীর উদ্যোগে প্রতিষ্ঠিত হয়।"
+      },
+      {
+        "role": "user",
+        "text": "founder ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-এর প্রতিষ্ঠাতা বীর মুক্তিযোদ্ধা **Dr. Zafrullah Chowdhury**। এটি Gonoshasthaya Kendra (GK) Public Charitable Trust-এর অধীনে পরিচালিত।"
+      },
+      {
+        "role": "user",
+        "text": "VC ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "Vice-Chancellor-er name **Professor Dr. Md. Abul Hossain**."
+      },
+      {
+        "role": "user",
+        "text": "chancellor ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-এর চ্যান্সেলর পদাধিকারবলে **গণপ্রজাতন্ত্রী বাংলাদেশের মহামান্য রাষ্ট্রপতি** (The President of Bangladesh)।"
+      },
+      {
+        "role": "user",
+        "text": "campus area koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-এর সাভারের স্থায়ী সবুজ ক্যাম্পাসটি প্রায় **32 acres (৩২ একর স্থায়ী সবুজ ক্যাম্পাস)** জমির ওপর অবস্থিত।"
+      },
+      {
+        "role": "user",
+        "text": "baksu ki?"
+      },
+      {
+        "role": "assistant",
+        "text": "**বাকসু (Gono Bishwabidyalay Central Students' Union (GBKC / বাকসু))** ২০১৩ সালে প্রতিষ্ঠিত হয়। এটি ঢাকা বিশ্ববিদ্যালয়ের ডাকসুর পর দেশের দ্বিতীয় সক্রিয় কেন্দ্রীয় ছাত্র সংসদ এবং বেসরকারি বিশ্ববিদ্যালয়ে একমাত্র নির্বাচিত ছাত্র সংসদ। এর বর্তমান ভিপি **Iyasin Al Mridul Dewan (ইয়াসিন আল মৃদুল দেওয়ান)** এবং জিএস **Md. Raihan Khan (মোঃ রায়হান খান)**।"
+      },
+      {
+        "role": "user",
+        "text": "hospital ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, গণস্বাস্থ্য কেন্দ্রের নিজস্ব ৫০০ শয্যার **গণস্বাস্থ্য নগর হাসপাতাল** (সাভার ও ধানমন্ডি) এবং গণস্বাস্থ্য সমাজভিত্তিক মেডিকেল কলেজ রয়েছে, যেখানে শিক্ষার্থীরা ক্লিনিক্যাল ও ব্যবহারিক প্রশিক্ষণ লাভ করে।"
+      },
+      {
+        "role": "user",
+        "text": "cost koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "**gb central students union 2025 2027**-এর নির্দিষ্ট মোট ৪ বছরের টিউশন প্যাকেজ ফি ওয়েবসাইটে আলাদাভাবে প্রকাশিত নেই।\n- **ভর্তিকালীন প্রারম্ভিক খরচ:** আন্ডারগ্র্যাজুয়েট প্রোগ্রামে সাধারণত **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন অন্তর্ভুক্ত)।\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার ফলাফলের ভিত্তিতে ১০% থেকে ৫০% পর্যন্ত টিউশন ফি ওয়েভার পাওয়া যায়।\n- বর্তমান সেশনের আপডেটেড পূর্ণাঙ্গ ফি জানতে ভর্তি অফিসে সরাসরি যোগাযোগ করুন: **01950003314**, **01950003319** বা ইমেইল: **admin@gonouniversity.edu.bd**।"
+      },
+      {
+        "role": "user",
+        "text": "CSE te cost koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ:** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার অন্তর্ভুক্ত)।"
+      },
+      {
+        "role": "user",
+        "text": "waiver kivabe pabo?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-তে সেমিস্টার পরীক্ষার ফলাফলের (GPA 3.50+) ভিত্তিতে **১০% থেকে সর্বোচ্চ ৫০%** পর্যন্ত টিউশন ফি ওয়েভার পাওয়া যায়। এছাড়া বীর মুক্তিযোদ্ধার সন্তানদের জন্য ১০০% এবং নারী শিক্ষার্থীদের জন্য বিশেষ Carrol Ann Eggen বৃত্তি রয়েছে। প্রতি সেমিস্টার শুরুর আগে ডিন বা রেজিস্ট্রার অফিসে আবেদন করতে হয়।"
+      },
+      {
+        "role": "user",
+        "text": "hostel ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, ক্যাম্পাসের নিকটবর্তী এলাকায় ছাত্র ও ছাত্রীদের জন্য বিশ্ববিদ্যালয়ের অনুমোদিত নিরাপদ আবাসিক হোস্টেল সুবিধা রয়েছে।"
+      },
+      {
+        "role": "user",
+        "text": "transport ache?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, শিক্ষার্থীদের জন্য ঢাকা ও আশেপাশের বিভিন্ন রুট (গাবতলী, মিরপুর-১০, উত্তরা, নবীনগর, আশুলিয়া, বাইপাইল) থেকে বিশ্ববিদ্যালয়ের নিজস্ব বাস সার্ভিস চালু রয়েছে।"
+      },
+      {
+        "role": "user",
+        "text": "kobe theke shuru hobe?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay-তে বছরে দুটি সেশনে ভর্তি নেওয়া হয়:\n- **স্প্রিং সেশন (Spring):** জানুয়ারি – ফেব্রুয়ারি\n- **ফল সেশন (Fall):** জুলাই – আগস্ট\nভর্তি সংক্রান্ত তথ্য ও সহায়তার জন্য হেল্পলাইন: **01950003314**, **01950003319**।"
+      },
+      {
+        "role": "user",
+        "text": "gono bishwabidyalay ki private naki public?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay একটি সরকার ও UGC অনুমোদিত **বেসরকারি বিশ্ববিদ্যালয় (Private University)**। এটি গণস্বাস্থ্য কেন্দ্র পাবলিক চ্যারিটেবল ট্রাস্টের অধীনে পরিচালিত একটি অলাভজনক সেবামূলক উচ্চশিক্ষা প্রতিষ্ঠান।"
+      },
+      {
+        "role": "user",
+        "text": "ugc approved kina?"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, Gono Bishwabidyalay বাংলাদেশ বিশ্ববিদ্যালয় মঞ্জুরী কমিশন (UGC) এবং শিক্ষা মন্ত্রণালয় কর্তৃক সম্পূর্ণভাবে **অনুমোদিত ও স্বীকৃত**। এছাড়াও এর ফার্মেসি প্রোগ্রাম Pharmacy Council of Bangladesh (PCB) এবং আইন প্রোগ্রাম বাংলাদেশ বার কাউন্সিল কর্তৃক অনুমোদিত।"
+      },
+      {
+        "role": "user",
+        "text": "ranking koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay বিশেষায়িত স্বাস্থ্যবিজ্ঞান, প্রকৌশল এবং সমাজকল্যাণমুখী শিক্ষার জন্য খ্যাত। বিশেষ করে দেশে সর্বপ্রথম 'মেডিকেল ফিজিক্স অ্যান্ড বায়োমেডিকেল ইঞ্জিনিয়ারিং' বিভাগ চালুর জন্য এটি সমাদৃত।"
+      },
+      {
+        "role": "user",
+        "text": "trustee board ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "Gono Bishwabidyalay **গণস্বাস্থ্য কেন্দ্র (GK) পাবলিক চ্যারিটেবল ট্রাস্ট**-এর অধীনে পরিচালিত হয়। বীর মুক্তিযোদ্ধা ডা. জাফরুল্লাহ চৌধুরী এই ট্রাস্টের মূল স্বপ্নদ্রষ্টা ছিলেন।"
+      },
+      {
+        "role": "user",
+        "text": "dr zafrullah chowdhury ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "বীর মুক্তিযোদ্ধা **ডা. জাফরুল্লাহ চৌধুরী** ছিলেন গণস্বাস্থ্য কেন্দ্র এবং Gono Bishwabidyalay-এর প্রতিষ্ঠাতা ও স্বপ্নদ্রষ্টা। তিনি বাংলাদেশের স্বাস্থ্য ও শিক্ষা খাতের একজন অগ্রদূত ছিলেন।"
+      },
+      {
+        "role": "user",
+        "text": "cse porle ki hobe?"
+      },
+      {
+        "role": "assistant",
+        "text": "**CSE ক্যারিয়ার সুযোগ:** সফটওয়্যার ইঞ্জিনিয়ারিং, AI ও মেশিন লার্নিং, ওয়েব/মোবাইল অ্যাপ ডেভেলপমেন্ট, সাইবার সিকিউরিটি এবং গ্লোবাল রিমোট টেক জবের চমৎকার সুযোগ রয়েছে। এছাড়াও বিসিএস আইসিটি ক্যাডার ও সরকারি প্রতিষ্ঠানে আইটি অফিসার পদে নিয়োগ পাওয়া যায়।"
+      },
+      {
+        "role": "user",
+        "text": "how many total credits?"
+      },
+      {
+        "role": "assistant",
+        "text": "The official course plan for **Department of Computer Science and Engineering (CSE)** lists total credits **160**."
+      },
+      {
+        "role": "user",
+        "text": "in cse"
+      },
+      {
+        "role": "assistant",
+        "text": "The official course plan for **Department of Computer Science and Engineering (CSE)** lists total credits **160**."
+      },
+      {
+        "role": "user",
+        "text": "what is the tuition fee?"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering** Tuition Fee:\n- **Total Program Fee (4 Years / 8 Semesters):** **Tk. 4,50,000/-**\n- **Initial Admission Payment:** **BDT 54,500** (includes admission fee and 1st semester tuition)."
+      },
+      {
+        "role": "user",
+        "text": "in cse"
+      },
+      {
+        "role": "assistant",
+        "text": "**B.Sc. (Honours) in Computer Science & Engineering** Tuition Fee:\n- **Total Program Fee (4 Years / 8 Semesters):** **Tk. 4,50,000/-**\n- **Initial Admission Payment:** **BDT 54,500** (includes admission fee and 1st semester tuition)."
+      },
+      {
+        "role": "user",
+        "text": "in pharmacy"
+      },
+      {
+        "role": "assistant",
+        "text": "Official published program fees:\n\n**BPharm/ Bachelor of Pharmacy (Hons)** total course fee is **Tk. 6,00,000/-** (4 years / 8 semesters). Initial admission payment is **BDT 54,500**.\n\n**MPharm/ Master of Pharmacy** total course fee is **Tk. 1,20,000/-** (4 years / 8 semesters). Initial admission payment is **BDT 54,500**."
+      },
+      {
+        "role": "user",
+        "text": "who is the head?"
+      },
+      {
+        "role": "assistant",
+        "text": "The official department head for Department of Pharmacy is **Dr. Mst. Rozina Parul**."
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "chat_1790363296240_c9mfa7",
+    "updatedAt": 1790363392124,
+    "turns": [
+      {
+        "role": "user",
+        "text": "bus service ache??"
+      },
+      {
+        "role": "assistant",
+        "text": "হ্যাঁ, শিক্ষার্থীদের জন্য ঢাকা ও আশেপাশের বিভিন্ন রুট (গাবতলী, মিরপুর-১০, উত্তরা, নবীনগর, আশুলিয়া, বাইপাইল) থেকে বিশ্ববিদ্যালয়ের নিজস্ব বাস সার্ভিস চালু রয়েছে।"
+      },
+      {
+        "role": "user",
+        "text": "vara koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "**vara koto?** সম্পর্কে প্রয়োজনীয় তথ্য ও পরামর্শ:\n- আপনি কি Gono Bishwabidyalay-এর নির্দিষ্ট কোনো বিভাগ (যেমন CSE, Pharmacy, BBA, Law), কোর্স ফি, ওয়েভার, নাকি ভর্তির যোগ্যতা সম্পর্কে জানতে চান?\n- আপনার প্রশ্নটি আরেকটু বিস্তারিত বা নির্দিষ্ট করে বলুন, আমি পূর্ণাঙ্গ তথ্য দিয়ে সাহায্য করব।"
+      }
+    ],
+    "entities": {}
+  },
+  {
+    "sessionId": "sharif-coref-live-3506c856a94e41cf838bc27929f4e981",
+    "updatedAt": 1790401641092,
+    "turns": [
+      {
+        "role": "user",
+        "text": "sharif sir ke cheno?"
+      },
+      {
+        "role": "assistant",
+        "text": "Haan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**."
+      },
+      {
+        "role": "user",
+        "text": "number please"
+      },
+      {
+        "role": "assistant",
+        "text": "**Sharif Ahamed**: **01881-062304**"
+      },
+      {
+        "role": "user",
+        "text": "does he have email?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Sharif Ahamed**: **diptosharifahamed@gmail.com**"
+      },
+      {
+        "role": "user",
+        "text": "tar qualification ki?"
+      },
+      {
+        "role": "assistant",
+        "text": "Haan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.\n**Qualification:** M.Sc. in CSE"
+      },
+      {
+        "role": "user",
+        "text": "email ta abar bolo"
+      },
+      {
+        "role": "assistant",
+        "text": "**Sharif Ahamed**: **diptosharifahamed@gmail.com**"
+      }
+    ],
+    "entities": {
+      "person": {
+        "name": "Sharif Ahamed",
+        "department": "Department of Computer Science and Engineering (CSE)",
+        "profileUrl": "https://gonouniversity.edu.bd/cse/employees/sharif-ahamed/"
+      }
+    }
+  },
+  {
+    "sessionId": "chat_1790401650832_pxrked",
+    "updatedAt": 1790401662166,
+    "turns": [
+      {
+        "role": "user",
+        "text": "sharif sir ke cheno?"
+      },
+      {
+        "role": "assistant",
+        "text": "Haan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**."
+      },
+      {
+        "role": "user",
+        "text": "number please"
+      },
+      {
+        "role": "assistant",
+        "text": "**Sharif Ahamed**: **01881-062304**"
+      },
+      {
+        "role": "user",
+        "text": "does he have email?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Sharif Ahamed**: **diptosharifahamed@gmail.com**"
+      }
+    ],
+    "entities": {
+      "person": {
+        "name": "Sharif Ahamed",
+        "department": "Department of Computer Science and Engineering (CSE)",
+        "profileUrl": "https://gonouniversity.edu.bd/cse/employees/sharif-ahamed/"
+      }
+    }
+  },
+  {
+    "sessionId": "external-proof-45de835dd00044268ab4a24ee8f67ddb",
+    "updatedAt": 1790401909462,
+    "turns": [
+      {
+        "role": "user",
+        "text": "area size of Gono Bishwabidyalay?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Wikipedia reports** that Gono Bishwabidyalay has a **32 acres** rural campus. The currently indexed official general-information pages do not publish an acreage figure, so this should be treated as a Wikipedia-attributed claim."
+      },
+      {
+        "role": "user",
+        "text": "What is its QS ranking?"
+      },
+      {
+        "role": "assistant",
+        "text": "According to **QS**, Gono Bishwabidyalay is ranked **#1301-1400 in the Asian University Rankings 2026**. QS's profile snapshot also reports **4,574 students** and **158 faculty staff**; these figures reflect QS's reporting dataset, not a live registrar count."
+      },
+      {
+        "role": "user",
+        "text": "Gono name meaning ki?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Gono Bishwabidyalay (গণ বিশ্ববিদ্যালয়)**-এর আক্ষরিক অর্থ **“People's University”** এবং সংক্ষিপ্ত নাম **GB**।"
+      },
+      {
+        "role": "user",
+        "text": "coordinates koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "Wikipedia lists the campus coordinates as **23.9287° N, 90.2447° E**. The official postal address is **Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344**."
+      }
+    ],
+    "entities": {
+      "person": {
+        "name": "Mst. Tahmina Sultana",
+        "department": "Department of Sociology and Social Work",
+        "profileUrl": "https://gonouniversity.edu.bd/sociology/employees/mst-tahmina-sultana/"
+      }
+    }
+  }
+]

@@ -1,0 +1,28 @@
+# Node dependencies
+node_modules/
+
+# Production build output
+dist/
+
+# Local environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+data/*.log
+
+# Temporary and cache files
+data/.*.tmp
+data/*.tmp
+data/crawl-cache/
+data/model-cache/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Test screenshots
+*-check*.png
+mobile-*.png

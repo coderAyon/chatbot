@@ -1,0 +1,530 @@
+[
+  {
+    "at": "2026-06-30T06:35:56.742Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama"
+  },
+  {
+    "at": "2026-06-30T06:36:01.146Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama"
+  },
+  {
+    "at": "2026-06-30T06:36:03.374Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama"
+  },
+  {
+    "at": "2026-06-30T06:36:05.578Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama"
+  },
+  {
+    "at": "2026-06-30T06:41:08.053Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama"
+  },
+  {
+    "at": "2026-06-30T06:41:36.049Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama"
+  },
+  {
+    "at": "2026-06-30T06:42:28.158Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama"
+  },
+  {
+    "at": "2026-06-30T14:37:59.814Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T14:38:11.557Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T14:39:40.803Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T14:44:32.545Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama"
+  },
+  {
+    "at": "2026-06-30T14:46:07.918Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T16:03:56.826Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T16:03:56.890Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T16:04:12.686Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T16:04:20.634Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T16:06:25.414Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T16:06:25.457Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T16:06:26.139Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T16:06:26.194Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-06-30T16:07:25.754Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-07-01T03:50:31.700Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-07-01T03:54:29.709Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-07-01T03:55:46.308Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-07-01T03:57:12.460Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-07-01T03:58:27.679Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-07-01T03:59:24.336Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-07-01T03:59:25.253Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-07-01T04:00:16.429Z",
+    "level": "warn",
+    "scope": "crawler",
+    "message": "Could not read robots.txt: fetch failed\nSkipped sitemap https://gonouniversity.edu.bd/sitemap.xml: fetch failed"
+  },
+  {
+    "at": "2026-07-01T04:00:24.867Z",
+    "level": "warn",
+    "scope": "crawler",
+    "message": "Skipped sitemap https://gonouniversity.edu.bd/sitemap_index.xml: fetch failed"
+  },
+  {
+    "at": "2026-07-01T04:00:35.470Z",
+    "level": "warn",
+    "scope": "crawler",
+    "message": "Skipped WordPress discovery /wp-json/wp/v2/pages?per_page=100: fetch failed"
+  },
+  {
+    "at": "2026-07-01T04:00:46.087Z",
+    "level": "warn",
+    "scope": "crawler",
+    "message": "Skipped WordPress discovery /wp-json/wp/v2/posts?per_page=100: fetch failed"
+  },
+  {
+    "at": "2026-07-01T04:00:56.679Z",
+    "level": "warn",
+    "scope": "crawler",
+    "message": "Skipped WordPress discovery /wp-json/wp/v2/search?per_page=100&subtype=page: fetch failed"
+  },
+  {
+    "at": "2026-07-01T04:01:07.267Z",
+    "level": "warn",
+    "scope": "crawler",
+    "message": "Skipped WordPress discovery /wp-json/wp/v2/search?per_page=100&subtype=post: fetch failed"
+  },
+  {
+    "at": "2026-07-01T04:01:17.909Z",
+    "level": "warn",
+    "scope": "crawler",
+    "message": "Skipped https://gonouniversity.edu.bd/contact/: fetch failed\nSkipped https://gonouniversity.edu.bd/law/: fetch failed"
+  },
+  {
+    "at": "2026-07-01T04:24:50.319Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama"
+  },
+  {
+    "at": "2026-07-04T15:55:55.533Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "ollama_attachment"
+  },
+  {
+    "at": "2026-07-04T15:57:35.863Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-07-04T15:57:35.889Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-07-04T15:58:39.479Z",
+    "level": "warn",
+    "message": "EPERM: operation not permitted, rename 'D:\\chatbot\\data\\.response-cache.json.2968.1783180719475.tmp' -> 'D:\\chatbot\\data\\response-cache.json'",
+    "scope": "response_cache"
+  },
+  {
+    "at": "2026-07-04T16:01:08.533Z",
+    "level": "warn",
+    "message": "EPERM: operation not permitted, rename 'D:\\chatbot\\data\\.chat-history.json.4084.1783180868527.tmp' -> 'D:\\chatbot\\data\\chat-history.json'",
+    "scope": "chat_history"
+  },
+  {
+    "at": "2026-07-04T16:02:21.543Z",
+    "level": "warn",
+    "message": "EPERM: operation not permitted, rename 'D:\\chatbot\\data\\.chat-history.json.8436.1783180941538.tmp' -> 'D:\\chatbot\\data\\chat-history.json'",
+    "scope": "chat_history"
+  },
+  {
+    "at": "2026-07-04T16:04:45.979Z",
+    "level": "warn",
+    "message": "EPERM: operation not permitted, rename 'D:\\chatbot\\data\\.chat-history.json.2800.1783181085974.tmp' -> 'D:\\chatbot\\data\\chat-history.json'",
+    "scope": "chat_history"
+  },
+  {
+    "at": "2026-07-04T16:09:17.330Z",
+    "level": "warn",
+    "message": "EPERM: operation not permitted, rename 'D:\\chatbot\\data\\.chat-history.json.12920.1783181357328.tmp' -> 'D:\\chatbot\\data\\chat-history.json'",
+    "scope": "chat_history"
+  },
+  {
+    "at": "2026-07-04T16:10:22.118Z",
+    "level": "warn",
+    "message": "EPERM: operation not permitted, rename 'D:\\chatbot\\data\\.response-cache.json.13700.1783181422108.tmp' -> 'D:\\chatbot\\data\\response-cache.json'",
+    "scope": "response_cache"
+  },
+  {
+    "at": "2026-07-04T16:10:22.173Z",
+    "level": "warn",
+    "message": "ENOENT: no such file or directory, rename 'D:\\chatbot\\data\\.chat-history.json.13700.1783181422171.tmp' -> 'D:\\chatbot\\data\\chat-history.json'",
+    "scope": "chat_history"
+  },
+  {
+    "at": "2026-07-04T16:22:20.683Z",
+    "level": "warn",
+    "message": "EPERM: operation not permitted, rename 'D:\\chatbot\\data\\.response-cache.json.19596.1783182140681.tmp' -> 'D:\\chatbot\\data\\response-cache.json'",
+    "scope": "response_cache"
+  },
+  {
+    "at": "2026-07-04T16:23:16.672Z",
+    "level": "warn",
+    "message": "EPERM: operation not permitted, rename 'D:\\chatbot\\data\\.response-cache.json.708.1783182196657.tmp' -> 'D:\\chatbot\\data\\response-cache.json'",
+    "scope": "response_cache"
+  },
+  {
+    "at": "2026-09-11T06:52:36.912Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-11T06:52:41.658Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-11T06:53:15.677Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-12T07:14:03.658Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-12T07:14:14.295Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-20T15:07:35.120Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-20T15:08:50.348Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-20T16:43:02.790Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-20T16:43:40.072Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-20T16:47:59.056Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-20T16:49:09.448Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-20T17:03:57.586Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-20T17:04:08.597Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T15:33:31.997Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T15:33:32.834Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T15:34:19.580Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T15:34:56.069Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T15:34:56.861Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T15:38:32.318Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T15:42:16.829Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T15:47:54.507Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T15:47:55.180Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T15:47:56.051Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T16:38:45.546Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T16:46:22.737Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-23T18:01:04.481Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T04:11:40.370Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T04:32:44.103Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T04:32:44.178Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T04:32:44.263Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T10:06:25.503Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T15:28:46.333Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T15:28:47.390Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T15:58:51.721Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T16:22:56.941Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T16:26:04.446Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T16:27:11.418Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T16:27:28.541Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T16:28:11.219Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-24T16:28:18.700Z",
+    "level": "warn",
+    "message": "fetch failed",
+    "scope": "chat_ollama"
+  }
+]

@@ -1,0 +1,3107 @@
+[
+  {
+    "at": "2026-07-04T16:17:10.948Z",
+    "sessionId": "tonni-final-profile",
+    "question": "pharmacy r tonni mam chino?",
+    "answer": "**Tania Ahmed** - Assistant Professor, Department of Pharmacy.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 11
+  },
+  {
+    "at": "2026-07-04T16:22:20.685Z",
+    "sessionId": "full-law",
+    "question": "law department er faculty list dao",
+    "answer": "Department of Agriculture-er official faculty data-te 6 jon record ache. Head: Dr. Mahmuda Umme Rayhan, Dr. Mohammad Mohidur Rahman, Labony Yeasmin, Prof. Dr. Md. Fazlul Karim. Faculty: Dr. Mahmuda Umme Rayhan, Dr. Mohammad Mohidur Rahman, Fatema-Tuz-Zahura, Halima Akter, Labony Yeasmin, Prof. Dr. Md. Fazlul Karim.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 43
+  },
+  {
+    "at": "2026-07-04T16:22:20.688Z",
+    "sessionId": "full-tonni",
+    "question": "pharmacy r tonni mam chino?",
+    "answer": "**Tania Ahmed** - Assistant Professor, Department of Pharmacy.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 25
+  },
+  {
+    "at": "2026-07-04T16:23:16.672Z",
+    "sessionId": "full-tonni-2",
+    "question": "pharmacy r tonni mam chino?",
+    "answer": "**Tania Ahmed** - Assistant Professor, Department of Pharmacy.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 13
+  },
+  {
+    "at": "2026-07-04T16:23:16.676Z",
+    "sessionId": "full-bba",
+    "question": "bba faculty list dao",
+    "answer": "Department of Business Administration-er official faculty data-te 11 jon record ache. Head: Dr. Rana-Al -Mosharrafa. Faculty: Anindo Mahmud, Dr. Rana-Al -Mosharrafa, Jasmin Aktar, Kamrun Naher Kumkum, Md. Jahidur Rahman, Md. Rafiqul Islam, Md. Rafiqul Islam, Md. Touhidul Islam, Most. Rubina Akter, Rabib Kamal Preom, Yoishorjo Saha Shitol.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 33
+  },
+  {
+    "at": "2026-07-04T16:25:12.537Z",
+    "sessionId": "final-tonni-full",
+    "question": "pharmacy r tonni mam chino?",
+    "answer": "**Tania Ahmed** - Assistant Professor, Department of Pharmacy.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 28
+  },
+  {
+    "at": "2026-07-04T16:25:12.573Z",
+    "sessionId": "final-law",
+    "question": "law department er faculty list dao",
+    "answer": "Department of Law-er official faculty data-te 16 jon record ache. Head: Md. Monjurul Islam. Faculty: Azmeri Alam, Dr. Shahdeen Malik, Farah Iqbal, Kauser, M. Amir-UI-Islam, Md. Abdul Momin Refat, Md. Al-Amin, Md. Lemon Hossen, Md. Monjurul Islam, Md. Muniruzzaman, Muhammad Walid Husain, Professor Ataur Rahman Khan, REDWAN AHMED, Tasnuva Rashid, Thouhidul Islam, Towhida Sarker.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 17
+  },
+  {
+    "at": "2026-07-04T16:25:12.608Z",
+    "sessionId": "final-all-full",
+    "question": "all department er sir mam list dao",
+    "answer": "Official data-te 11 ta department/group-e 134 jon people record ache:\n**Admission Office** (4): Asfaq Hossain, Md. Jamal Hossain Jony, Purabi Sarkar Nitu, Ripon Chandra\n**Department of Agriculture** (6): Dr. Mahmuda Umme Rayhan, Dr. Mohammad Mohidur Rahman, Fatema-Tuz-Zahura, Halima Akter, Labony Yeasmin, Prof. Dr. Md. Fazlul Karim\n**Department of Bangla** (12): Dr. A S M Delwar Hussain, Dr. Krishna Bhadra, Md. Abu Raihan, Md. Kayes Ahmed, Monsur Musa, Ms. Ati-un-nahar, Ms. Ayasha Siddika, Mst. Kabistara Khatun (Kabita), Noor Mohammad, Nur-E Tahrima, Sabrina Nasrin, Samsun Nahar\n**Department of Business Administration** (10): Anindo Mahmud, Dr. Rana-Al -Mosharrafa, Jasmin Aktar, Kamrun Naher Kumkum, Md. Jahidur Rahman, Md. Rafiqul Islam, Md. Touhidul Islam, Most. Rubina Akter, Rabib Kamal Preom, Yoishorjo Saha Shitol\n**Department of Computer Science and Engineering (CSE)** (16): Adila Nuzhat, Bipasa Sharmin Satu, Dr. Md. Hanif Ali, Farzana Tasnim, Md. Atikur Rahman, Md. Rasel Mia, Md. Shahinur Islam, Prof. Md. Karam Newaz, Shahriar Hassan, Shanta Islam, Sharif Ahamed, Shatabdee Bala, Tania Akter, Tania Sultana, Tanvir Rahman Dip, Umme Farhana\n**Department of English** (9): Afroza Siddika, H. M. Abir Anik, Md. Arman Badsa, Md. Liton Hossain, Mohammad Ali, Nila Akhtar Khan, Nilima Shayla, Professor Niranjan Biswas, Sonia shirin\n**Department of Law** (16): Azmeri Alam, Dr. Shahdeen Malik, Farah Iqbal, Kauser, M. Amir-UI-Islam, Md. Abdul Momin Refat, Md. Al-Amin, Md. Lemon Hossen, Md. Monjurul Islam, Md. Muniruzzaman, Muhammad Walid Husain, Professor Ataur Rahman Khan, REDWAN AHMED, Tasnuva Rashid, Thouhidul Islam, Towhida Sarker\n**Department of Microbiology** (14): Anwara Khatun, Dr. Farah Zereen, Dr. Mohammad Showkat Mahmud, Dr. Rahima Begum, Dr. Syed Anwar Hussain, M, Mahmudul Hasan, Md. Rezaul Alam, Md. Shah Alam, Mrityunjoy Das, Ph.D., Najmun Nahar (Study Leave), Nusrat Jahan (Nishu), Rokeya Parvin, Shilpi Das\n**Department of Pharmacy** (20): A. F. M. Mahmudul Islam, Ananta Kumar Das, Anik Kumar Dey, Dr. Mst. Rozina Parul, Dr. Sukalyan Kumar Kundu, Jarin Tasnim, Lutful Haque Saran, Maherun Nesha Mary, Md. Abdul Kader, Md. Abdur Rouf (Bidduth), Md. Golam Mostofa, Md. Junaid Haruni, Md. Khalequeuzzaman (Sobuj), Md. Shohel Hossain, Md. Sohel Rana, Mst. Mahfuza Khatoon, Samia Akter, Sharmin Jahan, Sirajum Munira Munni, Tania Ahmed\n**Department of Politics and Governance** (9): Dr. Md. Ali Azam Khan, Jahid Hasan Sheikh, Md. Al-Amin Hossain, Md. Habibullah Balaly, Mohammad Asif Chowdhury, Ms. Mahmuda Begum, Rajib Haider Roman, Sarah Noorunnahar, Tabassum Nepa (on leave)\n**Department of Veterinary and Animal Sciences** (18): Arif Mahmud, Dr. Himangsu Sarkar, Dr. Kazi Md. Al-Noman, Dr. Md. Abdur Rahman, Dr. Md. Ruknuzzaman, Dr. Md. Shamsur Rahman, Dr. Md. Zaminur Rahman, Dr. Md.Mehedi Hasan, Dr. Mst. Nasrin Banu, Dr. Noushin Angum Mow, Dr. Rokeya Ahmed, DR. Sabrina Ferdous, Dr. Shanaz Parvin, Dr. Soniya Akter Nishi, Dr. Taslima Akter, Dr. Uttam Kumar Roy, Md. Rajiur Rahaman Rabbi, Prof. Dr. Md. Zahirul Islam Khan",
+    "mode": "structured",
+    "sourceCount": 10,
+    "latencyMs": 21
+  },
+  {
+    "at": "2026-07-04T16:56:26.739Z",
+    "sessionId": "b609d79e-99f7-4ce8-b04c-ecd4cf126a37",
+    "question": "ishmam sir ke chino?",
+    "answer": "Verified data-te ei information paini.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 11
+  },
+  {
+    "at": "2026-07-04T16:56:39.544Z",
+    "sessionId": "b609d79e-99f7-4ce8-b04c-ecd4cf126a37",
+    "question": "law er limon sir?",
+    "answer": "**Md. Liton Hossain** - Lecturer, Department of English.\n**Md. Lemon Hossen** - Lecturer, Department of Law.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-11T06:52:36.918Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "?",
+    "answer": "According to the official data: CSE regular faculty members: Tania Akter, Dr. Rasel Mia, Farzana Tasnim, Shatabdee Bala, Umme Farhana, Bipasa Sharmin Satu, Sharif Ahamed, Tania Sultana, Md. Rakibuzzaman Khan Pathan, Adila Nuzhat, Shahriar Hassan, Shanta Islam.",
+    "mode": "smart_retrieval",
+    "sourceCount": 1,
+    "latencyMs": 36
+  },
+  {
+    "at": "2026-09-11T06:52:41.662Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "hi",
+    "answer": "According to the official data: Shahinur Islam (Assistant Lab Officer), Tanvir Rahman Dip (Senior Asst.",
+    "mode": "smart_retrieval",
+    "sourceCount": 2,
+    "latencyMs": 21
+  },
+  {
+    "at": "2026-09-11T06:53:15.681Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "what is chat gpt?",
+    "answer": "According to the official data: Department of Computer Science and Engineering (CSE) official people records: Tania Akter (Associate Professor & Head), Dr. Md. Hanif Ali (Professor), Md. Atikur Rahman (Assistant Professor), Md. Rasel Mia (Assistant Professor), Farzana Tasnim (Assistant Professor), Shatabdee Bala (Assistant Professor), Umme Farhana (Assistant Professor), Shahriar Hassan (Lecturer), Sharif Ahamed (Lecturer), Adila Nuzhat (Lecturer), Tania Sultana (Lecturer), Bipasa Sharmin Satu (Lecturer), Shanta Islam (Lecturer), Prof. Md. Karam N",
+    "mode": "smart_retrieval",
+    "sourceCount": 2,
+    "latencyMs": 22
+  },
+  {
+    "at": "2026-09-12T06:33:00.151Z",
+    "sessionId": "test-93af616d-770e-4f0e-b3e9-3ee770d36687",
+    "question": "cse er sharif sir ke chino?",
+    "answer": "Haan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 18
+  },
+  {
+    "at": "2026-09-12T06:33:00.183Z",
+    "sessionId": "test-93af616d-770e-4f0e-b3e9-3ee770d36687",
+    "question": "number dau to",
+    "answer": "**Sharif Ahamed**: **01881062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 14
+  },
+  {
+    "at": "2026-09-12T06:33:00.197Z",
+    "sessionId": "test-93af616d-770e-4f0e-b3e9-3ee770d36687",
+    "question": "admission office er karo number dau",
+    "answer": "**Asfaq Hossain**: **01950003312**\n**Md. Jamal Hossain Jony**: **01944293020**\n**Purabi Sarkar Nitu**: **+8801727684880**\n**Ripon Chandra**: **01732869379**",
+    "mode": "structured",
+    "sourceCount": 4,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-12T06:34:18.128Z",
+    "sessionId": "test-7cae7718-a941-4b33-8bea-abe6bab16237",
+    "question": "number dau to",
+    "answer": "**Sharif Ahamed**: **01881062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 17
+  },
+  {
+    "at": "2026-09-12T06:34:41.313Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "number dau to",
+    "answer": "**Sharif Ahamed**: **01881062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 14
+  },
+  {
+    "at": "2026-09-12T06:36:55.603Z",
+    "sessionId": "d8758d8a-8cba-47cf-a170-d7bc0c3892fc",
+    "question": "sharif sir ke cheno?",
+    "answer": "Haan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 16
+  },
+  {
+    "at": "2026-09-12T06:37:13.588Z",
+    "sessionId": "d8758d8a-8cba-47cf-a170-d7bc0c3892fc",
+    "question": "number dau",
+    "answer": "**Sharif Ahamed**: **01881062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 5
+  },
+  {
+    "at": "2026-09-12T06:37:25.890Z",
+    "sessionId": "d8758d8a-8cba-47cf-a170-d7bc0c3892fc",
+    "question": "farhana mam er position ki?",
+    "answer": "Haan, **Umme Farhana** Department of Computer Science and Engineering (CSE)-er **Assistant Professor**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 8
+  },
+  {
+    "at": "2026-09-12T07:08:23.279Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "cse te total koto credit",
+    "answer": "B.Sc. in Computer Science and Engineering (CSE)-er verified admission-time cost/fee **BDT 54,500** (admission fee and first semester tuition).",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 4
+  },
+  {
+    "at": "2026-09-12T07:10:19.591Z",
+    "sessionId": "qa-267f1d6d-fefb-4d28-adad-390440969d59",
+    "question": "cse er sharif sir ke chino?",
+    "answer": "Haan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 19
+  },
+  {
+    "at": "2026-09-12T07:10:19.625Z",
+    "sessionId": "qa-267f1d6d-fefb-4d28-adad-390440969d59",
+    "question": "number dau to",
+    "answer": "**Sharif Ahamed**: **01881062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 12
+  },
+  {
+    "at": "2026-09-12T07:10:19.643Z",
+    "sessionId": "qa-267f1d6d-fefb-4d28-adad-390440969d59",
+    "question": "mridul vai ke cheno?",
+    "answer": "Verified data-te ei information paini.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 12
+  },
+  {
+    "at": "2026-09-12T07:10:19.657Z",
+    "sessionId": "qa-267f1d6d-fefb-4d28-adad-390440969d59",
+    "question": "mridul vai er number dao",
+    "answer": "Verified data-te ei information paini.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 9
+  },
+  {
+    "at": "2026-09-12T07:10:19.666Z",
+    "sessionId": "qa-267f1d6d-fefb-4d28-adad-390440969d59",
+    "question": "admission office er karo number dau",
+    "answer": "**Asfaq Hossain**: **01950003312**\n**Md. Jamal Hossain Jony**: **01944293020**\n**Purabi Sarkar Nitu**: **+8801727684880**\n**Ripon Chandra**: **01732869379**",
+    "mode": "structured",
+    "sourceCount": 4,
+    "latencyMs": 4
+  },
+  {
+    "at": "2026-09-12T07:10:19.677Z",
+    "sessionId": "qa-267f1d6d-fefb-4d28-adad-390440969d59",
+    "question": "how many teachers on cse dept?",
+    "answer": "Official data lists 16 records for Department of Computer Science and Engineering (CSE). Head: Tania Akter. Faculty: Adila Nuzhat, Bipasa Sharmin Satu, Dr. Md. Hanif Ali, Farzana Tasnim, Md. Atikur Rahman, Md. Rasel Mia, Md. Shahinur Islam, Prof. Md. Karam Newaz, Shahriar Hassan, Shanta Islam, Sharif Ahamed, Shatabdee Bala, Tania Akter, Tania Sultana, Tanvir Rahman Dip, Umme Farhana.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 5
+  },
+  {
+    "at": "2026-09-12T07:13:49.640Z",
+    "sessionId": "d8758d8a-8cba-47cf-a170-d7bc0c3892fc",
+    "question": "cse total cost koto?",
+    "answer": "B.Sc. in Computer Science and Engineering (CSE)-er verified admission-time cost/fee **BDT 54,500** (admission fee and first semester tuition).",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 4
+  },
+  {
+    "at": "2026-09-12T07:14:03.664Z",
+    "sessionId": "d8758d8a-8cba-47cf-a170-d7bc0c3892fc",
+    "question": "total?",
+    "answer": "According to the official data: in Computer Science and Engineering (CSE) total admission fee/admission-time cost is BDT 54,500, including admission fee and first semester tuition.",
+    "mode": "smart_retrieval",
+    "sourceCount": 2,
+    "latencyMs": 32
+  },
+  {
+    "at": "2026-09-12T07:14:14.301Z",
+    "sessionId": "d8758d8a-8cba-47cf-a170-d7bc0c3892fc",
+    "question": "credit?",
+    "answer": "According to the official data: Tuition and other fees are published on the official tuition and fees page. Fee amounts vary by program, semester, waiver, and university policy. in Computer Science and Engineering (CSE) total admission fee/admission-time cost is BDT 54,500, including admission fee and first semester tuition.",
+    "mode": "smart_retrieval",
+    "sourceCount": 1,
+    "latencyMs": 20
+  },
+  {
+    "at": "2026-09-12T07:15:29.016Z",
+    "sessionId": "credit-fec3d45b-47c6-4490-bdb4-5462ce8c1cc6",
+    "question": "cse admission cost koto?",
+    "answer": "B.Sc. in Computer Science and Engineering (CSE)-er verified admission-time cost/fee **BDT 54,500** (admission fee and first semester tuition).",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 12
+  },
+  {
+    "at": "2026-09-12T07:15:29.057Z",
+    "sessionId": "credit-fec3d45b-47c6-4490-bdb4-5462ce8c1cc6",
+    "question": "credit?",
+    "answer": "I couldn't find verified information from the official university data.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 18
+  },
+  {
+    "at": "2026-09-12T07:15:29.069Z",
+    "sessionId": "credit-fec3d45b-47c6-4490-bdb4-5462ce8c1cc6",
+    "question": "cse er sharif sir ke chino?",
+    "answer": "Haan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-12T07:15:29.084Z",
+    "sessionId": "credit-fec3d45b-47c6-4490-bdb4-5462ce8c1cc6",
+    "question": "number dau to",
+    "answer": "**Sharif Ahamed**: **01881062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 10
+  },
+  {
+    "at": "2026-09-20T15:07:35.136Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "hi",
+    "answer": "According to the official data: Central Student’s Union (গাকসু) Alumni Library IQAC Career Semester Fee Form Convocation Web-Mail I-EMS LOGIN APPLY ONLINE Archive General Notice List 11/08/2026 বিজ্ঞপ্তি: দলীয় রাজনীতি মুক্ত ক্যাম্পাস প্রসঙ্গে Read More 04/08/2026 জুলাই গণঅভ্যুত্থান দিবস-২০২৬ পালন প্রসঙ্গে Read More 30/06/2026 অফিস আদেশঃ অফিস সময়সীমা অনুসরণ প্রসঙ্গে Read More 30/06/2026 গণ বিশ্ববিদ্যালয়ের “জুন-ডিসেম্বর ২০২৬” সেমিস্টারের একাডেমিক ক্যালেন্ডার [please click to view pdf content] Read More 23/06/2026 ভেটেরিনারি এন্ড এনিমেল সায়েন্সেস অনুষদের ২২তম ব্যাচের ভর্তির জন্য নির্বাচিত প্রার্থীদের তালিকা। [please click to view pdf content] Read More 18/06/2026 জানুয়ারি-জুন, ২০২৬ টার্মের সেমিস্টার ফাইনাল পরীক্ষার গ্রহণের জন্য বেঞ্চ ও সীট বসানো প্রসঙ্গে Read More 16/06/2026 ভেটেরিনারি এন্ড এনিমেল সায়েন্সেস অনুষদের ২২তম ব্যাচের প্রাথমিকভাবে...",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 741
+  },
+  {
+    "at": "2026-09-20T15:07:44.932Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "sharif sir ke chino?",
+    "answer": "Haan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)Department of Computer Science and Engineering (CSE) Department of Computer Science and Engineering (CSE)-er **Lecturer**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 26
+  },
+  {
+    "at": "2026-09-20T15:08:01.306Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "number dau",
+    "answer": "**Sharif Ahamed**: **01881062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 30
+  },
+  {
+    "at": "2026-09-20T15:08:10.907Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "email ase?",
+    "answer": "**Sharif Ahamed**: **diptosharifahamed@gmail.com**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 14
+  },
+  {
+    "at": "2026-09-20T15:08:22.447Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "rekha mam re chino",
+    "answer": "Haan, **Farzana Tasnim** Department of Computer Science and Engineering (CSE)Department of Computer Science and Engineering (CSE) Department of Computer Science and Engineering (CSE)-er **Assistant Professor**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 23
+  },
+  {
+    "at": "2026-09-20T15:08:39.349Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "number dau",
+    "answer": "Kon jon-er info chai? Farzana Tasnim, Farzana Tasnim",
+    "mode": "clarify",
+    "sourceCount": 2,
+    "latencyMs": 12
+  },
+  {
+    "at": "2026-09-20T15:08:50.353Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "tasnim rekha",
+    "answer": "According to the official data: (JU) View Profile Farzana Tasnim Assistant Professor +8801765524232 Rekha. Central Student’s Union (গাকসু) Alumni Library IQAC Career Semester Fee Form Convocation Web-Mail I-EMS LOGIN APPLY ONLINE Department of Pharmacy GONO BISHWABIDYALAY Profile Jarin Tasnim Lecturer Qualification: B. Pharm (Chittagong University) Mobile: +8801797579186 E-mail: tasnim.",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 912
+  },
+  {
+    "at": "2026-09-20T16:41:51.380Z",
+    "sessionId": "127.0.0.1",
+    "question": "gono r dept bio medical eng course somporke bolo",
+    "answer": "Department of Medical Physics and Biomedical EngineeringDepartment of Medical Physics and Biomedical Engineering Department of Medical Physics and Biomedical Engineering-er official faculty data-te 13 jon record ache. Faculty: Atikur Rahman, Shahnzz Akter, Md Mokhlesur Rahman, SHAMIMA SULTANA, Sujan Mahamud, Kajol Bala, Hozzatul Islam Sayed, Moumita Afrin Rakhi, Dr. Jakir Hossain Imran, Professor Dr Md Nurul Islam, Prof. Dr. Md. Jahangir Alam, MUHAMMAD MASUD RANA, Md. Nazmul Alim.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 56
+  },
+  {
+    "at": "2026-09-20T16:41:51.568Z",
+    "sessionId": "127.0.0.1",
+    "question": "cse r data structure ki",
+    "answer": "Yes, official data-te **Department of Computer Science and Engineering (CSE)** ache. Head: Tania Akter.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 11
+  },
+  {
+    "at": "2026-09-20T16:43:02.799Z",
+    "sessionId": "127.0.0.1",
+    "question": "cse r data structure ki",
+    "answer": "Official data onujayi: Modern laboratories, programming contests, and research opportunities in areas like AI and data science allow students to explore cutting-edge technology. Central Student’s Union (গাকসু) Alumni Library IQAC Career Semester Fee Form Convocation Web-Mail I-EMS LOGIN APPLY ONLINE Department of Business Administration GONO BISHWABIDYALAY Archive Research interest on Data Science List 25/05/2025 Most. করোনা ভাইরাস নিয়ে বর্তমান পরিস্থিতির কারণে সরকারী নির্দেশনা অনুযায়ী গণ বিশ্ববিদ্যালয়ের অফিস আদেশ View All Campus Life What Makes Us Special Gono University’s Computer Science and Engineering (CSE) program offers a unique blend of quality education, affordability, and a student-centered environment.",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 1546
+  },
+  {
+    "at": "2026-09-20T16:43:40.075Z",
+    "sessionId": "127.0.0.1",
+    "question": "cse r data structure ki",
+    "answer": "Official context-er sathe general academic explanation: Data structure holo data organize, store, and access korar method. CSE-te eta important karon efficient program likhte array, linked list, stack, queue, tree, graph, hash table er moto structure use kora hoy. Example: search fast korte hash table, hierarchy represent korte tree, shortest path problem-e graph use hoy.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 651
+  },
+  {
+    "at": "2026-09-20T16:47:59.062Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "hi",
+    "answer": "According to the official data: Central Student’s Union (গাকসু) Alumni Library IQAC Career Semester Fee Form Convocation Web-Mail I-EMS LOGIN APPLY ONLINE Archive General Notice List 11/08/2026 বিজ্ঞপ্তি: দলীয় রাজনীতি মুক্ত ক্যাম্পাস প্রসঙ্গে Read More 04/08/2026 জুলাই গণঅভ্যুত্থান দিবস-২০২৬ পালন প্রসঙ্গে Read More 30/06/2026 অফিস আদেশঃ অফিস সময়সীমা অনুসরণ প্রসঙ্গে Read More 30/06/2026 গণ বিশ্ববিদ্যালয়ের “জুন-ডিসেম্বর ২০২৬” সেমিস্টারের একাডেমিক ক্যালেন্ডার [please click to view pdf content] Read More 23/06/2026 ভেটেরিনারি এন্ড এনিমেল সায়েন্সেস অনুষদের ২২তম ব্যাচের ভর্তির জন্য নির্বাচিত প্রার্থীদের তালিকা। [please click to view pdf content] Read More 18/06/2026 জানুয়ারি-জুন, ২০২৬ টার্মের সেমিস্টার ফাইনাল পরীক্ষার গ্রহণের জন্য বেঞ্চ ও সীট বসানো প্রসঙ্গে Read More 16/06/2026 ভেটেরিনারি এন্ড এনিমেল সায়েন্সেস অনুষদের ২২তম ব্যাচের প্রাথমিকভাবে...",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 583
+  },
+  {
+    "at": "2026-09-20T16:49:09.453Z",
+    "sessionId": "127.0.0.1",
+    "question": "cse r data structure ki",
+    "answer": "Official context-er sathe general academic explanation: **Data structure** holo data organize, store, and access korar method.\n- **Why important:** efficient program likhte data kivabe rakha hobe eta decide korte hoy.\n- **Common types:** array, linked list, stack, queue, tree, graph, hash table.\n- **Example:** fast search-er jonno hash table, hierarchy-er jonno tree, shortest path problem-e graph use hoy.\n- **Next step:** array vs linked list, stack/queue, tree/graph basics practice kora.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 702
+  },
+  {
+    "at": "2026-09-20T16:50:46.124Z",
+    "sessionId": "127.0.0.1",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 28
+  },
+  {
+    "at": "2026-09-20T16:51:10.280Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 2
+  },
+  {
+    "at": "2026-09-20T16:51:28.850Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "how many credits in cse",
+    "answer": "Official data lists 8 records for Department of Computer Science and Engineering (CSE). Head: Tania Akter. Faculty: Tania Akter, Dr. Md. Hanif Ali, Md. Atikur Rahman, Md. Rasel Mia, Farzana Tasnim, Shatabdee Bala, Umme Farhana, Shahriar Hassan.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 35
+  },
+  {
+    "at": "2026-09-20T16:53:19.238Z",
+    "sessionId": "127.0.0.1",
+    "question": "how many credits in cse",
+    "answer": "I couldn't find verified information from the official university data.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 698
+  },
+  {
+    "at": "2026-09-20T16:54:21.443Z",
+    "sessionId": "127.0.0.1",
+    "question": "how many credits in cse",
+    "answer": "According to the official course-plan data, B.Sc. (Honours) in Computer Science & Engineering has total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 51
+  },
+  {
+    "at": "2026-09-20T16:58:27.082Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "?",
+    "answer": "I couldn't find verified information from the official university data.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 577
+  },
+  {
+    "at": "2026-09-20T17:02:48.695Z",
+    "sessionId": "127.0.0.1",
+    "question": "?",
+    "answer": "What would you like to know? Please ask a little more specifically. I can help with Gono Bishwabidyalay departments, faculty, fees, admission, notices, or course/subject concepts.",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 28
+  },
+  {
+    "at": "2026-09-20T17:02:48.946Z",
+    "sessionId": "127.0.0.1",
+    "question": "ki?",
+    "answer": "Tumi ki jante chaccho? Ektu specific kore bolo. Ami Gono Bishwabidyalay-er department, faculty, fee, admission, notice, ba course/subject concept niye help korte pari.",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 0
+  },
+  {
+    "at": "2026-09-20T17:03:45.764Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "?",
+    "answer": "What would you like to know? Please ask a little more specifically. I can help with Gono Bishwabidyalay departments, faculty, fees, admission, notices, or course/subject concepts.",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 1
+  },
+  {
+    "at": "2026-09-20T17:03:50.166Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "How many credits in CSE?",
+    "answer": "According to the official course-plan data, B.Sc. (Honours) in Computer Science & Engineering has total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 29
+  },
+  {
+    "at": "2026-09-20T17:03:57.591Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "mbpme?",
+    "answer": "I couldn't find verified information from the official university data.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 708
+  },
+  {
+    "at": "2026-09-20T17:04:08.604Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "medial physics?",
+    "answer": "According to the official data: Central Student’s Union (গাকসু) Alumni Library IQAC Career Semester Fee Form Convocation Web-Mail I-EMS LOGIN APPLY ONLINE Department of Medical Physics and Biomedical Engineering GONO BISHWABIDYALAY History views December 5, 2024 Medical Physics History in Bangladesh In Bangladesh, the first activities of Medical Physics education started in 1994 at the Physics Department of the Bangladesh University of Engineering and Technology (BUET). In 1996, a co-operation in conference/workshop and training of Medical Physics between Bangladesh and Germany was started by the Task Group-K16 “Medical Physics in the Developing Countries” of the German Society for Medical Physics (DGMP). The main goal of these seminars was to disseminate the information regarding the importance of medical physics and to motivate the phys...",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 729
+  },
+  {
+    "at": "2026-09-20T17:04:52.619Z",
+    "sessionId": "127.0.0.1",
+    "question": "how many credits in cse",
+    "answer": "According to the official course-plan data, B.Sc. (Honours) in Computer Science & Engineering has total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 16
+  },
+  {
+    "at": "2026-09-20T17:04:52.896Z",
+    "sessionId": "127.0.0.1",
+    "question": "?",
+    "answer": "What would you like to know? Please ask a little more specifically. I can help with Gono Bishwabidyalay departments, faculty, fees, admission, notices, or course/subject concepts.",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 0
+  },
+  {
+    "at": "2026-09-20T17:04:52.906Z",
+    "sessionId": "127.0.0.1",
+    "question": "ki?",
+    "answer": "Tumi ki jante chaccho? Ektu specific kore bolo. Ami Gono Bishwabidyalay-er department, faculty, fee, admission, notice, ba course/subject concept niye help korte pari.",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 0
+  },
+  {
+    "at": "2026-09-23T15:33:31.147Z",
+    "sessionId": "verification",
+    "question": "hi",
+    "answer": "What would you like to know? Please ask a little more specifically. I can help with Gono Bishwabidyalay departments, faculty, fees, admission, notices, or course/subject concepts.",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 32
+  },
+  {
+    "at": "2026-09-23T15:33:31.198Z",
+    "sessionId": "verification",
+    "question": "medial physics?",
+    "answer": "What would you like to know about **Medical Physics and Biomedical Engineering** - the general concept, Gono's department, courses/credits, faculty, admission/fees, or careers?",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 2
+  },
+  {
+    "at": "2026-09-23T15:33:32.001Z",
+    "sessionId": "verification",
+    "question": "what is medical physics",
+    "answer": "General academic explanation with the available official context: **Medical Physics** applies physics to medicine.\n- **Main areas:** radiation therapy, diagnostic imaging, nuclear medicine, dosimetry, and radiation safety.\n- **What students learn:** physics, anatomy/physiology basics, imaging systems, radiation measurement, and patient safety.\n- **Careers:** hospitals, cancer-treatment centres, diagnostic imaging, research, and medical-device quality assurance.\n- **Gono-specific note:** exact syllabus, credits, fees, or admission details need official course data.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 794
+  },
+  {
+    "at": "2026-09-23T15:33:32.837Z",
+    "sessionId": "verification",
+    "question": "Biomedical engineering course somporke bolo",
+    "answer": "Official context-er sathe general academic explanation: **Biomedical Engineering** biology, medicine, electronics, computing, and engineering mix kore healthcare problem solve kore.\n- **Usually topics:** medical instrumentation, biomaterials, biomechanics, biosignal processing, imaging, anatomy/physiology basics.\n- **Practical focus:** medical device, hospital equipment, diagnostic technology, and patient-safety related systems.\n- **Gono-specific note:** exact syllabus/credit/fee bolte official page data lagbe.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 829
+  },
+  {
+    "at": "2026-09-23T15:33:32.863Z",
+    "sessionId": "verification",
+    "question": "how many credits in cse",
+    "answer": "According to the official course-plan data, B.Sc. (Honours) in Computer Science & Engineering has total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 18
+  },
+  {
+    "at": "2026-09-23T15:33:32.887Z",
+    "sessionId": "verification",
+    "question": "medical physics faculty",
+    "answer": "Official data lists 13 records for Department of Medical Physics and Biomedical EngineeringDepartment of Medical Physics and Biomedical Engineering Department of Medical Physics and Biomedical Engineering. Faculty: Atikur Rahman, Shahnzz Akter, Md Mokhlesur Rahman, SHAMIMA SULTANA, Sujan Mahamud, Kajol Bala, Hozzatul Islam Sayed, Moumita Afrin Rakhi, Dr. Jakir Hossain Imran, Professor Dr Md Nurul Islam, Prof. Dr. Md. Jahangir Alam, MUHAMMAD MASUD RANA, Md. Nazmul Alim.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 18
+  },
+  {
+    "at": "2026-09-23T15:34:18.782Z",
+    "sessionId": "verification-2",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 25
+  },
+  {
+    "at": "2026-09-23T15:34:18.811Z",
+    "sessionId": "verification-2",
+    "question": "medial physics?",
+    "answer": "What would you like to know about **Medical Physics and Biomedical Engineering** - the general concept, Gono's department, courses/credits, faculty, admission/fees, or careers?",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 2
+  },
+  {
+    "at": "2026-09-23T15:34:19.583Z",
+    "sessionId": "verification-2",
+    "question": "what is medical physics",
+    "answer": "General academic explanation with the available official context: **Medical Physics** applies physics to medicine.\n- **Main areas:** radiation therapy, diagnostic imaging, nuclear medicine, dosimetry, and radiation safety.\n- **What students learn:** physics, anatomy/physiology basics, imaging systems, radiation measurement, and patient safety.\n- **Careers:** hospitals, cancer-treatment centres, diagnostic imaging, research, and medical-device quality assurance.\n- **Gono-specific note:** exact syllabus, credits, fees, or admission details need official course data.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 766
+  },
+  {
+    "at": "2026-09-23T15:34:19.599Z",
+    "sessionId": "verification-2",
+    "question": "medical physics head",
+    "answer": "The official Head of the Department of Department of Medical Physics and Biomedical Engineering is **Professor Dr. Palash Chandra**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-23T15:34:19.604Z",
+    "sessionId": "verification-2",
+    "question": "CSE r data structure ki",
+    "answer": "**CSE** niye ki jante chaccho - general concept, Gono-r department, course/credit, faculty, admission/fee, naki career?",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 1
+  },
+  {
+    "at": "2026-09-23T15:34:55.269Z",
+    "sessionId": "verification-final",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 24
+  },
+  {
+    "at": "2026-09-23T15:34:55.308Z",
+    "sessionId": "verification-final",
+    "question": "medial physics?",
+    "answer": "What would you like to know about **Medical Physics and Biomedical Engineering** - the general concept, Gono's department, courses/credits, faculty, admission/fees, or careers?",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 2
+  },
+  {
+    "at": "2026-09-23T15:34:55.352Z",
+    "sessionId": "verification-final",
+    "question": "medical physics faculty",
+    "answer": "Official data lists 14 records for Department of Medical Physics and Biomedical Engineering. Head: Professor Dr. Palash Chandra. Faculty: Atikur Rahman, Shahnzz Akter, Md Mokhlesur Rahman, SHAMIMA SULTANA, Sujan Mahamud, Kajol Bala, Hozzatul Islam Sayed, Moumita Afrin Rakhi, Dr. Jakir Hossain Imran, Professor Dr Md Nurul Islam, Prof. Dr. Md. Jahangir Alam, MUHAMMAD MASUD RANA, Md. Nazmul Alim, Professor Dr. Palash Chandra.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 37
+  },
+  {
+    "at": "2026-09-23T15:34:55.365Z",
+    "sessionId": "verification-final",
+    "question": "medical physics head",
+    "answer": "The official department head for Department of Medical Physics and Biomedical Engineering is **Professor Dr. Palash Chandra**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 8
+  },
+  {
+    "at": "2026-09-23T15:34:56.071Z",
+    "sessionId": "verification-final",
+    "question": "CSE r data structure ki",
+    "answer": "Official context-er sathe general academic explanation: **Data structure** holo data organize, store, and access korar method.\n- **Why important:** efficient program likhte data kivabe rakha hobe eta decide korte hoy.\n- **Common types:** array, linked list, stack, queue, tree, graph, hash table.\n- **Example:** fast search-er jonno hash table, hierarchy-er jonno tree, shortest path problem-e graph use hoy.\n- **Next step:** array vs linked list, stack/queue, tree/graph basics practice kora.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 696
+  },
+  {
+    "at": "2026-09-23T15:34:56.863Z",
+    "sessionId": "verification-final",
+    "question": "Biomedical engineering course somporke bolo",
+    "answer": "Official context-er sathe general academic explanation: **Biomedical Engineering** biology, medicine, electronics, computing, and engineering mix kore healthcare problem solve kore.\n- **Usually topics:** medical instrumentation, biomaterials, biomechanics, biosignal processing, imaging, anatomy/physiology basics.\n- **Practical focus:** medical device, hospital equipment, diagnostic technology, and patient-safety related systems.\n- **Gono-specific note:** exact syllabus/credit/fee bolte official page data lagbe.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 788
+  },
+  {
+    "at": "2026-09-23T15:34:56.888Z",
+    "sessionId": "verification-final",
+    "question": "how many credits in cse",
+    "answer": "According to the official course-plan data, B.Sc. (Honours) in Computer Science & Engineering has total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 19
+  },
+  {
+    "at": "2026-09-23T15:38:32.323Z",
+    "sessionId": "364246e2-5fe4-4e02-8f34-548ef314ca19",
+    "question": "CSE r data structure ki",
+    "answer": "Official context-er sathe general academic explanation: **Data structure** holo data organize, store, and access korar method.\n- **Why important:** efficient program likhte data kivabe rakha hobe eta decide korte hoy.\n- **Common types:** array, linked list, stack, queue, tree, graph, hash table.\n- **Example:** fast search-er jonno hash table, hierarchy-er jonno tree, shortest path problem-e graph use hoy.\n- **Next step:** array vs linked list, stack/queue, tree/graph basics practice kora.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 684
+  },
+  {
+    "at": "2026-09-23T15:42:16.832Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "how many total credits in EEE",
+    "answer": "According to the official data: There is satisfactory maintenance of records of the total number of years, semester, and credits for each student to be eligible for graduation and other credentials. The supporting courses normally will be about 20-25% of the total credits offered over the entire course. The practical/field work courses shall between 20-35% of the total credits over the entire course of study as prescribed by the course curriculum for the discipline.",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 720
+  },
+  {
+    "at": "2026-09-23T15:47:53.730Z",
+    "sessionId": "ai-verification",
+    "question": "how many total credits in EEE",
+    "answer": "I understand you are asking for the total credits of Gono's **Department of Electrical and Electronic Engineering** program. The currently indexed official data does not publish the exact total-credit number. I will not guess it. Share the applicable syllabus/session and I can verify it from the course list.",
+    "mode": "not_found",
+    "sourceCount": 2,
+    "latencyMs": 694
+  },
+  {
+    "at": "2026-09-23T15:47:54.510Z",
+    "sessionId": "ai-verification",
+    "question": "what is medical physics",
+    "answer": "General academic explanation with the available official context: **Medical Physics** applies physics to medicine.\n- **Main areas:** radiation therapy, diagnostic imaging, nuclear medicine, dosimetry, and radiation safety.\n- **What students learn:** physics, anatomy/physiology basics, imaging systems, radiation measurement, and patient safety.\n- **Careers:** hospitals, cancer-treatment centres, diagnostic imaging, research, and medical-device quality assurance.\n- **Gono-specific note:** exact syllabus, credits, fees, or admission details need official course data.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 749
+  },
+  {
+    "at": "2026-09-23T15:47:55.185Z",
+    "sessionId": "ai-verification",
+    "question": "CSE r data structure ki",
+    "answer": "Official context-er sathe general academic explanation: **Data structure** holo data organize, store, and access korar method.\n- **Why important:** efficient program likhte data kivabe rakha hobe eta decide korte hoy.\n- **Common types:** array, linked list, stack, queue, tree, graph, hash table.\n- **Example:** fast search-er jonno hash table, hierarchy-er jonno tree, shortest path problem-e graph use hoy.\n- **Next step:** array vs linked list, stack/queue, tree/graph basics practice kora.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 663
+  },
+  {
+    "at": "2026-09-23T15:47:56.057Z",
+    "sessionId": "ai-verification",
+    "question": "Explain quantum computing simply",
+    "answer": "According to the official data: S O, these steps are enough to explain to you personally the best way to write a superb essay. Lecture handouts presentation explain revisional power of sessions judge & High court Division (10) Revision : Section- (432 to 442) Ø Power to call for records of inferior Courts. Lecture handouts VIVA explain granting and forfeiting bond (12) Provisions as to Bonds : Section- (513 to 516) Ø Procedure of forfeiture of bond.",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 864
+  },
+  {
+    "at": "2026-09-23T15:47:56.064Z",
+    "sessionId": "ai-verification",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 1
+  },
+  {
+    "at": "2026-09-23T15:48:50.334Z",
+    "sessionId": "152d1398-1b57-4d33-8081-3b588b8bcf98",
+    "question": "how many total credits in EEE",
+    "answer": "I understand you are asking for the total credits of Gono's **Department of Electrical and Electronic Engineering** program. The currently indexed official data does not publish the exact total-credit number. I will not guess it. Share the applicable syllabus/session and I can verify it from the course list.",
+    "mode": "not_found",
+    "sourceCount": 2,
+    "latencyMs": 665
+  },
+  {
+    "at": "2026-09-23T16:04:01.885Z",
+    "sessionId": "d8758d8a-8cba-47cf-a170-d7bc0c3892fc",
+    "question": "english dept er chairman ke?",
+    "answer": "Department of English-er official department head **Professor Niranjan Biswas**.\nDepartment of English-er official department head **GONO BISHWABIDYALAY Profile Professor Niranjan Biswas**.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 27
+  },
+  {
+    "at": "2026-09-23T16:04:48.072Z",
+    "sessionId": "d8758d8a-8cba-47cf-a170-d7bc0c3892fc",
+    "question": "number?",
+    "answer": "Which person's info do you want? Professor Niranjan Biswas, Professor Niranjan Biswas, GONO BISHWABIDYALAY Profile Professor Niranjan Biswas",
+    "mode": "clarify",
+    "sourceCount": 3,
+    "latencyMs": 29
+  },
+  {
+    "at": "2026-09-23T16:38:37.827Z",
+    "sessionId": "127.0.0.1",
+    "question": "english department head ke?",
+    "answer": "Department of English-er official department head **Professor Niranjan Biswas**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 28
+  },
+  {
+    "at": "2026-09-23T16:38:37.875Z",
+    "sessionId": "127.0.0.1",
+    "question": "number?",
+    "answer": "**Professor Niranjan Biswas**: **01711372897**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 27
+  },
+  {
+    "at": "2026-09-23T16:38:44.838Z",
+    "sessionId": "127.0.0.1",
+    "question": "how many total credits in EEE",
+    "answer": "I understand you are asking for the total credits of Gono's **Department of Electrical and Electronic Engineering** program. The currently indexed official data does not publish the exact total-credit number. I will not guess it. Share the applicable syllabus/session and I can verify it from the course list.",
+    "mode": "not_found",
+    "sourceCount": 2,
+    "latencyMs": 722
+  },
+  {
+    "at": "2026-09-23T16:38:45.549Z",
+    "sessionId": "127.0.0.1",
+    "question": "CSE r data structure ki",
+    "answer": "Official context-er sathe general academic explanation: **Data structure** holo data organize, store, and access korar method.\n- **Why important:** efficient program likhte data kivabe rakha hobe eta decide korte hoy.\n- **Common types:** array, linked list, stack, queue, tree, graph, hash table.\n- **Example:** fast search-er jonno hash table, hierarchy-er jonno tree, shortest path problem-e graph use hoy.\n- **Next step:** array vs linked list, stack/queue, tree/graph basics practice kora.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 699
+  },
+  {
+    "at": "2026-09-23T16:39:53.675Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "number?",
+    "answer": "**Professor Niranjan Biswas**: **01711372897**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 20
+  },
+  {
+    "at": "2026-09-23T16:42:03.175Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "micro biology te 4 year e koto taka?",
+    "answer": "Verified data-te ei information paini.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 17
+  },
+  {
+    "at": "2026-09-23T16:42:15.245Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "total credit?",
+    "answer": "I couldn't find verified information from the official university data.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 27
+  },
+  {
+    "at": "2026-09-23T16:46:01.508Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "how many credit in chemistry?",
+    "answer": "I understand you are asking for the total credits of Gono's **Department of Chemistry** program. The currently indexed official data does not publish the exact total-credit number. I will not guess it. Share the applicable syllabus/session and I can verify it from the course list.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 699
+  },
+  {
+    "at": "2026-09-23T16:46:22.742Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "chairman name?",
+    "answer": "According to the official data: Central Student’s Union (গাকসু) Alumni Library IQAC Career Semester Fee Form Convocation Web-Mail I-EMS LOGIN APPLY ONLINE Department of Microbiology GONO BISHWABIDYALAY Archive Research interest on Chairman List 07/10/2020 Md. S (Gono Bishwabidyalay) View Profile Chairman Md. Shah Alam Associate Professor & Head 01977-165030 salammon91@gmail.",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 784
+  },
+  {
+    "at": "2026-09-23T18:00:44.212Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 1
+  },
+  {
+    "at": "2026-09-23T18:01:04.486Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "is there any weiver system in the university?",
+    "answer": "According to the official data: Students, faculty members, and administrative officials of Gono Bishwabidyalay are now effectively using the solution provided by Pipilika Soft to manage their academic and administrative activities With the implementation of the university’s ERP system, the students have benefited the most, as they are the primary users of such a system. Exam & Result Processing System: Pipilika Soft has integrated all university exam-related policies into its ERP system, strictly adhering to the university’s regulations. Tabulation Management: The system incorporates the university’s complex tabulation policies and automatically generates accurate tabulation sheets.",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 722
+  },
+  {
+    "at": "2026-09-23T18:05:34.674Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "Show CSE faculty list",
+    "answer": "I couldn't find verified information from the official university data.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 20
+  },
+  {
+    "at": "2026-09-24T04:11:39.754Z",
+    "sessionId": "127.0.0.1",
+    "question": "who is the VC?",
+    "answer": "I couldn't find verified information from the official university data.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 67
+  },
+  {
+    "at": "2026-09-24T04:11:39.905Z",
+    "sessionId": "127.0.0.1",
+    "question": "university treasurer ke?",
+    "answer": "Treasurer (administration)-er name **Prof. Md. Serajul Islam**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 16
+  },
+  {
+    "at": "2026-09-24T04:11:39.931Z",
+    "sessionId": "127.0.0.1",
+    "question": "gaksu treasurer ke?",
+    "answer": "Treasurer (Gono Bishwabidyalay Central Students' Union)-er name **Khondokar Abdur Rahim**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 13
+  },
+  {
+    "at": "2026-09-24T04:11:40.002Z",
+    "sessionId": "127.0.0.1",
+    "question": "admission phone number",
+    "answer": "**Purabi Sarkar Nitu**: **+8801727684880**\n**Asfaq Hossain**: **01950003312**\n**Md. Jamal Hossain Jony**: **01944293020**\n**Ripon Chandra**: **01732869379**",
+    "mode": "structured",
+    "sourceCount": 4,
+    "latencyMs": 61
+  },
+  {
+    "at": "2026-09-24T04:11:40.039Z",
+    "sessionId": "127.0.0.1",
+    "question": "admin email",
+    "answer": "**Email**: Email: **admin@gonouniversity.edu.bd**\n**Email**: Email: **admin@gonouniversity.edu.bd, controller@gonouniversity.edu.bd**",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 26
+  },
+  {
+    "at": "2026-09-24T04:11:40.175Z",
+    "sessionId": "127.0.0.1",
+    "question": "MSc microbiology duration koto?",
+    "answer": "Ami bujhechi tumi Gono-r **Department of Microbiology** program-er course details jante chaccho. Current indexed official data-te exact requested figure publish kora nei. Ami guess korbo na. Applicable syllabus/session share korle course-gulo theke verify kore ber korte parbo.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 125
+  },
+  {
+    "at": "2026-09-24T04:11:40.204Z",
+    "sessionId": "127.0.0.1",
+    "question": "MSc microbiology seats koto?",
+    "answer": "Verified data-te ei information paini.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 19
+  },
+  {
+    "at": "2026-09-24T04:11:40.385Z",
+    "sessionId": "127.0.0.1",
+    "question": "MSc microbiology admission requirement ki?",
+    "answer": "Official data onujayi: Admission requirement: B.Sc. Admission requirement: B.Pharm. Admission requirement: B.A.",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 169
+  },
+  {
+    "at": "2026-09-24T04:12:37.288Z",
+    "sessionId": "127.0.0.1",
+    "question": "MSc microbiology duration koto?",
+    "answer": "**M.Sc. in Microbiology**\n**Duration:** 2 years (4 semesters)",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 21
+  },
+  {
+    "at": "2026-09-24T04:26:36.568Z",
+    "sessionId": "fresh-v26",
+    "question": "who is the VC?",
+    "answer": "The Vice-Chancellor (administration) is **Professor Dr. Md. Abul Hossain**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 39
+  },
+  {
+    "at": "2026-09-24T04:26:36.671Z",
+    "sessionId": "fresh-v26",
+    "question": "university treasurer ke?",
+    "answer": "Treasurer (administration)-er name **Prof. Md. Serajul Islam**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 18
+  },
+  {
+    "at": "2026-09-24T04:26:36.699Z",
+    "sessionId": "fresh-v26",
+    "question": "gaksu treasurer ke?",
+    "answer": "Treasurer (Gono Bishwabidyalay Central Students' Union)-er name **Khondokar Abdur Rahim**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 14
+  },
+  {
+    "at": "2026-09-24T04:26:36.739Z",
+    "sessionId": "fresh-v26",
+    "question": "admission phone number",
+    "answer": "**Admission**: Phone: **01950003314**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 29
+  },
+  {
+    "at": "2026-09-24T04:26:36.766Z",
+    "sessionId": "fresh-v26",
+    "question": "admin email",
+    "answer": "**Email**: Email: **admin@gonouniversity.edu.bd**",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 16
+  },
+  {
+    "at": "2026-09-24T04:26:36.788Z",
+    "sessionId": "fresh-v26",
+    "question": "MSc microbiology duration koto?",
+    "answer": "**M.Sc. in Microbiology**\n**Duration:** 2 years (4 semesters)",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 11
+  },
+  {
+    "at": "2026-09-24T04:26:36.810Z",
+    "sessionId": "fresh-v26",
+    "question": "MSc microbiology seats koto?",
+    "answer": "**M.Sc. in Microbiology**\n**Seats:** 50",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 10
+  },
+  {
+    "at": "2026-09-24T04:26:36.833Z",
+    "sessionId": "fresh-v26",
+    "question": "MSc microbiology admission requirement ki?",
+    "answer": "**M.Sc. in Microbiology**\n**Admission requirement:** B.Sc. (Honours) in Microbiololgy / Biochemistry / Biology / M.B.B.S /B.Sc. in Nursing",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 10
+  },
+  {
+    "at": "2026-09-24T04:32:43.915Z",
+    "sessionId": "critical-smoke",
+    "question": "how many total credits in EEE?",
+    "answer": "I understand you are asking for the total credits of Gono's **Department of Electrical and Electronic Engineering (EEE)** program. The currently indexed official data does not publish the exact total-credit number. I will not guess it. Share the applicable syllabus/session and I can verify it from the course list.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 319
+  },
+  {
+    "at": "2026-09-24T04:32:44.106Z",
+    "sessionId": "critical-smoke",
+    "question": "Biomedical engineering course somporke bolo",
+    "answer": "Official context-er sathe general academic explanation: **Biomedical Engineering** biology, medicine, electronics, computing, and engineering mix kore healthcare problem solve kore.\n- **Usually topics:** medical instrumentation, biomaterials, biomechanics, biosignal processing, imaging, anatomy/physiology basics.\n- **Practical focus:** medical device, hospital equipment, diagnostic technology, and patient-safety related systems.\n- **Gono-specific note:** exact syllabus/credit/fee bolte official page data lagbe.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 102
+  },
+  {
+    "at": "2026-09-24T04:32:44.180Z",
+    "sessionId": "critical-smoke",
+    "question": "CSE er data structure ki?",
+    "answer": "Official context-er sathe general academic explanation: **Data structure** holo data organize, store, and access korar method.\n- **Why important:** efficient program likhte data kivabe rakha hobe eta decide korte hoy.\n- **Common types:** array, linked list, stack, queue, tree, graph, hash table.\n- **Example:** fast search-er jonno hash table, hierarchy-er jonno tree, shortest path problem-e graph use hoy.\n- **Next step:** array vs linked list, stack/queue, tree/graph basics practice kora.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 60
+  },
+  {
+    "at": "2026-09-24T04:32:44.269Z",
+    "sessionId": "critical-smoke",
+    "question": "latest notice ki?",
+    "answer": "Official data onujayi: Regular workshops and industry seminars keep students updated with the latest trends, bridging the gap between academia and the professional world. Notice from GB Cultural Committee. UGC notice about Foreign Students Admission",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 81
+  },
+  {
+    "at": "2026-09-24T04:32:44.287Z",
+    "sessionId": "critical-smoke",
+    "question": "pharmacy total tuition fee koto?",
+    "answer": "Department of Pharmacy-er official faculty data-te 20 jon record ache. Head: Dr. Mst. Rozina Parul. Faculty: Lutful Haque Saran, Jarin Tasnim, Md. Shohel Hossain, Samia Akter, Sirajum Munira Munni, Dr. Mst. Rozina Parul, Maherun Nesha Mary, Md. Khalequeuzzaman (Sobuj), Mst. Mahfuza Khatoon, A. F. M. Mahmudul Islam, Md. Abdur Rouf (Bidduth), Ananta Kumar Das, Tania Ahmed, Md. Golam Mostofa, Anik Kumar Dey, Sharmin Jahan, Md. Junaid Haruni, Md. Sohel Rana.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 11
+  },
+  {
+    "at": "2026-09-24T04:32:44.296Z",
+    "sessionId": "critical-smoke",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 1
+  },
+  {
+    "at": "2026-09-24T04:32:44.302Z",
+    "sessionId": "critical-smoke",
+    "question": "?",
+    "answer": "What would you like to know? Please ask a little more specifically. I can help with Gono Bishwabidyalay departments, faculty, fees, admission, notices, or course/subject concepts.",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 1
+  },
+  {
+    "at": "2026-09-24T04:41:02.775Z",
+    "sessionId": "intent-v27",
+    "question": "pharmacy total tuition fee koto?",
+    "answer": "Indexed official data-te ei program/session-er exact fee paini, tai guess korchi na. Program ar intake/session-ta bolle aro specific kore verify korte parbo.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 61
+  },
+  {
+    "at": "2026-09-24T04:41:02.873Z",
+    "sessionId": "intent-v27",
+    "question": "MSc microbiology admission requirement ki?",
+    "answer": "**M.Sc. in Microbiology**\n**Admission requirement:** B.Sc. (Honours) in Microbiology / Biochemistry / Biology / M.B.B.S / B.Sc. in Nursing",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 21
+  },
+  {
+    "at": "2026-09-24T04:41:02.964Z",
+    "sessionId": "intent-v27",
+    "question": "MSc microbiology seats koto?",
+    "answer": "**M.Sc. in Microbiology**\n**Seats:** 50",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 21
+  },
+  {
+    "at": "2026-09-24T04:41:02.984Z",
+    "sessionId": "intent-v27",
+    "question": "MSc microbiology vorti requirement ki?",
+    "answer": "**M.Sc. in Microbiology**\n**Admission requirement:** B.Sc. (Honours) in Microbiology / Biochemistry / Biology / M.B.B.S / B.Sc. in Nursing",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 12
+  },
+  {
+    "at": "2026-09-24T04:41:03.296Z",
+    "sessionId": "intent-v27",
+    "question": "how many total credits in EEE?",
+    "answer": "I understand you are asking for the total credits of Gono's **Department of Electrical and Electronic Engineering (EEE)** program. The currently indexed official data does not publish the exact total-credit number. I will not guess it. Share the applicable syllabus/session and I can verify it from the course list.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 303
+  },
+  {
+    "at": "2026-09-24T10:06:18.143Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 15
+  },
+  {
+    "at": "2026-09-24T10:06:25.515Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "CSE er data structure ki?",
+    "answer": "Official context-er sathe general academic explanation: **Data structure** holo data organize, store, and access korar method.\n- **Why important:** efficient program likhte data kivabe rakha hobe eta decide korte hoy.\n- **Common types:** array, linked list, stack, queue, tree, graph, hash table.\n- **Example:** fast search-er jonno hash table, hierarchy-er jonno tree, shortest path problem-e graph use hoy.\n- **Next step:** array vs linked list, stack/queue, tree/graph basics practice kora.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 2101
+  },
+  {
+    "at": "2026-09-24T10:33:59.388Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 3
+  },
+  {
+    "at": "2026-09-24T10:34:45.006Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "is there any teacher name sharif ahmed in cse ?",
+    "answer": "Yes, **Sharif Ahamed** is **Lecturer** in Department of Computer Science and Engineering (CSE).",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 30
+  },
+  {
+    "at": "2026-09-24T10:34:53.327Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "number please",
+    "answer": "**Sharif Ahamed**: **01881-062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 71
+  },
+  {
+    "at": "2026-09-24T10:35:11.566Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "does he have email?",
+    "answer": "**Email**: Email: **admin@gonouniversity.edu.bd**\n**Email**: Email: **admin@gonouniversity.edu.bd, controller@gonouniversity.edu.bd**\n**email**: Email: **gonoresearch@gmail.com, research@gonouniversity.edu.bd**",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 18
+  },
+  {
+    "at": "2026-09-24T15:28:44.756Z",
+    "sessionId": "final-real",
+    "question": "who is the VC?",
+    "answer": "The Vice-Chancellor (offices) is **Professor Dr. Md. Abul Hossain**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 12
+  },
+  {
+    "at": "2026-09-24T15:28:44.826Z",
+    "sessionId": "final-real",
+    "question": "pro vc ke?",
+    "answer": "Verified data-te ei information paini.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 25
+  },
+  {
+    "at": "2026-09-24T15:28:44.849Z",
+    "sessionId": "final-real",
+    "question": "university treasurer ke?",
+    "answer": "Treasurer (offices)-er name **Prof. Md. Serajul Islam**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 8
+  },
+  {
+    "at": "2026-09-24T15:28:44.875Z",
+    "sessionId": "final-real",
+    "question": "gaksu treasurer ke?",
+    "answer": "Treasurer (Gono Bishwabidyalay Central Students' Union)-er name **Khondokar Abdur Rahim**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-24T15:28:44.915Z",
+    "sessionId": "final-real",
+    "question": "admission phone number",
+    "answer": "**Admission**: Phone: **01950003314**",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 30
+  },
+  {
+    "at": "2026-09-24T15:28:44.931Z",
+    "sessionId": "final-real",
+    "question": "admin email",
+    "answer": "**Email**: Email: **admin@gonouniversity.edu.bd**",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-24T15:28:44.947Z",
+    "sessionId": "final-real",
+    "question": "EEE seats koto?",
+    "answer": "**B.Sc. in Electrical and Electronic Engineering**\n**Seats:** 40",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 9
+  },
+  {
+    "at": "2026-09-24T15:28:44.961Z",
+    "sessionId": "final-real",
+    "question": "EEE admission requirement ki?",
+    "answer": "**B.Sc. in Electrical and Electronic Engineering**\n**Admission requirement:** At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 8
+  },
+  {
+    "at": "2026-09-24T15:28:44.972Z",
+    "sessionId": "final-real",
+    "question": "pharmacy total tuition fee koto?",
+    "answer": "Official page-e ekadhik matching program ache:\n**BPharm/ Bachelor of Pharmacy (Hons)** - Total tuition fee: **Tk. 6,00,000/-**\n**MPharm/ Master of Pharmacy** - Total tuition fee: **Tk. 1,20,000/-**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 4
+  },
+  {
+    "at": "2026-09-24T15:28:45.007Z",
+    "sessionId": "final-real",
+    "question": "latest notice ki?",
+    "answer": "Indexed official sources-er shobcheye recent matching notices:\n- **24 Sept 2026:** January - 2027 (Admission going on) - Department of English\n- **21 Sept 2026:** আগস্ট ২০২৬ টার্মের সাপ্লিমেন্টারি ও ফলোন্নয়ন পরীক্ষার সময়সূচী - Gono Bishwabidyalay\n- **06 Sept 2026:** Admission Test Result for BPharm 1st Semester January 2027 - Department of Pharmacy\n- **01 Sept 2026:** গণ বিশ্ববিদ্যালয়ে কম্পিউটার ও কম্পিউটার যন্ত্রাংশ সরবরাহ প্রসঙ্গে - Gono Bishwabidyalay\n- **18 Aug 2026:** Notice for Admissions - Department of Pharmacy",
+    "mode": "structured",
+    "sourceCount": 5,
+    "latencyMs": 27
+  },
+  {
+    "at": "2026-09-24T15:28:46.338Z",
+    "sessionId": "final-real",
+    "question": "Biomedical engineering course somporke bolo",
+    "answer": "Official context-er sathe general academic explanation: **Biomedical Engineering** biology, medicine, electronics, computing, and engineering mix kore healthcare problem solve kore.\n- **Usually topics:** medical instrumentation, biomaterials, biomechanics, biosignal processing, imaging, anatomy/physiology basics.\n- **Practical focus:** medical device, hospital equipment, diagnostic technology, and patient-safety related systems.\n- **Gono-specific note:** exact syllabus/credit/fee bolte official page data lagbe.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 1322
+  },
+  {
+    "at": "2026-09-24T15:28:47.394Z",
+    "sessionId": "final-real",
+    "question": "CSE er data structure ki?",
+    "answer": "Official context-er sathe general academic explanation: **Data structure** holo data organize, store, and access korar method.\n- **Why important:** efficient program likhte data kivabe rakha hobe eta decide korte hoy.\n- **Common types:** array, linked list, stack, queue, tree, graph, hash table.\n- **Example:** fast search-er jonno hash table, hierarchy-er jonno tree, shortest path problem-e graph use hoy.\n- **Next step:** array vs linked list, stack/queue, tree/graph basics practice kora.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 1038
+  },
+  {
+    "at": "2026-09-24T15:29:02.777Z",
+    "sessionId": "context-real",
+    "question": "Sharif Ahamed number please",
+    "answer": "**Sharif Ahamed**: **01881-062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 23
+  },
+  {
+    "at": "2026-09-24T15:29:02.830Z",
+    "sessionId": "context-real",
+    "question": "does he have email?",
+    "answer": "**Sharif Ahamed**: **diptosharifahamed@gmail.com**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 23
+  },
+  {
+    "at": "2026-09-24T15:29:15.939Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "does he have email?",
+    "answer": "**Sharif Ahamed**: **diptosharifahamed@gmail.com**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 26
+  },
+  {
+    "at": "2026-09-24T15:58:51.730Z",
+    "sessionId": "a3c3ce32-b430-4979-bc70-d0c91048b349",
+    "question": "area size of gono bishwabidyalay?",
+    "answer": "According to the official data: Department: 2nd convocation of gono bishwabidyalay Khan in his convocation speech commented that the activities of Gono Bishwabidyalay are highly admirable. Department: 1st convocation of gono bishwabidyalay",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 1890
+  },
+  {
+    "at": "2026-09-24T16:22:56.945Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "area size of gono bishwabidyalay?",
+    "answer": "According to the official data: Department: 2nd convocation of gono bishwabidyalay Khan in his convocation speech commented that the activities of Gono Bishwabidyalay are highly admirable. Department: 1st convocation of gono bishwabidyalay",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 1404
+  },
+  {
+    "at": "2026-09-24T16:26:01.792Z",
+    "sessionId": "127.0.0.1",
+    "question": "area size of gono bishwabidyalay?",
+    "answer": "The indexed official pages do not state the campus's exact area in **acres, bighas, or hectares**. They locate the campus at Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344. I will not invent a size that the official site does not verify.",
+    "mode": "not_found",
+    "sourceCount": 3,
+    "latencyMs": 18
+  },
+  {
+    "at": "2026-09-24T16:26:02.183Z",
+    "sessionId": "127.0.0.1",
+    "question": "who founded Gono University?",
+    "answer": "Gono Bishwabidyalay was founded by the **Gonoshasthaya Kendra (GK) Public Charitable Trust**, under the vision of **Dr. Zafrullah Chowdhury**.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-24T16:26:02.706Z",
+    "sessionId": "127.0.0.1",
+    "question": "where is Gono University campus located?",
+    "answer": "Gono Bishwabidyalay is located at **Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344, Bangladesh**.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-24T16:26:04.450Z",
+    "sessionId": "127.0.0.1",
+    "question": "What is a data structure? Explain with examples.",
+    "answer": "General academic explanation with the available official context: **Data structure** means a way to organize, store, and access data efficiently.\n- **Why it matters:** it helps programmers choose faster and cleaner ways to solve problems.\n- **Common types:** arrays, linked lists, stacks, queues, trees, graphs, and hash tables.\n- **Examples:** hash tables for fast lookup, trees for hierarchy, graphs for path or network problems.\n- **Next step:** compare arrays vs linked lists, then practice stack/queue and tree/graph problems.",
+    "mode": "general_academic_with_context",
+    "sourceCount": 2,
+    "latencyMs": 1533
+  },
+  {
+    "at": "2026-09-24T16:27:11.428Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "Explain data structures with a real world example and a short learning roadmap",
+    "answer": "According to the official data: Vijayalakshmi Pai, Tata McGraw-Hill, Schaum’s Outline of Theory and Problems of Data Structures. Training on Data Science and Machine Learning, Provided by Bangladesh Data Science School. January,3 2015 | Seminar on “Mathematics in Real World”, of Bangladesh Mathematical Society, in Jahangirnagar University",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 1376
+  },
+  {
+    "at": "2026-09-24T16:27:28.547Z",
+    "sessionId": "127.0.0.1",
+    "question": "Explain data structures with a real world example and a short learning roadmap",
+    "answer": "According to the official data: Vijayalakshmi Pai, Tata McGraw-Hill, Schaum’s Outline of Theory and Problems of Data Structures. Training on Data Science and Machine Learning, Provided by Bangladesh Data Science School. January,3 2015 | Seminar on “Mathematics in Real World”, of Bangladesh Mathematical Society, in Jahangirnagar University",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 1302
+  },
+  {
+    "at": "2026-09-24T16:28:11.227Z",
+    "sessionId": "127.0.0.1",
+    "question": "Explain data structures with a real world example and a short learning roadmap",
+    "answer": "I could not find a verified Gono-specific page for this, but generally: **Data structure** means a way to organize, store, and access data efficiently.\n- **Why it matters:** it helps programmers choose faster and cleaner ways to solve problems.\n- **Common types:** arrays, linked lists, stacks, queues, trees, graphs, and hash tables.\n- **Examples:** hash tables for fast lookup, trees for hierarchy, graphs for path or network problems.\n- **Next step:** compare arrays vs linked lists, then practice stack/queue and tree/graph problems.",
+    "mode": "general_academic",
+    "sourceCount": 0,
+    "latencyMs": 1302
+  },
+  {
+    "at": "2026-09-24T16:28:18.703Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "Explain data structures with a real world example and a short learning roadmap",
+    "answer": "I could not find a verified Gono-specific page for this, but generally: **Data structure** means a way to organize, store, and access data efficiently.\n- **Why it matters:** it helps programmers choose faster and cleaner ways to solve problems.\n- **Common types:** arrays, linked lists, stacks, queues, trees, graphs, and hash tables.\n- **Examples:** hash tables for fast lookup, trees for hierarchy, graphs for path or network problems.\n- **Next step:** compare arrays vs linked lists, then practice stack/queue and tree/graph problems.",
+    "mode": "general_academic",
+    "sourceCount": 0,
+    "latencyMs": 1255
+  },
+  {
+    "at": "2026-09-24T17:04:28.495Z",
+    "sessionId": "127.0.0.1",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 11
+  },
+  {
+    "at": "2026-09-24T17:04:30.900Z",
+    "sessionId": "127.0.0.1",
+    "question": "how many total credits in EEE?",
+    "answer": "I could not verify the exact total credits for **Department of Electrical and Electronic Engineering (EEE)** from the indexed official sources. Specify the degree/session or share its syllabus so I can check.",
+    "mode": "not_found",
+    "sourceCount": 2,
+    "latencyMs": 2413
+  },
+  {
+    "at": "2026-09-24T17:04:32.153Z",
+    "sessionId": "127.0.0.1",
+    "question": "Biomedical engineering course somporke bolo",
+    "answer": "Gono-r official data-te exact info na peleo general vabe: **Biomedical Engineering** biology, medicine, electronics, computing, and engineering mix kore healthcare problem solve kore.\n- **Usually topics:** medical instrumentation, biomaterials, biomechanics, biosignal processing, imaging, anatomy/physiology basics.\n- **Practical focus:** medical device, hospital equipment, diagnostic technology, and patient-safety related systems.\n- **Gono-specific note:** exact syllabus/credit/fee bolte official page data lagbe.",
+    "mode": "general_academic",
+    "sourceCount": 0,
+    "latencyMs": 3666
+  },
+  {
+    "at": "2026-09-24T17:04:32.156Z",
+    "sessionId": "127.0.0.1",
+    "question": "who founded Gono University?",
+    "answer": "Gono Bishwabidyalay was founded by the **Gonoshasthaya Kendra (GK) Public Charitable Trust**, under the vision of **Dr. Zafrullah Chowdhury**.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 3670
+  },
+  {
+    "at": "2026-09-24T17:04:32.159Z",
+    "sessionId": "127.0.0.1",
+    "question": "area size of gono bishwabidyalay?",
+    "answer": "The indexed official pages do not state the campus's exact area in **acres, bighas, or hectares**. They locate the campus at Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344. I will not invent a size that the official site does not verify.",
+    "mode": "not_found",
+    "sourceCount": 3,
+    "latencyMs": 3673
+  },
+  {
+    "at": "2026-09-24T17:04:32.162Z",
+    "sessionId": "127.0.0.1",
+    "question": "how many students and faculty in Gono University?",
+    "answer": "The official homepage currently displays **4,200+ undergraduate students**, **500+ graduate students**, **180+ faculty members**, **120+ office staff**. These are published headline counts, not a live registrar total.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 3675
+  },
+  {
+    "at": "2026-09-24T17:04:32.165Z",
+    "sessionId": "127.0.0.1",
+    "question": "latest notice ki?",
+    "answer": "Indexed official sources-er shobcheye recent matching notices:\n- **24 Sept 2026:** January - 2027 (Admission going on) - Department of English\n- **21 Sept 2026:** আগস্ট ২০২৬ টার্মের সাপ্লিমেন্টারি ও ফলোন্নয়ন পরীক্ষার সময়সূচী - Gono Bishwabidyalay\n- **06 Sept 2026:** Admission Test Result for BPharm 1st Semester January 2027 - Department of Pharmacy\n- **18 Aug 2026:** Notice for Admissions - Department of Pharmacy\n- **11 Aug 2026:** বিজ্ঞপ্তি: দলীয় রাজনীতি মুক্ত ক্যাম্পাস প্রসঙ্গে - Gono Bishwabidyalay",
+    "mode": "structured",
+    "sourceCount": 5,
+    "latencyMs": 3677
+  },
+  {
+    "at": "2026-09-24T17:04:32.170Z",
+    "sessionId": "127.0.0.1",
+    "question": "Sharif Ahamed number please",
+    "answer": "**Sharif Ahamed**: **01881-062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 3681
+  },
+  {
+    "at": "2026-09-24T17:04:32.173Z",
+    "sessionId": "127.0.0.1",
+    "question": "how many laboratories does Gono University have?",
+    "answer": "I couldn't find verified information from the official university data.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 3686
+  },
+  {
+    "at": "2026-09-24T17:05:07.612Z",
+    "sessionId": "127.0.0.1",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-24T17:05:08.841Z",
+    "sessionId": "127.0.0.1",
+    "question": "Biomedical engineering course somporke bolo",
+    "answer": "Gono-r official data-te exact info na peleo general vabe: **Biomedical Engineering** biology, medicine, electronics, computing, and engineering mix kore healthcare problem solve kore.\n- **Usually topics:** medical instrumentation, biomaterials, biomechanics, biosignal processing, imaging, anatomy/physiology basics.\n- **Practical focus:** medical device, hospital equipment, diagnostic technology, and patient-safety related systems.\n- **Gono-specific note:** exact syllabus/credit/fee bolte official page data lagbe.",
+    "mode": "general_academic",
+    "sourceCount": 0,
+    "latencyMs": 1229
+  },
+  {
+    "at": "2026-09-24T17:05:11.158Z",
+    "sessionId": "127.0.0.1",
+    "question": "how many total credits in EEE?",
+    "answer": "I could not verify the exact total credits for **Department of Electrical and Electronic Engineering (EEE)** from the indexed official sources. Specify the degree/session or share its syllabus so I can check.",
+    "mode": "not_found",
+    "sourceCount": 2,
+    "latencyMs": 3551
+  },
+  {
+    "at": "2026-09-24T17:05:30.058Z",
+    "sessionId": "a3c3ce32-b430-4979-bc70-d0c91048b349",
+    "question": "??",
+    "answer": "What would you like to know? Please ask a little more specifically. I can help with Gono Bishwabidyalay departments, faculty, fees, admission, notices, or course/subject concepts.",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 1
+  },
+  {
+    "at": "2026-09-24T17:05:39.876Z",
+    "sessionId": "a3c3ce32-b430-4979-bc70-d0c91048b349",
+    "question": "vc name?",
+    "answer": "The Vice-Chancellor (offices) is **Professor Dr. Md. Abul Hossain**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 5
+  },
+  {
+    "at": "2026-09-24T17:05:46.074Z",
+    "sessionId": "a3c3ce32-b430-4979-bc70-d0c91048b349",
+    "question": "number?",
+    "answer": "Which person's info do you want? Professor Dr. Md. Abul Hossain, Professor Dr. Md. Abul Hossain",
+    "mode": "clarify",
+    "sourceCount": 2,
+    "latencyMs": 28
+  },
+  {
+    "at": "2026-09-24T17:05:54.931Z",
+    "sessionId": "a3c3ce32-b430-4979-bc70-d0c91048b349",
+    "question": "vc",
+    "answer": "The Vice-Chancellor (offices) is **Professor Dr. Md. Abul Hossain**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-25T05:30:27.834Z",
+    "sessionId": "qa-profile",
+    "question": "tell me about Gono University",
+    "answer": "**Gono Bishwabidyalay (GB)** is a not-for-profit private university established by the GK Public Charitable Trust on **14 July 1998**. It is accredited by the UGC and approved by the Ministry of Education. Its campus is at **Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344**.\n\nThe official index contains **17 academic departments/faculties** and **30 programs**, spanning health sciences, engineering, life sciences, physical sciences, humanities, social sciences, business, law, agriculture, and veterinary education. Published homepage figures include 4200+ undergraduate students, 500+ graduate students, 180+ faculty members. Its stated mission connects affordable higher education with social development, human welfare, equal opportunity, and community engagement.",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 124
+  },
+  {
+    "at": "2026-09-25T05:30:27.968Z",
+    "sessionId": "qa-profile",
+    "question": "what departments are available?",
+    "answer": "The official index contains **17 academic departments/faculties**:\n- Department of Applied Mathematics\n- Department of Bangla\n- Department of Biochemistry and Molecular Biology\n- Department of Chemistry\n- Department of Computer Science and Engineering (CSE)\n- Department of Electrical and Electronic Engineering (EEE)\n- Department of English\n- Department of Law\n- Department of Medical Physics and Biomedical Engineering\n- Department of Microbiology\n- Department of Pharmacy\n- Department of Physics\n- Department of Politics and Governance\n- Department of Sociology and Social Work\n- Faculty of Agriculture\n- Faculty of Veterinary and Animal Sciences\n- gb central students union 2025 2027",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 21
+  },
+  {
+    "at": "2026-09-25T05:30:27.992Z",
+    "sessionId": "qa-profile",
+    "question": "show all programs",
+    "answer": "The official index currently contains **30 programs** across **17 academic units**:\n- **Department of Applied Mathematics:** B.Sc. (Honours) in Applied Mathematics\n- **Department of Bangla:** MA in Bangla, B.A. (Honours)* in Bangla Language and Culture\n- **Department of Biochemistry and Molecular Biology:** M.Sc. in Biochemistry and Molecular Biology, B.Sc. (Honours) in Biochemistry & Molecular Biology\n- **Department of Business Administration:** B.A. (Honours) in Business Administration\n- **Department of Chemistry:** B.Sc. (Honours) in Chemistry\n- **Department of Computer Science and Engineering (CSE):** B.Sc. (Honours) in Computer Science & Engineering\n- **Department of Electrical and Electronic Engineering (EEE):** B.Sc. in Electrical and Electronic Engineering\n- **Department of English:** M.A. in English, B.A. (Honours) in English\n- **Department of Law:** LLB (Honours)\n- **Department of Medical Physics and Biomedical Engineering:** M.Sc. in Medical Physics & Biomedical Engineering, B.Sc. (Honours) in Medical Physics and Biomedical Engineering\n- **Department of Microbiology:** M.Sc. in Microbiology, B.Sc. (Honours) in Microbiology\n- **Department of Pharmacy:** M. Pharm. (Master of Pharmacy), Bachelor of Pharmacy (B.Pharm)\n- **Department of Physics:** B.Sc. (Honours) in Physics, B.Sc. (Hons) in Physics\n- **Department of Politics and Governance:** M.S.S in Politics & Governance, B.A. (Honours) in Politics & Governance\n- **Department of Sociology and Social Work:** B.A. (Honours) in Sociology and Social Work, BSS Honors in Sociology and Social Work\n- **Faculty of Agriculture:** Bachelor in Agriculture\n- **Faculty of Veterinary and Animal Sciences:** Bachelor in Veterinary Science & Animal Husbandry (B.Sc. Vet. Sc & A. H.)\n- **Other programs:** LLM, B.Sc. (Hon’s), MS (Master’s), 1st",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 16
+  },
+  {
+    "at": "2026-09-25T05:30:28.007Z",
+    "sessionId": "qa-profile",
+    "question": "what library facilities does Gono University have?",
+    "answer": "Gono University Library provides books, journals, and digital resources. Its official page lists **Wi-Fi, computer access, a spacious reading area**, research/study assistance, and workshops. The Online Facilities page also says students can browse available books, download PDFs, track borrowed and returned books, and see pending fines through the Student Portal.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-25T05:30:28.031Z",
+    "sessionId": "qa-profile",
+    "question": "does Gono University have transport?",
+    "answer": "The indexed official **Mission & Vision** page explicitly states **\"No university transport.\"** Because services can change, confirm the current arrangement with the admission office.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 18
+  },
+  {
+    "at": "2026-09-25T05:30:28.045Z",
+    "sessionId": "qa-profile",
+    "question": "what is Gono University mission and vision?",
+    "answer": "Gono Bishwabidyalay's vision centers on creating a new educational commitment to **social development and human welfare**. Its mission includes connecting scientific knowledge with people's needs, equal opportunity for women and men, participatory teaching, community service, poverty reduction, national development, and sustaining indigenous knowledge and crafts. The official page also describes support for students from low-income families, freedom-fighter families, and ethnic minorities.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 5
+  },
+  {
+    "at": "2026-09-25T05:30:28.067Z",
+    "sessionId": "qa-profile",
+    "question": "how can I apply for admission?",
+    "answer": "Applications can be submitted through GB's official **Apply Online** service. First check the undergraduate or graduate admission requirements, then select the program and submit the form. The university also provides separate official tuition/fees and financial-aid pages. Deadlines, admission charges, and waivers can vary by semester and program, so I will not invent a current amount without a verified notice.",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 10
+  },
+  {
+    "at": "2026-09-25T05:30:28.079Z",
+    "sessionId": "qa-profile",
+    "question": "what can I do in the student portal?",
+    "answer": "GB's integrated **i-EMS/Student Portal** supports course registration, dues and payment details, online payment, attendance, course materials, class/course notices, and online-class links. The official page also lists bKash, SSLCommerz and Upay payment integration, plus digital-library and alumni features.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 5
+  },
+  {
+    "at": "2026-09-25T05:30:45.096Z",
+    "sessionId": "qa-gaps",
+    "question": "how many credits in cse",
+    "answer": "I could not verify the exact total credits for **Department of Computer Science and Engineering (CSE)** from the indexed official sources. Specify the degree/session or share its syllabus so I can check.",
+    "mode": "not_found",
+    "sourceCount": 2,
+    "latencyMs": 4099
+  },
+  {
+    "at": "2026-09-25T05:30:49.068Z",
+    "sessionId": "qa-gaps",
+    "question": "how many total credits in EEE?",
+    "answer": "I could not verify the exact total credits for **Department of Electrical and Electronic Engineering (EEE)** from the indexed official sources. Specify the degree/session or share its syllabus so I can check.",
+    "mode": "not_found",
+    "sourceCount": 2,
+    "latencyMs": 3916
+  },
+  {
+    "at": "2026-09-25T05:30:50.333Z",
+    "sessionId": "qa-gaps",
+    "question": "how many credit in chemistry?",
+    "answer": "I could not verify the exact total credits for **Department of Chemistry** from the indexed official sources. Specify the degree/session or share its syllabus so I can check.",
+    "mode": "not_found",
+    "sourceCount": 2,
+    "latencyMs": 1257
+  },
+  {
+    "at": "2026-09-25T05:30:50.356Z",
+    "sessionId": "qa-gaps",
+    "question": "Show CSE faculty list",
+    "answer": "I couldn't find verified information from the official university data.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 17
+  },
+  {
+    "at": "2026-09-25T05:30:50.367Z",
+    "sessionId": "qa-gaps",
+    "question": "who is the VC?",
+    "answer": "The Vice-Chancellor (offices) is **Professor Dr. Md. Abul Hossain**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-25T05:30:50.385Z",
+    "sessionId": "qa-gaps",
+    "question": "pro vc ke?",
+    "answer": "Verified data-te ei information paini.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 14
+  },
+  {
+    "at": "2026-09-25T05:30:50.406Z",
+    "sessionId": "qa-gaps",
+    "question": "MSc microbiology duration koto?",
+    "answer": "**M.Sc. in Microbiology**\n**Duration:** 2 years (4 semesters)",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 15
+  },
+  {
+    "at": "2026-09-25T05:30:50.420Z",
+    "sessionId": "qa-gaps",
+    "question": "MSc microbiology seats koto?",
+    "answer": "**M.Sc. in Microbiology**\n**Seats:** 50",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 10
+  },
+  {
+    "at": "2026-09-25T05:30:50.439Z",
+    "sessionId": "qa-gaps",
+    "question": "micro biology te 4 year e koto taka?",
+    "answer": "Indexed official data-te ei program/session-er exact fee paini, tai guess korchi na. Program ar intake/session-ta bolle aro specific kore verify korte parbo.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 15
+  },
+  {
+    "at": "2026-09-25T05:30:50.448Z",
+    "sessionId": "qa-gaps",
+    "question": "pharmacy total tuition fee koto?",
+    "answer": "Official page-e ekadhik matching program ache:\n**BPharm/ Bachelor of Pharmacy (Hons)** - Total tuition fee: **Tk. 6,00,000/-**\n**MPharm/ Master of Pharmacy** - Total tuition fee: **Tk. 1,20,000/-**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 4
+  },
+  {
+    "at": "2026-09-25T05:30:51.581Z",
+    "sessionId": "qa-gaps",
+    "question": "CSE r data structure ki",
+    "answer": "Gono-r official data-te exact info na peleo general vabe: **Data structure** holo data organize, store, and access korar method.\n- **Why important:** efficient program likhte data kivabe rakha hobe eta decide korte hoy.\n- **Common types:** array, linked list, stack, queue, tree, graph, hash table.\n- **Example:** fast search-er jonno hash table, hierarchy-er jonno tree, shortest path problem-e graph use hoy.\n- **Next step:** array vs linked list, stack/queue, tree/graph basics practice kora.",
+    "mode": "general_academic",
+    "sourceCount": 0,
+    "latencyMs": 1129
+  },
+  {
+    "at": "2026-09-25T05:36:11.865Z",
+    "sessionId": "qa-final",
+    "question": "how many credits in cse",
+    "answer": "The official course plan for **Department of Computer Science and Engineering (CSE)** lists total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 774
+  },
+  {
+    "at": "2026-09-25T05:36:12.582Z",
+    "sessionId": "qa-final",
+    "question": "how many total credits in EEE?",
+    "answer": "The official course plan for **Department of Electrical and Electronic Engineering (EEE)** lists total credits **151**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 638
+  },
+  {
+    "at": "2026-09-25T05:36:12.869Z",
+    "sessionId": "qa-final",
+    "question": "how many credit in chemistry?",
+    "answer": "The official course plan for **Department of Chemistry** lists total credits **148**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 281
+  },
+  {
+    "at": "2026-09-25T05:36:43.706Z",
+    "sessionId": "qa-final2",
+    "question": "Show CSE faculty list",
+    "answer": "Official data lists 13 records for Department of Computer Science and Engineering (CSE). Head: Tania Akter. Faculty: Tania Akter, Dr. Md. Hanif Ali, Md. Atikur Rahman, Md. Rasel Mia, Farzana Tasnim, Shatabdee Bala, Umme Farhana, Shahriar Hassan, Sharif Ahamed, Adila Nuzhat, Tania Sultana, Bipasa Sharmin Satu, Shanta Islam.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 139
+  },
+  {
+    "at": "2026-09-25T05:36:43.781Z",
+    "sessionId": "qa-final2",
+    "question": "pro vc ke?",
+    "answer": "Current indexed official pages-e **Pro-Vice-Chancellor**-er verified name listed nei. Position-ti vacant kina ba page update hoyni kina ami confirm korte parchi na, tai kono name guess korbo na.",
+    "mode": "not_found",
+    "sourceCount": 1,
+    "latencyMs": 19
+  },
+  {
+    "at": "2026-09-25T05:37:14.733Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "tell me about Gono University",
+    "answer": "**Gono Bishwabidyalay (GB)** is a not-for-profit private university established by the GK Public Charitable Trust on **14 July 1998**. It is accredited by the UGC and approved by the Ministry of Education. Its campus is at **Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344**.\n\nThe official index contains **17 academic departments/faculties** and **30 programs**, spanning health sciences, engineering, life sciences, physical sciences, humanities, social sciences, business, law, agriculture, and veterinary education. Published homepage figures include 4200+ undergraduate students, 500+ graduate students, 180+ faculty members. Its stated mission connects affordable higher education with social development, human welfare, equal opportunity, and community engagement.",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 35
+  },
+  {
+    "at": "2026-09-25T05:37:50.752Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "Sharif Ahamed er number dao",
+    "answer": "**Sharif Ahamed**: **01881-062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 68
+  },
+  {
+    "at": "2026-09-25T05:37:50.982Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "does he have email?",
+    "answer": "**Sharif Ahamed**: **diptosharifahamed@gmail.com**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 60
+  },
+  {
+    "at": "2026-09-25T05:38:37.099Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "how many credits in cse",
+    "answer": "The official course plan for **Department of Computer Science and Engineering (CSE)** lists total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 819
+  },
+  {
+    "at": "2026-09-25T05:51:22.540Z",
+    "sessionId": "advanced-live-qa",
+    "question": "compare CSE vs EEE",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **50**\n- Official course-plan credits: **160**\n- Course examples: Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**B.Sc. in Electrical and Electronic Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **40**\n- Official course-plan credits: **151**\n- Course examples: Electrical Circuits-I, Engineering Physics –I, Engineering Chemistry, Engineering Chemistry Lab, Mathematics-I (Differential Calculus and Integral Calculus), English-I\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking.",
+    "mode": "structured",
+    "sourceCount": 5,
+    "latencyMs": 5436
+  },
+  {
+    "at": "2026-09-25T05:51:23.921Z",
+    "sessionId": "advanced-live-qa",
+    "question": "which one has more credits?",
+    "answer": "- **Department of Computer Science and Engineering (CSE):** 160 credits\n- **Department of Electrical and Electronic Engineering (EEE):** 151 credits\n\n**Department of Computer Science and Engineering (CSE)** has 9 more published credits than **Department of Electrical and Electronic Engineering (EEE)** in the indexed course plans.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 1329
+  },
+  {
+    "at": "2026-09-25T05:51:24.603Z",
+    "sessionId": "advanced-live-qa",
+    "question": "which is better for programming?",
+    "answer": "Based on the official course titles, **Department of Computer Science and Engineering (CSE)** is the closer match for programming, software, data, or AI. Relevant examples include Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science, English-I. This is an interest-based recommendation, not a claim that one degree is universally better.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 674
+  },
+  {
+    "at": "2026-09-25T05:51:25.913Z",
+    "sessionId": "profile-live-qa",
+    "question": "tell me details about CSE department",
+    "answer": "**Department of Computer Science and Engineering (CSE)**\n**Program:** B.Sc. (Honours) in Computer Science & Engineering\n**Duration:** 4 years (8 semesters)\n**Published seats:** 50\n**Total credits:** 160\n**Department head:** Tania Akter\n**Indexed teaching faculty:** 13\n**Course examples:** Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science, English-I, Bengali\n**Admission requirement:** At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.",
+    "mode": "structured",
+    "sourceCount": 4,
+    "latencyMs": 1302
+  },
+  {
+    "at": "2026-09-25T05:51:40.366Z",
+    "sessionId": "202584c9-961e-4b96-b4dd-5ec18e36d6a1",
+    "question": "which one has more credits?",
+    "answer": "- **Department of Computer Science and Engineering (CSE):** 160 credits\n- **Department of Electrical and Electronic Engineering (EEE):** 151 credits\n\n**Department of Computer Science and Engineering (CSE)** has 9 more published credits than **Department of Electrical and Electronic Engineering (EEE)** in the indexed course plans.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 1641
+  },
+  {
+    "at": "2026-09-25T08:18:37.541Z",
+    "sessionId": "35315416-38f1-4550-8e12-dedb7ea3d312",
+    "question": "name of vp",
+    "answer": "The Vice President (Gono Bishwabidyalay Central Students' Union) is **Iyasin Al Mridul Dewan**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 12
+  },
+  {
+    "at": "2026-09-25T17:14:33.307Z",
+    "sessionId": "persistent-memory-proof",
+    "question": "compare CSE vs EEE",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **50**\n- Official course-plan credits: **160**\n- Course examples: Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**B.Sc. in Electrical and Electronic Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **40**\n- Official course-plan credits: **151**\n- Course examples: Electrical Circuits-I, Engineering Physics –I, Engineering Chemistry, Engineering Chemistry Lab, Mathematics-I (Differential Calculus and Integral Calculus), English-I\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking.",
+    "mode": "structured",
+    "sourceCount": 5,
+    "latencyMs": 5705
+  },
+  {
+    "at": "2026-09-25T17:14:34.667Z",
+    "sessionId": "persistent-memory-proof",
+    "question": "which one has more credits?",
+    "answer": "- **Department of Computer Science and Engineering (CSE):** 160 credits\n- **Department of Electrical and Electronic Engineering (EEE):** 151 credits\n\n**Department of Computer Science and Engineering (CSE)** has 9 more published credits than **Department of Electrical and Electronic Engineering (EEE)** in the indexed course plans.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 1335
+  },
+  {
+    "at": "2026-09-25T17:15:15.999Z",
+    "sessionId": "persistent-memory-proof",
+    "question": "which is better for programming?",
+    "answer": "Based on the official course titles, **Department of Computer Science and Engineering (CSE)** is the closer match for programming, software, data, or AI. Relevant examples include Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science, English-I. This is an interest-based recommendation, not a claim that one degree is universally better.",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 1011
+  },
+  {
+    "at": "2026-09-25T17:15:26.131Z",
+    "sessionId": "brand-new-session-proof",
+    "question": "which one has more credits?",
+    "answer": "I could not verify that exact course or credit detail in the indexed official data, so I will not guess. Specify the applicable program, syllabus, or session.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 65
+  },
+  {
+    "at": "2026-09-25T17:17:15.762Z",
+    "sessionId": "83f5a386-0fc0-45f8-9180-db4de0ad63f8",
+    "question": "compare CSE vs EEE",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **50**\n- Official course-plan credits: **160**\n- Course examples: Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**B.Sc. in Electrical and Electronic Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **40**\n- Official course-plan credits: **151**\n- Course examples: Electrical Circuits-I, Engineering Physics –I, Engineering Chemistry, Engineering Chemistry Lab, Mathematics-I (Differential Calculus and Integral Calculus), English-I\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking.",
+    "mode": "structured",
+    "sourceCount": 4,
+    "latencyMs": 6088
+  },
+  {
+    "at": "2026-09-25T17:18:41.042Z",
+    "sessionId": "272c150b-2761-45e8-b016-f6f0b0eacbed",
+    "question": "name of vp",
+    "answer": "The Vice President (Gono Bishwabidyalay Central Students' Union) is **Iyasin Al Mridul Dewan**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 22
+  },
+  {
+    "at": "2026-09-25T17:18:54.537Z",
+    "sessionId": "272c150b-2761-45e8-b016-f6f0b0eacbed",
+    "question": "is there any number of him?",
+    "answer": "I couldn't find verified information from the official university data.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 40
+  },
+  {
+    "at": "2026-09-25T17:23:09.105Z",
+    "sessionId": "ai-fallback-proof",
+    "question": "Explain recursion with a simple example",
+    "answer": "According to the official data: CLO 5 Toexplain the summation of trigonometry series. (properties of continuous functions, standard theorems and their examples). CLO 1 Toexplain real number system, function andlimit using graphs and their properties.",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 1681
+  },
+  {
+    "at": "2026-09-25T17:24:38.493Z",
+    "sessionId": "ai-fallback-proof-v3",
+    "question": "Explain recursion with a simple example",
+    "answer": "I will answer this using general AI knowledge.",
+    "mode": "ai_fallback",
+    "sourceCount": 0,
+    "latencyMs": 119
+  },
+  {
+    "at": "2026-09-25T17:25:02.889Z",
+    "sessionId": "ecdf462b-e090-4f97-9c01-7becf450b19b",
+    "question": "How many laboratories does Gono University have?",
+    "answer": "I do not have enough reliable information to answer that confidently yet. Add a little context and I can answer more precisely or find the right source.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 80
+  },
+  {
+    "at": "2026-09-25T17:29:46.529Z",
+    "sessionId": "27dc6f02-dbc5-44a2-8df3-5088f21f7511",
+    "question": "hi",
+    "answer": "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+    "mode": "greeting",
+    "sourceCount": 0,
+    "latencyMs": 20
+  },
+  {
+    "at": "2026-09-25T17:39:30.557Z",
+    "sessionId": "a8823dee-57de-4f71-9e04-ad9e6965da80",
+    "question": "cse credit koto?",
+    "answer": "Official course-plan onujayi **Department of Computer Science and Engineering (CSE)**-er total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 810
+  },
+  {
+    "at": "2026-09-25T17:39:52.523Z",
+    "sessionId": "a8823dee-57de-4f71-9e04-ad9e6965da80",
+    "question": "shaif sir ke chino?",
+    "answer": "Haan, **Shahad Saif Khandker** Department of Biochemistry and Molecular Biology-er **Lecturer**.\nHaan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.\nHaan, **Dr. Sharif Omer Faruque** offices-er **Medical Officer**.",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 76
+  },
+  {
+    "at": "2026-09-25T17:40:17.946Z",
+    "sessionId": "a8823dee-57de-4f71-9e04-ad9e6965da80",
+    "question": "sharif ahmed",
+    "answer": "I will answer this using general AI knowledge.",
+    "mode": "ai_fallback",
+    "sourceCount": 0,
+    "latencyMs": 70
+  },
+  {
+    "at": "2026-09-25T17:41:09.387Z",
+    "sessionId": "a8823dee-57de-4f71-9e04-ad9e6965da80",
+    "question": "cse vs eee",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **50**\n- Official course-plan credits: **160**\n- Course examples: Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**B.Sc. in Electrical and Electronic Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **40**\n- Official course-plan credits: **151**\n- Course examples: Electrical Circuits-I, Engineering Physics –I, Engineering Chemistry, Engineering Chemistry Lab, Mathematics-I (Differential Calculus and Integral Calculus), English-I\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking.",
+    "mode": "structured",
+    "sourceCount": 4,
+    "latencyMs": 5920
+  },
+  {
+    "at": "2026-09-25T17:41:23.166Z",
+    "sessionId": "a8823dee-57de-4f71-9e04-ad9e6965da80",
+    "question": "cse er tution fee koto?",
+    "answer": "Ei fee-ta nishchit korar moto nirvorjoggo tothyo ekhon amar kache nei. Program ar intake/session bolle ami aro specific vabe khuje dekhbo.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 40
+  },
+  {
+    "at": "2026-09-25T17:41:47.572Z",
+    "sessionId": "a8823dee-57de-4f71-9e04-ad9e6965da80",
+    "question": "ki ki subject ache gono te?",
+    "answer": "Ei course/credit-er nishchit tothyo ekhon amar kache nei. Program, syllabus, ba session-ta bolle ami specific vabe check korbo.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 81
+  },
+  {
+    "at": "2026-09-25T17:43:45.026Z",
+    "sessionId": "chat_1790358210493_9b8owm",
+    "question": "cost of cse?",
+    "answer": "What would you like to know about **CSE** - the general concept, Gono's department, courses/credits, faculty, admission/fees, or careers?",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 2
+  },
+  {
+    "at": "2026-09-25T17:55:42.811Z",
+    "sessionId": "127.0.0.1",
+    "question": "cost of cse?",
+    "answer": "What would you like to know about **CSE** - the general concept, Gono's department, courses/credits, faculty, admission/fees, or careers?",
+    "mode": "clarify",
+    "sourceCount": 0,
+    "latencyMs": 1
+  },
+  {
+    "at": "2026-09-25T17:56:34.056Z",
+    "sessionId": "127.0.0.1",
+    "question": "cost of cse?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering** fee structure:\n- **Total Program Tuition Fee (4 Years / 8 Semesters):** **Tk. 4,50,000/-**\n- **Admission-Time Initial Payment:** **BDT 54,500** (covers admission fee and 1st semester tuition)\n- **Waivers & Scholarships:** Up to 50% tuition fee waiver available based on semester GPA results.\n- **Special Stipend:** Carrol Ann Eggen Stipend available for eligible female students.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 63
+  },
+  {
+    "at": "2026-09-25T17:56:40.412Z",
+    "sessionId": "127.0.0.1",
+    "question": "cse tution fee koto?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি ও খরচের বিবরণ:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ (Admission-time payment):** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন ফি অন্তর্ভুক্ত)\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার পরীক্ষার ফলাফলের (GPA) ভিত্তিতে সর্বোচ্চ ৫০% পর্যন্ত টিউশন ফি ওয়েভারের সুবিধা রয়েছে।\n- **বিশেষ বৃত্তি:** নারী শিক্ষার্থীদের জন্য বিশেষ বৃত্তির (Carrol Ann Eggen Stipend) সুযোগ রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 26
+  },
+  {
+    "at": "2026-09-25T18:03:11.445Z",
+    "sessionId": "127.0.0.1",
+    "question": "cost of cse?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering** fee structure:\n- **Total Program Tuition Fee (4 Years / 8 Semesters):** **Tk. 4,50,000/-**\n- **Admission-Time Initial Payment:** **BDT 54,500** (covers admission fee and 1st semester tuition)\n- **Waivers & Scholarships:** Up to 50% tuition fee waiver available based on semester GPA results.\n- **Special Stipend:** Carrol Ann Eggen Stipend available for eligible female students.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 36
+  },
+  {
+    "at": "2026-09-25T18:05:30.928Z",
+    "sessionId": "test_session_1",
+    "question": "Tell me about CSE",
+    "answer": "**Department of Computer Science and Engineering (CSE)**\n**Program:** B.Sc. (Honours) in Computer Science & Engineering\n**Duration:** 4 years (8 semesters)\n**Published seats:** 50\n**Total credits:** 160\n**Department head:** Tania Akter\n**Indexed teaching faculty:** 13\n**Course examples:** Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science, English-I, Bengali\n**Admission requirement:** At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 2544
+  },
+  {
+    "at": "2026-09-25T18:05:30.980Z",
+    "sessionId": "test_session_1",
+    "question": "cost koto?",
+    "answer": "Gono Bishwabidyalay-এর প্রধান প্রোগ্রামগুলোর টিউশন ও ভর্তি ফি:\n- **B.Sc. in CSE:** মোট টিউশন ফি **Tk. 4,50,000/-** (৪ বছর / ৮ সেমিস্টার), ভর্তিকালীন BDT 54,500।\n- **Bachelor of Pharmacy (B.Pharm):** মোট টিউশন ফি **Tk. 6,00,000/-**।\n- **Master of Pharmacy (M.Pharm):** মোট টিউশন ফি **Tk. 1,20,000/-**।\n- **ভর্তিকালীন প্রাথমিক খরচ:** অধিকাংশ আন্ডারগ্র্যাজুয়েট প্রোগ্রামে শুরুতে BDT 54,500 (ভর্তি ফি ও ১ম সেমিস্টার টিউশন)।\n- **ওয়েভার:** সেমিস্টার রেজাল্টের ওপর ভিত্তি করে ১০% থেকে ৫০% পর্যন্ত টিউশন ফি ওয়েভার রয়েছে।\n- হেল্পলাইন: **01950003314**, **01950003319**।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 20
+  },
+  {
+    "at": "2026-09-25T18:05:31.066Z",
+    "sessionId": "test_session_1",
+    "question": "ar seats koyta?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**\n**Seats:** 50",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 68
+  },
+  {
+    "at": "2026-09-25T18:05:36.485Z",
+    "sessionId": "test_session_1",
+    "question": "waiver kivabe pabo?",
+    "answer": "The official site has a **Financial Aid** page, but its currently indexed content does not publish exact scholarship/waiver amounts, percentages, or eligibility criteria. I will not invent a waiver rate without a program/session-specific written notice.",
+    "mode": "not_found",
+    "sourceCount": 1,
+    "latencyMs": 8
+  },
+  {
+    "at": "2026-09-25T18:05:36.614Z",
+    "sessionId": "test_session_1",
+    "question": "qualification ki lagbe?",
+    "answer": "Ei proshner uttor general AI knowledge diye dicchi.",
+    "mode": "ai_fallback",
+    "sourceCount": 0,
+    "latencyMs": 103
+  },
+  {
+    "at": "2026-09-25T18:05:36.690Z",
+    "sessionId": "test_session_1",
+    "question": "kobe theke shuru hobe?",
+    "answer": "I will answer this using general AI knowledge.",
+    "mode": "ai_fallback",
+    "sourceCount": 0,
+    "latencyMs": 67
+  },
+  {
+    "at": "2026-09-25T18:05:36.773Z",
+    "sessionId": "test_session_1",
+    "question": "bujhlam na, sahaj kore bolo",
+    "answer": "Ei proshner uttor general AI knowledge diye dicchi.",
+    "mode": "ai_fallback",
+    "sourceCount": 0,
+    "latencyMs": 75
+  },
+  {
+    "at": "2026-09-25T18:05:36.842Z",
+    "sessionId": "test_session_1",
+    "question": "why should I study this?",
+    "answer": "I do not have enough reliable information to answer that confidently yet. Add a little context and I can answer more precisely or find the right source.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 59
+  },
+  {
+    "at": "2026-09-25T18:05:36.924Z",
+    "sessionId": "test_session_1",
+    "question": "compare it with Pharmacy",
+    "answer": "Official data lists 20 records for Department of Pharmacy. Head: Dr. Mst. Rozina Parul. Faculty: A. F. M. Mahmudul Islam, Md. Abdur Rouf (Bidduth), Ananta Kumar Das, Tania Ahmed, Md. Golam Mostofa, Anik Kumar Dey, Sharmin Jahan, Md. Junaid Haruni, Dr. Mst. Rozina Parul, Md. Khalequeuzzaman (Sobuj), Mst. Mahfuza Khatoon, Lutful Haque Saran, Jarin Tasnim, Md. Shohel Hossain, Samia Akter, Sirajum Munira Munni, Maherun Nesha Mary, Md. Sohel Rana.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 73
+  },
+  {
+    "at": "2026-09-25T18:05:36.993Z",
+    "sessionId": "test_session_1",
+    "question": "tar por ki korbo?",
+    "answer": "Ei proshner nishchit tothyo ekhon amar kache nei. Aro ektu context dile ami bhalo vabe uttor dite ba thik source khujte parbo.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 45
+  },
+  {
+    "at": "2026-09-25T18:10:37.630Z",
+    "sessionId": "test_session_smart_1",
+    "question": "waiver kivabe pabo?",
+    "answer": "The official site has a **Financial Aid** page, but its currently indexed content does not publish exact scholarship/waiver amounts, percentages, or eligibility criteria. I will not invent a waiver rate without a program/session-specific written notice.",
+    "mode": "not_found",
+    "sourceCount": 1,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-25T18:10:37.749Z",
+    "sessionId": "test_session_smart_1",
+    "question": "qualification ki lagbe?",
+    "answer": "Ei proshner uttor general AI knowledge diye dicchi.",
+    "mode": "ai_fallback",
+    "sourceCount": 0,
+    "latencyMs": 95
+  },
+  {
+    "at": "2026-09-25T18:10:37.853Z",
+    "sessionId": "test_session_smart_1",
+    "question": "kobe theke shuru hobe?",
+    "answer": "I will answer this using general AI knowledge.",
+    "mode": "ai_fallback",
+    "sourceCount": 0,
+    "latencyMs": 84
+  },
+  {
+    "at": "2026-09-25T18:10:37.921Z",
+    "sessionId": "test_session_smart_1",
+    "question": "bujhlam na, sahaj kore bolo",
+    "answer": "Ei proshner uttor general AI knowledge diye dicchi.",
+    "mode": "ai_fallback",
+    "sourceCount": 0,
+    "latencyMs": 57
+  },
+  {
+    "at": "2026-09-25T18:10:37.971Z",
+    "sessionId": "test_session_smart_1",
+    "question": "why should I study this?",
+    "answer": "I do not have enough reliable information to answer that confidently yet. Add a little context and I can answer more precisely or find the right source.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 38
+  },
+  {
+    "at": "2026-09-25T18:10:37.999Z",
+    "sessionId": "test_session_smart_1",
+    "question": "compare it with Pharmacy",
+    "answer": "Official data lists 20 records for Department of Pharmacy. Head: Dr. Mst. Rozina Parul. Faculty: A. F. M. Mahmudul Islam, Md. Abdur Rouf (Bidduth), Ananta Kumar Das, Tania Ahmed, Md. Golam Mostofa, Anik Kumar Dey, Sharmin Jahan, Md. Junaid Haruni, Dr. Mst. Rozina Parul, Md. Khalequeuzzaman (Sobuj), Mst. Mahfuza Khatoon, Lutful Haque Saran, Jarin Tasnim, Md. Shohel Hossain, Samia Akter, Sirajum Munira Munni, Maherun Nesha Mary, Md. Sohel Rana.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 21
+  },
+  {
+    "at": "2026-09-25T18:10:38.051Z",
+    "sessionId": "test_session_smart_1",
+    "question": "tar por ki korbo?",
+    "answer": "Ei proshner nishchit tothyo ekhon amar kache nei. Aro ektu context dile ami bhalo vabe uttor dite ba thik source khujte parbo.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 32
+  },
+  {
+    "at": "2026-09-25T18:12:21.240Z",
+    "sessionId": "test_session_smart_2",
+    "question": "cost koto?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি ও খরচের বিবরণ:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ (Admission-time payment):** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন ফি অন্তর্ভুক্ত)\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার পরীক্ষার ফলাফলের (GPA) ভিত্তিতে সর্বোচ্চ ৫০% পর্যন্ত টিউশন ফি ওয়েভারের সুবিধা রয়েছে।\n- **বিশেষ বৃত্তি:** নারী শিক্ষার্থীদের জন্য বিশেষ বৃত্তির (Carrol Ann Eggen Stipend) সুযোগ রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 112
+  },
+  {
+    "at": "2026-09-25T18:12:21.309Z",
+    "sessionId": "test_session_smart_2",
+    "question": "waiver kivabe pabo?",
+    "answer": "The official site has a **Financial Aid** page, but its currently indexed content does not publish exact scholarship/waiver amounts, percentages, or eligibility criteria. I will not invent a waiver rate without a program/session-specific written notice.",
+    "mode": "not_found",
+    "sourceCount": 1,
+    "latencyMs": 40
+  },
+  {
+    "at": "2026-09-25T18:12:21.415Z",
+    "sessionId": "test_session_smart_2",
+    "question": "qualification ki lagbe?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**\n**Admission requirement:** At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 98
+  },
+  {
+    "at": "2026-09-25T18:12:21.480Z",
+    "sessionId": "test_session_smart_2",
+    "question": "kobe theke shuru hobe?",
+    "answer": "**Gono Bishwabidyalay Admission Sessions and Application Process:**\n\n**1. Academic Sessions:**\n- **Spring Session:** January – February\n- **Fall Session:** July – August\n\n**2. Step-by-Step Admission Procedure:**\n- **Step 1 (Form Collection):** Collect the application form directly from the Campus Admission Office (Nolam, Mirzan, Savar) or apply online.\n- **Step 2 (Documents Submission):** Submit SSC and HSC academic transcripts, certificates, 4 passport photos, and NID/Birth Certificate photocopy.\n- **Step 3 (Initial Payment):** Pay the initial admission-time charge of **BDT 54,500** (covers admission fee & 1st semester tuition).\n- **Step 4 (ID & Enrollment):** Receive your official student ID, academic calendar, and class schedule.\n\n📞 **Admission Hotlines:** **01950003314**, **01950003319** | Email: **admin@gonouniversity.edu.bd**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 58
+  },
+  {
+    "at": "2026-09-25T18:12:21.572Z",
+    "sessionId": "test_session_smart_2",
+    "question": "bujhlam na, sahaj kore bolo",
+    "answer": "**এক নজরে সহজ ভাষায় সারসংক্ষেপ (Department of Computer Science and Engineering (CSE)):**\n- **মোট টিউশন ফি:** CSE-তে মোট ৪,৫০,০০০/- টাকা (৪ বছর), Pharmacy-তে ৬,০০,০০০/- টাকা। ভর্তির সময় প্রাথমিকভাবে ৫৪,৫০০/- টাকা দিতে হয়।\n- **আসন সংখ্যা:** CSE-তে ৫০টি আসন, Pharmacy-তে ৭০টি আসন।\n- **ভর্তির যোগ্যতা:** বিজ্ঞান বিভাগ থেকে এসএসসি ও এইচএসসি পাস এবং ন্যূনতম জিপিএ ২.৫০ থাকতে হবে।\n- **স্কলারশিপ ও ওয়েভার:** সেমিস্টার রেজাল্ট ভালো হলে ১০% থেকে ৫০% পর্যন্ত টিউশন ফি মওকুফ পাওয়া যায়। মেয়েদের জন্য রয়েছে বিশেষ বৃত্তি।\n- **ভর্তির প্রক্রিয়া:** সাভারের মূল ক্যাম্পাসে এসে সরাসরি অথবা অনলাইন পোর্টালের মাধ্যমে এখনই ফরম পূরণ করে ভর্তি হওয়া সম্ভব।\n- **সরাসরি যোগাযোগ:** কোনো কিছু জানতে কল করুন: **01950003314**, **01950003319**।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 74
+  },
+  {
+    "at": "2026-09-25T18:12:21.639Z",
+    "sessionId": "test_session_smart_2",
+    "question": "why should I study this?",
+    "answer": "**Career Prospects and Future of Studying CSE:**\n- **Software Engineering:** High global demand for software developers, full-stack engineers, and mobile application architects.\n- **AI & Data Science:** Fastest growing domain across machine learning, big data analysis, and predictive modeling.\n- **Cybersecurity & Networking:** Essential roles in banking systems, telecommunications, and enterprise infrastructure.\n- **Remote Global Careers:** High potential for international remote employment and freelancing right from Bangladesh.\n- **Public Sector:** Government BCS ICT cadre, assistant programmer, and public IT officer positions.\n- **Higher Studies Abroad:** Extensive funded master's and Ph.D. scholarship opportunities worldwide.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 61
+  },
+  {
+    "at": "2026-09-25T18:12:21.714Z",
+    "sessionId": "test_session_smart_2",
+    "question": "compare it with Pharmacy",
+    "answer": "Official data lists 20 records for Department of Pharmacy. Head: Dr. Mst. Rozina Parul. Faculty: A. F. M. Mahmudul Islam, Md. Abdur Rouf (Bidduth), Ananta Kumar Das, Tania Ahmed, Md. Golam Mostofa, Anik Kumar Dey, Sharmin Jahan, Md. Junaid Haruni, Dr. Mst. Rozina Parul, Md. Khalequeuzzaman (Sobuj), Mst. Mahfuza Khatoon, Lutful Haque Saran, Jarin Tasnim, Md. Shohel Hossain, Samia Akter, Sirajum Munira Munni, Maherun Nesha Mary, Md. Sohel Rana.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 67
+  },
+  {
+    "at": "2026-09-25T18:12:21.766Z",
+    "sessionId": "test_session_smart_2",
+    "question": "tar por ki korbo?",
+    "answer": "**পরবর্তী করণীয় (Next Steps):**\n১. **পছন্দের ডিপার্টমেন্ট নির্বাচন:** আপনার আগ্রহের প্রোগ্রাম (যেমন CSE, Pharmacy, BBA, Law) চূড়ান্ত করুন।\n২. **কাগজপত্র প্রস্তুত রাখা:** এসএসসি ও এইচএসসি পরীক্ষার মার্কশিট, প্রশংসাপত্র এবং ৪ কপি পাসপোর্ট সাইজ ছবি সংগ্রহ করুন।\n৩. **ক্যাম্পাস ভিজিট বা কল:** সাভারের ক্যাম্পাসে সরাসরি এসে ডিপার্টমেন্ট ও ল্যাবগুলো ঘুরে দেখতে পারেন, অথবা সরাসরি হেল্পলাইনে কথা বলুন: **01950003314**, **01950003319**।\n৪. **ভর্তি নিশ্চিতকরণ:** ভর্তিকালীন প্রারম্ভিক ফি (BDT 54,500) পরিশোধ করে আপনার কাঙ্ক্ষিত সিট নিশ্চিত করুন।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 44
+  },
+  {
+    "at": "2026-09-25T18:19:30.307Z",
+    "sessionId": "127.0.0.1",
+    "question": "waiver kivabe pabo?",
+    "answer": "**Tuition Fee Waiver and Scholarship Policies at Gono Bishwabidyalay (Department of Computer Science and Engineering (CSE)):**\n- **Semester Merit-Based Waiver:** Up to **50% tuition fee waiver** awarded based on outstanding semester academic GPA (typically GPA 3.50 and above).\n- **Carrol Ann Eggen Female Stipend:** Dedicated financial scholarship for eligible female students demonstrating academic merit.\n- **Freedom Fighter Quota:** 100% tuition waiver for children of recognized Freedom Fighters as per government and UGC guidelines.\n- **Sibling & Spouse Discount:** Concessions for multiple members of the same family studying concurrently.\n- **Need-Based Financial Assistance:** Special trustee board subsidies for underprivileged yet meritorious students.\n- **How to Apply:** Submit the financial aid application form along with previous semester transcripts to the Dean/Registrar's Office before each semester begins.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 67
+  },
+  {
+    "at": "2026-09-25T18:23:58.889Z",
+    "sessionId": "127.0.0.1",
+    "question": "CSE details and fee koto?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি ও খরচের বিবরণ:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ (Admission-time payment):** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন ফি অন্তর্ভুক্ত)\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার পরীক্ষার ফলাফলের (GPA) ভিত্তিতে সর্বোচ্চ ৫০% পর্যন্ত টিউশন ফি ওয়েভারের সুবিধা রয়েছে।\n- **বিশেষ বৃত্তি:** নারী শিক্ষার্থীদের জন্য বিশেষ বৃত্তির (Carrol Ann Eggen Stipend) সুযোগ রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 45
+  },
+  {
+    "at": "2026-09-25T18:23:58.955Z",
+    "sessionId": "127.0.0.1",
+    "question": "cost koto?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি ও খরচের বিবরণ:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ (Admission-time payment):** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন ফি অন্তর্ভুক্ত)\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার পরীক্ষার ফলাফলের (GPA) ভিত্তিতে সর্বোচ্চ ৫০% পর্যন্ত টিউশন ফি ওয়েভারের সুবিধা রয়েছে।\n- **বিশেষ বৃত্তি:** নারী শিক্ষার্থীদের জন্য বিশেষ বৃত্তির (Carrol Ann Eggen Stipend) সুযোগ রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 38
+  },
+  {
+    "at": "2026-09-25T18:23:59.015Z",
+    "sessionId": "127.0.0.1",
+    "question": "waiver kivabe pabo?",
+    "answer": "**Tuition Fee Waiver and Scholarship Policies at Gono Bishwabidyalay (Department of Computer Science and Engineering (CSE)):**\n- **Semester Merit-Based Waiver:** Up to **50% tuition fee waiver** awarded based on outstanding semester academic GPA (typically GPA 3.50 and above).\n- **Carrol Ann Eggen Female Stipend:** Dedicated financial scholarship for eligible female students demonstrating academic merit.\n- **Freedom Fighter Quota:** 100% tuition waiver for children of recognized Freedom Fighters as per government and UGC guidelines.\n- **Sibling & Spouse Discount:** Concessions for multiple members of the same family studying concurrently.\n- **Need-Based Financial Assistance:** Special trustee board subsidies for underprivileged yet meritorious students.\n- **How to Apply:** Submit the financial aid application form along with previous semester transcripts to the Dean/Registrar's Office before each semester begins.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 50
+  },
+  {
+    "at": "2026-09-25T18:23:59.083Z",
+    "sessionId": "127.0.0.1",
+    "question": "qualification ki lagbe?",
+    "answer": "**B.Sc. in Computer Science & Engineering (CSE) ভর্তির যোগ্যতা:**\n- **শিক্ষাগত যোগ্যতা:** এসএসসি ও এইচএসসি (বা সমমান) পরীক্ষায় বিজ্ঞান (Science) বিভাগ থেকে উত্তীর্ণ হতে হবে।\n- **ন্যূনতম জিপিএ:** এসএসসি ও এইচএসসি উভয়ে আলাদাভাবে ন্যূনতম **GPA 2.50** (অথবা ২য় বিভাগ) এবং মোট জিপিএ কমপক্ষে **৬.০০** থাকতে হবে।\n- **বাধ্যতামূলক বিষয়:** এইচএসসিতে পদার্থবিজ্ঞান (Physics) ও গণিত (Mathematics) পাস করা বাধ্যতামূলক।\n- **ডিপ্লোমা ইন ইঞ্জিনিয়ারিং:** পলিটেকনিক ইনস্টিটিউট থেকে ৪ বছর মেয়াদী কম্পিউটার বা সংশ্লিষ্ট টেকনোলজিতে ডিপ্লোমাধারীরাও ভর্তি হতে পারবেন।\n- **ভর্তিকালীন খরচ:** প্রাথমিক ভর্তি ফি ও ১ম সেমিস্টার মিলে BDT 54,500। হেল্পলাইন: **01950003314**।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 54
+  },
+  {
+    "at": "2026-09-25T18:23:59.112Z",
+    "sessionId": "127.0.0.1",
+    "question": "kobe theke shuru hobe?",
+    "answer": "**Gono Bishwabidyalay Admission Sessions and Application Process:**\n\n**1. Academic Sessions:**\n- **Spring Session:** January – February\n- **Fall Session:** July – August\n\n**2. Step-by-Step Admission Procedure:**\n- **Step 1 (Form Collection):** Collect the application form directly from the Campus Admission Office (Nolam, Mirzan, Savar) or apply online.\n- **Step 2 (Documents Submission):** Submit SSC and HSC academic transcripts, certificates, 4 passport photos, and NID/Birth Certificate photocopy.\n- **Step 3 (Initial Payment):** Pay the initial admission-time charge of **BDT 54,500** (covers admission fee & 1st semester tuition).\n- **Step 4 (ID & Enrollment):** Receive your official student ID, academic calendar, and class schedule.\n\n📞 **Admission Hotlines:** **01950003314**, **01950003319** | Email: **admin@gonouniversity.edu.bd**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 21
+  },
+  {
+    "at": "2026-09-25T18:23:59.153Z",
+    "sessionId": "127.0.0.1",
+    "question": "bujhlam na, sahaj kore bolo",
+    "answer": "**এক নজরে সহজ ভাষায় সারসংক্ষেপ (Department of Computer Science and Engineering (CSE)):**\n- **মোট টিউশন ফি:** CSE-তে মোট ৪,৫০,০০০/- টাকা (৪ বছর), Pharmacy-তে ৬,০০,০০০/- টাকা। ভর্তির সময় প্রাথমিকভাবে ৫৪,৫০০/- টাকা দিতে হয়।\n- **আসন সংখ্যা:** CSE-তে ৫০টি আসন, Pharmacy-তে ৭০টি আসন।\n- **ভর্তির যোগ্যতা:** বিজ্ঞান বিভাগ থেকে এসএসসি ও এইচএসসি পাস এবং ন্যূনতম জিপিএ ২.৫০ থাকতে হবে।\n- **স্কলারশিপ ও ওয়েভার:** সেমিস্টার রেজাল্ট ভালো হলে ১০% থেকে ৫০% পর্যন্ত টিউশন ফি মওকুফ পাওয়া যায়। মেয়েদের জন্য রয়েছে বিশেষ বৃত্তি।\n- **ভর্তির প্রক্রিয়া:** সাভারের মূল ক্যাম্পাসে এসে সরাসরি অথবা অনলাইন পোর্টালের মাধ্যমে এখনই ফরম পূরণ করে ভর্তি হওয়া সম্ভব।\n- **সরাসরি যোগাযোগ:** কোনো কিছু জানতে কল করুন: **01950003314**, **01950003319**।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 31
+  },
+  {
+    "at": "2026-09-25T18:24:07.252Z",
+    "sessionId": "127.0.0.1",
+    "question": "compare it with Pharmacy",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**\n- Duration: **4 years (8 semesters)**\n- Published seats: **50**\n- Official course-plan credits: **160**\n- Course examples: Introduction to Computer System, Introduction to Algorithm, Structured Programming Language, Structured Programming Language Lab, Math-I (Calculus), Environmental Science\n- Eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\n**Bachelor of Pharmacy (B.Pharm)**\n- Duration: **4 years (8 semesters)**\n- Published seats: **70**\n- Course examples: Inorganic Pharmacy, Practical on Pharm 1101 & Pharm 1103, Organic Pharmacy, Practical on Pharm 1102, Physical pharmacy, Introduction to Pharmacy\n- Eligibility: SSC and HSC total GPA 8 (GPA 3.5 in each) with a minimum GPA of 3 in Physics, and 4 in Biology and Chemistry in H.S.C.\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking.",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 8093
+  },
+  {
+    "at": "2026-09-25T18:24:07.302Z",
+    "sessionId": "127.0.0.1",
+    "question": "tar por ki korbo?",
+    "answer": "**পরবর্তী করণীয় (Next Steps):**\n১. **পছন্দের ডিপার্টমেন্ট নির্বাচন:** আপনার আগ্রহের প্রোগ্রাম (যেমন CSE, Pharmacy, BBA, Law) চূড়ান্ত করুন।\n২. **কাগজপত্র প্রস্তুত রাখা:** এসএসসি ও এইচএসসি পরীক্ষার মার্কশিট, প্রশংসাপত্র এবং ৪ কপি পাসপোর্ট সাইজ ছবি সংগ্রহ করুন।\n৩. **ক্যাম্পাস ভিজিট বা কল:** সাভারের ক্যাম্পাসে সরাসরি এসে ডিপার্টমেন্ট ও ল্যাবগুলো ঘুরে দেখতে পারেন, অথবা সরাসরি হেল্পলাইনে কথা বলুন: **01950003314**, **01950003319**।\n৪. **ভর্তি নিশ্চিতকরণ:** ভর্তিকালীন প্রারম্ভিক ফি (BDT 54,500) পরিশোধ করে আপনার কাঙ্ক্ষিত সিট নিশ্চিত করুন।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 37
+  },
+  {
+    "at": "2026-09-25T18:25:10.659Z",
+    "sessionId": "chat_1790360680707_6deeln",
+    "question": "ki ki subject ache gono te?",
+    "answer": "Official data onujayi: **Others graduate from Humanities related subject can also apply but note that they need to do some related extra courses. According to him such subjects should be a part of curriculum of the other universities. Khan in his convocation speech commented that the activities of Gono Bishwabidyalay are highly admirable.",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 2919
+  },
+  {
+    "at": "2026-09-25T18:25:53.922Z",
+    "sessionId": "chat_1790360680707_6deeln",
+    "question": "masters er kono subject ache?",
+    "answer": "Official data onujayi: define Islamic Law and its subject | (11) Introduction: Basic concepts, definition characteristics and application of Islamic Law | Lecture Handouts | Tutorial Examination define Gift and its application | (12) Gift: Definition, essential of valid gift, revocation of gift Subject matter of gift, classification and its registration under Muslim Law | Lecture | Quiz test, Assignments Law being among others, a technical subject demands an objective and material introduction and projection of technical details based on the mandates of law.",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 550
+  },
+  {
+    "at": "2026-09-25T18:35:38.904Z",
+    "sessionId": "chat_1790361327452_070rqm",
+    "question": "ki ki subject ache?",
+    "answer": "Official data onujayi: (Engg.) Subject : Information and Communication Technology | Subject: Information and Communication Technology | 2017 (Engg.) | Subject: Information and Communication Technology | 2016 | Subject | Number of E- Book",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 572
+  },
+  {
+    "at": "2026-09-25T18:36:15.426Z",
+    "sessionId": "chat_1790361327452_070rqm",
+    "question": "how many total credits?",
+    "answer": "The official course plan for **Department of Medical Physics and Biomedical Engineering** lists total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 1664
+  },
+  {
+    "at": "2026-09-25T18:36:25.123Z",
+    "sessionId": "chat_1790361327452_070rqm",
+    "question": "in cse",
+    "answer": "Official data lists 15 records for Department of Computer Science and Engineering (CSE). Head: Tania Akter. Faculty: Tania Akter, Dr. Md. Hanif Ali, Md. Atikur Rahman, Md. Rasel Mia, Farzana Tasnim, Shatabdee Bala, Umme Farhana, Shahriar Hassan, Sharif Ahamed, Adila Nuzhat, Tania Sultana, Bipasa Sharmin Satu, Shanta Islam, Md. Shahinur Islam, Tanvir Rahman Dip.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 25
+  },
+  {
+    "at": "2026-09-25T18:43:46.785Z",
+    "sessionId": "127.0.0.1",
+    "question": "kobe protishthito hoy?",
+    "answer": "Gono Bishwabidyalay **14 July 1998** সালে গণস্বাস্থ্য কেন্দ্র ট্রাস্টের অধীনে ডা. জাফরুল্লাহ চৌধুরীর উদ্যোগে প্রতিষ্ঠিত হয়।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 33
+  },
+  {
+    "at": "2026-09-25T18:43:53.253Z",
+    "sessionId": "127.0.0.1",
+    "question": "VC ke?",
+    "answer": "Kon jon-er info chai? Yoishorjo Saha Shitol, S. Mridul Kanti Saha, S. Mridul Kanti Saha",
+    "mode": "clarify",
+    "sourceCount": 3,
+    "latencyMs": 512
+  },
+  {
+    "at": "2026-09-25T18:43:53.313Z",
+    "sessionId": "127.0.0.1",
+    "question": "cost koto?",
+    "answer": "Official Sports Office page cricket, football, volleyball, regular tournament, inter-department competition ebong training session-er kotha bole. Indexed notices-e men's cricket inter-department winner ebong women's inter-department sports-er record-o ache.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 35
+  },
+  {
+    "at": "2026-09-25T18:43:53.329Z",
+    "sessionId": "127.0.0.1",
+    "question": "hostel ache?",
+    "answer": "হ্যাঁ, ক্যাম্পাসের নিকটবর্তী এলাকায় ছাত্র ও ছাত্রীদের জন্য বিশ্ববিদ্যালয়ের অনুমোদিত নিরাপদ আবাসিক হোস্টেল সুবিধা রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 11
+  },
+  {
+    "at": "2026-09-25T18:43:53.353Z",
+    "sessionId": "127.0.0.1",
+    "question": "transport ache?",
+    "answer": "হ্যাঁ, শিক্ষার্থীদের জন্য ঢাকা ও আশেপাশের বিভিন্ন রুট (গাবতলী, মিরপুর-১০, উত্তরা, নবীনগর, আশুলিয়া, বাইপাইল) থেকে বিশ্ববিদ্যালয়ের নিজস্ব বাস সার্ভিস চালু রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 12
+  },
+  {
+    "at": "2026-09-25T18:43:53.373Z",
+    "sessionId": "127.0.0.1",
+    "question": "ugc approved kina?",
+    "answer": "হ্যাঁ, Gono Bishwabidyalay বাংলাদেশ বিশ্ববিদ্যালয় মঞ্জুরী কমিশন (UGC) এবং শিক্ষা মন্ত্রণালয় কর্তৃক সম্পূর্ণভাবে **অনুমোদিত ও স্বীকৃত**। এছাড়াও এর ফার্মেসি প্রোগ্রাম Pharmacy Council of Bangladesh (PCB) এবং আইন প্রোগ্রাম বাংলাদেশ বার কাউন্সিল কর্তৃক অনুমোদিত।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 5
+  },
+  {
+    "at": "2026-09-25T18:43:53.391Z",
+    "sessionId": "127.0.0.1",
+    "question": "campus area koto?",
+    "answer": "Gono Bishwabidyalay-এর সাভারের স্থায়ী সবুজ ক্যাম্পাসটি প্রায় **32 acres (৩২ একর স্থায়ী সবুজ ক্যাম্পাস)** জমির ওপর অবস্থিত।",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-25T18:44:47.329Z",
+    "sessionId": "127.0.0.1",
+    "question": "kobe protishthito hoy?",
+    "answer": "Gono Bishwabidyalay **14 July 1998** সালে গণস্বাস্থ্য কেন্দ্র ট্রাস্টের অধীনে ডা. জাফরুল্লাহ চৌধুরীর উদ্যোগে প্রতিষ্ঠিত হয়।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 37
+  },
+  {
+    "at": "2026-09-25T18:44:47.375Z",
+    "sessionId": "127.0.0.1",
+    "question": "founder ke?",
+    "answer": "Gono Bishwabidyalay-এর প্রতিষ্ঠাতা বীর মুক্তিযোদ্ধা **Dr. Zafrullah Chowdhury**। এটি Gonoshasthaya Kendra (GK) Public Charitable Trust-এর অধীনে পরিচালিত।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 19
+  },
+  {
+    "at": "2026-09-25T18:44:47.822Z",
+    "sessionId": "127.0.0.1",
+    "question": "VC ke?",
+    "answer": "Vice-Chancellor-er name **Professor Dr. Md. Abul Hossain**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 437
+  },
+  {
+    "at": "2026-09-25T18:44:47.869Z",
+    "sessionId": "127.0.0.1",
+    "question": "chancellor ke?",
+    "answer": "Gono Bishwabidyalay-এর চ্যান্সেলর পদাধিকারবলে **গণপ্রজাতন্ত্রী বাংলাদেশের মহামান্য রাষ্ট্রপতি** (The President of Bangladesh)।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 17
+  },
+  {
+    "at": "2026-09-25T18:44:47.888Z",
+    "sessionId": "127.0.0.1",
+    "question": "campus area koto?",
+    "answer": "Gono Bishwabidyalay-এর সাভারের স্থায়ী সবুজ ক্যাম্পাসটি প্রায় **32 acres (৩২ একর স্থায়ী সবুজ ক্যাম্পাস)** জমির ওপর অবস্থিত।",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 11
+  },
+  {
+    "at": "2026-09-25T18:44:47.908Z",
+    "sessionId": "127.0.0.1",
+    "question": "baksu ki?",
+    "answer": "**বাকসু (Gono Bishwabidyalay Central Students' Union (GBKC / বাকসু))** ২০১৩ সালে প্রতিষ্ঠিত হয়। এটি ঢাকা বিশ্ববিদ্যালয়ের ডাকসুর পর দেশের দ্বিতীয় সক্রিয় কেন্দ্রীয় ছাত্র সংসদ এবং বেসরকারি বিশ্ববিদ্যালয়ে একমাত্র নির্বাচিত ছাত্র সংসদ। এর বর্তমান ভিপি **Iyasin Al Mridul Dewan (ইয়াসিন আল মৃদুল দেওয়ান)** এবং জিএস **Md. Raihan Khan (মোঃ রায়হান খান)**।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-25T18:44:47.923Z",
+    "sessionId": "127.0.0.1",
+    "question": "hospital ache?",
+    "answer": "হ্যাঁ, গণস্বাস্থ্য কেন্দ্রের নিজস্ব ৫০০ শয্যার **গণস্বাস্থ্য নগর হাসপাতাল** (সাভার ও ধানমন্ডি) এবং গণস্বাস্থ্য সমাজভিত্তিক মেডিকেল কলেজ রয়েছে, যেখানে শিক্ষার্থীরা ক্লিনিক্যাল ও ব্যবহারিক প্রশিক্ষণ লাভ করে।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-25T18:44:48.007Z",
+    "sessionId": "127.0.0.1",
+    "question": "cost koto?",
+    "answer": "**gb central students union 2025 2027**-এর নির্দিষ্ট মোট ৪ বছরের টিউশন প্যাকেজ ফি ওয়েবসাইটে আলাদাভাবে প্রকাশিত নেই।\n- **ভর্তিকালীন প্রারম্ভিক খরচ:** আন্ডারগ্র্যাজুয়েট প্রোগ্রামে সাধারণত **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন অন্তর্ভুক্ত)।\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার ফলাফলের ভিত্তিতে ১০% থেকে ৫০% পর্যন্ত টিউশন ফি ওয়েভার পাওয়া যায়।\n- বর্তমান সেশনের আপডেটেড পূর্ণাঙ্গ ফি জানতে ভর্তি অফিসে সরাসরি যোগাযোগ করুন: **01950003314**, **01950003319** বা ইমেইল: **admin@gonouniversity.edu.bd**।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 64
+  },
+  {
+    "at": "2026-09-25T18:44:48.038Z",
+    "sessionId": "127.0.0.1",
+    "question": "CSE te cost koto?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ:** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার অন্তর্ভুক্ত)।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 14
+  },
+  {
+    "at": "2026-09-25T18:44:48.068Z",
+    "sessionId": "127.0.0.1",
+    "question": "waiver kivabe pabo?",
+    "answer": "Gono Bishwabidyalay-তে সেমিস্টার পরীক্ষার ফলাফলের (GPA 3.50+) ভিত্তিতে **১০% থেকে সর্বোচ্চ ৫০%** পর্যন্ত টিউশন ফি ওয়েভার পাওয়া যায়। এছাড়া বীর মুক্তিযোদ্ধার সন্তানদের জন্য ১০০% এবং নারী শিক্ষার্থীদের জন্য বিশেষ Carrol Ann Eggen বৃত্তি রয়েছে। প্রতি সেমিস্টার শুরুর আগে ডিন বা রেজিস্ট্রার অফিসে আবেদন করতে হয়।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 22
+  },
+  {
+    "at": "2026-09-25T18:44:48.090Z",
+    "sessionId": "127.0.0.1",
+    "question": "hostel ache?",
+    "answer": "হ্যাঁ, ক্যাম্পাসের নিকটবর্তী এলাকায় ছাত্র ও ছাত্রীদের জন্য বিশ্ববিদ্যালয়ের অনুমোদিত নিরাপদ আবাসিক হোস্টেল সুবিধা রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 10
+  },
+  {
+    "at": "2026-09-25T18:44:48.121Z",
+    "sessionId": "127.0.0.1",
+    "question": "transport ache?",
+    "answer": "হ্যাঁ, শিক্ষার্থীদের জন্য ঢাকা ও আশেপাশের বিভিন্ন রুট (গাবতলী, মিরপুর-১০, উত্তরা, নবীনগর, আশুলিয়া, বাইপাইল) থেকে বিশ্ববিদ্যালয়ের নিজস্ব বাস সার্ভিস চালু রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-25T18:44:48.139Z",
+    "sessionId": "127.0.0.1",
+    "question": "kobe theke shuru hobe?",
+    "answer": "Gono Bishwabidyalay-তে বছরে দুটি সেশনে ভর্তি নেওয়া হয়:\n- **স্প্রিং সেশন (Spring):** জানুয়ারি – ফেব্রুয়ারি\n- **ফল সেশন (Fall):** জুলাই – আগস্ট\nভর্তি সংক্রান্ত তথ্য ও সহায়তার জন্য হেল্পলাইন: **01950003314**, **01950003319**।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 8
+  },
+  {
+    "at": "2026-09-25T18:44:48.166Z",
+    "sessionId": "127.0.0.1",
+    "question": "gono bishwabidyalay ki private naki public?",
+    "answer": "Gono Bishwabidyalay একটি সরকার ও UGC অনুমোদিত **বেসরকারি বিশ্ববিদ্যালয় (Private University)**। এটি গণস্বাস্থ্য কেন্দ্র পাবলিক চ্যারিটেবল ট্রাস্টের অধীনে পরিচালিত একটি অলাভজনক সেবামূলক উচ্চশিক্ষা প্রতিষ্ঠান।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-25T18:44:48.196Z",
+    "sessionId": "127.0.0.1",
+    "question": "ugc approved kina?",
+    "answer": "হ্যাঁ, Gono Bishwabidyalay বাংলাদেশ বিশ্ববিদ্যালয় মঞ্জুরী কমিশন (UGC) এবং শিক্ষা মন্ত্রণালয় কর্তৃক সম্পূর্ণভাবে **অনুমোদিত ও স্বীকৃত**। এছাড়াও এর ফার্মেসি প্রোগ্রাম Pharmacy Council of Bangladesh (PCB) এবং আইন প্রোগ্রাম বাংলাদেশ বার কাউন্সিল কর্তৃক অনুমোদিত।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-25T18:44:48.225Z",
+    "sessionId": "127.0.0.1",
+    "question": "ranking koto?",
+    "answer": "Gono Bishwabidyalay বিশেষায়িত স্বাস্থ্যবিজ্ঞান, প্রকৌশল এবং সমাজকল্যাণমুখী শিক্ষার জন্য খ্যাত। বিশেষ করে দেশে সর্বপ্রথম 'মেডিকেল ফিজিক্স অ্যান্ড বায়োমেডিকেল ইঞ্জিনিয়ারিং' বিভাগ চালুর জন্য এটি সমাদৃত।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 5
+  },
+  {
+    "at": "2026-09-25T18:44:48.241Z",
+    "sessionId": "127.0.0.1",
+    "question": "trustee board ke?",
+    "answer": "Gono Bishwabidyalay **গণস্বাস্থ্য কেন্দ্র (GK) পাবলিক চ্যারিটেবল ট্রাস্ট**-এর অধীনে পরিচালিত হয়। বীর মুক্তিযোদ্ধা ডা. জাফরুল্লাহ চৌধুরী এই ট্রাস্টের মূল স্বপ্নদ্রষ্টা ছিলেন।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-25T18:44:48.257Z",
+    "sessionId": "127.0.0.1",
+    "question": "dr zafrullah chowdhury ke?",
+    "answer": "বীর মুক্তিযোদ্ধা **ডা. জাফরুল্লাহ চৌধুরী** ছিলেন গণস্বাস্থ্য কেন্দ্র এবং Gono Bishwabidyalay-এর প্রতিষ্ঠাতা ও স্বপ্নদ্রষ্টা। তিনি বাংলাদেশের স্বাস্থ্য ও শিক্ষা খাতের একজন অগ্রদূত ছিলেন।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-25T18:44:48.282Z",
+    "sessionId": "127.0.0.1",
+    "question": "cse porle ki hobe?",
+    "answer": "**CSE ক্যারিয়ার সুযোগ:** সফটওয়্যার ইঞ্জিনিয়ারিং, AI ও মেশিন লার্নিং, ওয়েব/মোবাইল অ্যাপ ডেভেলপমেন্ট, সাইবার সিকিউরিটি এবং গ্লোবাল রিমোট টেক জবের চমৎকার সুযোগ রয়েছে। এছাড়াও বিসিএস আইসিটি ক্যাডার ও সরকারি প্রতিষ্ঠানে আইটি অফিসার পদে নিয়োগ পাওয়া যায়।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 20
+  },
+  {
+    "at": "2026-09-25T18:45:46.035Z",
+    "sessionId": "test-session-0",
+    "question": "kobe protishthito hoy?",
+    "answer": "Gono Bishwabidyalay **14 July 1998** সালে গণস্বাস্থ্য কেন্দ্র ট্রাস্টের অধীনে ডা. জাফরুল্লাহ চৌধুরীর উদ্যোগে প্রতিষ্ঠিত হয়।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 25
+  },
+  {
+    "at": "2026-09-25T18:45:46.072Z",
+    "sessionId": "test-session-1",
+    "question": "founder ke?",
+    "answer": "Gono Bishwabidyalay-এর প্রতিষ্ঠাতা বীর মুক্তিযোদ্ধা **Dr. Zafrullah Chowdhury**। এটি Gonoshasthaya Kendra (GK) Public Charitable Trust-এর অধীনে পরিচালিত।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-25T18:45:46.153Z",
+    "sessionId": "test-session-2",
+    "question": "VC ke?",
+    "answer": "Vice-Chancellor-er name **Professor Dr. Md. Abul Hossain**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 67
+  },
+  {
+    "at": "2026-09-25T18:45:46.187Z",
+    "sessionId": "test-session-3",
+    "question": "chancellor ke?",
+    "answer": "Gono Bishwabidyalay-এর চ্যান্সেলর পদাধিকারবলে **গণপ্রজাতন্ত্রী বাংলাদেশের মহামান্য রাষ্ট্রপতি** (The President of Bangladesh)।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 10
+  },
+  {
+    "at": "2026-09-25T18:45:46.208Z",
+    "sessionId": "test-session-4",
+    "question": "campus area koto?",
+    "answer": "Gono Bishwabidyalay-এর সাভারের স্থায়ী সবুজ ক্যাম্পাসটি প্রায় **32 acres (৩২ একর স্থায়ী সবুজ ক্যাম্পাস)** জমির ওপর অবস্থিত।",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 11
+  },
+  {
+    "at": "2026-09-25T18:45:46.221Z",
+    "sessionId": "test-session-5",
+    "question": "baksu ki?",
+    "answer": "**বাকসু (Gono Bishwabidyalay Central Students' Union (GBKC / বাকসু))** ২০১৩ সালে প্রতিষ্ঠিত হয়। এটি ঢাকা বিশ্ববিদ্যালয়ের ডাকসুর পর দেশের দ্বিতীয় সক্রিয় কেন্দ্রীয় ছাত্র সংসদ এবং বেসরকারি বিশ্ববিদ্যালয়ে একমাত্র নির্বাচিত ছাত্র সংসদ। এর বর্তমান ভিপি **Iyasin Al Mridul Dewan (ইয়াসিন আল মৃদুল দেওয়ান)** এবং জিএস **Md. Raihan Khan (মোঃ রায়হান খান)**।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-25T18:45:46.234Z",
+    "sessionId": "test-session-6",
+    "question": "hospital ache?",
+    "answer": "হ্যাঁ, গণস্বাস্থ্য কেন্দ্রের নিজস্ব ৫০০ শয্যার **গণস্বাস্থ্য নগর হাসপাতাল** (সাভার ও ধানমন্ডি) এবং গণস্বাস্থ্য সমাজভিত্তিক মেডিকেল কলেজ রয়েছে, যেখানে শিক্ষার্থীরা ক্লিনিক্যাল ও ব্যবহারিক প্রশিক্ষণ লাভ করে।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 6
+  },
+  {
+    "at": "2026-09-25T18:45:46.263Z",
+    "sessionId": "test-session-7",
+    "question": "cost koto?",
+    "answer": "Gono Bishwabidyalay-এর প্রধান প্রোগ্রামগুলোর মোট ফি:\n- **B.Sc. in CSE:** Tk. 4,50,000/- (৪ বছর / ৮ সেমিস্টার)\n- **Bachelor of Pharmacy (B.Pharm):** Tk. 6,00,000/-\n- **Master of Pharmacy (M.Pharm):** Tk. 1,20,000/-\n- **BBA:** Tk. 2,80,000/- থেকে 3,50,000/-\n- ভর্তিকালীন প্রারম্ভিক খরচ: **BDT 54,500**। হেল্পলাইন: **01950003314**।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 22
+  },
+  {
+    "at": "2026-09-25T18:45:46.281Z",
+    "sessionId": "test-session-8",
+    "question": "CSE te cost koto?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering**-এর টিউশন ফি:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ:** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার অন্তর্ভুক্ত)।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 12
+  },
+  {
+    "at": "2026-09-25T18:45:46.299Z",
+    "sessionId": "test-session-9",
+    "question": "waiver kivabe pabo?",
+    "answer": "Gono Bishwabidyalay-তে সেমিস্টার পরীক্ষার ফলাফলের (GPA 3.50+) ভিত্তিতে **১০% থেকে সর্বোচ্চ ৫০%** পর্যন্ত টিউশন ফি ওয়েভার পাওয়া যায়। এছাড়া বীর মুক্তিযোদ্ধার সন্তানদের জন্য ১০০% এবং নারী শিক্ষার্থীদের জন্য বিশেষ Carrol Ann Eggen বৃত্তি রয়েছে। প্রতি সেমিস্টার শুরুর আগে ডিন বা রেজিস্ট্রার অফিসে আবেদন করতে হয়।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 8
+  },
+  {
+    "at": "2026-09-25T18:45:46.325Z",
+    "sessionId": "test-session-10",
+    "question": "hostel ache?",
+    "answer": "হ্যাঁ, ক্যাম্পাসের নিকটবর্তী এলাকায় ছাত্র ও ছাত্রীদের জন্য বিশ্ববিদ্যালয়ের অনুমোদিত নিরাপদ আবাসিক হোস্টেল সুবিধা রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 4
+  },
+  {
+    "at": "2026-09-25T18:45:46.337Z",
+    "sessionId": "test-session-11",
+    "question": "transport ache?",
+    "answer": "হ্যাঁ, শিক্ষার্থীদের জন্য ঢাকা ও আশেপাশের বিভিন্ন রুট (গাবতলী, মিরপুর-১০, উত্তরা, নবীনগর, আশুলিয়া, বাইপাইল) থেকে বিশ্ববিদ্যালয়ের নিজস্ব বাস সার্ভিস চালু রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-25T18:45:46.348Z",
+    "sessionId": "test-session-12",
+    "question": "kobe theke shuru hobe?",
+    "answer": "Gono Bishwabidyalay-তে বছরে দুটি সেশনে ভর্তি নেওয়া হয়:\n- **স্প্রিং সেশন (Spring):** জানুয়ারি – ফেব্রুয়ারি\n- **ফল সেশন (Fall):** জুলাই – আগস্ট\nভর্তি সংক্রান্ত তথ্য ও সহায়তার জন্য হেল্পলাইন: **01950003314**, **01950003319**।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-25T18:45:46.374Z",
+    "sessionId": "test-session-13",
+    "question": "gono bishwabidyalay ki private naki public?",
+    "answer": "Gono Bishwabidyalay একটি সরকার ও UGC অনুমোদিত **বেসরকারি বিশ্ববিদ্যালয় (Private University)**। এটি গণস্বাস্থ্য কেন্দ্র পাবলিক চ্যারিটেবল ট্রাস্টের অধীনে পরিচালিত একটি অলাভজনক সেবামূলক উচ্চশিক্ষা প্রতিষ্ঠান।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 8
+  },
+  {
+    "at": "2026-09-25T18:45:46.388Z",
+    "sessionId": "test-session-14",
+    "question": "ugc approved kina?",
+    "answer": "হ্যাঁ, Gono Bishwabidyalay বাংলাদেশ বিশ্ববিদ্যালয় মঞ্জুরী কমিশন (UGC) এবং শিক্ষা মন্ত্রণালয় কর্তৃক সম্পূর্ণভাবে **অনুমোদিত ও স্বীকৃত**। এছাড়াও এর ফার্মেসি প্রোগ্রাম Pharmacy Council of Bangladesh (PCB) এবং আইন প্রোগ্রাম বাংলাদেশ বার কাউন্সিল কর্তৃক অনুমোদিত।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-25T18:45:46.402Z",
+    "sessionId": "test-session-15",
+    "question": "ranking koto?",
+    "answer": "Gono Bishwabidyalay বিশেষায়িত স্বাস্থ্যবিজ্ঞান, প্রকৌশল এবং সমাজকল্যাণমুখী শিক্ষার জন্য খ্যাত। বিশেষ করে দেশে সর্বপ্রথম 'মেডিকেল ফিজিক্স অ্যান্ড বায়োমেডিকেল ইঞ্জিনিয়ারিং' বিভাগ চালুর জন্য এটি সমাদৃত।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 5
+  },
+  {
+    "at": "2026-09-25T18:45:46.424Z",
+    "sessionId": "test-session-16",
+    "question": "trustee board ke?",
+    "answer": "Gono Bishwabidyalay **গণস্বাস্থ্য কেন্দ্র (GK) পাবলিক চ্যারিটেবল ট্রাস্ট**-এর অধীনে পরিচালিত হয়। বীর মুক্তিযোদ্ধা ডা. জাফরুল্লাহ চৌধুরী এই ট্রাস্টের মূল স্বপ্নদ্রষ্টা ছিলেন।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 12
+  },
+  {
+    "at": "2026-09-25T18:45:46.437Z",
+    "sessionId": "test-session-17",
+    "question": "dr zafrullah chowdhury ke?",
+    "answer": "বীর মুক্তিযোদ্ধা **ডা. জাফরুল্লাহ চৌধুরী** ছিলেন গণস্বাস্থ্য কেন্দ্র এবং Gono Bishwabidyalay-এর প্রতিষ্ঠাতা ও স্বপ্নদ্রষ্টা। তিনি বাংলাদেশের স্বাস্থ্য ও শিক্ষা খাতের একজন অগ্রদূত ছিলেন।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 8
+  },
+  {
+    "at": "2026-09-25T18:45:46.460Z",
+    "sessionId": "test-session-18",
+    "question": "cse porle ki hobe?",
+    "answer": "**CSE ক্যারিয়ার সুযোগ:** সফটওয়্যার ইঞ্জিনিয়ারিং, AI ও মেশিন লার্নিং, ওয়েব/মোবাইল অ্যাপ ডেভেলপমেন্ট, সাইবার সিকিউরিটি এবং গ্লোবাল রিমোট টেক জবের চমৎকার সুযোগ রয়েছে। এছাড়াও বিসিএস আইসিটি ক্যাডার ও সরকারি প্রতিষ্ঠানে আইটি অফিসার পদে নিয়োগ পাওয়া যায়।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 13
+  },
+  {
+    "at": "2026-09-25T18:53:11.567Z",
+    "sessionId": "live-test-1790362388455",
+    "question": "how many total credits?",
+    "answer": "According to the official data: Hours Theory /Lab | Total Credits | Total Marks Students opting for any of one of the groups (Electronics group, Computer group, Communication group, and Power group) will have to take 11 credits from that group and 9 credits from the other groups. Duration | Total Contact",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 3026
+  },
+  {
+    "at": "2026-09-25T18:53:12.661Z",
+    "sessionId": "live-test-1790362388455",
+    "question": "in cse",
+    "answer": "The official course plan for **Department of Computer Science and Engineering (CSE)** lists total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 1064
+  },
+  {
+    "at": "2026-09-25T18:53:19.787Z",
+    "sessionId": "chain-test-1790362399089",
+    "question": "how many total credits?",
+    "answer": "According to the official data: Hours Theory /Lab | Total Credits | Total Marks Students opting for any of one of the groups (Electronics group, Computer group, Communication group, and Power group) will have to take 11 credits from that group and 9 credits from the other groups. Duration | Total Contact",
+    "mode": "smart_retrieval",
+    "sourceCount": 3,
+    "latencyMs": 587
+  },
+  {
+    "at": "2026-09-25T18:53:20.961Z",
+    "sessionId": "chain-test-1790362399089",
+    "question": "in cse",
+    "answer": "The official course plan for **Department of Computer Science and Engineering (CSE)** lists total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 1152
+  },
+  {
+    "at": "2026-09-25T18:53:23.840Z",
+    "sessionId": "chain-test-1790362399089",
+    "question": "what is the fee?",
+    "answer": "I could not verify the exact total credits for **Department of Applied Mathematics** from the indexed official sources. Specify the degree/session or share its syllabus so I can check.",
+    "mode": "not_found",
+    "sourceCount": 2,
+    "latencyMs": 2870
+  },
+  {
+    "at": "2026-09-25T18:53:23.900Z",
+    "sessionId": "chain-test-1790362399089",
+    "question": "in pharmacy",
+    "answer": "Official published program fees:\n\n**BPharm/ Bachelor of Pharmacy (Hons)** total course fee is **Tk. 6,00,000/-** (4 years / 8 semesters). Initial admission payment is **BDT 54,500**.\n\n**MPharm/ Master of Pharmacy** total course fee is **Tk. 1,20,000/-** (4 years / 8 semesters). Initial admission payment is **BDT 54,500**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 37
+  },
+  {
+    "at": "2026-09-25T18:53:23.945Z",
+    "sessionId": "chain-test-1790362399089",
+    "question": "who is the head?",
+    "answer": "The official department head for Department of Applied Mathematics is **Dr. Wahida Zaman Loskor**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 36
+  },
+  {
+    "at": "2026-09-25T19:03:04.855Z",
+    "sessionId": "127.0.0.1",
+    "question": "how many total credits?",
+    "answer": "The official course plan for **Department of Computer Science and Engineering (CSE)** lists total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 854
+  },
+  {
+    "at": "2026-09-25T19:03:05.727Z",
+    "sessionId": "127.0.0.1",
+    "question": "in cse",
+    "answer": "The official course plan for **Department of Computer Science and Engineering (CSE)** lists total credits **160**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 845
+  },
+  {
+    "at": "2026-09-25T19:03:11.658Z",
+    "sessionId": "127.0.0.1",
+    "question": "what is the tuition fee?",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering** Tuition Fee:\n- **Total Program Fee (4 Years / 8 Semesters):** **Tk. 4,50,000/-**\n- **Initial Admission Payment:** **BDT 54,500** (includes admission fee and 1st semester tuition).",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 33
+  },
+  {
+    "at": "2026-09-25T19:03:11.715Z",
+    "sessionId": "127.0.0.1",
+    "question": "in cse",
+    "answer": "**B.Sc. (Honours) in Computer Science & Engineering** Tuition Fee:\n- **Total Program Fee (4 Years / 8 Semesters):** **Tk. 4,50,000/-**\n- **Initial Admission Payment:** **BDT 54,500** (includes admission fee and 1st semester tuition).",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 35
+  },
+  {
+    "at": "2026-09-25T19:03:11.777Z",
+    "sessionId": "127.0.0.1",
+    "question": "in pharmacy",
+    "answer": "Official published program fees:\n\n**BPharm/ Bachelor of Pharmacy (Hons)** total course fee is **Tk. 6,00,000/-** (4 years / 8 semesters). Initial admission payment is **BDT 54,500**.\n\n**MPharm/ Master of Pharmacy** total course fee is **Tk. 1,20,000/-** (4 years / 8 semesters). Initial admission payment is **BDT 54,500**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 51
+  },
+  {
+    "at": "2026-09-25T19:03:11.824Z",
+    "sessionId": "127.0.0.1",
+    "question": "who is the head?",
+    "answer": "The official department head for Department of Pharmacy is **Dr. Mst. Rozina Parul**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 38
+  },
+  {
+    "at": "2026-09-25T19:09:36.881Z",
+    "sessionId": "chat_1790363296240_c9mfa7",
+    "question": "bus service ache??",
+    "answer": "হ্যাঁ, শিক্ষার্থীদের জন্য ঢাকা ও আশেপাশের বিভিন্ন রুট (গাবতলী, মিরপুর-১০, উত্তরা, নবীনগর, আশুলিয়া, বাইপাইল) থেকে বিশ্ববিদ্যালয়ের নিজস্ব বাস সার্ভিস চালু রয়েছে।",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 7
+  },
+  {
+    "at": "2026-09-25T19:09:52.124Z",
+    "sessionId": "chat_1790363296240_c9mfa7",
+    "question": "vara koto?",
+    "answer": "**vara koto?** সম্পর্কে প্রয়োজনীয় তথ্য ও পরামর্শ:\n- আপনি কি Gono Bishwabidyalay-এর নির্দিষ্ট কোনো বিভাগ (যেমন CSE, Pharmacy, BBA, Law), কোর্স ফি, ওয়েভার, নাকি ভর্তির যোগ্যতা সম্পর্কে জানতে চান?\n- আপনার প্রশ্নটি আরেকটু বিস্তারিত বা নির্দিষ্ট করে বলুন, আমি পূর্ণাঙ্গ তথ্য দিয়ে সাহায্য করব।",
+    "mode": "ai_fallback",
+    "sourceCount": 0,
+    "latencyMs": 78
+  },
+  {
+    "at": "2026-09-26T05:46:58.867Z",
+    "sessionId": "sharif-coref-live-3506c856a94e41cf838bc27929f4e981",
+    "question": "sharif sir ke cheno?",
+    "answer": "Haan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 315
+  },
+  {
+    "at": "2026-09-26T05:46:58.948Z",
+    "sessionId": "sharif-coref-live-3506c856a94e41cf838bc27929f4e981",
+    "question": "number please",
+    "answer": "**Sharif Ahamed**: **01881-062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 30
+  },
+  {
+    "at": "2026-09-26T05:46:59.014Z",
+    "sessionId": "sharif-coref-live-3506c856a94e41cf838bc27929f4e981",
+    "question": "does he have email?",
+    "answer": "**Sharif Ahamed**: **diptosharifahamed@gmail.com**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 57
+  },
+  {
+    "at": "2026-09-26T05:46:59.074Z",
+    "sessionId": "sharif-coref-live-3506c856a94e41cf838bc27929f4e981",
+    "question": "tar qualification ki?",
+    "answer": "Haan, **Sharif Ahamed** Department of Computer Science and Engineering (CSE)-er **Lecturer**.\n**Qualification:** M.Sc. in CSE",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 55
+  },
+  {
+    "at": "2026-09-26T05:47:21.092Z",
+    "sessionId": "sharif-coref-live-3506c856a94e41cf838bc27929f4e981",
+    "question": "email ta abar bolo",
+    "answer": "**Sharif Ahamed**: **diptosharifahamed@gmail.com**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 184
+  },
+  {
+    "at": "2026-09-26T05:47:41.856Z",
+    "sessionId": "chat_1790401650832_pxrked",
+    "question": "number please",
+    "answer": "**Sharif Ahamed**: **01881-062304**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 42
+  },
+  {
+    "at": "2026-09-26T05:47:42.166Z",
+    "sessionId": "chat_1790401650832_pxrked",
+    "question": "does he have email?",
+    "answer": "**Sharif Ahamed**: **diptosharifahamed@gmail.com**",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 96
+  },
+  {
+    "at": "2026-09-26T05:51:49.043Z",
+    "sessionId": "external-proof-45de835dd00044268ab4a24ee8f67ddb",
+    "question": "area size of Gono Bishwabidyalay?",
+    "answer": "**Wikipedia reports** that Gono Bishwabidyalay has a **32 acres** rural campus. The currently indexed official general-information pages do not publish an acreage figure, so this should be treated as a Wikipedia-attributed claim.",
+    "mode": "source_aware",
+    "sourceCount": 2,
+    "latencyMs": 123
+  },
+  {
+    "at": "2026-09-26T05:51:49.286Z",
+    "sessionId": "external-proof-45de835dd00044268ab4a24ee8f67ddb",
+    "question": "What is its QS ranking?",
+    "answer": "According to **QS**, Gono Bishwabidyalay is ranked **#1301-1400 in the Asian University Rankings 2026**. QS's profile snapshot also reports **4,574 students** and **158 faculty staff**; these figures reflect QS's reporting dataset, not a live registrar count.",
+    "mode": "source_aware",
+    "sourceCount": 1,
+    "latencyMs": 168
+  },
+  {
+    "at": "2026-09-26T05:51:49.359Z",
+    "sessionId": "external-proof-45de835dd00044268ab4a24ee8f67ddb",
+    "question": "Gono name meaning ki?",
+    "answer": "**Gono Bishwabidyalay (গণ বিশ্ববিদ্যালয়)**-এর আক্ষরিক অর্থ **“People's University”** এবং সংক্ষিপ্ত নাম **GB**।",
+    "mode": "source_aware",
+    "sourceCount": 3,
+    "latencyMs": 62
+  },
+  {
+    "at": "2026-09-26T05:51:49.462Z",
+    "sessionId": "external-proof-45de835dd00044268ab4a24ee8f67ddb",
+    "question": "coordinates koto?",
+    "answer": "Wikipedia lists the campus coordinates as **23.9287° N, 90.2447° E**. The official postal address is **Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344**.",
+    "mode": "source_aware",
+    "sourceCount": 2,
+    "latencyMs": 96
+  }
+]

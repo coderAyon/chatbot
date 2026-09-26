@@ -1,0 +1,33 @@
+{
+  "name": "gono-university-helpdesk",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test scripts/answer-engine.test.mjs",
+    "check": "npm test && npm run build",
+    "start": "node scripts/dev-all.mjs",
+    "dev": "vite --host 127.0.0.1",
+    "api": "node scripts/api-server.mjs",
+    "build:knowledge": "node scripts/build-knowledge.mjs",
+    "enrich:core": "node scripts/enrich-core-knowledge.mjs",
+    "enrich:external": "node scripts/enrich-external-knowledge.mjs",
+    "refresh:people": "node scripts/refresh-people-knowledge.mjs",
+    "refresh:pharmacy": "node scripts/refresh-pharmacy-knowledge.mjs",
+    "restore:knowledge": "node scripts/restore-seed-knowledge.mjs",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.3.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "cheerio": "^1.2.0",
+    "lucide-react": "^0.544.0",
+    "pdf-parse": "^2.4.5",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tesseract.js": "^7.0.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7"
+  }
+}
