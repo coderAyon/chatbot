@@ -14,7 +14,7 @@ const SETTINGS_FILE = new URL("../data/settings.json", import.meta.url);
 const CACHE_FILE = new URL("../data/response-cache.json", import.meta.url);
 const CONVERSATION_FILE = new URL("../data/conversation-memory.json", import.meta.url);
 const NOT_VERIFIED = "I couldn't find verified information from the official university data.";
-const ANSWER_ENGINE_VERSION = "2026-09-26-viva-hardening-v42";
+const ANSWER_ENGINE_VERSION = "2026-09-26-viva-hardening-v44";
 
 async function loadLocalEnv() {
   try {
@@ -2230,9 +2230,7 @@ function directDepartmentLeaderAnswer(question, knowledge) {
   }
 
   const displayDepartment = displayDepartmentName(matchedDepartment);
-  const leaders = departmentPeople(knowledge, matchedDepartment).filter((person) =>
-    /\b(head|chairman|chairperson|chair)\b/i.test(person.designation || ""),
-  );
+  const leaders = departmentLeaders(departmentPeople(knowledge, matchedDepartment), matchedDepartment);
   if (!leaders.length) return null;
 
   if (/\b(room|office\s+room|room\s+number|building|floor)\b/i.test(q)) {
@@ -2345,10 +2343,12 @@ function departmentAliases(department) {
   if (/\bComputer Science|CSE\b/i.test(department)) aliases.add("cse").add("computer science").add("computer science and engineering");
   if (/Business Administration/i.test(department)) aliases.add("bba").add("business").add("business administration");
   if (/Bangla/i.test(department)) aliases.add("bangla").add("bengali");
-  if (/Politics/i.test(department)) aliases.add("politics").add("politics and governance").add("political science");
-  if (/Veterinary/i.test(department)) aliases.add("veterinary").add("animal sciences");
+  if (/Politics/i.test(department)) aliases.add("politics").add("governance").add("politics and governance").add("political science");
+  if (/Veterinary/i.test(department)) {
+    aliases.add("vet").add("veterinary").add("vet science").add("veterinary science").add("animal science").add("animal sciences").add("dvm");
+  }
   if (/Pharmacy/i.test(department)) aliases.add("pharmacy").add("pharma").add("farmacy");
-  if (/Microbiology/i.test(department)) aliases.add("microbiology");
+  if (/Microbiology/i.test(department)) aliases.add("microbiology").add("microbio");
   if (/Electrical and Electronic Engineering|\bEEE\b/i.test(department)) {
     aliases.add("eee").add("electrical engineering").add("electrical and electronic engineering");
   }
@@ -2361,13 +2361,15 @@ function departmentAliases(department) {
       .add("mpbme")
       .add("bme");
   }
-  if (/Agriculture/i.test(department)) aliases.add("agriculture");
+  if (/Agriculture/i.test(department)) aliases.add("agriculture").add("agri");
   if (/English/i.test(department)) aliases.add("english");
-  if (/\bLaw\b/i.test(department)) aliases.add("law");
   if (/\bMathematics\b/i.test(department)) aliases.add("math").add("mathematics").add("applied math").add("applied mathematics");
   if (/\bChemistry\b/i.test(department)) aliases.add("chemistry").add("chem");
   if (/\bPhysics\b/i.test(department)) aliases.add("physics").add("phy");
-  if (/\bBiochemistry\b/i.test(department)) aliases.add("bmb").add("biochemistry").add("molecular biology");
+  if (/\bBiochemistry\b/i.test(department)) aliases.add("bmb").add("biochem").add("biochemistry").add("molecular biology");
+  if (/Applied Mathematics/i.test(department)) aliases.add("math").add("maths").add("applied math").add("applied mathematics");
+  if (/Sociology|Social Work/i.test(department)) aliases.add("sociology").add("social work").add("sociology and social work");
+  if (/\bLaw\b/i.test(department)) aliases.add("law").add("llb").add("llm");
   return [...aliases].filter(Boolean);
 }
 
@@ -2382,6 +2384,13 @@ function departmentPeople(knowledge, department) {
   return dedupePeople(
     (knowledge.faculty || []).filter((person) => displayDepartmentName(person.department).toLowerCase() === wanted),
   );
+}
+
+function departmentLeaders(people, department) {
+  const leaders = people.filter((person) => /\b(head|chairman|chairperson|chair|dean)\b/i.test(person.designation || ""));
+  if (!/^Faculty of\b/i.test(displayDepartmentName(department))) return leaders;
+  const deans = leaders.filter((person) => /\bdean\b/i.test(person.designation || ""));
+  return deans.length ? deans : leaders;
 }
 
 function isTeachingFaculty(person) {
@@ -2652,7 +2661,7 @@ function directDepartmentProfileAnswer(question, knowledge) {
   if (!matchedDepartment || !asksOverview || asksFeeDetail(q) || asksContactDetail(q) || asksProgramDetail(q)) return null;
   const program = programForDepartment(knowledge, matchedDepartment, /\b(master|msc|graduate|postgraduate)\b/i.test(q));
   const people = departmentPeople(knowledge, matchedDepartment).filter(isTeachingFaculty);
-  const heads = people.filter((person) => /\b(head|chairman|chairperson|chair)\b/i.test(person.designation || ""));
+  const heads = departmentLeaders(people, matchedDepartment);
   const credit = departmentCreditFact(knowledge, matchedDepartment);
   const { courses, sources: courseSources } = departmentCourses(knowledge, matchedDepartment);
   const facts = [
@@ -2699,7 +2708,7 @@ function directDepartmentOverviewAnswer(question, knowledge) {
   const people = /\b(faculty|teacher|teachers)\b/i.test(q) ? allPeople.filter(isTeachingFaculty) : allPeople;
   if (!asksFaculty || !people.length) return null;
 
-  const leaders = people.filter((person) => /\b(head|chairman|chairperson|chair)\b/i.test(person.designation || ""));
+  const leaders = departmentLeaders(people, matchedDepartment);
   const leadText = leaders.length
     ? ` Head: ${leaders.map((person) => person.name).join(", ")}.`
     : "";
@@ -3229,7 +3238,6 @@ function directAnswer(question, knowledge, history = []) {
     directResearchAndCampusLifeAnswer(question) ||
     directFacilitiesAnswer(question) ||
     directAdmissionOverviewAnswer(question, knowledge) ||
-    directPeopleAnswer(question, knowledge) ||
     directAdmissionProcedureAnswer(question, knowledge, history) ||
     directAdmissionEligibilityAnswer(question, knowledge, history) ||
     directWaiverAndFinancialAidAnswer(question, knowledge, history) ||
@@ -3239,13 +3247,14 @@ function directAnswer(question, knowledge, history = []) {
     directCareerGuidanceAnswer(question, knowledge, history) ||
     directCourseCatalogAnswer(question, knowledge) ||
     directDepartmentProfileAnswer(question, knowledge) ||
-    directFollowupAnswer(question, knowledge, history) ||
     directRoleAnswer(question, knowledge) ||
     directProgramAdmissionAnswer(question, knowledge) ||
     directProgramDetailAnswer(question, knowledge) ||
     directNoticeAnswer(question, knowledge) ||
     directOfficeContactAnswer(question, knowledge) ||
     directDepartmentLeaderAnswer(question, knowledge) ||
+    directPeopleAnswer(question, knowledge) ||
+    directFollowupAnswer(question, knowledge, history) ||
     directAllPeopleOverviewAnswer(question, knowledge) ||
     directDepartmentOverviewAnswer(question, knowledge) ||
     directUnknownPersonAnswer(question, knowledge) ||

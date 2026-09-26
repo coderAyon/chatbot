@@ -12,6 +12,7 @@ import {
 const root = "https://gonouniversity.edu.bd/";
 const eee = "Department of Electrical and Electronic Engineering (EEE)";
 const chemistry = "Department of Chemistry";
+const veterinary = "Faculty of Veterinary and Animal Sciences";
 const fixture = {
   pages: [], documents: [], fees: [], contacts: [], notices: [],
   institution: {
@@ -29,6 +30,8 @@ const fixture = {
     { name: "Example Chemistry Head", department: chemistry, designation: "Professor and Head", phone: "01000000000", email: "head@example.edu", source: `${root}chemistry/faculty-members/` },
     { name: "Example Pharmacy Head", department: "Department of Pharmacy", designation: "Head", source: `${root}pharmacy/faculty-members/` },
     { name: "Example CSE Head", department: "Department of Computer Science and Engineering (CSE)", designation: "Associate Professor & Head", source: `${root}cse/faculty-members/` },
+    { name: "Example Vet Dean", department: veterinary, designation: "Dean and Head, Department of Para-Clinical Courses", source: `${root}veterinary/faculty-members/` },
+    { name: "Example Animal Production Head", department: veterinary, designation: "Head, Department of Animal Production", source: `${root}veterinary/faculty-members/` },
   ],
   roles: [
     { key: "vice_chancellor", name: "Example VC", title: "Vice-Chancellor", source: root },
@@ -39,6 +42,7 @@ const fixture = {
   programs: [
     { name: "B.Sc. in Electrical and Electronic Engineering", department: eee, aliases: ["EEE"], duration: "4 years (8 semesters)", seats: "40", admissionRequirement: "GPA 2.5", source: `${root}admission/undergraduate-admission-requirements/` },
     { name: "B.Sc. (Honours) in Computer Science & Engineering", department: "Department of Computer Science and Engineering (CSE)", aliases: ["CSE", "Computer Science and Engineering"], duration: "4 years (8 semesters)", seats: "50", admissionRequirement: "GPA 2.5", source: `${root}admission/undergraduate-admission-requirements/` },
+    { name: "Doctor of Veterinary Medicine (DVM)", department: veterinary, aliases: ["DVM", "Veterinary Medicine"], duration: "5 years", seats: "40", admissionRequirement: "Science background", source: `${root}admission/undergraduate-admission-requirements/` },
   ],
 };
 
@@ -69,6 +73,38 @@ test("seats and eligibility do not trigger fee or faculty replies", () => {
   const missingFee = directAnswer("pharmacy total tuition fee koto?", fixture);
   assert.ok(!missingFee || missingFee.mode === "not_found");
   assert.equal(requiresVerifiedStructuredAnswer("pharmacy total tuition fee koto?"), true);
+});
+
+test("common department abbreviations resolve to the intended department", () => {
+  const faculty = directAnswer("vet faculty list", fixture);
+  assert.equal(faculty.mode, "structured");
+  assert.match(faculty.text, /Example Vet Dean/);
+  assert.match(faculty.text, /Example Animal Production Head/);
+
+  const head = directAnswer("vet dept er head ke?", fixture);
+  assert.equal(head.mode, "structured");
+  assert.match(head.text, /Example Vet Dean/);
+  assert.doesNotMatch(head.text, /Example Animal Production Head/);
+
+  const program = directAnswer("DVM duration koto?", fixture);
+  assert.equal(program.mode, "structured");
+  assert.match(program.text, /5 years/);
+
+  const overview = directAnswer("vet somporke bolo", fixture);
+  const history = [
+    { role: "user", text: "vet somporke bolo" },
+    { role: "assistant", text: overview.text },
+  ];
+  const contextualHead = directAnswer("head ke?", fixture, history);
+  assert.match(contextualHead.text, /Example Vet Dean/);
+  assert.doesNotMatch(contextualHead.text, /Example Animal Production Head/);
+
+  const contextualDuration = directAnswer("duration koto?", fixture, [
+    ...history,
+    { role: "user", text: "head ke?" },
+    { role: "assistant", text: contextualHead.text },
+  ]);
+  assert.match(contextualDuration.text, /5 years/);
 });
 
 test("credits work for departments other than CSE, with department evidence", () => {
@@ -170,7 +206,7 @@ test("program catalog excludes malformed and duplicate crawler records", () => {
   ] };
   const answer = directAnswer("show all programs", knowledge);
   assert.doesNotMatch(answer.text, /\b1st\b|30000/);
-  assert.match(answer.text, /2 programs/);
+  assert.match(answer.text, /3 programs/);
 });
 
 test("conflicting official totals ask for the applicable session", () => {
