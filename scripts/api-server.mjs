@@ -14,7 +14,7 @@ const SETTINGS_FILE = new URL("../data/settings.json", import.meta.url);
 const CACHE_FILE = new URL("../data/response-cache.json", import.meta.url);
 const CONVERSATION_FILE = new URL("../data/conversation-memory.json", import.meta.url);
 const NOT_VERIFIED = "I couldn't find verified information from the official university data.";
-const ANSWER_ENGINE_VERSION = "2026-09-26-viva-hardening-v44";
+const ANSWER_ENGINE_VERSION = "2026-09-26-viva-hardening-v45";
 
 async function loadLocalEnv() {
   try {
@@ -2387,10 +2387,10 @@ function departmentPeople(knowledge, department) {
 }
 
 function departmentLeaders(people, department) {
-  const leaders = people.filter((person) => /\b(head|chairman|chairperson|chair|dean)\b/i.test(person.designation || ""));
-  if (!/^Faculty of\b/i.test(displayDepartmentName(department))) return leaders;
-  const deans = leaders.filter((person) => /\bdean\b/i.test(person.designation || ""));
-  return deans.length ? deans : leaders;
+  const heads = people.filter((person) => /\b(head|chairman|chairperson|chair)\b/i.test(person.designation || ""));
+  if (!/^Faculty of\b/i.test(displayDepartmentName(department))) return heads;
+  const deans = people.filter((person) => /\bdean\b/i.test(person.designation || ""));
+  return deans.length ? deans : heads;
 }
 
 function isTeachingFaculty(person) {
@@ -3253,10 +3253,10 @@ function directAnswer(question, knowledge, history = []) {
     directNoticeAnswer(question, knowledge) ||
     directOfficeContactAnswer(question, knowledge) ||
     directDepartmentLeaderAnswer(question, knowledge) ||
+    directDepartmentOverviewAnswer(question, knowledge) ||
     directPeopleAnswer(question, knowledge) ||
     directFollowupAnswer(question, knowledge, history) ||
     directAllPeopleOverviewAnswer(question, knowledge) ||
-    directDepartmentOverviewAnswer(question, knowledge) ||
     directUnknownPersonAnswer(question, knowledge) ||
     null
   );

@@ -376,6 +376,16 @@ test("a department faculty-list request is not mistaken for an unknown person", 
   assert.match(answer.text, /Example Chemistry Head/);
 });
 
+test("department faculty lists prefer their head over a faculty-level dean", () => {
+  const knowledge = { ...fixture, faculty: [
+    ...fixture.faculty,
+    { name: "Example Science Dean", department: "Department of Computer Science and Engineering (CSE)", designation: "Dean, Faculty of Science and Engineering", source: root },
+  ] };
+  const answer = directAnswer("CSE faculty list", knowledge);
+  assert.match(answer.text, /Head: Example CSE Head\./);
+  assert.doesNotMatch(answer.text, /Head: [^.]*Example Science Dean/);
+});
+
 test("faculty lists exclude non-teaching officers", () => {
   const knowledge = { ...fixture, faculty: [
     ...fixture.faculty,
