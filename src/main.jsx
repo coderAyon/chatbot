@@ -9,9 +9,12 @@ import {
   Clock,
   DatabaseZap,
   Download,
+  Headphones,
   Link as LinkIcon,
   Loader2,
   MessageSquare,
+  Mic,
+  MicOff,
   Moon,
   PanelLeft,
   PanelLeftClose,
@@ -21,9 +24,12 @@ import {
   Search,
   Settings,
   Sparkles,
+  Square,
   Sun,
   Trash2,
   UserRound,
+  Volume2,
+  VolumeX,
   X,
 } from "lucide-react";
 import "./styles.css";
@@ -32,6 +38,159 @@ const GB_LOGO_URL = "/gb-logo.png";
 const CHAT_HISTORY_KEY = "university-chat-history-v3";
 const ACTIVE_CHAT_KEY = "university-active-chat-v3";
 const LEGACY_CHAT_HISTORY_KEYS = ["university-chat-history", "university-chat-history-v2"];
+
+function parseBanglaOrEnglishNum(str) {
+  const bnToEn = { "০": "0", "১": "1", "২": "2", "৩": "3", "৪": "4", "৫": "5", "৬": "6", "৭": "7", "৮": "8", "৯": "9" };
+  return String(str).replace(/[০-৯]/g, (d) => bnToEn[d]).replace(/,/g, "");
+}
+
+function toBanglaDigits(numStr) {
+  const enToBn = { "0": "০", "1": "১", "2": "২", "3": "৩", "4": "৪", "5": "৫", "6": "৬", "7": "৭", "8": "৮", "9": "৯" };
+  return String(numStr).replace(/[0-9]/g, (d) => enToBn[d]);
+}
+
+function formatSpokenNumber(num, isBangla) {
+  if (isNaN(num) || num < 1000) return isBangla ? toBanglaDigits(num) : String(num);
+  const crore = Math.floor(num / 10000000);
+  let rem = num % 10000000;
+  const lakh = Math.floor(rem / 100000);
+  rem = rem % 100000;
+  const thousand = Math.floor(rem / 1000);
+  const rest = rem % 1000;
+
+  const parts = [];
+  if (crore > 0) parts.push(isBangla ? `${toBanglaDigits(crore)} কোটি` : `${crore} crore`);
+  if (lakh > 0) parts.push(isBangla ? `${toBanglaDigits(lakh)} লাখ` : `${lakh} lakh`);
+  if (thousand > 0) parts.push(isBangla ? `${toBanglaDigits(thousand)} হাজার` : `${thousand} thousand`);
+  if (rest > 0) {
+    if (rest >= 100) {
+      const hundreds = Math.floor(rest / 100);
+      const subRest = rest % 100;
+      if (isBangla) {
+        parts.push(subRest > 0 ? `${toBanglaDigits(hundreds)} শত ${toBanglaDigits(subRest)}` : `${toBanglaDigits(hundreds)} শত`);
+      } else {
+        parts.push(subRest > 0 ? `${hundreds} hundred ${subRest}` : `${hundreds} hundred`);
+      }
+    } else {
+      parts.push(isBangla ? toBanglaDigits(rest) : String(rest));
+    }
+  }
+
+  return parts.join(" ");
+}
+
+function humanizeNumbersForSpeech(text, isBangla) {
+  if (!text) return "";
+
+  // 1. Currency patterns:
+  // e.g. ৳ 45,000 / ৳45000 / 45,000/- / 45,000 টাকা / BDT 45,000 / TK 45,000
+  const currencyRegex = /(?:৳|tk\.?|bdt)\s*([০-৯0-9,]+(?:\.\d+)?)(?:\s*\/-)?(?:\s*(?:টাকা|taka))?|([০-৯0-9,]+(?:\.\d+)?)\s*(?:টাকা|taka|\/-)/gi;
+
+  let cleaned = text.replace(currencyRegex, (match, num1, num2) => {
+    const rawNum = (num1 || num2 || "").replace(/\.00$/, "");
+    const cleanNum = parseBanglaOrEnglishNum(rawNum);
+    const val = Math.round(parseFloat(cleanNum));
+    if (!isNaN(val) && val >= 1000) {
+      const spoken = formatSpokenNumber(val, isBangla);
+      return isBangla ? `${spoken} টাকা` : `${spoken} taka`;
+    }
+    return isBangla ? `${toBanglaDigits(cleanNum)} টাকা` : `${cleanNum} taka`;
+  });
+
+  // 2. Standalone large numbers (>= 1,000 with commas or >= 10,000 without commas)
+  // Preserves 4-digit years like 1998, 2024.
+  const largeNumRegex = /(?<![০-৯0-9])([০-৯0-9]{1,3}(?:,[০-৯0-9]{2,3})+|[0-9]{5,10}|[০-৯]{5,10})(?![০-৯0-9])/g;
+  cleaned = cleaned.replace(largeNumRegex, (match) => {
+    const cleanNum = parseBanglaOrEnglishNum(match);
+    const val = parseInt(cleanNum, 10);
+    if (!isNaN(val) && val >= 1000) {
+      return formatSpokenNumber(val, isBangla);
+    }
+    return match;
+  });
+
+  return cleaned;
+}
+
+function cleanTextForSpeech(text, lang) {
+  if (!text) return "";
+  const isBangla = lang ? lang.startsWith("bn") : detectSpeechLanguage(text).startsWith("bn");
+  let cleaned = text
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_#~>]/g, " ")
+    .replace(/\|\s*[-:]+\s*\|/g, " ")
+    .replace(/\|/g, ", ")
+    .replace(/https?:\/\/\S+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  cleaned = humanizeNumbersForSpeech(cleaned, isBangla);
+  return cleaned;
+}
+
+function detectSpeechLanguage(text) {
+  return /[\u0980-\u09FF]/.test(text) ? "bn-BD" : "en-US";
+}
+
+function speakUtterance(text, { lang, onStart, onEnd, onError, isVoiceMode = false } = {}) {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    onError?.(new Error("Speech synthesis not supported in this browser"));
+    return () => {};
+  }
+
+  window.speechSynthesis.cancel();
+  const determinedLang = lang || detectSpeechLanguage(text);
+  const rawCleaned = cleanTextForSpeech(text, determinedLang);
+  if (!rawCleaned) {
+    onEnd?.();
+    return () => {};
+  }
+
+  let spokenText = rawCleaned;
+  if (isVoiceMode && rawCleaned.length > 360) {
+    const sentences = rawCleaned.split(/(?<=[.!?।])\s+/);
+    let gathered = "";
+    for (const s of sentences) {
+      if ((gathered + " " + s).trim().length > 340) break;
+      gathered = (gathered + " " + s).trim();
+    }
+    spokenText = gathered || rawCleaned.slice(0, 340);
+  }
+
+  const utterance = new SpeechSynthesisUtterance(spokenText);
+  utterance.lang = determinedLang;
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+
+  const voices = window.speechSynthesis.getVoices?.() || [];
+  if (voices.length > 0) {
+    const match = voices.find(
+      (v) =>
+        v.lang.toLowerCase().startsWith(determinedLang.slice(0, 2).toLowerCase()) ||
+        (determinedLang.startsWith("bn") &&
+          (v.name.toLowerCase().includes("bangla") || v.name.toLowerCase().includes("bengali")))
+    );
+    if (match) utterance.voice = match;
+  }
+
+  utterance.onstart = () => onStart?.();
+  utterance.onend = () => onEnd?.();
+  utterance.onerror = (e) => {
+    if (e.error !== "canceled" && e.error !== "interrupted") {
+      onError?.(e);
+    } else {
+      onEnd?.();
+    }
+  };
+
+  window.speechSynthesis.speak(utterance);
+
+  return () => {
+    window.speechSynthesis.cancel();
+  };
+}
 
 function createNewConversation() {
   const id = `chat_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -95,10 +254,92 @@ function App() {
   const [status, setStatus] = useState(null);
   const [connectionState, setConnectionState] = useState("checking");
   const [copiedIndex, setCopiedIndex] = useState(null);
+  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
+  const [speakingIndex, setSpeakingIndex] = useState(null);
+  const [isListeningComposer, setIsListeningComposer] = useState(false);
+  const composerRecognitionRef = useRef(null);
   const fileInputRef = useRef(null);
   const composerInputRef = useRef(null);
   const endRef = useRef(null);
   const activeRequestRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis?.cancel();
+      composerRecognitionRef.current?.abort();
+    };
+  }, []);
+
+  function toggleSpeakMessage(text, index) {
+    if (speakingIndex === index) {
+      window.speechSynthesis?.cancel();
+      setSpeakingIndex(null);
+      return;
+    }
+    setSpeakingIndex(index);
+    speakUtterance(text, {
+      onEnd: () => setSpeakingIndex(null),
+      onError: () => setSpeakingIndex(null),
+    });
+  }
+
+  function toggleComposerVoiceInput() {
+    const SpeechRecognition = typeof window !== "undefined"
+      ? window.SpeechRecognition || window.webkitSpeechRecognition
+      : null;
+
+    if (!SpeechRecognition) {
+      alert("Voice recognition is not supported in this browser. Please try Chrome, Edge, or Safari.");
+      return;
+    }
+
+    if (isListeningComposer) {
+      composerRecognitionRef.current?.stop();
+      setIsListeningComposer(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      composerRecognitionRef.current = recognition;
+      recognition.lang = "bn-BD";
+      recognition.interimResults = true;
+      recognition.continuous = false;
+
+      let finalCaptured = "";
+      recognition.onstart = () => {
+        setIsListeningComposer(true);
+      };
+      recognition.onresult = (event) => {
+        let currentInterim = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const item = event.results[i];
+          if (item.isFinal) {
+            finalCaptured += item[0].transcript + " ";
+          } else {
+            currentInterim += item[0].transcript;
+          }
+        }
+        const full = (finalCaptured + currentInterim).trim();
+        if (full) {
+          setInput(full);
+          if (composerInputRef.current) {
+            resizeComposer(composerInputRef.current);
+          }
+        }
+      };
+      recognition.onerror = () => {
+        setIsListeningComposer(false);
+      };
+      recognition.onend = () => {
+        setIsListeningComposer(false);
+        composerInputRef.current?.focus();
+      };
+      recognition.start();
+    } catch {
+      setIsListeningComposer(false);
+    }
+  }
 
   useEffect(() => {
     try {
@@ -125,6 +366,10 @@ function App() {
     if (composerInputRef.current) composerInputRef.current.style.height = "auto";
     setAttachments([]);
     setAttachmentError("");
+    window.speechSynthesis?.cancel();
+    setSpeakingIndex(null);
+    composerRecognitionRef.current?.abort();
+    setIsListeningComposer(false);
 
     // If active chat is already empty, just stay on it
     if (activeConversation && activeConversation.messages.length === 0) {
@@ -162,6 +407,10 @@ function App() {
     if (composerInputRef.current) composerInputRef.current.style.height = "auto";
     setAttachments([]);
     setAttachmentError("");
+    window.speechSynthesis?.cancel();
+    setSpeakingIndex(null);
+    composerRecognitionRef.current?.abort();
+    setIsListeningComposer(false);
     if (window.innerWidth <= 820) setSidebarOpen(false);
   }
 
@@ -171,6 +420,8 @@ function App() {
       activeRequestRef.current = null;
       setIsThinking(false);
     }
+    window.speechSynthesis?.cancel();
+    setSpeakingIndex(null);
     setConversations((prev) => {
       const filtered = prev.filter((c) => c.id !== chatId);
       if (filtered.length === 0) {
@@ -189,6 +440,10 @@ function App() {
     activeRequestRef.current?.abort();
     activeRequestRef.current = null;
     setIsThinking(false);
+    window.speechSynthesis?.cancel();
+    setSpeakingIndex(null);
+    composerRecognitionRef.current?.abort();
+    setIsListeningComposer(false);
     const fresh = createNewConversation();
     setConversations([fresh]);
     setActiveChatId(fresh.id);
@@ -346,8 +601,9 @@ function App() {
             : c,
         ),
       );
+      return assistantMessage;
     } catch (error) {
-      if (activeRequestRef.current !== request || request.signal.aborted) return;
+      if (activeRequestRef.current !== request || request.signal.aborted) return null;
       setConnectionState("offline");
       setInput(trimmed);
       setAttachments(selectedAttachments);
@@ -365,6 +621,7 @@ function App() {
             : c,
         ),
       );
+      return null;
     } finally {
       if (activeRequestRef.current === request) {
         activeRequestRef.current = null;
@@ -459,9 +716,36 @@ function App() {
           placeholder="Ask or attach PDF/image..."
           rows={1}
         />
-        <button className="send-button" type="submit" disabled={(!input.trim() && attachments.length === 0) || isThinking} aria-label="Send message">
-          <ArrowUp size={19} />
+        <button
+          className={`composer-mic-button ${isListeningComposer ? "listening" : ""}`}
+          type="button"
+          onClick={toggleComposerVoiceInput}
+          disabled={isThinking}
+          aria-label={isListeningComposer ? "Stop voice input" : "Voice input"}
+          title={isListeningComposer ? "Listening... click to stop" : "Voice input (বাংলা/English)"}
+        >
+          {isListeningComposer ? <MicOff size={18} /> : <Mic size={18} />}
         </button>
+        {input.trim() || attachments.length > 0 ? (
+          <button className="send-button" type="submit" disabled={isThinking} aria-label="Send message" title="Send message">
+            <ArrowUp size={19} />
+          </button>
+        ) : (
+          <button
+            className="composer-voice-mode-button"
+            type="button"
+            onClick={() => {
+              window.speechSynthesis?.cancel();
+              setSpeakingIndex(null);
+              setVoiceModeOpen(true);
+            }}
+            disabled={isThinking}
+            aria-label="Open Voice Mode"
+            title="ChatGPT Voice Mode (Live Voice)"
+          >
+            <Headphones size={18} />
+          </button>
+        )}
       </form>
       {attachments.length > 0 && (
         <div className="attachment-row">
@@ -621,6 +905,20 @@ function App() {
             </div>
           </div>
           <div className="topbar-actions">
+            <button
+              className="voice-mode-trigger-btn"
+              type="button"
+              onClick={() => {
+                window.speechSynthesis?.cancel();
+                setSpeakingIndex(null);
+                setVoiceModeOpen(true);
+              }}
+              aria-label="Open ChatGPT Voice Mode"
+              title="ChatGPT Voice Mode (Live Voice)"
+            >
+              <Headphones size={17} />
+              <span className="voice-mode-trigger-label">Voice Mode</span>
+            </button>
             <button className="icon-button" type="button" onClick={startNewChat} aria-label="New chat" title="New chat">
               <Plus size={18} />
             </button>
@@ -662,6 +960,8 @@ function App() {
                     onCopy={() => copyMessage(message.text, index)}
                     onSuggestion={sendMessage}
                     onRetry={(retryText) => sendMessage(retryText)}
+                    isSpeaking={speakingIndex === index}
+                    onToggleSpeak={() => toggleSpeakMessage(message.text, index)}
                     key={`${message.role}-${index}-${message.text.slice(0, 12)}`}
                   />
                 ))}
@@ -688,11 +988,22 @@ function App() {
         {hasMessages && <footer className="composer-wrap">{composer}</footer>}
       </section>
       {adminOpen && <AdminPanel status={status} onClose={() => setAdminOpen(false)} onRefreshStatus={refreshStatus} />}
+      {voiceModeOpen && (
+        <VoiceModeModal
+          isOpen={voiceModeOpen}
+          onClose={() => {
+            window.speechSynthesis?.cancel();
+            setVoiceModeOpen(false);
+          }}
+          onSendMessage={sendMessage}
+          activeConversation={activeConversation}
+        />
+      )}
     </main>
   );
 }
 
-function MessageBubble({ message, copied, onCopy, onSuggestion, onRetry }) {
+function MessageBubble({ message, copied, onCopy, onSuggestion, onRetry, isSpeaking, onToggleSpeak }) {
   const isAssistant = message.role === "assistant";
   return (
     <article className={`message ${message.role}`}>
@@ -734,6 +1045,16 @@ function MessageBubble({ message, copied, onCopy, onSuggestion, onRetry }) {
             <button className="message-action" type="button" onClick={onCopy} aria-label="Copy response" title="Copy response">
               {copied ? <Check size={16} /> : <Clipboard size={16} />}
               <span>{copied ? "Copied" : "Copy"}</span>
+            </button>
+            <button
+              className={`message-action ${isSpeaking ? "is-speaking" : ""}`}
+              type="button"
+              onClick={onToggleSpeak}
+              aria-label={isSpeaking ? "Stop voice" : "Read aloud"}
+              title={isSpeaking ? "Stop voice" : "Read aloud in voice (বাংলা/English)"}
+            >
+              {isSpeaking ? <VolumeX size={16} /> : <Volume2 size={16} />}
+              <span>{isSpeaking ? "Stop" : "Listen"}</span>
             </button>
             {message.mode === "error" && (
               <button className="message-action retry-action" type="button" onClick={() => onRetry(message.retryText || "")}>
@@ -986,6 +1307,386 @@ function renderInlineText(text, keyPrefix) {
       if (part.startsWith("*") && part.endsWith("*")) return <em key={key}>{part.slice(1, -1)}</em>;
       return <React.Fragment key={key}>{part}</React.Fragment>;
     });
+}
+
+function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) {
+  const [voiceStatus, setVoiceStatus] = useState("listening"); // "listening" | "thinking" | "speaking" | "idle"
+  const [voiceLang, setVoiceLang] = useState("bn-BD");
+  const [isMuted, setIsMuted] = useState(false);
+  const [audioLevel, setAudioLevel] = useState(0);
+  const [userTranscript, setUserTranscript] = useState("");
+  const [interimTranscript, setInterimTranscript] = useState("");
+  const [assistantReply, setAssistantReply] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const recognitionRef = useRef(null);
+  const isComponentMounted = useRef(true);
+
+  // Monitor microphone volume via Web Audio API for reactive Orb glow/scale
+  useEffect(() => {
+    if (!isOpen) return;
+    let stream = null;
+    let audioCtx = null;
+    let analyser = null;
+    let animId = null;
+
+    async function initAudio() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaStreamSource(stream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+        analyser.smoothingTimeConstant = 0.4;
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const checkAudio = () => {
+          if (!analyser) return;
+          analyser.getByteFrequencyData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+          }
+          const avg = sum / dataArray.length;
+          const level = Math.min(1, Math.max(0, (avg - 10) / 55));
+          setAudioLevel(level);
+          animId = requestAnimationFrame(checkAudio);
+        };
+        checkAudio();
+      } catch {
+        // Fallback gracefully if mic stream visualization cannot be accessed
+      }
+    }
+
+    initAudio();
+
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+      if (audioCtx) audioCtx.close().catch(() => {});
+      if (stream) stream.getTracks().forEach((track) => track.stop());
+    };
+  }, [isOpen]);
+
+  // Main SpeechRecognition handling loop
+  useEffect(() => {
+    if (!isOpen) return;
+    isComponentMounted.current = true;
+
+    const SpeechRecognition = typeof window !== "undefined"
+      ? window.SpeechRecognition || window.webkitSpeechRecognition
+      : null;
+
+    if (!SpeechRecognition) {
+      setErrorMessage("ভয়েস রিকগনিশন এই ব্রাউজারে সাপোর্টেড নয়। সেরা অভিজ্ঞতার জন্য Chrome, Edge বা Safari ব্যবহার করুন।");
+      return;
+    }
+
+    if (voiceStatus !== "listening" || isMuted) {
+      recognitionRef.current?.abort();
+      return;
+    }
+
+    let recognition = null;
+    try {
+      recognition = new SpeechRecognition();
+      recognitionRef.current = recognition;
+      recognition.lang = voiceLang;
+      recognition.interimResults = true;
+      recognition.continuous = false;
+
+      let finalCaptured = "";
+
+      recognition.onstart = () => {
+        setErrorMessage("");
+      };
+
+      recognition.onresult = (event) => {
+        let currentInterim = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const res = event.results[i];
+          if (res.isFinal) {
+            finalCaptured += res[0].transcript;
+          } else {
+            currentInterim += res[0].transcript;
+          }
+        }
+        setInterimTranscript(currentInterim);
+        if (finalCaptured) {
+          setUserTranscript(finalCaptured.trim());
+        }
+      };
+
+      recognition.onerror = (e) => {
+        if (e.error === "no-speech") {
+          if (voiceStatus === "listening" && isComponentMounted.current && !isMuted) {
+            try {
+              recognition.start();
+            } catch {}
+          }
+        } else if (e.error === "not-allowed") {
+          setErrorMessage("মাইক্রোফোনের অনুমতি দেওয়া হয়নি। অনুগ্রহ করে ব্রাউজার সেটিংসে মাইক অ্যাক্সেস অ্যালাউ করুন।");
+          setVoiceStatus("idle");
+        }
+      };
+
+      recognition.onend = async () => {
+        setInterimTranscript("");
+        const query = finalCaptured.trim();
+        if (query && voiceStatus === "listening") {
+          handleUserVoiceQuery(query);
+        } else if (voiceStatus === "listening" && !isMuted && isComponentMounted.current) {
+          try {
+            recognition.start();
+          } catch {}
+        }
+      };
+
+      recognition.start();
+    } catch {
+      // Ignore start errors
+    }
+
+    return () => {
+      recognition?.abort();
+    };
+  }, [isOpen, voiceStatus, voiceLang, isMuted]);
+
+  async function handleUserVoiceQuery(text) {
+    if (!text) return;
+    setVoiceStatus("thinking");
+    setAssistantReply("");
+    try {
+      const result = await onSendMessage(text);
+      if (result && result.text) {
+        setAssistantReply(result.text);
+        setVoiceStatus("speaking");
+        speakUtterance(result.text, {
+          lang: voiceLang,
+          isVoiceMode: true,
+          onEnd: () => {
+            if (isComponentMounted.current) {
+              setVoiceStatus("listening");
+            }
+          },
+          onError: () => {
+            if (isComponentMounted.current) {
+              setVoiceStatus("listening");
+            }
+          },
+        });
+      } else {
+        setVoiceStatus("idle");
+      }
+    } catch {
+      setVoiceStatus("idle");
+    }
+  }
+
+  function handleInterrupt() {
+    window.speechSynthesis?.cancel();
+    setVoiceStatus("listening");
+    setAssistantReply("");
+  }
+
+  function toggleLanguage() {
+    window.speechSynthesis?.cancel();
+    setVoiceLang((prev) => (prev === "bn-BD" ? "en-US" : "bn-BD"));
+    setVoiceStatus("listening");
+  }
+
+  function handleClose() {
+    isComponentMounted.current = false;
+    window.speechSynthesis?.cancel();
+    recognitionRef.current?.abort();
+    onClose();
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") handleClose();
+      if (e.key === " " && voiceStatus === "speaking") {
+        e.preventDefault();
+        handleInterrupt();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      isComponentMounted.current = false;
+    };
+  }, [voiceStatus]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="voice-mode-overlay" role="dialog" aria-modal="true" aria-label="ChatGPT Voice Mode">
+      <header className="voice-mode-header">
+        <div className="voice-mode-brand">
+          <img src={GB_LOGO_URL} alt="Gono Bishwabidyalay logo" className="voice-mode-logo" />
+          <div className="voice-mode-title-wrap">
+            <span className="voice-mode-title">GB Voice Mode</span>
+            <span className={`voice-mode-status-badge ${voiceStatus}`}>
+              <span className="voice-status-dot" />
+              <span>
+                {voiceStatus === "listening"
+                  ? voiceLang === "bn-BD" ? "শুনছি... বলুন" : "Listening..."
+                  : voiceStatus === "thinking"
+                  ? voiceLang === "bn-BD" ? "ভাবছি..." : "Thinking..."
+                  : voiceStatus === "speaking"
+                  ? voiceLang === "bn-BD" ? "বলছি..." : "Speaking..."
+                  : voiceLang === "bn-BD" ? "প্রস্তুত" : "Ready"}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <div className="voice-mode-top-actions">
+          <button
+            type="button"
+            className="voice-lang-pill"
+            onClick={toggleLanguage}
+            title="Toggle Language (বাংলা / English)"
+            aria-label="Toggle Language"
+          >
+            <span>{voiceLang === "bn-BD" ? "বাংলা" : "English"}</span>
+          </button>
+          <button
+            type="button"
+            className="voice-mode-close-btn"
+            onClick={handleClose}
+            title="Exit Voice Mode (Esc)"
+            aria-label="Exit Voice Mode"
+          >
+            <X size={20} />
+          </button>
+        </div>
+      </header>
+
+      {/* Main visualizer and ChatGPT Glowing Orb */}
+      <main className="voice-mode-main">
+        <div
+          className={`voice-orb-container ${voiceStatus}`}
+          onClick={voiceStatus === "speaking" ? handleInterrupt : undefined}
+          title={voiceStatus === "speaking" ? "Click to interrupt and speak" : ""}
+        >
+          {/* Outer diffuse ambient glow */}
+          <div
+            className="voice-orb-glow"
+            style={{
+              transform: `scale(${1 + audioLevel * 0.45})`,
+              opacity: 0.5 + audioLevel * 0.5,
+            }}
+          />
+
+          {/* Soundwave expanding rings */}
+          {(voiceStatus === "listening" || voiceStatus === "speaking") && (
+            <>
+              <div className="voice-orb-wave wave-1" />
+              <div className="voice-orb-wave wave-2" />
+            </>
+          )}
+
+          {/* The Central Glowing Orb */}
+          <div
+            className={`voice-orb ${voiceStatus}`}
+            style={{
+              transform: `scale(${1 + audioLevel * (voiceStatus === "listening" ? 0.35 : 0.15)})`,
+            }}
+          >
+            <div className="voice-orb-inner" />
+            <div className="voice-orb-highlight" />
+          </div>
+        </div>
+
+        {/* Dynamic Transcripts & Subtitles */}
+        <div className="voice-transcript-card">
+          {errorMessage ? (
+            <p className="voice-error-text">{errorMessage}</p>
+          ) : voiceStatus === "speaking" && assistantReply ? (
+            <div className="voice-reply-box">
+              <span className="voice-role-tag">GB Assistant</span>
+              <p className="voice-reply-text">{assistantReply}</p>
+            </div>
+          ) : userTranscript || interimTranscript ? (
+            <div className="voice-user-box">
+              <span className="voice-role-tag user">You</span>
+              <p className="voice-user-text">
+                {userTranscript}
+                {interimTranscript && <span className="voice-interim"> {interimTranscript}</span>}
+              </p>
+            </div>
+          ) : (
+            <p className="voice-hint-text">
+              {voiceLang === "bn-BD"
+                ? "মুখে বলুন... যেমন: 'ভর্তি ফি কত?' বা 'ফার্মেসি ডিপার্টমেন্ট সম্পর্কে বলো'"
+                : "Ask anything aloud... e.g. 'What is the tuition fee?' or 'Campus contact numbers'"}
+            </p>
+          )}
+        </div>
+      </main>
+
+      {/* Bottom Floating Control Dock */}
+      <footer className="voice-mode-footer">
+        <div className="voice-dock">
+          <button
+            type="button"
+            className={`voice-dock-btn ${isMuted ? "muted" : "active"}`}
+            onClick={() => setIsMuted((prev) => !prev)}
+            title={isMuted ? "Unmute Mic" : "Mute Mic"}
+            aria-label={isMuted ? "Unmute Mic" : "Mute Mic"}
+          >
+            {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
+          </button>
+
+          {voiceStatus === "speaking" ? (
+            <button
+              type="button"
+              className="voice-dock-btn interrupt-btn"
+              onClick={handleInterrupt}
+              title="Interrupt & Speak"
+              aria-label="Interrupt & Speak"
+            >
+              <Square size={18} />
+              <span>Interrupt</span>
+            </button>
+          ) : voiceStatus === "thinking" ? (
+            <button
+              type="button"
+              className="voice-dock-btn disabled-btn"
+              disabled
+              title="Generating answer..."
+              aria-label="Thinking"
+            >
+              <Loader2 className="spin" size={20} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="voice-dock-btn listening-pill"
+              onClick={() => {
+                if (voiceStatus === "idle") setVoiceStatus("listening");
+              }}
+              title="Listening to your voice"
+              aria-label="Listening"
+            >
+              <span className="voice-pulsing-circle" />
+              <span>{voiceLang === "bn-BD" ? "কথা শুনছি..." : "Listening..."}</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            className="voice-dock-btn exit-btn"
+            onClick={handleClose}
+            title="Back to text chat"
+            aria-label="Back to text chat"
+          >
+            <MessageSquare size={19} />
+          </button>
+        </div>
+      </footer>
+    </div>
+  );
 }
 
 const rootElement = document.getElementById("root");
