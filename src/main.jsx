@@ -244,6 +244,7 @@ function App() {
     return conversations.some((chat) => chat.id === stored) ? stored : conversations[0]?.id;
   });
   const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== "undefined" ? window.innerWidth > 820 : true);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" ? window.innerWidth <= 640 : false);
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState([]);
   const [attachmentError, setAttachmentError] = useState("");
@@ -264,7 +265,10 @@ function App() {
   const activeRequestRef = useRef(null);
 
   useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 640);
+    window.addEventListener("resize", handleResize);
     return () => {
+      window.removeEventListener("resize", handleResize);
       window.speechSynthesis?.cancel();
       composerRecognitionRef.current?.abort();
     };
@@ -713,7 +717,7 @@ function App() {
               sendMessage();
             }
           }}
-          placeholder="Ask or attach PDF/image..."
+          placeholder={isMobile ? "Ask anything..." : "Ask or attach PDF/image..."}
           rows={1}
         />
         <button

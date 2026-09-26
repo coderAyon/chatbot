@@ -3077,6 +3077,12 @@ textarea {
   font-size: 0.94rem;
 }
 
+textarea::placeholder {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .send-button {
   width: 38px;
   height: 38px;
