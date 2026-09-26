@@ -3092,7 +3092,7 @@ function directAnswer(question, knowledge, history = []) {
 
   // Handle follow-up queries that specify a department/subject without repeating the attribute
   // (e.g. Turn 1: "how many total credits?", Turn 2: "in cse" / "for pharmacy" / "cse te" / "what about cse?")
-  if (history.length && !comparativeFollowup) {
+  if (history.length && !comparativeFollowup && !departmentFollowup) {
     const matchedDept = matchedDepartmentFromQuestion(q, knowledge);
     const matchedProg = rankedPrograms(q, knowledge.programs || [])[0]?.program;
     const targetSubject = matchedDept || matchedProg?.name;

@@ -441,3 +441,25 @@ test("generic fee and leadership queries never falsely match unrelated departmen
   assert.equal(contextHead.mode, "structured");
   assert.match(contextHead.text, /Example CSE Head/i);
 });
+
+test("followup with distinct attribute overrides previous conversational attribute", () => {
+  const subjectHistory = [
+    { role: "user", text: "ki ki subject ache?" },
+    { role: "assistant", text: "Graduate Admission Requirements - Gono Bishwabidyalay" },
+  ];
+  const feeKnowledge = {
+    ...fixture,
+    fees: [
+      {
+        program: "B.Sc. in Computer Science & Engineering",
+        aliases: ["CSE"],
+        admissionCost: "Tk. 4,50,000/-",
+        source: `${root}admission/fees/`,
+      },
+    ],
+  };
+  const costAnswer = directAnswer("cse r cost koto?", feeKnowledge, subjectHistory);
+  assert.equal(costAnswer.mode, "structured");
+  assert.match(costAnswer.text, /4,50,000/);
+  assert.doesNotMatch(costAnswer.text, /course records/i);
+});
