@@ -942,7 +942,7 @@ function AdminPanel({ status, onClose, onRefreshStatus }) {
             <small>
               Answer mode: {status?.geminiConfigured ? "Gemini AI" : status?.openAiConfigured ? status?.openAiProviderName || "OpenAI-compatible AI" : status?.ollamaAvailable ? "Ollama" : "official knowledge + general academic fallback"}.
             </small>
-            <small>Free model options: Puter.js no-key browser AI, Gemini free tier, OpenRouter free models, or local Ollama.</small>
+            <small>Server AI options: Groq, Gemini, OpenRouter, or local Ollama. Visitors never need a separate AI login.</small>
             <small>Set `OFFICIAL_SITE_URL` or save admin settings before rebuilding for another university.</small>
           </div>
         )}

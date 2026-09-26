@@ -1,7 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  clientAiEligible,
   directActivePersonAnswer,
   directAnswer,
   mergeConversationHistory,
@@ -314,9 +313,8 @@ test("research, sports, financial aid, and hostel questions avoid generic retrie
 });
 
 test("unknown questions remain eligible for conversational AI", () => {
-  assert.equal(clientAiEligible("explain quantum computing simply", { mode: "not_found" }), true);
-  assert.equal(clientAiEligible("unknown Gono campus fact", { mode: "not_found" }), true);
-  assert.equal(clientAiEligible("CSE credits", { mode: "structured" }), false);
+  assert.equal(directAnswer("Explain recursion with a simple example", fixture), null);
+  assert.equal(directAnswer("Explain quantum computing simply", fixture), null);
 });
 
 test("AI history keeps anchors, relevant older turns, and recent conversation", () => {

@@ -9,7 +9,7 @@ Production-oriented hybrid RAG + AI chatbot for Gono Bishwabidyalay. It separate
 - Caches fetched official pages for 24 hours so interrupted refreshes can continue without repeating completed downloads.
 - Stores indexed knowledge in `data/knowledge.json`.
 - Serves a REST chat API with hybrid retrieval: keyword, fuzzy matching, synonym expansion, and vector-style lexical similarity.
-- Uses Gemini first when configured, then an OpenAI-compatible provider or an available local Ollama model. In the browser, Puter.js discovers currently available text models and prefers free variants with automatic model fallback.
+- Uses Gemini first when configured, then a server-side OpenAI-compatible provider such as Groq/OpenRouter, or an available local Ollama model. Visitors never need a separate AI account or login.
 - Applies strict evidence gates to exact numbers, fees, credits, contacts, dates, roles, and campus facts. A weak keyword match cannot become a verified answer.
 - Stores structured institution facts, programs, people, roles, contacts, notices, and readable PDF content alongside page chunks.
 - Keeps recent person and department context for follow-up questions such as `number please` and `does he have email?`.
@@ -44,7 +44,7 @@ Open `http://127.0.0.1:5173/`. `npm start` runs both the API and Vite developmen
 4. Try fact handlers for roles, people, programs, fees, credits, contacts, notices, campus services, and institution facts.
 5. Search a cached hybrid retrieval index for supporting official evidence.
 6. Reject weak, placeholder, malformed, or unrelated evidence for exact university facts.
-7. Use configured server AI or a dynamically discovered Puter text model when general synthesis is useful.
+7. Use the configured server AI when general synthesis is useful.
 8. Return answer confidence, relevant official sources, and contextual follow-up actions.
 
 ## Important Environment Variables
@@ -55,6 +55,7 @@ Open `http://127.0.0.1:5173/`. `npm start` runs both the API and Vite developmen
 - `OPENAI_API_KEY`: optional OpenAI-compatible API key.
 - `OPENAI_MODEL`: default `gpt-4o-mini`.
 - `OPENAI_BASE_URL`: default `https://api.openai.com/v1`; can point to an OpenAI-compatible gateway.
+- For Groq on Render, set `OPENAI_API_KEY`, `OPENAI_MODEL=openai/gpt-oss-120b`, `OPENAI_BASE_URL=https://api.groq.com/openai/v1`, and `OPENAI_PROVIDER_NAME=Groq`.
 - `OLLAMA_URL` and `OLLAMA_MODEL`: optional local fallback.
 - `ADMIN_TOKEN`: optional token required as `x-admin-token` for logs, settings, and rebuild APIs. Public health/status remains readable so the chat UI can report service health.
 - `MAX_PAGES`, `MAX_PDFS`, `CRAWL_CONCURRENCY`, `PDF_CONCURRENCY`: crawler limits.
@@ -99,7 +100,7 @@ The backend prompt and retrieval pipeline require source-grounded answers. Do no
 
 ## Deployment Notes
 
-- Puter browser AI follows Puter's user-pays model. No developer API key is embedded in this project, but a user may be asked to authenticate with Puter.
-- For controlled production usage, configure Gemini, OpenAI/OpenRouter, or Ollama on the server and set a strong `ADMIN_TOKEN`.
+- Configure Groq, Gemini, OpenAI/OpenRouter, or Ollama on the Render backend and set a strong `ADMIN_TOKEN`. The Vercel frontend proxies `/api/*` to Render, so provider secrets belong in Render rather than browser-visible `VITE_*` variables.
+- After changing Render environment variables, save and redeploy the Render service. Vercel visitors can then use AI without an AI-provider login.
 - Chat history and logs are JSON files intended for a single-process final-year-project deployment. Use a database before running multiple API instances.
 - The official university website remains the source of truth. Rebuild the index after material website updates and review crawler warnings in Admin.

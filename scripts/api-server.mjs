@@ -348,7 +348,7 @@ async function loadSettings() {
     maxPages: Number(process.env.MAX_PAGES || 2000),
     crawlConcurrency: Number(process.env.CRAWL_CONCURRENCY || 10),
     aiProvider: configuredAiProviders.join(" -> "),
-    freeAiProviders: "Puter.js no-key browser AI, Gemini free tier, OpenRouter free models, or local Ollama",
+    freeAiProviders: "Groq, Gemini, OpenRouter, or local Ollama through the server",
     ...((await readJson(SETTINGS_FILE, null)) || {}),
   };
 }
@@ -2986,32 +2986,6 @@ function directCareerGuidanceAnswer(question, knowledge, history = []) {
   return null;
 }
 
-function directSimplificationAnswer(question, knowledge, history = []) {
-  const q = normalizeQuestion(question);
-  const asksSimplification = /\b(bujhlam\s+na|sahaj|sohoj|simple|simplify|explain\s+simply|banglay|english|summary|summarize|short\s+kore|সহজ\s+করে|বুঝলাম\s+না|বাংলায়\s+বলো)\b/i.test(q);
-  if (!asksSimplification) return null;
-  const banglish = prefersBanglish(question);
-
-  const activeDept = activeContextDepartment(history, question, knowledge) || "Gono Bishwabidyalay";
-  const deptName = displayDepartmentName(activeDept);
-
-  return {
-    text: banglish
-      ? `**এক নজরে সারসংক্ষেপ (${deptName}):**\n` +
-        `- **কোর্স ফি:** CSE মোট ৪,৫০,০০০/- টাকা (৪ বছর), Pharmacy ৬,০০,০০০/- টাকা। প্রারম্ভিক ভর্তি ফি ৫৪,৫০০/- টাকা।\n` +
-        `- **ভর্তির যোগ্যতা:** SSC ও HSC উভয়টিতে ন্যূনতম GPA 2.50 (বিজ্ঞান বিভাগ)।\n` +
-        `- **ওয়েভার:** সেমিস্টার রেজাল্ট অনুযায়ী ১০% থেকে ৫০% পর্যন্ত ফি মওকুফ।\n` +
-        `- **যোগাযোগ:** সাভার ক্যাম্পাসে সরাসরি আসুন বা কল করুন: **01950003314**, **01950003319**।`
-      : `**Quick Summary at a Glance (${deptName}):**\n` +
-        `- **Tuition Fees:** B.Sc. in CSE is Tk. 4,50,000/- (4 years); B.Pharm is Tk. 6,00,000/-. Initial admission payment: BDT 54,500.\n` +
-        `- **Eligibility:** Minimum GPA 2.50 in SSC & HSC from Science.\n` +
-        `- **Waivers:** 10% to 50% tuition waiver based on semester GPA.\n` +
-        `- **Helplines:** **01950003314**, **01950003319**.`,
-    sources: [{ title: "Gono Bishwabidyalay Overview", url: "https://gonouniversity.edu.bd/" }],
-    mode: "structured",
-  };
-}
-
 function directCampusFacilitiesAnswer(question, knowledge, history = []) {
   const q = normalizeQuestion(question);
   const cleanQ = q.replace(/[?.!,।\s]+$/u, "").trim();
@@ -3131,7 +3105,6 @@ function directAnswer(question, knowledge, history = []) {
   return (
     directGreetingAnswer(question) ||
     directClarificationAnswer(question, history) ||
-    directSimplificationAnswer(question, knowledge, history) ||
     directInstitutionFactAnswer(question, knowledge) ||
     directUniversityOverviewAnswer(question, knowledge) ||
     directAcademicUnitsAnswer(question, knowledge) ||
@@ -3609,55 +3582,6 @@ function relevantConversationHistory(question, history = [], limit = 24) {
     .map(({ role, text }) => ({ role, text }));
 }
 
-function clientAiEligible(question, result) {
-  const mode = String(result?.mode || "");
-  if (/^(structured|greeting|clarify|attachment)$/.test(mode)) return false;
-  if (mode.includes("attachment")) return false;
-  return true;
-}
-
-function clientAiPackage(question, contexts, history = []) {
-  const compactContext = contexts
-    .slice(0, 5)
-    .map((context, index) => {
-      const text = cleanExtractedText(context.text || "").slice(0, 1800);
-      return `[${index + 1}] ${context.title}\nURL: ${context.url || ""}\n${text}`;
-    })
-    .join("\n\n");
-  const recentHistory = relevantConversationHistory(question, history, 24)
-    .filter((item) => item?.role && item?.text)
-    .map((item) => ({ role: item.role === "assistant" ? "assistant" : "user", content: String(item.text).slice(0, 1800) }));
-
-  return {
-    provider: "Puter",
-    modelCandidates: [
-      "claude-3-5-sonnet",
-      "gpt-4o-mini",
-      "gemini-1.5-flash",
-      "deepseek-chat",
-      "mistral-large-latest",
-      "qwen/qwen-2.5-72b-instruct",
-    ],
-    messages: [
-      {
-        role: "system",
-        content:
-          `You are the highly intelligent, helpful, and friendly AI Academic Assistant for Gono Bishwabidyalay (Gono University), Savar, Dhaka, Bangladesh. ` +
-          `You understand Bengali, Banglish, and English with complete fluency and natural conversational flow. ` +
-          `Always maintain full context of previous turns in the conversation. ` +
-          `Answer the user's actual question directly with clear markdown headings, bullet points, and bold text. ` +
-          `If the user asks in Bengali or Banglish, reply in warm, natural Bengali or Banglish. If in English, answer in English. ` +
-          `Never claim that a university-specific number is verified unless that exact number appears in the official context.`,
-      },
-      ...recentHistory,
-      {
-        role: "user",
-        content: `Question: ${question}\n\nRetrieved official context:\n${compactContext || "(No official context. Answer using general academic and university knowledge with helpful guidance.)"}`,
-      },
-    ],
-  };
-}
-
 async function askOpenAI(question, contexts, history = []) {
   const apiKey = envSecret("OPENAI_API_KEY");
   if (!apiKey) return null;
@@ -4034,10 +3958,6 @@ async function handleChat(req, res) {
   if (mayAttachRetrievedSources && !result.sources?.length && result.text !== NOT_VERIFIED && result.text !== notVerifiedText(message) && contexts.length) {
     result.sources = contexts.slice(0, 2).map(({ title, url }) => ({ title, url }));
   }
-  if (clientAiEligible(message, result)) {
-    const aiContexts = allowGeneralAnswer && !explicitlyRequestsGonoContext(message) ? [] : contexts;
-    result.aiAssist = clientAiPackage(message, aiContexts, previousHistory);
-  }
   result.profile = responseProfile(result, message);
   result.suggestions = followupSuggestions(message, result).slice(0, 3);
   const resolvedPerson = resolvedPersonFromExchange(message, result, knowledge);
@@ -4115,7 +4035,6 @@ async function adminStatus(req, res) {
     openAiProviderName,
     geminiConfigured: Boolean(envSecret("GEMINI_API_KEY")),
     ollamaAvailable,
-    puterClientAvailable: true,
     openAiModel,
     ollamaModel,
     geminiModel,
@@ -4283,7 +4202,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
 }
 
 export {
-  clientAiEligible,
   directActivePersonAnswer,
   directAnswer,
   extractProgramPlanFacts,
