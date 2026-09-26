@@ -744,17 +744,20 @@ function App() {
             <div className="bot-mark">
               <img src={GB_LOGO_URL} alt="Gono Bishwabidyalay logo" />
             </div>
-            <div>
+            <div className="topbar-identity">
               <h1>GB Knowledge Assistant</h1>
               <p className={`service-state ${connectionState}`}>
-                <span aria-hidden="true" />
-                {connectionState === "online"
-                  ? status?.geminiConfigured || status?.openAiConfigured || status?.ollamaAvailable
-                    ? "AI + knowledge online"
-                    : "Knowledge online | free AI on demand"
-                  : connectionState === "offline"
-                    ? "Service offline"
-                    : "Checking service"}
+                <span className="service-state-dot" aria-hidden="true" />
+                <span className="state-label">
+                  {connectionState === "online" ? "Online" : connectionState === "offline" ? "Offline" : "Connecting"}
+                </span>
+                <span className="state-extra">
+                  {connectionState === "online"
+                    ? status?.geminiConfigured || status?.openAiConfigured || status?.ollamaAvailable
+                      ? " • AI Active"
+                      : " • Official Data"
+                    : ""}
+                </span>
               </p>
             </div>
           </div>
