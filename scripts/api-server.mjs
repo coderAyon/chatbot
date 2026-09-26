@@ -14,7 +14,7 @@ const SETTINGS_FILE = new URL("../data/settings.json", import.meta.url);
 const CACHE_FILE = new URL("../data/response-cache.json", import.meta.url);
 const CONVERSATION_FILE = new URL("../data/conversation-memory.json", import.meta.url);
 const NOT_VERIFIED = "I couldn't find verified information from the official university data.";
-const ANSWER_ENGINE_VERSION = "2026-09-26-viva-hardening-v41";
+const ANSWER_ENGINE_VERSION = "2026-09-26-viva-hardening-v42";
 
 async function loadLocalEnv() {
   try {
@@ -2802,7 +2802,8 @@ function directProgramDetailAnswer(question, knowledge) {
   if (!matchedDepartment) return null;
 
   const departmentTerms = departmentAliases(matchedDepartment);
-  const records = pageRecords(knowledge)
+  const allRecords = pageRecords(knowledge);
+  const records = allRecords
     .filter((record) => {
       if (record.textQuality === "low" || record.textQuality === "none") return false;
       if (recordConflictsWithDepartment(record, matchedDepartment)) return false;
@@ -2831,15 +2832,15 @@ function directProgramDetailAnswer(question, knowledge) {
   if (!best) {
     const displayDepartment = displayDepartmentName(matchedDepartment);
     const departmentTerms = departmentAliases(matchedDepartment).map((alias) => normalizeQuestion(alias));
-    const sourceRecords = pageRecords(knowledge).filter((record) => {
+    const sourceRecords = allRecords.filter((record) => {
       if (recordConflictsWithDepartment(record, matchedDepartment)) return false;
-      const combined = normalizeQuestion(`${record.title} ${record.url} ${record.text}`);
+      const combined = normalizeQuestion(`${record.title} ${record.url} ${record.department || ""}`);
       return departmentTerms.some((term) => term.length >= 3 && termInQuestion(combined, term));
     });
     const syllabusSource = sourceRecords.find((record) => /syllabus|curriculum|course|download/i.test(`${record.title} ${record.url}`));
-    const admissionSource = pageRecords(knowledge).find((record) => {
+    const admissionSource = sourceRecords.find((record) => {
       const combined = normalizeQuestion(`${record.title} ${record.text}`);
-      return departmentTerms.some((term) => term.length >= 3 && termInQuestion(combined, term)) && /4\s+years?|8\s+semesters?/i.test(combined);
+      return /admission|requirement|program/i.test(`${record.title} ${record.url}`) && /4\s+years?|8\s+semesters?/i.test(combined);
     });
     const sources = [syllabusSource, admissionSource]
       .filter(Boolean)
