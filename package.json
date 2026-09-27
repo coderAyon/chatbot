@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "test": "node --test scripts/answer-engine.test.mjs",
+    "test": "node --test scripts/*.test.mjs",
     "check": "npm test && npm run build",
     "start": "node scripts/dev-all.mjs",
     "dev": "vite --host 127.0.0.1",

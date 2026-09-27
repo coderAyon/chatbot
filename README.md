@@ -58,6 +58,7 @@ Open `http://127.0.0.1:5173/`. `npm start` runs both the API and Vite developmen
 - For Groq on Render, set `OPENAI_API_KEY`, `OPENAI_MODEL=openai/gpt-oss-120b`, `OPENAI_BASE_URL=https://api.groq.com/openai/v1`, and `OPENAI_PROVIDER_NAME=Groq`.
 - `OLLAMA_URL` and `OLLAMA_MODEL`: optional local fallback.
 - `ADMIN_TOKEN`: optional token required as `x-admin-token` for logs, settings, and rebuild APIs. Public health/status remains readable so the chat UI can report service health.
+- `MAX_REQUEST_BYTES` and `MAX_ATTACHMENT_BYTES`: request and per-file upload limits. The defaults support up to three 8 MB attachments after base64 encoding.
 - `MAX_PAGES`, `MAX_PDFS`, `CRAWL_CONCURRENCY`, `PDF_CONCURRENCY`: crawler limits.
 - `FETCH_TIMEOUT_MS`, `FETCH_RETRIES`, `RECOVERY_PAGES`: transient failure handling and the reduced-concurrency recovery pass.
 

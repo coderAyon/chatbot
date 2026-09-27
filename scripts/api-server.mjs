@@ -2,7 +2,7 @@ import http from "node:http";
 import { spawn } from "node:child_process";
 import { copyFile, mkdir, readFile, rename, stat, unlink, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { basename, dirname, extname, join, resolve } from "node:path";
+import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const DIST_DIR = new URL("../dist/", import.meta.url);
@@ -42,10 +42,15 @@ const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 const openAiBaseUrl = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/+$/, "");
 const openAiProviderName = process.env.OPENAI_PROVIDER_NAME || (openAiBaseUrl.includes("groq.com") ? "Groq" : openAiBaseUrl.includes("openrouter.ai") ? "OpenRouter" : "OpenAI");
 const openAiModel = process.env.OPENAI_MODEL || (openAiProviderName === "Groq" ? "openai/gpt-oss-120b" : "gpt-4o-mini");
-const maxRequestBytes = Number(process.env.MAX_REQUEST_BYTES || 36 * 1024 * 1024);
-const maxAttachmentBytes = Number(process.env.MAX_ATTACHMENT_BYTES || 12 * 1024 * 1024);
-const rateWindowMs = Number(process.env.RATE_WINDOW_MS || 60_000);
-const rateLimit = Number(process.env.RATE_LIMIT || 60);
+function positiveIntegerEnv(name, fallback, maximum = Number.MAX_SAFE_INTEGER) {
+  const value = Number(process.env[name]);
+  return Number.isSafeInteger(value) && value > 0 ? Math.min(value, maximum) : fallback;
+}
+
+const maxRequestBytes = positiveIntegerEnv("MAX_REQUEST_BYTES", 36 * 1024 * 1024, 100 * 1024 * 1024);
+const maxAttachmentBytes = positiveIntegerEnv("MAX_ATTACHMENT_BYTES", 8 * 1024 * 1024, 25 * 1024 * 1024);
+const rateWindowMs = positiveIntegerEnv("RATE_WINDOW_MS", 60_000, 24 * 60 * 60 * 1000);
+const rateLimit = positiveIntegerEnv("RATE_LIMIT", 60, 10_000);
 const responseCache = new Map();
 const rateBuckets = new Map();
 const attachmentSessions = new Map();
@@ -136,6 +141,33 @@ const languagePatterns = [
 
 const banglishPatterns = [
   [/\bmedial\s+physics\b/g, " medical physics "],
+  [/\b(vlo|valo|vhalo|balo)\b/g, " bhalo "],
+  [/\b(nki|naky)\b/g, " naki "],
+  [/\b(kmn|kamon)\b/g, " kemon "],
+  [/\b(kto|kotoo)\b/g, " koto "],
+  [/\b(koita|koyta|koyti)\b/g, " koyta "],
+  [/\b(koyjn|koijn|koijon|koyjon)\b/g, " kojon "],
+  [/\b(koy|koto)\s+(?:bosor|bochor|year)\b/g, " koto year "],
+  [/\b(hed|headd|hod)\b/g, " head "],
+  [/\b(chairmn|chairmanne|chairmaan)\b/g, " chairman "],
+  [/\b(deen)\b/g, " dean "],
+  [/\b(vet(?:erinary)?\s+(?:er\s+)?)(din)\b/g, "$1 dean "],
+  [/\b(tchr|tchrs|teachr|teachrs)\b/g, " teacher "],
+  [/\b(fclty|faclty|faculti)\b/g, " faculty "],
+  [/\b(crdt|crdts|credt|credts)\b/g, " credit "],
+  [/\b(sit|sits|seet|seets)\b/g, " seat "],
+  [/\b(drtn|duratn|duretion)\b/g, " duration "],
+  [/\b(sub|subs|subj|subjs)\b/g, " subject "],
+  [/\b(reqrmnt|reqmnt|requirment)\b/g, " requirement "],
+  [/\b(elgblty|eligiblity)\b/g, " eligibility "],
+  [/\b(admsn|admisson|addmission)\b/g, " admission "],
+  [/\b(phrmcy|pharmcy|pharmasy)\b/g, " pharmacy "],
+  [/\b(nmbr|nuber|numbr)\b/g, " number "],
+  [/\b(?:poray|porai|porae)\b/g, " course subject "],
+  [/\bbl(?:o|w)?\b/g, " bolo "],
+  [/\bniye\s+(?:kisu|kichu)\s+bolo\b/g, " niye bolo details "],
+  [/\b(kom|beshi)\s+somoy\b/g, "$1 duration "],
+  [/\bk\b/g, " ke "],
   [/\b(likha|likhae|likhse|likhsen|lekse|lekhse|lekhsen)\b/g, " lekha "],
   [/\b(ki\s+likha|ki\s+lekha|ki\s+lekse|ki\s+likhse)\b/g, " ki lekha "],
   [/\b(nam|naam)\b/g, " name "],
@@ -180,6 +212,8 @@ function securityHeaders(extra = {}) {
     "access-control-allow-methods": "GET,POST,OPTIONS",
     "access-control-allow-headers": "content-type,x-admin-token",
     "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "permissions-policy": "camera=(), geolocation=(), payment=()",
     "referrer-policy": "no-referrer",
     "cache-control": "no-store",
     ...extra,
@@ -197,6 +231,17 @@ function clientIp(req) {
 
 function consumeRateBucket(key, limit) {
   const now = Date.now();
+  if (rateBuckets.size > 10_000) {
+    for (const [bucketKey, value] of rateBuckets) {
+      if (now > value.resetAt) rateBuckets.delete(bucketKey);
+    }
+    if (rateBuckets.size > 10_000) {
+      for (const bucketKey of rateBuckets.keys()) {
+        rateBuckets.delete(bucketKey);
+        if (rateBuckets.size <= 8_000) break;
+      }
+    }
+  }
   const bucket = rateBuckets.get(key) || { resetAt: now + rateWindowMs, count: 0 };
   if (now > bucket.resetAt) {
     bucket.resetAt = now + rateWindowMs;
@@ -433,27 +478,40 @@ function cleanExtractedText(text) {
 async function readBody(req) {
   return new Promise((resolve, reject) => {
     let body = "";
+    let tooLarge = false;
     req.on("data", (chunk) => {
+      if (tooLarge) return;
       body += chunk;
       if (Buffer.byteLength(body) > maxRequestBytes) {
-        const error = new Error("Request body is too large. Upload a smaller image/PDF.");
-        error.status = 413;
-        reject(error);
-        req.destroy();
+        tooLarge = true;
+        body = "";
       }
     });
-    req.on("end", () => resolve(body));
+    req.on("end", () => {
+      if (!tooLarge) return resolve(body);
+      const error = new Error("Request body is too large. Upload a smaller image/PDF.");
+      error.status = 413;
+      reject(error);
+    });
     req.on("error", reject);
   });
 }
 
 async function parseJsonBody(req) {
+  const contentType = String(req.headers["content-type"] || "").toLowerCase();
+  if (contentType && !contentType.startsWith("application/json")) {
+    const error = new Error("Content-Type must be application/json");
+    error.status = 415;
+    throw error;
+  }
   const raw = await readBody(req);
   if (!raw) return {};
   try {
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") throw new TypeError("JSON body must be an object");
+    return parsed;
   } catch {
-    const error = new Error("Invalid JSON body");
+    const error = new Error("Invalid JSON body; expected a JSON object");
     error.status = 400;
     throw error;
   }
@@ -461,7 +519,10 @@ async function parseJsonBody(req) {
 
 function attachmentBuffer(attachment) {
   if (!attachment?.data || typeof attachment.data !== "string") return null;
-  const base64 = attachment.data.includes(",") ? attachment.data.split(",").pop() : attachment.data;
+  const base64 = attachment.data.includes(",") ? attachment.data.slice(attachment.data.indexOf(",") + 1) : attachment.data;
+  if (!base64 || !/^[A-Za-z0-9+/]*={0,2}$/.test(base64) || base64.length % 4 === 1) return null;
+  const estimatedBytes = Math.floor((base64.length * 3) / 4) - (base64.endsWith("==") ? 2 : base64.endsWith("=") ? 1 : 0);
+  if (estimatedBytes <= 0 || estimatedBytes > maxAttachmentBytes) return null;
   const buffer = Buffer.from(base64, "base64");
   if (!buffer.length || buffer.length > maxAttachmentBytes) return null;
   return buffer;
@@ -556,8 +617,7 @@ async function extractAttachmentText(attachment) {
 }
 
 async function extractAttachments(attachments = []) {
-  const safeAttachments = Array.isArray(attachments) ? attachments.slice(0, 3) : [];
-  return Promise.all(safeAttachments.map((attachment) => extractAttachmentText(attachment)));
+  return Promise.all(attachments.map((attachment) => extractAttachmentText(attachment)));
 }
 
 function pruneAttachmentSessions() {
@@ -746,9 +806,11 @@ function scoreAliasMatch(question, alias) {
 }
 
 function prefersBanglish(text) {
+  const raw = String(text || "").toLowerCase();
   const q = normalizeQuestion(text);
   return (
-    /[\u0980-\u09ff]/.test(String(text || "")) ||
+    /[\u0980-\u09ff]/.test(raw) ||
+    /\b(fe|kto|koyjn|koijon|hed|chairmn|crdt|drtn|phrmcy|vlo|nki|kmn|bl)\b/i.test(raw) ||
     /\b(ki|ke|kivabe|pabo|lagbe|shuru|hobe|korbo|konta|kontar|porbo|kothay|somporke|chino|cheno|chine|jano|bolo|dao|ache|ase|kono|koto|koyjon|kojon|koyta|er|r|ta|te|vorti|hoy|hoi|kina|kemon|keno|kobe|bhalo|shob|sob|naki|ba|tarpor|porle|jani|janan|bolun|dekhun)\b/i.test(q)
   );
 }
@@ -829,31 +891,18 @@ function directFeeAnswer(question, knowledge, history = []) {
   const searchSubject = targetFeeDept ? `${targetFeeDept} ${q}` : q;
   const ranked = rankedProgramFees(searchSubject, knowledge.fees || []);
   const banglish = prefersBanglish(question);
+  const formatFeeItem = (fee) => {
+    const shortAlias = (fee.aliases || []).find((alias) => /^[A-Z][A-Z.]{1,10}$/i.test(alias) && !fee.program?.includes(alias));
+    const programLabel = `${fee.program || "Program"}${shortAlias ? ` (${shortAlias})` : ""}`;
+    const evidenceDetail = fee.admissionCostIncludes || fee.note || "";
+    const includeText = evidenceDetail ? ` (${evidenceDetail})` : "";
+    const feeType = /total tuition/i.test(`${fee.note || ""} ${fee.sourceTitle || ""}`) ? "Total tuition fee" : "Published fee / admission cost";
+    return `**${programLabel}** - ${feeType}: **${fee.admissionCost}**${includeText}`;
+  };
 
   if (ranked.length) {
     const bestScore = ranked[0].score;
     const matchedFees = ranked.filter((item) => item.score === bestScore).map((item) => item.fee);
-
-    const formatFeeItem = (fee) => {
-      const isCse = /\bcse|computer\s+science\b/i.test(`${fee.program} ${(fee.aliases || []).join(" ")}`);
-      const isPharmacy = /\bpharmacy|bpharm|mpharm\b/i.test(`${fee.program} ${(fee.aliases || []).join(" ")}`);
-
-      if (isCse) {
-        return banglish
-          ? `**${fee.program}**-এর টিউশন ফি:\n- **মোট টিউশন ফি (৪ বছর / ৮ সেমিস্টার):** **Tk. 4,50,000/-**\n- **ভর্তিকালীন প্রারম্ভিক খরচ:** **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার অন্তর্ভুক্ত)।`
-          : `**${fee.program}** Tuition Fee:\n- **Total Program Fee (4 Years / 8 Semesters):** **Tk. 4,50,000/-**\n- **Initial Admission Payment:** **BDT 54,500** (includes admission fee and 1st semester tuition).`;
-      }
-
-      if (isPharmacy) {
-        return banglish
-          ? `**${fee.program}**-এর মোট কোর্স ফি **${fee.admissionCost}** (৪ বছর / ৮ সেমিস্টার)। ভর্তিকালীন প্রারম্ভিক খরচ **BDT 54,500**।`
-          : `**${fee.program}** total course fee is **${fee.admissionCost}** (4 years / 8 semesters). Initial admission payment is **BDT 54,500**.`;
-      }
-
-      const includeText = fee.admissionCostIncludes ? ` (${fee.admissionCostIncludes})` : "";
-      const feeType = /total tuition/i.test(`${fee.note || ""} ${fee.sourceTitle || ""}`) ? "Total tuition fee" : "Published fee / admission cost";
-      return `**${fee.program}** - ${feeType}: **${fee.admissionCost}**${includeText}`;
-    };
 
     const text =
       matchedFees.length > 1
@@ -876,30 +925,22 @@ function directFeeAnswer(question, knowledge, history = []) {
     const deptName = displayDepartmentName(matchedDept);
     return {
       text: banglish
-        ? `**${deptName}**-এর নির্দিষ্ট মোট ৪ বছরের টিউশন প্যাকেজ ফি ওয়েবসাইটে আলাদাভাবে প্রকাশিত নেই।\n- **ভর্তিকালীন প্রারম্ভিক খরচ:** আন্ডারগ্র্যাজুয়েট প্রোগ্রামে সাধারণত **BDT 54,500** (ভর্তি ফি ও ১ম সেমিস্টার টিউশন অন্তর্ভুক্ত)।\n- **ওয়েভার ও স্কলারশিপ:** সেমিস্টার ফলাফলের ভিত্তিতে ১০% থেকে ৫০% পর্যন্ত টিউশন ফি ওয়েভার পাওয়া যায়।\n- বর্তমান সেশনের আপডেটেড পূর্ণাঙ্গ ফি জানতে ভর্তি অফিসে সরাসরি যোগাযোগ করুন: **01950003314**, **01950003319** বা ইমেইল: **admin@gonouniversity.edu.bd**।`
-        : `For **${deptName}**, the full 4-year total tuition package is not separately itemized online.\n- **Initial Admission-Time Payment:** Typically **BDT 54,500** (covers admission fee and first semester tuition).\n- **Tuition Fee Waiver:** Up to 50% tuition waiver available based on semester GPA results.\n- For the exact current session fee breakdown, please contact the Admission Office: **01950003314**, **01950003319** or email **admin@gonouniversity.edu.bd**.`,
-      sources: [
-        {
-          title: "Tuition and Other Fees - Gono Bishwabidyalay",
-          url: "https://gonouniversity.edu.bd/admission/tuition-and-other-fees/",
-        },
-      ],
-      mode: "structured",
+        ? `**${deptName}**-এর নির্দিষ্ট ফি indexed official fee record-এ পাওয়া যায়নি। অন্য program-এর fee এই বিভাগে প্রযোজ্য ধরে নেওয়া নিরাপদ নয়; current session-এর লিখিত fee schedule যাচাই করুন।`
+        : `I could not find a program-specific fee for **${deptName}** in the indexed official fee records. It would be unsafe to apply another program's fee to this department; please verify the current session's written fee schedule.`,
+      sources: [],
+      mode: "not_found",
     };
   }
 
   // If general fee inquiry (e.g. "what is the tuition fee", "fee koto", "admission fee"):
   if ((knowledge.fees || []).length > 0 && (/\b(?:what\s+is|bolo|dao|koto|how\s+much|list|show|all)\b/i.test(q) || q.split(/\s+/).length <= 4)) {
+    const publishedFees = (knowledge.fees || []).filter((fee) => fee?.program && fee?.admissionCost && fee?.source);
+    if (!publishedFees.length) return null;
     return {
-      text: banglish
-        ? `Gono Bishwabidyalay-এর প্রধান প্রোগ্রামগুলোর মোট ফি:\n- **B.Sc. in CSE:** Tk. 4,50,000/- (৪ বছর / ৮ সেমিস্টার)\n- **Bachelor of Pharmacy (B.Pharm):** Tk. 6,00,000/-\n- **Master of Pharmacy (M.Pharm):** Tk. 1,20,000/-\n- **BBA:** Tk. 2,80,000/- থেকে 3,50,000/-\n- ভর্তিকালীন প্রারম্ভিক খরচ: **BDT 54,500**। হেল্পলাইন: **01950003314**।`
-        : `Gono Bishwabidyalay published program fees:\n- **B.Sc. in CSE:** Tk. 4,50,000/- (4 years / 8 semesters)\n- **Bachelor of Pharmacy (B.Pharm):** Tk. 6,00,000/-\n- **Master of Pharmacy (M.Pharm):** Tk. 1,20,000/-\n- **BBA:** Tk. 2,80,000/- to 3,50,000/-\n- Initial admission payment: **BDT 54,500**. Helpline: **01950003314**.`,
-      sources: [
-        {
-          title: "Tuition and Other Fees - Gono Bishwabidyalay",
-          url: "https://gonouniversity.edu.bd/admission/tuition-and-other-fees/",
-        },
-      ],
+      text: `${banglish ? "Indexed official record-e published program fee" : "Published program fees in the indexed official records"}:\n${publishedFees.map((fee) => `- ${formatFeeItem(fee)}`).join("\n")}`,
+      sources: publishedFees
+        .map((fee) => ({ title: fee.sourceTitle || "Official fee source", url: fee.source }))
+        .filter((source, index, list) => list.findIndex((item) => item.url === source.url) === index),
       mode: "structured",
     };
   }
@@ -1703,6 +1744,7 @@ function directUniversityOverviewAnswer(question, knowledge) {
 
 function directAcademicUnitsAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
+  if (asksFeeDetail(q)) return null;
   const asksList = /\b(what|which|ki\s+ki|list|show|all|sob|shob|koyta|koto|how\s+many|available|offer)\b/i.test(q);
   const asksUnits = /\b(departments?|facult(?:y|ies)|academic\s+units?|programs?|degrees?)\b/i.test(q);
   if (!asksList || !asksUnits || asksProgramDetail(q)) return null;
@@ -2329,6 +2371,81 @@ function matchedDepartmentFromQuestion(question, knowledge) {
     .sort((a, b) => b.score - a.score)[0]?.department;
 }
 
+function ordinalTopicIndex(question) {
+  const q = normalizeQuestion(question);
+  const patterns = [
+    /(?:\b(?:first|1st)\s+(?:topic|one|department|program|subject|ta|tar)\b|\bprothom(?:\s+(?:topic|one|department|program|subject|ta|tar|bisoy|bishoy))?\b|প্রথম(?:টা|টি|টার|টির|\s*বিষ[য়য়])?)/iu,
+    /(?:\b(?:second|2nd)\s+(?:topic|one|department|program|subject|ta|tar)\b|\bditiyo(?:\s+(?:topic|one|department|program|subject|ta|tar|bisoy|bishoy))?\b|দ্বিতী[য়য়](?:টা|টি|টার|টির|\s*বিষ[য়য়])?)/iu,
+    /(?:\b(?:third|3rd)\s+(?:topic|one|department|program|subject|ta|tar)\b|\btritiyo(?:\s+(?:topic|one|department|program|subject|ta|tar|bisoy|bishoy))?\b|তৃতী[য়য়](?:টা|টি|টার|টির|\s*বিষ[য়য়])?)/iu,
+  ];
+  const index = patterns.findIndex((pattern) => pattern.test(q));
+  return index >= 0 ? index : null;
+}
+
+function conversationDepartmentTopics(history = [], knowledge = null) {
+  if (!knowledge) return [];
+  const topics = [];
+  for (const turn of history) {
+    if (turn?.role !== "user") continue;
+    const text = String(turn.text || "");
+    const department =
+      matchedDepartmentFromQuestion(text, knowledge) ||
+      rankedPrograms(text, knowledge.programs || [])[0]?.program?.department;
+    if (department && !topics.includes(department)) topics.push(department);
+  }
+  return topics;
+}
+
+function explicitTopicAnchor(question, knowledge = null) {
+  const text = String(question || "");
+  const q = normalizeQuestion(text);
+  const department = knowledge
+    ? matchedDepartmentFromQuestion(text, knowledge) || rankedPrograms(text, knowledge.programs || [])[0]?.program?.department
+    : null;
+  if (department) return { key: `department:${department}`, query: department };
+
+  const categories = [
+    ["admission", /\b(admission|vorti|apply|eligibility|requirements?|ssc|hsc|deadline)\b/i, "admission"],
+    ["fees", /\b(fees?|tuition|tution|cost|khoroch|payment|taka|waiver|scholarship)\b/i, "tuition fees"],
+    ["library", /\b(library|pathagar|boighor)\b/i, "library"],
+    ["hostel", /\b(hostel|hall|dormitory|abashon)\b/i, "hostel"],
+    ["transport", /\b(transport|bus|route|shuttle)\b/i, "transport"],
+    ["research", /\b(research|journal|publication|laboratory|lab)\b/i, "research"],
+    ["notices", /\b(notices?|result|routine|schedule|circular)\b/i, "latest notices"],
+    ["portal", /\b(portal|iems|student\s+portal|online\s+payment)\b/i, "student portal"],
+    ["facilities", /\b(campus|facilities?|canteen|sports|club)\b/i, "campus facilities"],
+    ["data-structures", /\bdata\s+structures?\b/i, "data structures"],
+    ["programming", /\b(programming|coding|software\s+development)\b/i, "programming"],
+  ];
+  const category = categories.find(([, pattern]) => pattern.test(q));
+  return category ? { key: `topic:${category[0]}`, query: category[2] } : null;
+}
+
+function conversationTopicAnchors(history = [], knowledge = null) {
+  const topics = [];
+  const seen = new Set();
+  for (const turn of history) {
+    if (turn?.role !== "user") continue;
+    const topic = explicitTopicAnchor(turn.text, knowledge);
+    if (!topic || seen.has(topic.key)) continue;
+    seen.add(topic.key);
+    topics.push(topic);
+  }
+  return topics;
+}
+
+function ordinalContextTopic(question, history = [], knowledge = null) {
+  const index = ordinalTopicIndex(question);
+  if (index === null) return null;
+  return conversationTopicAnchors(previousConversation(history, question), knowledge)[index] || null;
+}
+
+function ordinalContextDepartment(question, history = [], knowledge = null) {
+  const index = ordinalTopicIndex(question);
+  if (index === null) return null;
+  return conversationDepartmentTopics(previousConversation(history, question), knowledge)[index] || null;
+}
+
 function activeContextDepartment(history = [], question = "", knowledge = null) {
   if (knowledge && question) {
     const directDept = matchedDepartmentFromQuestion(question, knowledge);
@@ -2337,13 +2454,22 @@ function activeContextDepartment(history = [], question = "", knowledge = null) 
   const items = previousConversation(history, question);
   if (!items || !items.length) return null;
 
+  const ordinalDepartment = ordinalContextDepartment(question, items, knowledge);
+  if (ordinalDepartment) return ordinalDepartment;
+
   // First pass: inspect recent USER turns in reverse
-  const recentUserTurns = items.filter((t) => t.role === "user").slice(-6).reverse();
+  const recentUserTurns = items
+    .map((turn, index) => ({ ...turn, historyIndex: index }))
+    .filter((turn) => turn.role === "user")
+    .slice(-12)
+    .reverse();
   for (const turn of recentUserTurns) {
     const text = String(turn.text || "");
     if (knowledge) {
       const found = matchedDepartmentFromQuestion(text, knowledge);
       if (found) return found;
+      const recalled = ordinalContextDepartment(text, items.slice(0, turn.historyIndex), knowledge);
+      if (recalled) return recalled;
     }
     if (/\bcse|computer\s+science\b/i.test(text)) return "Department of Computer Science and Engineering";
     if (/\bpharmacy|bpharm|mpharm\b/i.test(text)) return "Department of Pharmacy";
@@ -2560,7 +2686,7 @@ function programForDepartment(knowledge, department, wantsGraduate = false) {
 
 function directProgramComparisonAnswer(question, knowledge, history = []) {
   const q = normalizeQuestion(question);
-  if (!/\b(compare|comparison|versus|vs|difference|better|choose|between|kont[a]?|konta|parthokko)\b/i.test(q)) return null;
+  if (!/\b(compare|comparison|versus|vs|difference|better|bhalo|naki|choose|between|kont[a]?|konta|parthokko)\b/i.test(q)) return null;
   let departments = mentionedDepartments(q, knowledge).slice(0, 3);
   if (departments.length < 2 && history.length) {
     const items = previousConversation(history, question);
@@ -2592,18 +2718,32 @@ function directProgramComparisonAnswer(question, knowledge, history = []) {
       }
     }
   }
-  if (departments.length < 2) return null;
+  if (departments.length < 2) {
+    const hasEarlierComparison = history.some((item) => item.role === "user" && mentionedDepartments(item.text || "", knowledge).length >= 2);
+    if (hasEarlierComparison) return null;
+    if (departments.length === 1 && /\b(better|bhalo|naki|konta|choose)\b/i.test(q)) {
+      return {
+        text: prefersBanglish(question)
+          ? `**${displayDepartmentName(departments[0])}**-ke kon program-er sathe compare korte chaccho? Onno program-ta bolle course, duration, credit o career-fit diye tulona korbo.`
+          : `Which program would you like to compare with **${displayDepartmentName(departments[0])}**? Name the other program and I will compare courses, duration, credits, and career fit.`,
+        sources: [],
+        mode: "clarify",
+      };
+    }
+    return null;
+  }
   const wantsGraduate = /\b(?:msc|mpharm|master|graduate|postgraduate|llm|mss|ma)\b/i.test(q);
+  const banglish = prefersBanglish(question);
   const sections = departments.map((department) => {
     const program = programForDepartment(knowledge, department, wantsGraduate);
     const credit = departmentCreditFact(knowledge, department);
     const { courses } = departmentCourses(knowledge, department);
     const facts = [
-      program?.duration && `Duration: **${cleanOfficialDisplayText(program.duration)}**`,
-      program?.seats && `Published seats: **${cleanOfficialDisplayText(program.seats)}**`,
-      credit?.value && `Official course-plan credits: **${credit.value}**`,
-      courses.length && `Course examples: ${courses.slice(0, 6).map((course) => course.title).join(", ")}`,
-      program?.admissionRequirement && `Eligibility: ${cleanOfficialDisplayText(program.admissionRequirement)}`,
+      program?.duration && `${banglish ? "Duration" : "Duration"}: **${cleanOfficialDisplayText(program.duration)}**`,
+      program?.seats && `${banglish ? "Published seat" : "Published seats"}: **${cleanOfficialDisplayText(program.seats)}**`,
+      credit?.value && `${banglish ? "Official total credit" : "Official course-plan credits"}: **${credit.value}**`,
+      courses.length && `${banglish ? "Course example" : "Course examples"}: ${courses.slice(0, 6).map((course) => course.title).join(", ")}`,
+      program?.admissionRequirement && `${banglish ? "Admission eligibility" : "Eligibility"}: ${cleanOfficialDisplayText(program.admissionRequirement)}`,
     ].filter(Boolean);
     return `**${program?.name || displayDepartmentName(department)}**\n${facts.map((fact) => `- ${fact}`).join("\n")}`;
   });
@@ -2625,8 +2765,12 @@ function directProgramComparisonAnswer(question, knowledge, history = []) {
   const interest = interestMap.find((item) => item.pattern.test(q));
   const recommended = interest && departments.find((department) => interest.department.test(department));
   const recommendation = recommended
-    ? `\n\n**Best fit for your stated interest:** **${displayDepartmentName(recommended)}**, because you mentioned ${interest.focus}. This is an interest-based recommendation, not a universal ranking.`
-    : `\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking.`;
+    ? (banglish
+        ? `\n\n**Tomar interest-er sathe best fit:** **${displayDepartmentName(recommended)}**, karon tumi ${interest.focus} niye interest bolecho. Eta interest-based suggestion, universal ranking na.`
+        : `\n\n**Best fit for your stated interest:** **${displayDepartmentName(recommended)}**, because you mentioned ${interest.focus}. This is an interest-based recommendation, not a universal ranking.`)
+    : (banglish
+        ? `\n\n**Konta bhalo?** Eta tomar interest-er upor depend kore. Uporer course, credit, duration o career direction miliye choose koro—sobai-r jonno ekta program universally better na.`
+        : `\n\n**How to choose:** compare the actual course examples with what you enjoy and the work you want to do. “Better” is personal; the verified differences above are more useful than a generic ranking.`);
   return {
     text: `${sections.join("\n\n")}${recommendation}`,
     sources,
@@ -2660,6 +2804,35 @@ function directComparisonFollowupAnswer(question, knowledge, history = []) {
     return {
       text: `${facts.map(({ department, program }) => `- **${displayDepartmentName(department)}:** ${program.seats} published seats`).join("\n")}\n\n**${displayDepartmentName(sorted[0].department)}** has the larger published intake in these official admission records.`,
       sources: facts.map(({ program }) => ({ title: program.sourceTitle || program.name, url: program.source })).filter((source, index, list) => list.findIndex((item) => item.url === source.url) === index),
+      mode: "structured",
+    };
+  }
+
+  if (/\b(duration|years?|semesters?|shorter|longer)\b/i.test(q)) {
+    const facts = departments
+      .map((department) => ({ department, program: programForDepartment(knowledge, department) }))
+      .filter((item) => item.program?.duration)
+      .map((item) => ({ ...item, years: Number(String(item.program.duration).match(/\d+(?:\.\d+)?/)?.[0]) }));
+    if (facts.length < 2) return null;
+    const validYears = facts.filter((item) => Number.isFinite(item.years));
+    const durations = facts.map(({ department, program }) => `- **${displayDepartmentName(department)}:** ${cleanOfficialDisplayText(program.duration)}`).join("\n");
+    let conclusion = prefersBanglish(question)
+      ? "Published duration program o session onujayi compare kora uchit."
+      : "The published durations should be compared by program and session.";
+    if (validYears.length >= 2) {
+      const shortest = Math.min(...validYears.map((item) => item.years));
+      const shortestPrograms = validYears.filter((item) => item.years === shortest);
+      conclusion = shortestPrograms.length > 1
+        ? (prefersBanglish(question)
+            ? `Duita program-er-i published duration **${shortest} years**—somoy-er dik diye konotai choto na.`
+            : `These programs have the same published duration of **${shortest} years**.`)
+        : (prefersBanglish(question)
+            ? `**${displayDepartmentName(shortestPrograms[0].department)}**-er published duration kom.`
+            : `**${displayDepartmentName(shortestPrograms[0].department)}** has the shorter published duration.`);
+    }
+    return {
+      text: `${durations}\n\n${conclusion}`,
+      sources: facts.map(({ program }) => ({ title: program.sourceTitle || program.name, url: program.source })).filter((source, index, list) => source.url && list.findIndex((item) => item.url === source.url) === index),
       mode: "structured",
     };
   }
@@ -3013,7 +3186,7 @@ function bareAcademicTopic(question) {
   const q = normalizeQuestion(question).replace(/[^\p{L}\p{N}\s]/gu, " ").trim();
   if (!q || tokenize(q).length > 4) return "";
   const hasSpecificIntent =
-    /\b(what\s+is|ki|kake\s+bole|explain|define|overview|about|details|courses?|subject|syllabus|credits?|duration|seats?|seat|asan|ashon|intake|capacity|qualification|eligibility|requirements?|joggota|lagbe|faculty|teacher|head|fee|fees?|fe|cost|costs?|tuition|tution|taka|tk|khoroch|khroch|kharach|kharoch|charge|charges|expense|expenses|payment|payments|package|admission|vorti|career|learn|study|somporke|somproke|bolo|dao|koto|how|why|list|show|compare|comparison|versus|vs|better|difference)\b/i.test(q);
+    /\b(what\s+is|ki|kake\s+bole|explain|define|overview|about|details|courses?|subject|syllabus|credits?|duration|seats?|seat|asan|ashon|intake|capacity|qualification|eligibility|requirements?|joggota|lagbe|faculty|teacher|head|fee|fees?|fe|cost|costs?|tuition|tution|taka|tk|khoroch|khroch|kharach|kharoch|charge|charges|expense|expenses|payment|payments|package|admission|vorti|career|learn|study|somporke|somproke|bolo|dao|koto|how|why|list|show|compare|comparison|versus|vs|better|bhalo|naki|difference)\b/i.test(q);
   if (hasSpecificIntent) return "";
   if (/\b(medical\s+physics|biomedical(?:\s+engineering)?)\b/i.test(q)) return "Medical Physics and Biomedical Engineering";
   if (/\b(cse|computer\s+science)\b/i.test(q)) return "CSE";
@@ -3251,8 +3424,17 @@ function directCampusFacilitiesAnswer(question, knowledge, history = []) {
 }
 
 function directAnswer(question, knowledge, history = []) {
+  if (history.length && !matchedDepartmentFromQuestion(question, knowledge)) {
+    const recalledDepartment = ordinalContextDepartment(question, history, knowledge);
+    if (recalledDepartment) {
+      const hasSpecificIntent = /\b(chairman|chairperson|head|hod|dean|credits?|duration|seats?|eligibility|requirements?|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|courses?|subjects?|faculty|teachers?|waiver|scholarship|admission|vorti|apply|qualification|gpa|career|job|future|scope|details?|contact|phone|email|number)\b/i.test(normalizeQuestion(question));
+      return directAnswer(`${recalledDepartment} ${hasSpecificIntent ? "" : "details"} ${question}`, knowledge, []);
+    }
+    const recalledTopic = ordinalContextTopic(question, history, knowledge);
+    if (recalledTopic) return directAnswer(`${recalledTopic.query} ${question}`, knowledge, []);
+  }
   const q = normalizeQuestion(question);
-  const departmentFollowup = /\b(chairman|chairperson|head|hod|dean|credits?|duration|seats?|eligibility|requirements?|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|waiver|scholarship|stipend|admission|vorti|apply|qualification|gpa|career|job|future|scope|details?|bistarito)\b/i.test(q);
+  const departmentFollowup = /\b(chairman|chairperson|head|hod|dean|faculty|teachers?|members?|credits?|duration|seats?|eligibility|requirements?|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|courses?|subjects?|waiver|scholarship|stipend|admission|vorti|apply|qualification|gpa|career|job|future|scope|details?|bistarito)\b/i.test(q);
   const comparativeFollowup = /\b(which|which\s+one|more|less|higher|lower|shorter|longer|better|konta|kontar|beshi|kom)\b/i.test(q);
   if (history.length && departmentFollowup && !comparativeFollowup && !matchedDepartmentFromQuestion(q, knowledge)) {
     const priorDept = activeContextDepartment(history, question, knowledge);
@@ -3311,13 +3493,13 @@ function directAnswer(question, knowledge, history = []) {
     directFacilitiesAnswer(question) ||
     directAdmissionOverviewAnswer(question, knowledge) ||
     directAdmissionProcedureAnswer(question, knowledge, history) ||
+    directProgramAdmissionAnswer(question, knowledge) ||
     directAdmissionEligibilityAnswer(question, knowledge, history) ||
     directWaiverAndFinancialAidAnswer(question, knowledge, history) ||
     directFeeAnswer(question, knowledge, history) ||
     directProgramComparisonAnswer(question, knowledge, history) ||
     directComparisonFollowupAnswer(question, knowledge, history) ||
     directCareerGuidanceAnswer(question, knowledge, history) ||
-    directProgramAdmissionAnswer(question, knowledge) ||
     directCourseCatalogAnswer(question, knowledge) ||
     directDepartmentProfileAnswer(question, knowledge) ||
     directRoleAnswer(question, knowledge) ||
@@ -3705,25 +3887,29 @@ function attachmentFallbackAnswer(question, contexts) {
   };
 }
 
-function safeAnswer(text) {
+function safeAnswer(text, question = "") {
   const trimmed = cleanExtractedText(text).replace(/【[^】]+】/g, "").replace(/[ \t]+\n/g, "\n").trim();
   if (!trimmed) return NOT_VERIFIED;
   if (/not (in|available|provided|found)|no verified|do not have verified|don't have verified|cannot verify/i.test(trimmed)) {
-    return NOT_VERIFIED;
+    return notVerifiedText(question);
   }
   return trimmed;
 }
 
 function aiSystemInstruction(question) {
-  const languageHint = prefersBanglish(question)
-    ? "Reply in natural Banglish/Bengali style matching the user's tone."
-    : "Reply in concise, natural English.";
+  const rawQuestion = String(question || "");
+  const languageHint = /[\u0980-\u09ff]/.test(rawQuestion)
+    ? "Reply in natural Bengali script. Match the user's casual or formal tone without becoming theatrical."
+    : prefersBanglish(question)
+      ? "Reply in natural, friendly Banglish matching the user's wording and level of formality."
+      : "Reply in concise, natural English matching the user's level of formality.";
   const academicHint = isGeneralAcademicQuestion(question)
     ? `This is a general academic/course explainer question. You may use general educational knowledge when official context is missing, but clearly say when the answer is general and not a verified Gono Bishwabidyalay-specific fact. `
     : "";
   return (
     `You are GB Knowledge Assistant, a capable conversational AI for Gono Bishwabidyalay students. Use the supplied official context and conversation for university-specific facts, and answer ordinary general-knowledge or academic questions normally. ` +
-    `Answer the user's real intent directly, keep continuity with earlier turns, and sound natural rather than like a search engine. ${languageHint} ` +
+    `Infer the user's real intent from fragments, common typos, shorthand, omitted words, and conversation context. Silently repair obvious wording mistakes. If one interpretation is clearly most likely, answer it directly; ask one short clarification only when two materially different interpretations remain plausible. ` +
+    `Keep continuity with earlier turns, remember which person/program/topic pronouns refer to, and sound natural rather than like a search engine or form. ${languageHint} ` +
     academicHint +
     `If the user asks a yes/no question and the context supports it, start with "Yes" or "No" and then give one short reason. ` +
     `For names, phone numbers, emails, fees, designations, departments, deadlines, and admission requirements, answer only when the exact fact is present in the supplied context. ` +
@@ -3881,7 +4067,7 @@ async function askAiProvider(question, contexts, history = [], scope = "ai") {
   for (const [name, ask] of providers) {
     try {
       const text = await ask(question, contexts, history);
-      if (text) return { text: safeAnswer(text), provider: name };
+      if (text) return { text: safeAnswer(text, question), provider: name };
     } catch (error) {
       await logServerEvent({ at: new Date().toISOString(), level: "warn", message: error.message, scope: `${scope}_${name}` });
     }
@@ -4058,9 +4244,19 @@ async function persistResponseCache() {
 async function handleChat(req, res) {
   const startedAt = Date.now();
   const body = await parseJsonBody(req);
+  if (body.attachments !== undefined && !Array.isArray(body.attachments)) {
+    return json(res, 400, { error: "Attachments must be an array" });
+  }
+  if (body.attachments?.length > 3) {
+    return json(res, 400, { error: "A maximum of 3 attachments is allowed per message" });
+  }
   const hasAttachments = Array.isArray(body.attachments) && body.attachments.length > 0;
   const message = String(body.message || (hasAttachments ? "Read this attachment and answer from it." : "")).trim();
-  const sessionId = String(body.sessionId || clientIp(req)).slice(0, 120);
+  const suppliedSessionId = String(body.sessionId || "").trim();
+  if (suppliedSessionId && !/^[A-Za-z0-9._:-]{1,120}$/.test(suppliedSessionId)) {
+    return json(res, 400, { error: "Session ID contains unsupported characters" });
+  }
+  const sessionId = suppliedSessionId || `anonymous:${clientIp(req)}`.slice(0, 120);
   if (!rateLimitOk(req, sessionId)) return json(res, 429, { error: "Too many messages in a short time. Please wait a minute and try again." });
   if (!message) return json(res, 400, { error: "Message is required" });
   if (message.length > 2000) return json(res, 400, { error: "Message is too long" });
@@ -4257,11 +4453,27 @@ async function adminLogs(req, res) {
 async function adminSettings(req, res) {
   if (req.method === "GET") return json(res, 200, await loadSettings());
   const body = await parseJsonBody(req);
+  const requestedMaxPages = Number(body.maxPages ?? 2000);
+  const requestedConcurrency = Number(body.crawlConcurrency ?? 10);
+  if (!Number.isSafeInteger(requestedMaxPages) || requestedMaxPages < 1 || requestedMaxPages > 5000) {
+    return json(res, 400, { error: "maxPages must be an integer between 1 and 5000" });
+  }
+  if (!Number.isSafeInteger(requestedConcurrency) || requestedConcurrency < 1 || requestedConcurrency > 25) {
+    return json(res, 400, { error: "crawlConcurrency must be an integer between 1 and 25" });
+  }
+  if (body.officialSiteUrl !== undefined) {
+    try {
+      const requestedUrl = new URL(String(body.officialSiteUrl));
+      if (!/^https?:$/.test(requestedUrl.protocol)) throw new Error("Unsupported protocol");
+    } catch {
+      return json(res, 400, { error: "officialSiteUrl must be a valid HTTP(S) URL" });
+    }
+  }
   const next = {
     ...(await loadSettings()),
     officialSiteUrl: normalizeBaseUrl(body.officialSiteUrl || officialSiteUrl),
-    maxPages: Math.min(Math.max(Number(body.maxPages || 2000), 1), 5000),
-    crawlConcurrency: Math.min(Math.max(Number(body.crawlConcurrency || 10), 1), 25),
+    maxPages: requestedMaxPages,
+    crawlConcurrency: requestedConcurrency,
   };
   await writeJsonAtomic(SETTINGS_FILE, next);
   return json(res, 200, next);
@@ -4319,6 +4531,7 @@ async function route(req, res) {
       geminiConfigured: Boolean(envSecret("GEMINI_API_KEY")),
     });
   }
+  if (url.pathname === "/api/chat" && req.method !== "POST") return json(res, 405, { error: "Method not allowed" });
   if (req.method === "POST" && url.pathname === "/api/chat") return handleChat(req, res);
   if (req.method === "GET" && url.pathname === "/api/admin/status") return adminStatus(req, res);
   if (url.pathname.startsWith("/api/admin") && !requireAdmin(req, res)) return;
@@ -4355,9 +4568,18 @@ async function serveStatic(req, res, pathname) {
   if (req.method !== "GET" && req.method !== "HEAD") {
     return json(res, 405, { error: "Method not allowed" });
   }
-  const cleanPath = pathname.replace(/^\/+/, "").replace(/\.\./g, "");
   const distPath = fileURLToPath(DIST_DIR);
+  let cleanPath;
+  try {
+    cleanPath = decodeURIComponent(pathname).replace(/\\/g, "/").replace(/^\/+/, "");
+  } catch {
+    return json(res, 400, { error: "Invalid URL path" });
+  }
   let targetFile = resolve(distPath, cleanPath || "index.html");
+  const relativeTarget = relative(distPath, targetFile);
+  if (relativeTarget.startsWith("..") || isAbsolute(relativeTarget)) {
+    return json(res, 403, { error: "Forbidden path" });
+  }
   if (!existsSync(targetFile)) {
     targetFile = resolve(distPath, "index.html");
   } else {
@@ -4381,6 +4603,11 @@ async function serveStatic(req, res, pathname) {
       "content-type": contentType,
       "content-length": Buffer.byteLength(data),
       "cache-control": ext === ".html" ? "no-cache" : "public, max-age=31536000, immutable",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "DENY",
+      "referrer-policy": "no-referrer",
+      "permissions-policy": "camera=(), geolocation=(), payment=()",
+      "content-security-policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
     });
     if (req.method === "HEAD") {
       res.end();
@@ -4396,8 +4623,11 @@ const server = http.createServer(async (req, res) => {
   try {
     await route(req, res);
   } catch (error) {
-    await logServerEvent({ at: new Date().toISOString(), level: "error", message: error.message, scope: "server" });
-    json(res, error.status || 500, { error: error.status ? error.message : "Internal server error" });
+    const status = Number.isInteger(error.status) ? error.status : 500;
+    if (status >= 500) {
+      await logServerEvent({ at: new Date().toISOString(), level: "error", message: error.message, scope: "server" });
+    }
+    json(res, status, { error: status < 500 ? error.message : "Internal server error" });
   }
 });
 

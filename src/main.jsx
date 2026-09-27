@@ -38,6 +38,17 @@ const GB_LOGO_URL = "/gb-logo.png";
 const CHAT_HISTORY_KEY = "university-chat-history-v3";
 const ACTIVE_CHAT_KEY = "university-active-chat-v3";
 const LEGACY_CHAT_HISTORY_KEYS = ["university-chat-history", "university-chat-history-v2"];
+const MAX_ATTACHMENTS = 3;
+const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024;
+
+function safeExternalUrl(value) {
+  try {
+    const url = new URL(String(value || ""), window.location.origin);
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+  } catch {
+    return "";
+  }
+}
 
 function parseBanglaOrEnglishNum(str) {
   const bnToEn = { "০": "0", "১": "1", "২": "2", "৩": "3", "৪": "4", "৫": "5", "৬": "6", "৭": "7", "৮": "8", "৯": "9" };
@@ -502,12 +513,12 @@ function App() {
 
   async function handleAttachmentChange(event) {
     const files = Array.from(event.target.files || []);
-    const maxFiles = Math.max(0, 3 - attachments.length);
+    const maxFiles = Math.max(0, MAX_ATTACHMENTS - attachments.length);
     const allowedExtensions = /\.(pdf|png|jpe?g|webp|gif|bmp|txt|md|csv)$/i;
     const selected = files.slice(0, maxFiles);
     const accepted = selected.filter(
       (file) =>
-        file.size <= 12 * 1024 * 1024 &&
+        file.size <= MAX_ATTACHMENT_BYTES &&
         (file.type.startsWith("image/") ||
           file.type === "application/pdf" ||
           file.type.startsWith("text/") ||
@@ -522,10 +533,10 @@ function App() {
         data: await readFileAsDataUrl(file),
       })),
     );
-    setAttachments((current) => [...current, ...prepared].slice(0, 3));
+    setAttachments((current) => [...current, ...prepared].slice(0, MAX_ATTACHMENTS));
     setAttachmentError(
       rejectedCount > 0
-        ? "Only PDF, image, or text files up to 12 MB are supported. Maximum 3 files per message."
+        ? "Only PDF, image, or text files up to 8 MB are supported. Maximum 3 files per message."
         : "",
     );
     event.target.value = "";
@@ -1078,10 +1089,10 @@ function MessageBubble({ message, copied, onCopy, onSuggestion, onRetry, isSpeak
             ))}
           </div>
         )}
-        {isAssistant && message.sources?.length > 0 && (
+        {isAssistant && message.sources?.some((source) => safeExternalUrl(source.url)) && (
           <div className="citation-row">
-            {message.sources.map((source, sourceIndex) => (
-              <a href={source.url || "#"} target={source.url ? "_blank" : undefined} rel="noreferrer" key={`${source.url}-${sourceIndex}`}>
+            {message.sources.filter((source) => safeExternalUrl(source.url)).map((source, sourceIndex) => (
+              <a href={safeExternalUrl(source.url)} target="_blank" rel="noopener noreferrer" key={`${source.url}-${sourceIndex}`}>
                 <LinkIcon size={13} />
                 <span>{source.title || "Official source"}</span>
               </a>
