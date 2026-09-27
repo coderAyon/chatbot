@@ -5673,12 +5673,37 @@ function getLastImageContext(history = []) {
   return null;
 }
 
+function isExplicitFreshImageIntent(text) {
+  const t = String(text || "").trim();
+  if (/\b(notun|new|another\s+different|onno|different|fresh|ebar\s+ekta|ebar\s+onno)\b/i.test(t) &&
+      /\b(chobi|image|photo|picture|drawing|illustration|banao|create|draw|generate)\b/i.test(t)) {
+    return true;
+  }
+  if (/(নতুন|অন্য|আরেকটি সম্পূর্ণ নতুন|এবার একটি|এবার একটা)\s*(ছবি|ইমেজ|চিত্র|ফটো)/i.test(t)) {
+    return true;
+  }
+  const hasRelativeContinuator = /\b(eitar|eita|er\s+vitore|er\s+moddhe|aro|abar|same|this|it|its|them|current|previous)\b/i.test(t) ||
+    /(এইটার|এটার|এর\s*ভেতরে|এর\s*মধ্যে|আরও|আবার|একই|এই)/i.test(t);
+
+  const hasFullSubjectCreationVerb = /(?:er\s+)?(?:ekta\s+)?(?:chobi|image|photo)\s+(?:banao|create\s+koro|draw\s+koro|ako)|(?:ছবি|ফটো)\s*(?:বানাও|আঁকো|আকো|তৈরি\s*করো)/i.test(t);
+
+  if (hasFullSubjectCreationVerb && !hasRelativeContinuator) {
+    return true;
+  }
+  return false;
+}
+
 function isImageRefinementOrFollowup(message, history = []) {
   const lastImage = getLastImageContext(history);
   if (!lastImage) return null;
 
   const t = String(message || "").trim();
   if (!t) return null;
+
+  // If user explicitly asks for a fresh new image of another subject, don't treat as refinement
+  if (isExplicitFreshImageIntent(t)) {
+    return null;
+  }
 
   // Unrelated university / academic questions are NOT image refinements
   if (/\b(admission|fee|fees|tuition|cost|khoroc|somoy|timing|open|close|bondho|schedule|routine|bus|transport|result|grade|cgpa|gpa|credit|waiver|scholarship|eligibility|joggot|department|faculty|teacher|dean|vc|vice chancellor|registrar|contact|phone|number|email|address|location|kothay|kokhon|koto|ki ki|kivabe|rules|notice|syllabus|curriculum)\b/i.test(t)) {
@@ -5912,23 +5937,103 @@ TASK:
   };
 }
 
+function isExistingImageLookupIntent(text) {
+  const t = String(text || "").trim();
+  return (
+    /\b(show|find|search|look\s+up|where\s+(?:is|can\s+i\s+find)|do\s+you\s+have|official)\b.*\b(image|photo|picture|portrait|logo|course\s+plan)\b/i.test(t) ||
+    /\b(image|photo|picture|portrait|logo|course\s+plan)\b.*\b(dekhao|dekhaw|khujte|khuje|find|show)\b/i.test(t) ||
+    /\b(image|photo|picture|portrait|logo)\s+of\s+(?:the\s+)?(?:vice\s+chancellor|vc|founder|faculty|teacher|dean|registrar|course\s+plan)\b/i.test(t) ||
+    /(ছবি|ফটো|ইমেজ|লোগো).*(দেখাও|খুঁজে|কোথায়|অফিশিয়াল)|(ভিসি|ভাইস[\s-]*চ্যান্সেলর|প্রতিষ্ঠাতা|শিক্ষক|ডিন|রেজিস্ট্রার|কোর্স[\s-]*প্ল্যান).*(ছবি|ফটো|ইমেজ|লোগো)/i.test(t)
+  );
+}
+
+function directOfficialImageLookupAnswer(question, knowledge) {
+  if (!isExistingImageLookupIntent(question)) return null;
+  const q = normalizeQuestion(question);
+  let subject = "requested item";
+  let source = null;
+
+  if (/\b(course\s*plan|syllabus|curriculum)\b/i.test(q)) {
+    const department = matchedDepartmentFromQuestion(q, knowledge);
+    const aliases = department ? departmentAliases(department) : [];
+    const page = (knowledge.pages || []).find((item) => {
+      const identity = normalizeQuestion(`${item.title || ""} ${item.url || ""} ${item.department || ""}`);
+      return /course[-\s/]*plan|syllabus|curriculum/i.test(identity) && (!department || aliases.some((alias) => termInQuestion(identity, alias)));
+    });
+    subject = department ? `${displayDepartmentName(department)} course plan` : "course plan";
+    if (page?.url) source = { title: page.title || subject, url: page.url };
+  } else {
+    const roleMatchers = [
+      [/\b(vice\s*chancellor|vc)\b|ভাইস[\s-]*চ্যান্সেলর|ভিসি/i, "vice_chancellor"],
+      [/\bregistrar\b|রেজিস্ট্রার/i, "registrar"],
+      [/\btreasurer\b|ট্রেজারার|কোষাধ্যক্ষ/i, "treasurer"],
+      [/\bproctor\b|প্রক্টর/i, "proctor"],
+    ];
+    const roleKey = roleMatchers.find(([pattern]) => pattern.test(question))?.[1];
+    const role = roleKey ? (knowledge.roles || []).find((item) => item.key === roleKey) : null;
+    if (role) {
+      subject = `${role.title} ${role.name}`;
+      if (role.source) source = { title: role.sourceTitle || `${role.title} official profile`, url: role.source };
+    } else if (/\bfounder\b|প্রতিষ্ঠাতা/i.test(question)) {
+      subject = `founder ${knowledge.institution?.founder || "Dr. Zafrullah Chowdhury"}`;
+      source = { title: "Gono Bishwabidyalay official website", url: knowledge.institution?.source || officialSiteUrl };
+    }
+  }
+
+  const hasSource = Boolean(source?.url);
+  return {
+    text: prefersBanglish(question)
+      ? hasSource
+        ? `**${subject}**-er kono notun/AI photo generate korchi na. Nicher verified official page-e available original photo/document dekhte parben.`
+        : `**${subject}**-er verified direct image URL indexed record-e nei, tai kono photo baniye dekhacchi na.`
+      : hasSource
+        ? `I will not generate a new or synthetic image of **${subject}**. Open the verified official page below to view the available original photo or document.`
+        : `The indexed records do not contain a verified direct image URL for **${subject}**, so I will not fabricate one.`,
+    sources: hasSource ? [source] : [],
+    mode: "official_image_lookup",
+    profile: { label: "Official image lookup", confidence: hasSource ? "Verified source" : "No verified image" },
+    suggestions: hasSource ? ["Official profile-er details bolo"] : ["Official source page dao"],
+  };
+}
+
 function isImageCreationIntent(text) {
   const t = String(text || "").trim();
   if (!t) return false;
+
+  // Filter out coding/academic/analytical questions
   if (/\b(solve|calculate|evaluate|explain|derive|program|code|python|java|c\+\+|javascript|function|algorithm|error|bug|difference between|how to|why|what is|when did|who is)\b/i.test(t)) {
     return false;
   }
-  if (/[?？]/.test(t) && !/(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|draw|create an? image|generate an? image)/i.test(t)) {
+  // Questions about administrative photo rules (upload, size, admit card, id card)
+  if (/\b(upload|scan|size|kb|mb|file|format|form|portal|admit\s*card|registration|id\s*card|nid|signature|nishedh|allowed|allow|permission|lagbe|lage|dorkar|mandatory|proyojon|rules|policy)\b/i.test(t)) {
     return false;
   }
-  if (/(সমাধান|ব্যাখ্যা|উত্তর|কী|কেন|কীভাবে|কোথায়|কখন|কার|প্রোগ্রাম|কোড|ফাংশন|বাগ|ত্রুটি)/.test(t) && !/(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো)/.test(t)) {
+  if (/(আপলোড|সাইজ|ফরম্যাট|এডমিট|নিষেধ|অনুমতি|লাগবে|লাগে|দরকার|বাধ্যতামূলক|প্রয়োজন|নিয়ম)/.test(t)) {
     return false;
   }
-  const asksForExistingImage =
-    /\b(show|find|search|look\s+up|where\s+(?:is|can\s+i\s+find)|do\s+you\s+have|official)\b.*\b(image|photo|picture|portrait|logo|course\s+plan)\b/i.test(t) ||
-    /\b(image|photo|picture|portrait|logo)\s+of\s+(?:the\s+)?(?:vice\s+chancellor|vc|founder|faculty|teacher|dean|registrar|course\s+plan)\b/i.test(t) ||
-    /(ছবি|ফটো|ইমেজ|লোগো).*(দেখাও|খুঁজে|কোথায়|অফিশিয়াল)|(ভিসি|ভাইস[\s-]*চ্যান্সেলর|প্রতিষ্ঠাতা|শিক্ষক|ডিন|রেজিস্ট্রার|কোর্স[\s-]*প্ল্যান).*(ছবি|ফটো|ইমেজ|লোগো)/i.test(t);
-  if (asksForExistingImage) return false;
+  // Bengali question words without image verbs
+  if (/(সমাধান|ব্যাখ্যা|উত্তর|কী|কেন|কীভাবে|কোথায়|কখন|কার|প্রোগ্রাম|কোড|ফাংশন|বাগ|ত্রুটি)/.test(t) && !/(ছবি|ইমেজ|ফটো).*(আঁকো|আকো|বানাও|তৈরি|দাও)/.test(t)) {
+    return false;
+  }
+  if (isExistingImageLookupIntent(t)) return false;
+
+  // Bengali creation patterns
+  if (/(ছবি|ইমেজ|ফটো|চিত্র)\s*(আঁকো|আকো|বানাও|তৈরি\s*করো|এঁকে\s*দাও|একে\s*দাও|বানিয়ে\s*দাও|তৈরি\s*করে\s*দাও|দাও)|(আঁকো|আকো|বানাও|তৈরি\s*করো)\s*(?:একটি|একটা)?\s*(ছবি|ইমেজ|ফটো|চিত্র)/i.test(t)) {
+    return true;
+  }
+
+  // English creation patterns: "create/generate/make/draw an image/picture/photo/wallpaper"
+  if (/\b(create|generate|make|draw|render|paint|design)\s+(?:an?|a\s+new|another|a\s+realistic|a\s+cinematic|a\s+vivid|an\s+hd)?\s*(?:image|picture|photo|illustration|drawing|wallpaper|portrait|artwork)\b/i.test(t)) {
+    return true;
+  }
+
+  // Banglish creation patterns:
+  // e.g. "chobi banao", "chobi eke dao", "chobi drawing koro", "chobi akba", "photo generate koro", "image banao"
+  const hasVisualNoun = /\b(chobi|chabi|image|photo|picture|pic|wallpaper|drawing)\b/i.test(t);
+  const hasVisualVerb = /\b(banao|banau|banay|banaye|banaba|banaben|ako|akba|akben|eke|akao|drawing|create|draw|generate|render)\b/i.test(t);
+  if (hasVisualNoun && hasVisualVerb) {
+    return true;
+  }
 
   return /(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|ছবি এঁকে দাও|ছবি একে দাও|ছবি বানিয়ে দাও|ছবি তৈরি করে দাও|image create koro|image banao|image draw koro|chobi banao|chobi ako|chobi create(?: koro)?|photo banao|picture banao|logo banao|generate an? image|create an? image|draw an? image|draw a\b|generate image|create image|draw image)/i.test(t);
 }
@@ -6146,6 +6251,12 @@ async function handleChat(req, res) {
   const storedAttachments = sessionAttachments(sessionId);
 
   const imageRefinement = !hasAttachments ? isImageRefinementOrFollowup(message, history) : null;
+
+  if (!hasAttachments && isExistingImageLookupIntent(message)) {
+    const lookupResponse = directOfficialImageLookupAnswer(message, await loadKnowledge());
+    rememberConversationExchange(sessionId, history, message, lookupResponse.text);
+    return json(res, 200, lookupResponse);
+  }
 
   // GB AI mode: Image creation if requested or refinement, otherwise Universal Problem & Screenshot Solver
   if (body.medium === "gb-ai") {
@@ -6589,6 +6700,7 @@ export {
   directActivePersonAnswer,
   directAnswer,
   directClubAnswer,
+  directOfficialImageLookupAnswer,
   extractProgramPlanFacts,
   fetchGeneratedImageAsset,
   isConversationalIntent,
@@ -6602,4 +6714,6 @@ export {
   getLastImageContext,
   isImageRefinementOrFollowup,
   isImageCreationIntent,
+  isExistingImageLookupIntent,
+  isExplicitFreshImageIntent,
 };
