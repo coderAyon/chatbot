@@ -2736,7 +2736,13 @@ function directProgramChoiceAnswer(question, knowledge) {
       department: "Department of Bangla",
     },
     {
-      test: /\b(healthcare|health|medical|patient|medicine|hospital|biology)\b/i,
+      test: /\b(pharmacy|pharma|medicines?|drugs?|oushodh|bpharm|mpharm|prescription)\b/i,
+      label: "Pharmacy & Pharmaceutical Sciences",
+      matches: /\b(pharmacy)\b/i,
+      department: "Department of Pharmacy",
+    },
+    {
+      test: /\b(healthcare|health|medical|patient|hospital|biology|microbiology|biochemistry)\b/i,
       label: "healthcare/life science",
       matches: /\b(pharmacy|microbiology|biochemistry|medical|biomedical|physiotherapy|veterinary|public health|nutrition)\b/i,
     },
@@ -2799,6 +2805,10 @@ function directProgramChoiceAnswer(question, knowledge) {
     .filter((program) => selected.matches.test(`${program.name || ""} ${program.department || ""} ${(program.aliases || []).join(" ")}`));
 
   filtered.sort((a, b) => {
+    const aDeptMatch = selected.department && displayDepartmentName(a.department || "").toLowerCase() === displayDepartmentName(selected.department).toLowerCase() ? 1 : 0;
+    const bDeptMatch = selected.department && displayDepartmentName(b.department || "").toLowerCase() === displayDepartmentName(selected.department).toLowerCase() ? 1 : 0;
+    if (aDeptMatch !== bDeptMatch) return bDeptMatch - aDeptMatch;
+
     if (wantsGraduate) {
       const aGrad = !isUndergrad(a) ? 1 : 0;
       const bGrad = !isUndergrad(b) ? 1 : 0;

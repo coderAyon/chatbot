@@ -967,4 +967,33 @@ test("sociology course parsing excludes fail grades and semester table headers",
   assert.doesNotMatch(res.text, /Second Semester/i);
 });
 
+test("program chooser prioritizes pharmacy for medicine/drugs query", () => {
+  const pharmaKnowledge = {
+    ...fixture,
+    programs: [
+      { name: "Bachelor of Pharmacy (B.Pharm)", department: "Department of Pharmacy", aliases: ["Pharmacy", "B.Pharm"] },
+      { name: "M.Pharm in General", department: "Department of Pharmacy", aliases: ["M.Pharm"] },
+      { name: "B.Sc. (Honours) in Microbiology", department: "Department of Microbiology", aliases: ["Microbiology"] },
+    ],
+  };
+  const res = directAnswer("medicines o drugs niye porte chai", pharmaKnowledge, []);
+  assert.equal(res.mode, "structured");
+  assert.match(res.text, /Bachelor of Pharmacy/i);
+  assert.doesNotMatch(res.text, /Sociology/i);
+});
+
+test("social work interest prioritizes Sociology and Social Work over other departments", () => {
+  const multiKnowledge = {
+    ...fixture,
+    programs: [
+      { name: "B.A. (Honours) in Sociology and Social Work", department: "Department of Sociology and Social Work", aliases: ["Sociology", "Social Work"] },
+      { name: "Bachelor of Pharmacy (B.Pharm)", department: "Department of Pharmacy", aliases: ["Pharmacy"] },
+    ],
+  };
+  const res = directAnswer("social work o shomaj sheba korte chai", multiKnowledge, []);
+  assert.equal(res.mode, "structured");
+  assert.match(res.text, /Sociology and Social Work/i);
+});
+
+
 
