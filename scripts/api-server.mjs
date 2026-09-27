@@ -2693,20 +2693,105 @@ function directStudentJourneyAnswer(question) {
 function directProgramChoiceAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   const interestGroups = [
-    { test: /\b(coding|programming|software|computer|app|web|developer)\b/i, label: "coding/software", matches: /\b(computer|computing|software|cse)\b/i },
-    { test: /\b(healthcare|health|medical|patient|medicine|hospital|biology)\b/i, label: "healthcare/life science", matches: /\b(pharmacy|microbiology|biochemistry|medical|biomedical|physiotherapy|veterinary|public health|nutrition)\b/i },
-    { test: /\b(business|management|marketing|finance|accounting|entrepreneur)\b/i, label: "business/management", matches: /\b(business|management|bba|mba|accounting|finance|marketing)\b/i },
-    { test: /\b(law|legal|advocate|court|justice)\b/i, label: "law/legal studies", matches: /\b(law|llb|llm|legal)\b/i },
-    { test: /\b(sheba|seba|social\s*work|manush|shomaj|somaj|service|help|volunteer|community)\b/i, label: "human service & social welfare", matches: /\b(sociology|social\s*work|physiotherapy|pharmacy|veterinary|medical)\b/i },
+    {
+      test: /\b(english|grammar|literature|linguistics|spoken\s*english|writing|reading|comprehension|ielts)\b/i,
+      label: "English Language, Grammar & Literature",
+      matches: /\b(english)\b/i,
+      department: "Department of English",
+    },
+    {
+      test: /\b(coding|programming|software|computer|app|web|developer|ai|algorithm)\b/i,
+      label: "coding/software",
+      matches: /\b(computer|computing|software|cse)\b/i,
+      department: "Department of Computer Science and Engineering (CSE)",
+    },
+    {
+      test: /\b(math|mathematics|calculus|algebra|statistics|gonit|maths)\b/i,
+      label: "Mathematics & Analytical Sciences",
+      matches: /\b(mathematics|math|cse|applied math)\b/i,
+      department: "Department of Applied Mathematics",
+    },
+    {
+      test: /\b(physics|padartha)\b/i,
+      label: "Physics & Physical Sciences",
+      matches: /\b(physics|medical physics|eee)\b/i,
+      department: "Department of Physics",
+    },
+    {
+      test: /\b(chemistry|chemical|roshayan)\b/i,
+      label: "Chemistry & Chemical Sciences",
+      matches: /\b(chemistry|biochemistry|pharmacy)\b/i,
+      department: "Department of Chemistry",
+    },
+    {
+      test: /\b(circuit|circuits|electronics|electrical|power|telecom|hardware)\b/i,
+      label: "Electrical & Electronic Engineering",
+      matches: /\b(electrical|electronic|eee)\b/i,
+      department: "Department of Electrical and Electronic Engineering (EEE)",
+    },
+    {
+      test: /\b(bangla|bengali|sahitya|sahityo|kobita)\b/i,
+      label: "Bangla Language, Literature & Culture",
+      matches: /\b(bangla|bengali)\b/i,
+      department: "Department of Bangla",
+    },
+    {
+      test: /\b(healthcare|health|medical|patient|medicine|hospital|biology)\b/i,
+      label: "healthcare/life science",
+      matches: /\b(pharmacy|microbiology|biochemistry|medical|biomedical|physiotherapy|veterinary|public health|nutrition)\b/i,
+    },
+    {
+      test: /\b(business|management|marketing|finance|accounting|entrepreneur|bba|bank|banking)\b/i,
+      label: "business/management",
+      matches: /\b(business|management|bba|mba|accounting|finance|marketing)\b/i,
+      department: "Department of Business Administration",
+    },
+    {
+      test: /\b(law|legal|advocate|court|justice|ain|llb|lawyer)\b/i,
+      label: "law/legal studies",
+      matches: /\b(law|llb|llm|legal)\b/i,
+      department: "Department of Law",
+    },
+    {
+      test: /\b(politics|governance|rajniti|political\s*science|public\s*policy)\b/i,
+      label: "Politics & Governance",
+      matches: /\b(politics|governance)\b/i,
+      department: "Department of Politics and Governance",
+    },
+    {
+      test: /\b(agriculture|krishi|farming|crops?|soil)\b/i,
+      label: "Agriculture & Agricultural Sciences",
+      matches: /\b(agriculture)\b/i,
+      department: "Faculty of Agriculture",
+    },
+    {
+      test: /\b(vet|veterinary|animals?|prani|livestock|dvm)\b/i,
+      label: "Veterinary Science & Animal Husbandry",
+      matches: /\b(veterinary|animal)\b/i,
+      department: "Faculty of Veterinary and Animal Sciences",
+    },
+    {
+      test: /\b(sheba|seba|social\s*work|manush|shomaj|somaj|service|help|volunteer|community|sociology)\b/i,
+      label: "human service & social welfare",
+      matches: /\b(sociology|social\s*work|physiotherapy|pharmacy|veterinary|medical)\b/i,
+      department: "Department of Sociology and Social Work",
+    },
   ];
+  const isAskingSpecificAttribute = /\b(chairman|chairperson|head|hod|dean|faculty|teachers?|teacher|members?|credit|credits|fee|fees|cost|tuition|khoroch|notice|routine|contact|number|phone|email)\b/i.test(q);
+  if (isAskingSpecificAttribute) return null;
+
   const selected = interestGroups.find((group) => group.test.test(q));
-  if (!selected || !/\b(ami|i|interest|pochondo|choose|program|subject|career|porte|pora|study|chai|korte\s+chai)\b/i.test(q)) return null;
+  const hasAptitudeOrInterest =
+    /\b(ami|amar|i|my|interest|pochondo|choose|choice|career|porte|pora|study|chai|korte\s+chai|bhalo|valo|pari|expert|skilled|strength|strong|weak|durbol|konta\s+(?:bhalo|nibo|choose))\b/i.test(q) ||
+    /\b(?:e|te|in)\s+(?:bhalo|valo)\b/i.test(q) ||
+    /\b(?:bhalo|valo)\s+(?:ami|lag[e|be]|pari)\b/i.test(q);
+  if (!selected || !hasAptitudeOrInterest) return null;
 
   const wantsGraduate = /\b(masters?|postgraduate|m\.?sc|m\.?pharm|mba|ll\.?m|ms)\b/i.test(q);
   const isUndergrad = (p) => {
     const name = String(p.name || "");
-    if (/\b(b\.?sc|b\.?pharm|bachelor|bba|ll\.?b|bpt|dvm)\b/i.test(name)) return true;
-    if (/\b(m\.?sc|m\.?pharm|master|mba|ll\.?m|ms|mph)\b/i.test(name)) return false;
+    if (/\b(b\.?sc|b\.?pharm|bachelor|bba|ll\.?b|bpt|dvm|b\.?a)\b/i.test(name)) return true;
+    if (/\b(m\.?sc|m\.?pharm|master|mba|ll\.?m|ms|mph|m\.?a)\b/i.test(name)) return false;
     return true;
   };
 
@@ -2736,19 +2821,47 @@ function directProgramChoiceAnswer(question, knowledge) {
     };
   }
 
+  const isAptitude = /\b(valo|bhalo|pari|expert|skilled|strength|strong)\b/i.test(q);
   const lines = programs.map((program, index) => {
     const facts = [
       program.duration && `duration: ${cleanOfficialDisplayText(program.duration)}`,
       program.seats && `seats: ${cleanOfficialDisplayText(program.seats)}`,
       program.admissionRequirement && `eligibility: ${cleanOfficialDisplayText(program.admissionRequirement)}`,
     ].filter(Boolean);
-    return `${index + 1}. **${program.name}**${facts.length ? ` — ${facts.join("; ")}` : ""}`;
+    const catalog = departmentCourses(knowledge, program.department || selected.department || "");
+    const courseExamples = catalog.courses.length
+      ? `\n   - **Course examples:** ${catalog.courses.slice(0, 5).map((c) => c.title).join(", ")}`
+      : "";
+    return `${index + 1}. **${program.name}**${facts.length ? ` — ${facts.join("; ")}` : ""}${courseExamples}`;
   });
+
+  const leadText = isAptitude
+    ? (banglish
+        ? `যেহেতু তোমার **${selected.label}**-এ ভালো দখল রয়েছে, তাই গণ বিশ্ববিদ্যালয়ের verified program data অনুযায়ী তোমার জন্য সবচেয়ে উপযুক্ত match:`
+        : `Since you have a strong background in **${selected.label}**, here are the closest matching programs from verified university records:`)
+    : (banglish
+        ? `তোমার **${selected.label}** interest অনুযায়ী verified program data থেকে সবচেয়ে কাছের match:`
+        : `Based on your interest in **${selected.label}**, the closest matches in the verified program data are:`);
+
+  const closingText = programs.length === 1
+    ? (banglish
+        ? `\n\nতোমার এই দক্ষতা এই প্রোগ্রামের কোর্সে বিশেষ সুবিধা দেবে। প্রোগ্রামটির ফি, কোর্স প্ল্যান বা ক্যারিয়ার সুযোগ নিয়ে জানতে চাইলে বলতে পারো।`
+        : `\n\nYour proficiency directly supports this curriculum. Let me know if you would like fee, syllabus, or career details for this program.`)
+    : (banglish
+        ? `\n\nপ্রথমে course content, eligibility ও duration মিলিয়ে shortlist করো। কোন option-টা compare করতে চাও বললে side-by-side দেখাব।`
+        : `\n\nShortlist by course content, eligibility, and duration. Tell me which options you want compared side by side.`);
+
   return {
-    text: banglish
-      ? `তোমার **${selected.label}** interest অনুযায়ী verified program data থেকে সবচেয়ে কাছের match:\n\n${lines.join("\n")}\n\nপ্রথমে course content, eligibility ও duration মিলিয়ে shortlist করো। কোন option-টা compare করতে চাও বললে side-by-side দেখাব।`
-      : `Based on your interest in **${selected.label}**, the closest matches in the verified program data are:\n\n${lines.join("\n")}\n\nShortlist by course content, eligibility, and duration. Tell me which options you want compared side by side.`,
-    sources: dedupeSources(programs.map((program) => ({ title: program.sourceTitle || program.name, url: program.source }))),
+    text: `${leadText}\n\n${lines.join("\n\n")}${closingText}`,
+    sources: dedupeSources(
+      programs.flatMap((program) => {
+        const catalog = departmentCourses(knowledge, program.department || selected.department || "");
+        return [
+          { title: program.sourceTitle || program.name, url: program.source },
+          ...catalog.sources,
+        ];
+      })
+    ),
     mode: "structured",
     suggestions: programs.slice(0, 2).map((program) => `${program.name} details bolo`),
   };
@@ -3484,27 +3597,73 @@ function departmentAcademicRecords(knowledge, department) {
     });
 }
 
+const isInvalidCourseTitle = (title) =>
+  !title ||
+  title.length < 3 ||
+  title.length > 110 ||
+  /^(?:first|second|third|fourth|fifth|sixth|six|seventh|seven|eighth|eight|ninth|tenth|\d+(?:st|nd|rd|th)?)\s+(?:year|semester|sem)\b/i.test(title) ||
+  /\b(?:fail|pass|grading|viva|viva[\s-]*voce|grand\s+total|sub\s*total|contact\s+hours?|credit\s+numbers?|course\s+code|course\s+title|course\s+name|nature\s+of|sl\.?\s*no)\b/i.test(title) ||
+  /^total$/i.test(title);
+
 function extractCoursesFromText(text) {
   const courses = [];
   for (const rawLine of String(text || "").split(/\n+/)) {
-    const line = cleanExtractedText(rawLine).replace(/^\d+\.?\s*\|\s*/, "").trim();
-    let match = line.match(/^([A-Z]{2,8}\s*\d{3,4}[A-Z]?)\s*\|\s*(.+?)\s*\|\s*(\d+(?:\.\d+)?)\s*(?:\||$)/i);
-    if (match) {
-      courses.push({ code: match[1].replace(/\s+/g, " "), title: match[2].trim(), credits: match[3] });
-      continue;
+    const line = cleanExtractedText(rawLine).trim();
+    if (!line) continue;
+
+    // Check pipe-separated rows (handles tables like "SSW. 101 | Introduction to Sociology | Compulsory | 4 | 100 | 45")
+    if (line.includes("|")) {
+      let parts = line.split("|").map((s) => s.trim()).filter(Boolean);
+      if (parts.length >= 2 && /^\d+$/.test(parts[0])) {
+        parts = parts.slice(1);
+      }
+      if (parts.length >= 2) {
+        const codeMatch = parts[0].match(/^([A-Za-z]{2,8}[\.\-]?\s*\d{2,4}[A-Za-z]?)$/);
+        if (codeMatch) {
+          const code = codeMatch[1].replace(/\s+/g, " ");
+          const title = parts[1].replace(/^\d+\.?\s*/, "").trim();
+          if (title && !isInvalidCourseTitle(title)) {
+            let credits = "";
+            for (let i = 2; i < Math.min(parts.length, 5); i++) {
+              const crMatch = parts[i].match(/^(\d+(?:\.\d+)?(?:\s*\+\s*\d+(?:\.\d+)?)?)$/);
+              if (crMatch && Number(crMatch[1]) <= 10) {
+                credits = crMatch[1];
+                break;
+              }
+            }
+            courses.push({ code, title, credits });
+            continue;
+          }
+        }
+      }
     }
-    match = line.match(/^([A-Z]{2,8}\s*\d{3,4}[A-Z]?)\s+(.+?)\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s+(\d+)$/i);
+
+    let match = line.match(/^([A-Za-z]{2,8}[\.\-]?\s*\d{2,4}[A-Za-z]?)\s*\|\s*(.+?)\s*\|\s*(\d+(?:\.\d+)?)\s*(?:\||$)/i);
     if (match) {
-      courses.push({ code: match[1].replace(/\s+/g, " "), title: match[2].trim(), credits: match[4] });
-      continue;
+      const title = match[2].trim();
+      if (!isInvalidCourseTitle(title)) {
+        courses.push({ code: match[1].replace(/\s+/g, " "), title, credits: match[3] });
+        continue;
+      }
+    }
+    match = line.match(/^([A-Za-z]{2,8}[\.\-]?\s*\d{2,4}[A-Za-z]?)\s+(.+?)\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s+(\d+)$/i);
+    if (match) {
+      const title = match[2].trim();
+      if (!isInvalidCourseTitle(title)) {
+        courses.push({ code: match[1].replace(/\s+/g, " "), title, credits: match[4] });
+        continue;
+      }
     }
     match = line.match(/^([A-Za-z][^|]{2,100}?)\s*\|\s*(\d+(?:\.\d+)?(?:\s*\+\s*\d+(?:\.\d+)?)?)\s*\|/);
-    if (match && !/^(?:course\s+title|sub\s*total|total)/i.test(match[1].trim())) {
-      courses.push({ code: "", title: match[1].trim(), credits: match[2].replace(/\s+/g, "") });
+    if (match) {
+      const title = match[1].trim();
+      if (!isInvalidCourseTitle(title) && !/^(?:course\s+title|sub\s*total|total)/i.test(title)) {
+        courses.push({ code: "", title, credits: match[2].replace(/\s+/g, "") });
+      }
     }
   }
-  return [...new Map(courses.map((course) => [course.code ? course.code.replace(/\s/g, "").toUpperCase() : normalizeQuestion(course.title), course])).values()]
-    .filter((course) => course.title.length >= 3 && course.title.length <= 110 && !/^total$/i.test(course.title));
+  return [...new Map(courses.map((course) => [course.code ? course.code.replace(/[\s\.\-]/g, "").toUpperCase() : normalizeQuestion(course.title), course])).values()]
+    .filter((course) => !isInvalidCourseTitle(course.title));
 }
 
 function formatCourse(course) {
@@ -3558,34 +3717,57 @@ function programForDepartment(knowledge, department, wantsGraduate = false) {
 
 function directProgramComparisonAnswer(question, knowledge, history = []) {
   const q = normalizeQuestion(question);
-  if (!/\b(compare|comparison|versus|vs|difference|better|bhalo|naki|choose|between|kont[a]?|konta|parthokko)\b/i.test(q)) return null;
+  const isAptitudeOrPreference =
+    /\b(?:e|te|in)\s+(?:bhalo|valo)\b/i.test(q) ||
+    /\b(?:bhalo|valo)\s+(?:ami|lag[e|be]|pari)\b/i.test(q) ||
+    /\b(?:ami|amar)\b.*?\b(?:bhalo|valo|pari)\b/i.test(q);
+  const hasExplicitComparisonTerm =
+    /\b(compare|comparison|versus|vs|difference|parthokko|tulona|তুলনা|পার্থক্য)\b/i.test(q) ||
+    /\b(better)\b/i.test(q) ||
+    /\b(konta|which(?:\s+one)?)\s+(?:bhalo|better|beshi\s+bhalo|val[o]?)\b/i.test(q) ||
+    /\b(?:bhalo|better)\s+(?:konta|konti)\b/i.test(q) ||
+    /\b(?:between|choose\s+between|konta\s+choose|konta\s+nibo|konta\s+neya\s+jay)\b/i.test(q) ||
+    /\b\w+\s+naki\s+\w+\b/i.test(q);
+
+  if (!hasExplicitComparisonTerm) return null;
+  if (isAptitudeOrPreference && !/\b(compare|comparison|versus|vs|difference|parthokko|tulona)\b/i.test(q)) return null;
+
   let departments = mentionedDepartments(q, knowledge).slice(0, 3);
+  if (departments.length === 0 && history.length) {
+    if (/\b(eta|eita|this|it)\b/i.test(q)) {
+      const priorDept = activeContextDepartment(history, question, knowledge);
+      if (priorDept) departments = [priorDept];
+    }
+  }
   if (departments.length < 2 && history.length) {
-    const items = previousConversation(history, question);
-    if (items && items.length) {
-      const recent = [...items].slice(-10).reverse();
-      for (const turn of recent) {
-        const text = String(turn.text || "");
-        const found =
-          matchedDepartmentFromQuestion(text, knowledge) ||
-          (/\bcse|computer\s+science\b/i.test(text)
-            ? "Department of Computer Science and Engineering"
-            : /\bpharmacy|bpharm|mpharm\b/i.test(text)
-            ? "Department of Pharmacy"
-            : /\bbba|business\b/i.test(text)
-            ? "Department of Business Administration"
-            : /\blaw\b/i.test(text)
-            ? "Department of Law"
-            : /\bmicrobiology\b/i.test(text)
-            ? "Department of Microbiology"
-            : /\benglish\b/i.test(text)
-            ? "Department of English"
-            : /\bmedical\s+physics|biomedical\b/i.test(text)
-            ? "Department of Medical Physics and Biomedical Engineering"
-            : null);
-        if (found && !departments.includes(found)) {
-          departments = [found, ...departments];
-          break;
+    const asksToCompareWithPrior = /\b(etar\s+sathe|ager\s+tar\s+sathe|compare\s+with|er\s+sathe\s+compare|sathe\s+tulona|versus\s+this|vs\s+this)\b/i.test(q);
+    if (asksToCompareWithPrior) {
+      const items = previousConversation(history, question);
+      if (items && items.length) {
+        const recent = [...items].slice(-6).reverse();
+        for (const turn of recent) {
+          const text = String(turn.text || "");
+          const found =
+            matchedDepartmentFromQuestion(text, knowledge) ||
+            (/\bcse|computer\s+science\b/i.test(text)
+              ? "Department of Computer Science and Engineering"
+              : /\bpharmacy|bpharm|mpharm\b/i.test(text)
+              ? "Department of Pharmacy"
+              : /\bbba|business\b/i.test(text)
+              ? "Department of Business Administration"
+              : /\blaw\b/i.test(text)
+              ? "Department of Law"
+              : /\bmicrobiology\b/i.test(text)
+              ? "Department of Microbiology"
+              : /\benglish\b/i.test(text)
+              ? "Department of English"
+              : /\bmedical\s+physics|biomedical\b/i.test(text)
+              ? "Department of Medical Physics and Biomedical Engineering"
+              : null);
+          if (found && !departments.includes(found)) {
+            departments = [found, ...departments];
+            break;
+          }
         }
       }
     }
@@ -4371,6 +4553,56 @@ function directCareerGuidanceAnswer(question, knowledge, history = []) {
         ? `**Pharmacy ক্যারিয়ার সুযোগ:** শীর্ষস্থানীয় ওষুধ প্রস্তুতকারক কোম্পানিতে (Beximco, Square, Incepta) প্রোডাকশন, QC/QA কর্মকর্তা, হাসপাতাল ও ক্লিনিক্যাল ফার্মাসিস্ট, ড্রাগ অ্যাডমিনিস্ট্রেশন এবং বিদেশে রেজিস্টার্ড ফার্মাসিস্ট হিসেবে কাজের সুযোগ রয়েছে।`
         : `**Pharmacy Career Prospects:** Outstanding careers in top pharmaceutical firms (QA/QC, production), hospital/clinical pharmacy, drug administration regulatory roles, and licensed practice abroad.`,
       sources: [{ title: "Department of Pharmacy - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/academic/faculty-of-health-sciences/department-of-pharmacy/" }],
+      mode: "structured",
+    };
+  }
+
+  if (activeDept && /\benglish\b/i.test(activeDept)) {
+    return {
+      text: banglish
+        ? `**English ক্যারিয়ার সুযোগ:** B.A. (Honours) in English সম্পন্ন করার পর স্কুল, কলেজ ও বিশ্ববিদ্যালয়ে শিক্ষকতা, বিসিএস (সাধারণ ক্যাডার), ব্যাংক ও বহুজাতিক কোম্পানিতে (MNC) এক্সিকিউটিভ জব, ডিজিটাল কনটেন্ট রাইটিং, জার্নালিজম, কর্পোরেট কমিউনিকেশন ও আন্তর্জাতিক সংস্থায় (NGOs) কাজের চমৎকার সুযোগ রয়েছে।`
+        : `**English Career Prospects:** English graduates have strong opportunities in English language teaching and academia, BCS (General Cadre), multinational corporations (MNCs), banking, content writing & editorial roles, journalism, corporate communications, and international NGOs.`,
+      sources: [{ title: "Department of English - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/academic/faculty-of-arts-and-social-sciences/department-of-english/" }],
+      mode: "structured",
+    };
+  }
+
+  if (activeDept && /\blaw\b/i.test(activeDept)) {
+    return {
+      text: banglish
+        ? `**Law ক্যারিয়ার সুযোগ:** বাংলাদেশ বার কাউন্সিলে সনদ নিয়ে জজ কোর্ট ও হাইকোর্টে অ্যাডভোকেট হিসেবে প্র্যাকটিস, বাংলাদেশ জুডিশিয়াল সার্ভিস (BJS) পরীক্ষায় সহকারী জজ নিয়োগ, করপোরেট লিগ্যাল অ্যাডভাইজার, ব্যাংক ও আর্থিক প্রতিষ্ঠানে ল অফিসার এবং মানবাধিকার সংস্থায় কাজের ব্যাপক সুযোগ রয়েছে।`
+        : `**Law Career Prospects:** Legal practice as an advocate in District and Supreme Courts via the Bar Council, judicial appointment as Assistant Judge via BJS examination, corporate legal counsel, banking law compliance, and human rights advocacy.`,
+      sources: [{ title: "Department of Law - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/academic/faculty-of-arts-and-social-sciences/department-of-law/" }],
+      mode: "structured",
+    };
+  }
+
+  if (activeDept && /\bbusiness|bba\b/i.test(activeDept)) {
+    return {
+      text: banglish
+        ? `**Business Administration (BBA) ক্যারিয়ার সুযোগ:** সরকারি ও বেসরকারি ব্যাংক, বহুজাতিক করপোরেট প্রতিষ্ঠান (MNCs), ব্র্যান্ড ও ডিজিটাল মার্কেটিং, সাপ্লাই চেইন ম্যানেজমেন্ট, হিউম্যান রিসোর্স (HR), ফিন্যান্সিয়াল অ্যানালাইসিস এবং উদ্যোক্তা (Entrepreneurship) হিসেবে সফল ক্যারিয়ার গড়ার সুযোগ রয়েছে।`
+        : `**Business Administration Career Prospects:** High-demand roles in banking and financial institutions, multinational corporations, marketing & brand management, supply chain operations, human resources, and entrepreneurship.`,
+      sources: [{ title: "Department of Business Administration - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/academic/faculty-of-arts-and-social-sciences/department-of-business-administration/" }],
+      mode: "structured",
+    };
+  }
+
+  if (activeDept && /\bmicrobiology\b/i.test(activeDept)) {
+    return {
+      text: banglish
+        ? `**Microbiology ক্যারিয়ার সুযোগ:** ডায়াগনস্টিক ও রিসার্চ ল্যাবরেটরি, ফার্মাসিউটিক্যাল ও ভ্যাকসিন কোম্পানি, ফুড অ্যান্ড বেভারেজ ইন্ডাস্ট্রি (কোয়ালিটি কন্ট্রোল), icddr,b ও জনস্বাস্থ্য গবেষণা প্রতিষ্ঠান এবং বিদেশে উচ্চশিক্ষায় স্কলারশিপের দারুণ সুযোগ রয়েছে।`
+        : `**Microbiology Career Prospects:** Careers in diagnostic laboratories, vaccine & pharmaceutical production, food/beverage quality assurance, public health institutes like icddr,b, and international postgraduate research fellowships.`,
+      sources: [{ title: "Department of Microbiology - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/academic/faculty-of-health-sciences/department-of-microbiology/" }],
+      mode: "structured",
+    };
+  }
+
+  if (activeDept && /\bsociology|social\s*work\b/i.test(activeDept)) {
+    return {
+      text: banglish
+        ? `**Sociology and Social Work ক্যারিয়ার সুযোগ:** জাতীয় ও আন্তর্জাতিক উন্নয়ন সংস্থা (BRAC, UNDP, UNICEF, Save the Children), সমাজসেবা অধিদপ্তর (সমাজসেবা অফিসার), এনজিও প্রজেক্ট ম্যানেজমেন্ট, সামাজিক গবেষণা ও সার্ভে ফার্ম, বিসিএস এবং কমিউনিটি ডেভেলপমেন্ট সেক্টরে কাজের বড় সুযোগ রয়েছে।`
+        : `**Sociology & Social Work Career Prospects:** Prominent roles in national and international NGOs (BRAC, UNDP, UNICEF), the Department of Social Services (social welfare officers), research agencies, development consultancy, and civil service.`,
+      sources: [{ title: "Department of Sociology and Social Work - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/academic/faculty-of-arts-and-social-sciences/department-of-sociology-and-social-work/" }],
       mode: "structured",
     };
   }

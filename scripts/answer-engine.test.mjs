@@ -911,3 +911,60 @@ test("current admission status explicitly confirms ongoing admissions", () => {
   assert.match(resBangla.text, /হ্যাঁ.*ভর্তি কার্যক্রম.*চলমান/i);
 });
 
+test("english grammar aptitude recommends Department of English and excludes Sociology even with prior Sociology conversation", () => {
+  const englishKnowledge = {
+    ...fixture,
+    programs: [
+      { name: "B.A. (Honours) in English", department: "Department of English", aliases: ["English"], duration: "4 years (8 semesters)", seats: "60", admissionRequirement: "GPA 2.5 in each", source: `${root}english/` },
+      { name: "M.A. in English", department: "Department of English", aliases: ["English"], duration: "1 year", seats: "60", admissionRequirement: "B.A. (Honours)", source: `${root}english/` },
+      { name: "B.A. (Honours) in Sociology and Social Work", department: "Department of Sociology and Social Work", aliases: ["Sociology", "Social Work"], duration: "4 years", seats: "60", admissionRequirement: "GPA 2.5", source: `${root}sociology/` },
+    ],
+    pages: [
+      { title: "Course Description - Department of English", url: `${root}english/ug-programme/course-description/`, department: "Department of English", chunks: ["ENG 1101 | Basic English Grammar | 3\nENG 1102 | Reading Comprehension | 3"] },
+      { title: "Course Plan - Department of Sociology and Social Works", url: `${root}sociology/ug-programme/course-plan/`, department: "Department of Sociology and Social Work", chunks: ["SSW. 101 | Introduction to Sociology | Compulsory | 4 | 100 | 45\nViva-Voce Examination | P (Pass)\nF (Fail) | 2 | 50 | –\n1 | First Semester | 22 | 550 | 225"] },
+    ],
+  };
+  const historyWithSociology = [
+    { role: "user", text: "sociology niye bolo" },
+    { role: "assistant", text: "Department of Sociology and Social Work overview" },
+  ];
+  const res = directAnswer("english grammar e valo ami", englishKnowledge, historyWithSociology);
+  assert.equal(res.mode, "structured");
+  assert.match(res.text, /B\.A\. \(Honours\) in English/i);
+  assert.match(res.text, /English Language, Grammar & Literature/i);
+  assert.doesNotMatch(res.text, /Sociology/i);
+  assert.doesNotMatch(res.text, /F \(Fail\)/i);
+});
+
+test("sociology course parsing excludes fail grades and semester table headers", () => {
+  const socKnowledge = {
+    ...fixture,
+    programs: [
+      { name: "B.A. (Honours) in Sociology and Social Work", department: "Department of Sociology and Social Work", aliases: ["Sociology", "Social Work"] },
+    ],
+    pages: [
+      {
+        title: "Course Plan - Department of Sociology and Social Works",
+        url: `${root}sociology/ug-programme/course-plan/`,
+        department: "Department of Sociology and Social Work",
+        chunks: [
+          "SSW. 101 | Introduction to Sociology | Compulsory | 4 | 100 | 45\n" +
+          "SSW.102 | Introduction to Anthropology | Compulsory | 4 | 100 | 45\n" +
+          "Viva-Voce Examination | P (Pass)\n" +
+          "F (Fail) | 2 | 50 | –\n" +
+          "1 | First Semester | 22 | 550 | 225\n" +
+          "2 | Second Semester | 22 | 550 | 225"
+        ],
+      },
+    ],
+  };
+  const res = directAnswer("sociology courses ki ki", socKnowledge, []);
+  assert.equal(res.mode, "structured");
+  assert.match(res.text, /Introduction to Sociology/i);
+  assert.match(res.text, /Introduction to Anthropology/i);
+  assert.doesNotMatch(res.text, /F \(Fail\)/i);
+  assert.doesNotMatch(res.text, /First Semester/i);
+  assert.doesNotMatch(res.text, /Second Semester/i);
+});
+
+
