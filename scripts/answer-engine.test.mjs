@@ -6,6 +6,7 @@ import {
   mergeConversationHistory,
   prefersBanglish,
   relevantConversationHistory,
+  resolveConversationHistory,
   resolvedPersonFromExchange,
   requiresVerifiedStructuredAnswer,
 } from "./api-server.mjs";
@@ -291,6 +292,41 @@ test("course-plan table and grand-total formats expose verified credits", () => 
   assert.match(directAnswer("EEE credits?", knowledge).text, /151/);
   assert.match(directAnswer("Chemistry credits?", knowledge).text, /148/);
   assert.match(directAnswer("CSE credits?", knowledge).text, /160/);
+});
+
+test("decimal semester totals are not mistaken for total Law credits", () => {
+  const law = "Department of Law";
+  const semesters = [
+    ["1st", [["LLB-001", 2], ["LLB-002", 2], ["LLB-003", 4], ["LLB-004", 3], ["LLB-005", 2], ["LLB-007", 3], ["LLB-009", 3], ["LLB-050", 1]]],
+    ["2nd", [["LLB-008", 3], ["LLB-010", 2], ["LLB-011", 3], ["LLB-012", 2], ["LLB-016", 3], ["LLB-049", 3], ["LLB-051", 1]]],
+    ["3rd", [["LLB-006", 2], ["LLB-013", 3], ["LLB-014", 3], ["LLB-015", 3], ["LLB-017", 3], ["LLB-052", 1]]],
+    ["4th", [["LLB-018", 3], ["LLB-019", 3], ["LLB-020", 2], ["LLB-021", 3], ["LLB-022", 3], ["LLB-053", 1]]],
+    ["5th", [["LLB-024", 3], ["LLB-025", 3], ["LLB-026", 3], ["LLB-027", 2], ["LLB-028", 3], ["LLB-029", 2], ["LLB-038", 2], ["LLB-054", 1]]],
+    ["6th", [["LLB-030", 2], ["LLB-031", 2], ["LLB-032", 3], ["LLB-033", 3], ["LLB-034", 3], ["LLB-035", 3], ["LLB-036", 3], ["LLB-055", 1]]],
+    ["7th", [["LLB-037", 2], ["LLB-039", 3], ["LLB-040", 2], ["LLB-041", 3], ["LLB-042", 3], ["LLB-043", 3], ["LLB-044", 2], ["LLB-056", 1]]],
+    ["8th", [["LLB-045", 3], ["LLB-046", 3], ["LLB-047", 2], ["LLB-058", 2], ["LLB-059", 2], ["LLB-060", 2], ["LLB-057", 1]]],
+  ];
+  const semesterTexts = semesters.map(([semester, courses]) => `${semester} Semester\n${courses.map(([code, value]) => `${code} | Course title | ${value}.00`).join("\n")}\nTotal Credit Hours | ${courses.reduce((sum, [, value]) => sum + value, 0)}.00`);
+  const knowledge = {
+    ...fixture,
+    programs: [...fixture.programs, { name: "LL.B. (Honours)", department: law, aliases: ["Law", "LLB"], source: `${root}law/` }],
+    pages: [{ title: "Law Course Plan", url: `${root}law/course-plan/`, department: law, chunks: [semesterTexts.slice(0, 4).join("\n"), semesterTexts.slice(4).join("\n")] }],
+  };
+  const answer = directAnswer("Law er total credit koto?", knowledge);
+  assert.match(answer.text, /140/);
+  assert.doesNotMatch(answer.text, /\b00\b/);
+  assert.match(directAnswer("Law er koto crest total?", knowledge).text, /140/);
+  assert.match(directAnswer("Law er koto credit otal?", knowledge).text, /140/);
+});
+
+test("edited conversations replace the old server-side branch", () => {
+  const stored = [
+    { role: "user", text: "wrong question" },
+    { role: "assistant", text: "wrong answer" },
+  ];
+  const incoming = [{ role: "user", text: "corrected question" }];
+  assert.deepEqual(resolveConversationHistory(stored, incoming, true), incoming);
+  assert.equal(resolveConversationHistory(stored, incoming, false).length, 3);
 });
 
 test("advanced academic advisor compares programs using structured facts", () => {
@@ -994,6 +1030,3 @@ test("social work interest prioritizes Sociology and Social Work over other depa
   assert.equal(res.mode, "structured");
   assert.match(res.text, /Sociology and Social Work/i);
 });
-
-
-

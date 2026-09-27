@@ -140,6 +140,8 @@ const languagePatterns = [
 ];
 
 const banglishPatterns = [
+  [/\bcrest\s+(?:total|otal)\b/g, " credit total "],
+  [/\bcredit\s+otal\b/g, " credit total "],
   [/\bmedial\s+physics\b/g, " medical physics "],
   [/\b(vlo|valo|vhalo|balo)\b/g, " bhalo "],
   [/\b(nki|naky)\b/g, " naki "],
@@ -346,6 +348,12 @@ function mergeConversationHistory(stored = [], incoming = [], limit = 120) {
   }
   const merged = [...earlier, ...recent.slice(overlap)];
   return merged.filter((turn, index) => index === 0 || !sameConversationTurn(turn, merged[index - 1])).slice(-limit);
+}
+
+function resolveConversationHistory(stored = [], incoming = [], replace = false) {
+  return replace
+    ? cleanConversationTurns(incoming).slice(-120)
+    : mergeConversationHistory(stored, incoming);
 }
 
 async function loadConversationMemory() {
@@ -584,13 +592,18 @@ async function captionImage(buffer, mimeType = "image/png") {
 }
 
 async function extractImageUnderstanding(buffer, mimeType) {
-  const [ocrResult, captionResult] = await Promise.allSettled([extractImageText(buffer), captionImage(buffer, mimeType)]);
+  const captionPromise = Promise.race([
+    captionImage(buffer, mimeType),
+    new Promise((_, reject) => setTimeout(() => reject(new Error("caption timeout")), 1200)),
+  ]).catch(() => "");
+
+  const [ocrResult, captionResult] = await Promise.allSettled([extractImageText(buffer), captionPromise]);
   return {
     text: ocrResult.status === "fulfilled" ? ocrResult.value : "",
-    visualCaption: captionResult.status === "fulfilled" ? captionResult.value : "",
+    visualCaption: captionResult.status === "fulfilled" ? (captionResult.value || "") : "",
     error:
-      ocrResult.status === "rejected" && captionResult.status === "rejected"
-        ? `OCR failed: ${ocrResult.reason?.message || ocrResult.reason}; caption failed: ${captionResult.reason?.message || captionResult.reason}`
+      ocrResult.status === "rejected"
+        ? `OCR failed: ${ocrResult.reason?.message || ocrResult.reason}`
         : "",
   };
 }
@@ -4082,20 +4095,35 @@ function directAllPeopleOverviewAnswer(question, knowledge) {
 }
 
 function extractProgramPlanFacts(text) {
-  const normalized = cleanExtractedText(text).replace(/\s+/g, " ");
+  const cleaned = cleanExtractedText(text);
+  const normalized = cleaned.replace(/\s+/g, " ");
   const creditPatterns = [
     /\bDuration\s*\|\s*Total Contact Hours[^|]{0,80}\|\s*Total Credits?\s+\d+\s+years?\s*\|\s*[\d/]+\s*\|\s*(\d{2,3})\b/i,
     /\bTotal minimum credit requirement[^.]{0,100}?\b(?:is|:)?\s*(\d{2,3})\b/i,
     /\bGrand Total\s+[\d/]+\s+(\d{2,3})\s+\d+\b/i,
     /\bTotal Credits?\s+Total Marks\s+\d+\s+years?\s+[\d/]+\s+(\d{2,3})\s+\d+/i,
     /\bTotal Credit(?:s| for Graduation)?\s*[:\-]?\s*(\d{2,3})\b/i,
-    /\b(\d{2,3})\s+Total Credits?\b/i,
+    /(?<![\d.])(\d{2,3})(?![\d.])\s+Total Credits?\b/i,
   ];
   const durationPatterns = [
     /\bDuration\s+(?:Total Contact Hours\s+Theory\s*\/Lab\s+Total Credits?\s+Total Marks\s+)?(\d+\s+years?)\b/i,
     /\b(\d+\s+years?)\s+has\s+\d+\s+semesters\b/i,
   ];
-  const credit = creditPatterns.map((pattern) => normalized.match(pattern)?.[1]).find(Boolean);
+  let credit = creditPatterns.map((pattern) => normalized.match(pattern)?.[1]).find(Boolean);
+  if (!credit && /\b1st Semester\b/i.test(cleaned) && /\b8th Semester\b/i.test(cleaned)) {
+    const codePattern = /\b([A-Z][A-Z.]{1,7}\s*-?\s*\d{3})\b/g;
+    const matches = [...cleaned.matchAll(codePattern)];
+    const courseCredits = new Map();
+    for (let index = 0; index < matches.length; index += 1) {
+      const code = matches[index][1].replace(/[^A-Z0-9]/gi, "").toUpperCase();
+      const block = cleaned.slice(matches[index].index, matches[index + 1]?.index ?? cleaned.length);
+      const values = [...block.matchAll(/\|\s*(\d+(?:\.\d+)?)(?=\s|$)/g)];
+      const value = Number.parseFloat(values[0]?.[1] || "");
+      if (Number.isFinite(value) && value > 0 && value <= 10) courseCredits.set(code, value);
+    }
+    const total = [...courseCredits.values()].reduce((sum, value) => sum + value, 0);
+    if (courseCredits.size >= 20 && total >= 80 && total <= 300) credit = Number.isInteger(total) ? String(total) : total.toFixed(1);
+  }
   const duration = durationPatterns.map((pattern) => normalized.match(pattern)?.[1]).find(Boolean);
   return { credit, duration };
 }
@@ -4121,7 +4149,22 @@ function directProgramDetailAnswer(question, knowledge) {
 
   const departmentTerms = departmentAliases(matchedDepartment);
   const allRecords = pageRecords(knowledge);
-  const records = allRecords
+  const combinedPageRecords = (knowledge.pages || [])
+    .filter((page) =>
+      Array.isArray(page.chunks) &&
+      page.chunks.length > 1 &&
+      /course[-\s/]*plan/i.test(`${page.title || ""} ${page.url || ""}`),
+    )
+    .map((page) => ({
+      id: `${page.url}#combined`,
+      title: page.title || page.url,
+      url: page.url,
+      kind: page.type || "page",
+      department: page.department || "",
+      textQuality: page.textQuality || "text",
+      text: `${page.department ? `Department: ${page.department}\n` : ""}${page.chunks.join("\n")}`,
+    }));
+  const records = [...combinedPageRecords, ...allRecords]
     .filter((record) => {
       if (record.textQuality === "low" || record.textQuality === "none") return false;
       if (recordConflictsWithDepartment(record, matchedDepartment)) return false;
@@ -5562,6 +5605,294 @@ async function persistResponseCache() {
   );
 }
 
+function isExplicitImageRequest(text) {
+  return /^(ছবি আঁকো|ছবি বানাও|ছবি তৈরি করো|একটি ছবি|chobi banao|chobi ako|generate an? image|create an? image|draw an? image)/i.test(String(text || "").trim());
+}
+
+async function handleImageGeneration(message, sessionId, history = []) {
+  let promptText = String(message || "")
+    .replace(/(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|একটি ছবি তৈরি করো|একটি ছবি বানাও|একটি ছবি আঁকো|একটি ছবি|image create koro|chobi banao|chobi ako|generate an? image of|create an? image of|draw an? image of|generate image|create image|draw image|ছবি এঁকে দাও|ছবি একে দাও|ছবি বানিয়ে দাও)[:\s,-]*/gi, "")
+    .trim();
+  if (!promptText) promptText = message;
+
+  let enhancedPrompt = promptText;
+  try {
+    const visualInstruction = "You are a world-class prompt engineer for FLUX AI image generator. Translate and expand the user's concept into a vivid, descriptive, photorealistic English visual prompt. Mention subject details, background environment, lighting (cinematic/natural), camera angle, and composition. Keep it under 40 words. Output ONLY the prompt without quotes, prefixes, or conversational filler.";
+    
+    let aiEnhanced = null;
+    const apiKey = envSecret("OPENAI_API_KEY");
+    if (apiKey) {
+      const resp = await fetch(`${openAiBaseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: openAiModel,
+          temperature: 0.65,
+          max_tokens: 120,
+          messages: [
+            { role: "system", content: visualInstruction },
+            { role: "user", content: promptText },
+          ],
+        }),
+        signal: AbortSignal.timeout(4000),
+      }).catch(() => null);
+      if (resp?.ok) {
+        const data = await resp.json().catch(() => null);
+        aiEnhanced = data?.choices?.[0]?.message?.content?.trim();
+      }
+    }
+
+    if (aiEnhanced && aiEnhanced.length > 5) {
+      enhancedPrompt = aiEnhanced.replace(/^["']|["']$/g, "").trim();
+    } else {
+      const hasBangla = /[\u0980-\u09FF]/.test(promptText);
+      if (!hasBangla) {
+        enhancedPrompt = `${promptText}, cinematic lighting, photorealistic, 8k resolution, highly detailed, sharp focus`;
+      } else {
+        enhancedPrompt = `${promptText}, cinematic lighting, high quality, photorealistic, 8k resolution`;
+      }
+    }
+  } catch {
+    enhancedPrompt = `${promptText}, cinematic lighting, photorealistic, 8k resolution`;
+  }
+
+  const seed = Math.floor(Math.random() * 10000000);
+  const encoded = encodeURIComponent(enhancedPrompt);
+  const imageUrl = `https://image.pollinations.ai/prompt/${encoded}?width=1024&height=1024&nologo=true&seed=${seed}&model=flux`;
+
+  return {
+    text: `✨ **GB AI Image Studio**\n\n🎨 **Prompt:** ${promptText}\n🔍 **Visual Concept:** *${enhancedPrompt}*`,
+    mode: "image",
+    medium: "gb-ai",
+    aiModel: "FLUX.1 (High Definition)",
+    image: {
+      url: imageUrl,
+      prompt: enhancedPrompt,
+      originalPrompt: promptText,
+      seed,
+      model: "FLUX.1-HD",
+      width: 1024,
+      height: 1024,
+      createdAt: new Date().toISOString(),
+    },
+    profile: {
+      label: "GB AI Studio",
+      confidence: "High Definition",
+    },
+    sources: [],
+    suggestions: [
+      "Sunset golden hour lighting e banao",
+      "Cyberpunk futuristic style e banao",
+      "Pencil sketch & watercolor style",
+      "Isometric 3D miniature render",
+    ],
+  };
+}
+
+function isImageCreationIntent(text) {
+  const t = String(text || "").trim();
+  if (!t) return false;
+  if (/\b(solve|calculate|evaluate|explain|derive|program|code|python|java|c\+\+|javascript|function|algorithm|error|bug|difference between|how to|why|what is|when did|who is)\b/i.test(t)) {
+    return false;
+  }
+  if (/[?？]/.test(t) && !/(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|draw|create an? image|generate an? image)/i.test(t)) {
+    return false;
+  }
+  if (/(সমাধান|ব্যাখ্যা|উত্তর|কী|কেন|কীভাবে|কোথায়|কখন|কার|প্রোগ্রাম|কোড|ফাংশন|বাগ|ত্রুটি)/.test(t) && !/(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো)/.test(t)) {
+    return false;
+  }
+  if (/(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|ছবি এঁকে দাও|ছবি একে দাও|ছবি বানিয়ে দাও|ছবি তৈরি করে দাও|ছবি দাও|image create koro|image banao|image draw koro|chobi banao|chobi ako|chobi create|generate an? image|create an? image|draw an? image|draw a\b|generate image|create image|draw image|image of|photo of|picture of|illustration of|painting of|wallpaper of)/i.test(t)) {
+    return true;
+  }
+  return false;
+}
+
+async function handleGbAiQuestion(message, attachments = [], history = [], sessionId = "") {
+  const hasAttachments = Array.isArray(attachments) && attachments.length > 0;
+  const isBangla = /[\u0980-\u09ff]/.test(message) || prefersBanglish(message);
+
+  if (hasAttachments) {
+    const hasAnyText = attachments.some(
+      (a) => (a.text && a.text.trim().length > 0) || (a.visualCaption && a.visualCaption.trim().length > 0)
+    );
+    if (!hasAnyText) {
+      return {
+        text: isBangla
+          ? "📷 **স্ক্রিনশট প্রসেস করা হয়েছে**\n\nআপনার আপলোড করা স্ক্রিনশট বা ছবিতে থাকা টেক্সটগুলো অস্পষ্ট বা রেজুলেশন কম হওয়ার কারণে সম্পূর্ণ পড়া যায়নি।\n\n- অনুগ্রহ করে স্ক্রিনশটের মূল প্রশ্নটি সরাসরি চ্যাটে লিখে দিন, অথবা\n- আরও স্পষ্ট ও পরিষ্কার রেজুলেশনের স্ক্রিনশট আপলোড করুন।"
+          : "📷 **Screenshot Processed**\n\nCould not detect readable text from your uploaded screenshot/image due to blurriness or low resolution.\n\n- Please type your question directly in the chat, or\n- Upload a clearer, higher-resolution screenshot.",
+        mode: "gb_ai_ocr_unclear",
+        medium: "gb-ai",
+        aiModel: "GB AI",
+        profile: {
+          label: "Screenshot Unclear",
+          confidence: "Low resolution",
+        },
+        sources: [],
+        suggestions: isBangla
+          ? ["প্রশ্নটি সরাসরি লিখে দিচ্ছি", "আরেকটি স্পষ্ট ছবি দিচ্ছি"]
+          : ["Type question directly", "Upload clearer image"],
+      };
+    }
+  }
+
+  let universityContexts = [];
+  try {
+    const knowledge = await loadKnowledge();
+    if (knowledge && typeof searchPages === "function") {
+      const hits = searchPages(message, knowledge, history);
+      if (Array.isArray(hits) && hits.length > 0) {
+        universityContexts = hits.slice(0, 3);
+      }
+    }
+  } catch {}
+
+  let langInstruction = "Reply in clear, natural, well-formatted English.";
+  if (/[\u0980-\u09ff]/.test(message)) {
+    langInstruction = "Reply in clear, natural, fluent Bengali (বাংলা). Maintain an encouraging, academic tone.";
+  } else if (prefersBanglish(message)) {
+    langInstruction = "Reply in friendly, clear Banglish matching the student's conversational style.";
+  }
+
+  const systemInstruction =
+    `You are GB AI, an expert academic tutor, problem solver, and multi-disciplinary AI assistant for students.\n` +
+    `You excel at solving and explaining:\n` +
+    `- Mathematics (Calculus, Algebra, Differential Equations, Geometry, Trigonometry, Statistics)\n` +
+    `- Computer Science & Programming (Python, C, C++, Java, JavaScript, Data Structures, Algorithms, SQL, OOP, Bug fixing)\n` +
+    `- Physics, Chemistry, Biology, Pharmacy, Medical Physics, Health Sciences\n` +
+    `- Solving exam questions, assignments, and problem sets from uploaded screenshots or text\n` +
+    `- Gono Bishwabidyalay university details (if relevant)\n\n` +
+    `Instructions:\n` +
+    `1. Provide direct, step-by-step solutions with clear reasoning.\n` +
+    `2. For Math/Science: State given values, the formula/principle used, step-by-step arithmetic/algebra, and underline or box the final answer.\n` +
+    `3. For Code: Provide clean, working code inside fenced markdown code blocks (\`\`\`language ... \`\`\`) with comments and complexity explanation.\n` +
+    `4. For Screenshots: Carefully read the extracted OCR text from the student's screenshot. Identify the specific problem(s) and solve them completely.\n` +
+    `5. Formatting: Use markdown bolding, numbered steps, bullet points, and headers for high readability.\n` +
+    `6. ${langInstruction}`;
+
+  let userPrompt = "";
+  const recentHistory = (history || []).slice(-6).filter((h) => h?.role && h?.text);
+  if (recentHistory.length > 0) {
+    userPrompt += "### Previous Conversation:\n";
+    for (const turn of recentHistory) {
+      userPrompt += `${turn.role === "assistant" ? "GB AI" : "Student"}: ${turn.text}\n`;
+    }
+    userPrompt += "\n";
+  }
+
+  if (hasAttachments) {
+    userPrompt += "### Uploaded Screenshot(s) / Document(s) Content:\n";
+    attachments.forEach((att, idx) => {
+      userPrompt += `[Attachment ${idx + 1}: ${att.title || "image"}]\n`;
+      if (att.visualCaption) userPrompt += `Visual Scene: ${att.visualCaption}\n`;
+      if (att.text) userPrompt += `Extracted Text (OCR):\n${att.text.trim()}\n`;
+      userPrompt += "\n";
+    });
+  }
+
+  if (universityContexts.length > 0) {
+    userPrompt += "### Relevant University Context:\n";
+    universityContexts.forEach((ctx, idx) => {
+      userPrompt += `[Context ${idx + 1}: ${ctx.title || "Info"}]\n${ctx.text || ""}\n\n`;
+    });
+  }
+
+  userPrompt += "### Student Question / Request:\n";
+  if (message && message !== "Read this attachment and answer from it.") {
+    userPrompt += message;
+  } else if (hasAttachments) {
+    userPrompt += "Please solve and explain the question/problem shown in the uploaded screenshot step-by-step.";
+  } else {
+    userPrompt += "Please assist me with this academic problem.";
+  }
+
+  let answerText = null;
+  const apiKey = envSecret("OPENAI_API_KEY");
+  if (apiKey) {
+    const isGroq = openAiBaseUrl.includes("groq.com");
+    const candidateModels = isGroq ? [openAiModel, "openai/gpt-oss-120b", "openai/gpt-oss-20b"] : [openAiModel];
+    const uniqueModels = [...new Set(candidateModels.filter(Boolean))];
+
+    for (const model of uniqueModels) {
+      try {
+        const resp = await fetch(`${openAiBaseUrl}/chat/completions`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model,
+            temperature: 0.25,
+            max_tokens: 1500,
+            messages: [
+              { role: "system", content: systemInstruction },
+              { role: "user", content: userPrompt },
+            ],
+          }),
+          signal: AbortSignal.timeout(25000),
+        });
+
+        if (resp.ok) {
+          const data = await resp.json().catch(() => null);
+          const candidate = data?.choices?.[0]?.message?.content?.trim();
+          if (candidate) {
+            answerText = candidate;
+            break;
+          }
+        }
+      } catch (err) {
+        await logServerEvent({ at: new Date().toISOString(), level: "warn", message: err.message, scope: `gb_ai_${model}` });
+      }
+    }
+  }
+
+  if (!answerText) {
+    if (hasAttachments && attachments.some((a) => a.text)) {
+      const combinedText = attachments.map((a) => a.text).filter(Boolean).join("\n\n");
+      answerText = isBangla
+        ? `📷 **স্ক্রিনশট থেকে প্রাপ্ত টেক্সট:**\n\n${combinedText.slice(0, 1000)}\n\n*বর্তমানে এআই সার্ভার রেসপন্স করতে পারছে না। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।*`
+        : `📷 **Extracted text from screenshot:**\n\n${combinedText.slice(0, 1000)}\n\n*The AI engine is temporarily busy. Please try again shortly.*`;
+    } else {
+      answerText = isBangla
+        ? `আমি আপনার প্রশ্নটি পেয়েছি, কিন্তু এআই সার্ভিস বর্তমানে ব্যস্ত রয়েছে। দয়া করে কিছুক্ষণ পর আবার জিজ্ঞাসা করুন।`
+        : `I received your question, but the AI service is momentarily busy. Please try again shortly.`;
+    }
+  }
+
+  const lowerMsg = (message || "").toLowerCase();
+  const lowerAns = answerText.toLowerCase();
+  let suggestions = [];
+  if (lowerMsg.includes("code") || lowerAns.includes("```") || lowerMsg.includes("python") || lowerMsg.includes("java")) {
+    suggestions = isBangla
+      ? ["কোডের প্রতিটি লাইন বুঝিয়ে দাও", "টাইম ও স্পেস কমপ্লেক্সিটি কত?", "অন্য কোনো অপ্টিমাইজড সমাধান আছে?"]
+      : ["Explain code line-by-line", "What is the time complexity?", "Can this be optimized?"];
+  } else if (/(\+|\-|\*|\/|=|\^|derivative|integral|equation|formula|ক্ষেত্রফল|সমীকরণ|ঘনত্ব)/i.test(message + answerText)) {
+    suggestions = isBangla
+      ? ["আরেকটি উদাহরণ দিয়ে বোঝাও", "ধাপগুলো আরেকটু সহজ করে বলো", "অন্য কোনো নিয়মে করা যায়?"]
+      : ["Explain with another example", "Simplify the steps", "Is there an alternative method?"];
+  } else {
+    suggestions = isBangla
+      ? ["আরেকটু বিস্তারিত ব্যাখ্যা করো", "সংক্ষেপে মূল পয়েন্টগুলো বলো", "বাস্তব উদাহরণ দিয়ে বোঝাও"]
+      : ["Explain in more detail", "Give key summary points", "Explain with real-world analogy"];
+  }
+
+  return {
+    text: answerText,
+    mode: hasAttachments ? "gb_ai_screenshot_solution" : "gb_ai_solution",
+    medium: "gb-ai",
+    aiModel: "GB AI (Deep Academic Solver)",
+    profile: {
+      label: hasAttachments ? "Screenshot Solved" : "GB AI Solution",
+      confidence: "Step-by-step",
+    },
+    sources: universityContexts.map((c) => ({ title: c.title, url: c.url || "" })),
+    suggestions,
+  };
+}
+
 async function handleChat(req, res) {
   const startedAt = Date.now();
   const body = await parseJsonBody(req);
@@ -5584,14 +5915,36 @@ async function handleChat(req, res) {
 
   const clientHistory = Array.isArray(body.history) ? body.history.slice(-20) : [];
   await loadConversationMemory();
-  const history = mergeConversationHistory(conversationHistory(sessionId), clientHistory);
+  const history = resolveConversationHistory(conversationHistory(sessionId), clientHistory, body.replaceHistory === true);
   const previousHistory = previousConversation(history, message);
 
-  const knowledge = await loadKnowledge();
-  await loadResponseCache();
   const uploadedAttachments = hasAttachments ? await extractAttachments(body.attachments) : [];
   if (hasAttachments) rememberSessionAttachments(sessionId, uploadedAttachments);
   const storedAttachments = sessionAttachments(sessionId);
+
+  // GB AI mode: Image creation if requested, otherwise Universal Problem & Screenshot Solver
+  if (body.medium === "gb-ai") {
+    const isImageRequest = !hasAttachments && (body.mode === "image" || isImageCreationIntent(message));
+    if (isImageRequest) {
+      const imageResponse = await handleImageGeneration(message, sessionId, history);
+      rememberConversationExchange(sessionId, history, message, imageResponse.text);
+      return json(res, 200, imageResponse);
+    }
+
+    const aiResponse = await handleGbAiQuestion(message, uploadedAttachments, history, sessionId);
+    rememberConversationExchange(sessionId, history, message, aiResponse.text);
+    return json(res, 200, aiResponse);
+  }
+
+  // Normal Chatbot mode - image creation fallback
+  if (body.mode === "image" || isExplicitImageRequest(message)) {
+    const imageResponse = await handleImageGeneration(message, sessionId, history);
+    rememberConversationExchange(sessionId, history, message, imageResponse.text);
+    return json(res, 200, imageResponse);
+  }
+
+  const knowledge = await loadKnowledge();
+  await loadResponseCache();
   const useStoredAttachments =
     !hasAttachments && storedAttachments.length > 0 && attachmentQuestionRelevance(message, storedAttachments) > 0;
   const skipCache =
@@ -5990,6 +6343,7 @@ export {
   extractProgramPlanFacts,
   isConversationalIntent,
   mergeConversationHistory,
+  resolveConversationHistory,
   prefersBanglish,
   relevantConversationHistory,
   resolvedPersonFromExchange,

@@ -4,13 +4,18 @@ import {
   ArrowUp,
   BadgeCheck,
   BookOpen,
+  Bot,
   Check,
+  ChevronDown,
   Clipboard,
   Clock,
   DatabaseZap,
+  Download,
   Headphones,
+  Image as ImageIcon,
   Link as LinkIcon,
   Loader2,
+  Maximize2,
   MessageSquare,
   Mic,
   MicOff,
@@ -277,6 +282,20 @@ function App() {
   const editInputRef = useRef(null);
   const endRef = useRef(null);
   const activeRequestRef = useRef(null);
+  const modeDropdownRef = useRef(null);
+  const [currentMedium, setCurrentMedium] = useState("chatbot"); // "chatbot" | "gb-ai"
+  const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modeDropdownRef.current && !modeDropdownRef.current.contains(event.target)) {
+        setModeDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 640);
@@ -560,9 +579,9 @@ function App() {
     setAttachments((current) => current.filter((_, index) => index !== indexToRemove));
   }
 
-  async function sendMessage(text = input) {
+  async function sendMessage(text = input, options = {}) {
     const trimmed = text.trim();
-    const selectedAttachments = attachments;
+    const selectedAttachments = options.attachments ?? attachments;
     if ((!trimmed && selectedAttachments.length === 0) || activeRequestRef.current) return;
     const request = new AbortController();
     activeRequestRef.current = request;
@@ -574,13 +593,16 @@ function App() {
       attachments: selectedAttachments.map(({ name, mimeType, size }) => ({ name, mimeType, size })),
     };
 
-    let targetId = activeChatId;
+    let targetId = options.targetId || activeChatId;
     let target = conversations.find((c) => c.id === targetId);
     if (!target) {
       target = createNewConversation();
       targetId = target.id;
       setActiveChatId(targetId);
       setConversations((prev) => [target, ...prev]);
+    }
+    if (Array.isArray(options.baseMessages)) {
+      target = { ...target, messages: options.baseMessages };
     }
 
     const isFirstMessage = target.messages.length === 0;
@@ -600,7 +622,17 @@ function App() {
     setAttachments([]);
     setAttachmentError("");
     setIsThinking(true);
-    setThinkingLabel("Thinking...");
+    let thinkingMsg = "Thinking...";
+    if (currentMedium === "gb-ai") {
+      if (selectedAttachments?.length > 0) {
+        thinkingMsg = "GB AI is reading screenshot & solving...";
+      } else if (/^(ছবি আঁকো|ছবি বানাও|ছবি তৈরি করো|একটি ছবি|chobi banao|chobi ako|generate an? image|create an? image|draw an? image)/i.test(outgoingText.trim())) {
+        thinkingMsg = "GB AI is creating your image...";
+      } else {
+        thinkingMsg = "GB AI is solving your question...";
+      }
+    }
+    setThinkingLabel(thinkingMsg);
 
     try {
       const response = await fetch("/api/chat", {
@@ -612,6 +644,8 @@ function App() {
           attachments: selectedAttachments,
           sessionId: target.sessionId || target.id,
           history: nextMessages.slice(-10).map(({ role, text }) => ({ role, text })),
+          medium: currentMedium,
+          replaceHistory: options.replaceHistory === true,
         }),
       });
       if (!response.ok) {
@@ -686,20 +720,17 @@ function App() {
     const target = conversations.find((c) => c.id === targetId);
     if (!target) return;
 
-    // Truncate: keep messages up to (but not including) the edited index
+    // Regenerate from the edited turn. Everything after it belongs to the old branch.
     const kept = target.messages.slice(0, index);
-    setConversations((prev) =>
-      prev.map((c) =>
-        c.id === targetId
-          ? { ...c, messages: kept, updatedAt: Date.now() }
-          : c,
-      ),
-    );
     setEditingIndex(null);
     setEditText("");
 
-    // Re-send with the edited text (sendMessage appends a new user msg + gets bot response)
-    await sendMessage(trimmed);
+    await sendMessage(trimmed, {
+      targetId,
+      baseMessages: kept,
+      attachments: [],
+      replaceHistory: true,
+    });
   }
 
   async function copyMessage(text, index) {
@@ -715,7 +746,7 @@ function App() {
   const composer = (
     <div className="composer-shell">
       <form
-        className="composer"
+        className={`composer ${currentMedium === "gb-ai" ? "is-ai-mode" : ""} ${isListeningComposer ? "is-listening" : ""}`}
         onSubmit={(event) => {
           event.preventDefault();
           sendMessage();
@@ -739,7 +770,6 @@ function App() {
         >
           <Paperclip size={18} />
         </button>
-        <Search size={18} aria-hidden="true" />
         <textarea
           ref={composerInputRef}
           value={input}
@@ -753,9 +783,74 @@ function App() {
               sendMessage();
             }
           }}
-          placeholder={isMobile ? "Ask anything..." : "Ask or attach PDF/image..."}
+          placeholder={
+            currentMedium === "gb-ai"
+              ? isMobile
+                ? "প্রশ্ন লিখুন, স্ক্রিনশট দিন বা ছবি আঁকুন..."
+                : "Ask any question, upload screenshot to solve, or generate image..."
+              : isMobile
+                ? "Ask anything..."
+                : "Ask or attach PDF/image..."
+          }
           rows={1}
         />
+        <div className="composer-mode-dropdown-wrap" ref={modeDropdownRef}>
+          <button
+            type="button"
+            className={`composer-mode-btn ${currentMedium === "gb-ai" ? "is-ai-mode" : ""}`}
+            onClick={() => setModeDropdownOpen((prev) => !prev)}
+            aria-haspopup="listbox"
+            aria-expanded={modeDropdownOpen}
+            title="Switch medium: Chatbot or GB AI"
+          >
+            <span className="mode-btn-label">
+              {currentMedium === "gb-ai" ? "GB AI" : "Chatbot"}
+            </span>
+            <ChevronDown size={14} className={`mode-caret ${modeDropdownOpen ? "open" : ""}`} />
+          </button>
+          {modeDropdownOpen && (
+            <div className="composer-mode-menu" role="listbox">
+              <div className="mode-menu-header">Assistant Medium</div>
+              <button
+                type="button"
+                className={`mode-menu-item ${currentMedium === "chatbot" ? "selected" : ""}`}
+                onClick={() => {
+                  setCurrentMedium("chatbot");
+                  setModeDropdownOpen(false);
+                }}
+              >
+                <div className="mode-item-icon bot">
+                  <Bot size={15} />
+                </div>
+                <div className="mode-item-details">
+                  <strong>GB Chatbot</strong>
+                  <span>Admissions, fees, faculty & official info</span>
+                </div>
+                {currentMedium === "chatbot" && <Check size={14} className="mode-item-check" />}
+              </button>
+              <button
+                type="button"
+                className={`mode-menu-item ${currentMedium === "gb-ai" ? "selected" : ""}`}
+                onClick={() => {
+                  setCurrentMedium("gb-ai");
+                  setModeDropdownOpen(false);
+                }}
+              >
+                <div className="mode-item-icon ai">
+                  <Sparkles size={15} />
+                </div>
+                <div className="mode-item-details">
+                  <div className="mode-title-row">
+                    <strong>GB AI</strong>
+                    <span className="mode-badge-pill">Super AI</span>
+                  </div>
+                  <span>Solve questions, screenshots & AI image studio</span>
+                </div>
+                {currentMedium === "gb-ai" && <Check size={14} className="mode-item-check" />}
+              </button>
+            </div>
+          )}
+        </div>
         <button
           className={`composer-mic-button ${isListeningComposer ? "listening" : ""}`}
           type="button"
@@ -1020,6 +1115,7 @@ function App() {
                     onSubmitEdit={() => submitEdit(index)}
                     editInputRef={editInputRef}
                     isThinking={isThinking}
+                    onOpenLightbox={setLightboxImage}
                     key={`${message.role}-${index}-${message.text.slice(0, 12)}`}
                   />
                 ))}
@@ -1057,11 +1153,17 @@ function App() {
           activeConversation={activeConversation}
         />
       )}
+      {lightboxImage && (
+        <ImageLightboxModal
+          image={lightboxImage}
+          onClose={() => setLightboxImage(null)}
+        />
+      )}
     </main>
   );
 }
 
-function MessageBubble({ message, index, copied, onCopy, onSuggestion, onRetry, isSpeaking, onToggleSpeak, isEditing, editText, onStartEdit, onCancelEdit, onEditTextChange, onSubmitEdit, editInputRef, isThinking }) {
+function MessageBubble({ message, index, copied, onCopy, onSuggestion, onRetry, isSpeaking, onToggleSpeak, isEditing, editText, onStartEdit, onCancelEdit, onEditTextChange, onSubmitEdit, editInputRef, isThinking, onOpenLightbox }) {
   const isAssistant = message.role === "assistant";
   const isUser = message.role === "user";
   return (
@@ -1154,7 +1256,12 @@ function MessageBubble({ message, index, copied, onCopy, onSuggestion, onRetry, 
             </div>
           </div>
         ) : (
-          <div className="bubble">{renderMessageText(message.text)}</div>
+          <div className="bubble">
+            {renderMessageText(message.text)}
+            {isAssistant && message.image && (
+              <AiImageCard image={message.image} onOpenLightbox={onOpenLightbox} />
+            )}
+          </div>
         )}
         {isUser && !isEditing && (
           <div className="message-actions user-actions">
@@ -1217,6 +1324,180 @@ function MessageBubble({ message, index, copied, onCopy, onSuggestion, onRetry, 
         )}
       </div>
     </article>
+  );
+}
+
+function AiImageCard({ image, onOpenLightbox }) {
+  const [loaded, setLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    try {
+      setDownloading(true);
+      const res = await fetch(image.url);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `gb-ai-image-${image.seed || Date.now()}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      window.open(image.url, "_blank");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const handleCopyPrompt = () => {
+    navigator.clipboard?.writeText(image.originalPrompt || image.prompt || "");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="ai-image-card">
+      <div className="ai-image-preview-wrap">
+        {!loaded && !hasError && (
+          <div className="ai-image-skeleton">
+            <Loader2 size={24} className="spin" />
+            <span>GB AI is rendering FLUX image...</span>
+          </div>
+        )}
+        {hasError ? (
+          <div className="ai-image-error">
+            <span>Failed to load image preview.</span>
+            <a href={image.url} target="_blank" rel="noopener noreferrer">Open direct link</a>
+          </div>
+        ) : (
+          <img
+            src={image.url}
+            alt={image.prompt || "GB AI Generated Artwork"}
+            className={`ai-image-display ${loaded ? "is-loaded" : ""}`}
+            onLoad={() => setLoaded(true)}
+            onError={() => setHasError(true)}
+            onClick={() => onOpenLightbox(image)}
+            title="Click to view full size"
+          />
+        )}
+        {loaded && (
+          <div className="ai-image-quick-actions">
+            <button
+              type="button"
+              className="ai-img-action-btn"
+              onClick={() => onOpenLightbox(image)}
+              title="View full size"
+              aria-label="View full size"
+            >
+              <Maximize2 size={15} />
+            </button>
+            <button
+              type="button"
+              className="ai-img-action-btn"
+              onClick={handleDownload}
+              disabled={downloading}
+              title="Download high-resolution image"
+              aria-label="Download image"
+            >
+              {downloading ? <Loader2 size={15} className="spin" /> : <Download size={15} />}
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="ai-image-meta-bar">
+        <div className="ai-image-info">
+          <span className="ai-model-tag">
+            <Sparkles size={12} />
+            {image.model || "FLUX.1-HD"}
+          </span>
+          <span className="ai-res-tag">1024 × 1024</span>
+        </div>
+        <button
+          type="button"
+          className="ai-copy-prompt-btn"
+          onClick={handleCopyPrompt}
+          title="Copy prompt"
+        >
+          {copied ? <Check size={13} /> : <Clipboard size={13} />}
+          <span>{copied ? "Copied" : "Copy Prompt"}</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ImageLightboxModal({ image, onClose }) {
+  const [downloading, setDownloading] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  const handleDownload = async () => {
+    try {
+      setDownloading(true);
+      const res = await fetch(image.url);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `gb-ai-image-${image.seed || Date.now()}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      window.open(image.url, "_blank");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  return (
+    <div className="image-lightbox-overlay" role="dialog" aria-modal="true" onClick={onClose}>
+      <div className="image-lightbox-container" onClick={(e) => e.stopPropagation()}>
+        <header className="image-lightbox-header">
+          <div className="image-lightbox-title">
+            <Sparkles size={16} />
+            <span>GB AI Studio • Full View</span>
+          </div>
+          <div className="image-lightbox-actions">
+            <button
+              type="button"
+              className="lightbox-btn"
+              onClick={handleDownload}
+              disabled={downloading}
+              title="Download image"
+            >
+              {downloading ? <Loader2 size={16} className="spin" /> : <Download size={16} />}
+              <span>Download</span>
+            </button>
+            <button type="button" className="lightbox-btn close" onClick={onClose} title="Close (Esc)">
+              <X size={18} />
+            </button>
+          </div>
+        </header>
+
+        <div className="image-lightbox-body">
+          <img src={image.url} alt={image.prompt || "GB AI Generated Artwork"} className="lightbox-img" />
+        </div>
+
+        {image.prompt && (
+          <footer className="image-lightbox-footer">
+            <p><strong>Prompt:</strong> {image.originalPrompt || image.prompt}</p>
+          </footer>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -1395,11 +1676,39 @@ function renderMessageText(text) {
   let index = 0;
 
   while (index < lines.length) {
-    const line = lines[index].trim();
+    const rawLine = lines[index];
+    const line = rawLine.trim();
     if (!line) {
       index += 1;
       continue;
     }
+
+    if (line.startsWith("```")) {
+      const lang = line.slice(3).trim();
+      const codeLines = [];
+      index += 1;
+      while (index < lines.length && !lines[index].trim().startsWith("```")) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length && lines[index].trim().startsWith("```")) {
+        index += 1;
+      }
+      output.push(
+        <div key={`codeblock-${index}`} className="message-code-block">
+          {lang && <div className="code-block-header"><span>{lang}</span></div>}
+          <pre><code>{codeLines.join("\n")}</code></pre>
+        </div>
+      );
+      continue;
+    }
+
+    if (line === "---" || line === "***" || line === "___") {
+      output.push(<hr key={`hr-${index}`} className="message-hr" />);
+      index += 1;
+      continue;
+    }
+
     const heading = line.match(/^(#{1,3})\s+(.+)$/);
     if (heading) {
       output.push(<h3 key={`heading-${index}`}>{renderInlineText(heading[2], `heading-${index}`)}</h3>);
