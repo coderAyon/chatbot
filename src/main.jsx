@@ -18,6 +18,7 @@ import {
   PanelLeft,
   PanelLeftClose,
   Paperclip,
+  Pencil,
   Plus,
   RotateCcw,
   Search,
@@ -268,9 +269,12 @@ function App() {
   const [voiceModeOpen, setVoiceModeOpen] = useState(false);
   const [speakingIndex, setSpeakingIndex] = useState(null);
   const [isListeningComposer, setIsListeningComposer] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editText, setEditText] = useState("");
   const composerRecognitionRef = useRef(null);
   const fileInputRef = useRef(null);
   const composerInputRef = useRef(null);
+  const editInputRef = useRef(null);
   const endRef = useRef(null);
   const activeRequestRef = useRef(null);
 
@@ -638,6 +642,48 @@ function App() {
     }
   }
 
+  function startEditMessage(index) {
+    const msg = messages[index];
+    if (!msg || msg.role !== "user" || isThinking) return;
+    setEditingIndex(index);
+    setEditText(msg.text);
+    setTimeout(() => {
+      if (editInputRef.current) {
+        editInputRef.current.focus();
+        editInputRef.current.style.height = "auto";
+        editInputRef.current.style.height = `${Math.min(editInputRef.current.scrollHeight, 160)}px`;
+      }
+    }, 30);
+  }
+
+  function cancelEdit() {
+    setEditingIndex(null);
+    setEditText("");
+  }
+
+  async function submitEdit(index) {
+    const trimmed = editText.trim();
+    if (!trimmed || isThinking) return;
+    const targetId = activeChatId;
+    const target = conversations.find((c) => c.id === targetId);
+    if (!target) return;
+
+    // Truncate: keep messages up to (but not including) the edited index
+    const kept = target.messages.slice(0, index);
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === targetId
+          ? { ...c, messages: kept, updatedAt: Date.now() }
+          : c,
+      ),
+    );
+    setEditingIndex(null);
+    setEditText("");
+
+    // Re-send with the edited text (sendMessage appends a new user msg + gets bot response)
+    await sendMessage(trimmed);
+  }
+
   async function copyMessage(text, index) {
     try {
       await navigator.clipboard.writeText(text);
@@ -941,12 +987,21 @@ function App() {
                 {messages.map((message, index) => (
                   <MessageBubble
                     message={message}
+                    index={index}
                     copied={copiedIndex === index}
                     onCopy={() => copyMessage(message.text, index)}
                     onSuggestion={sendMessage}
                     onRetry={(retryText) => sendMessage(retryText)}
                     isSpeaking={speakingIndex === index}
                     onToggleSpeak={() => toggleSpeakMessage(message.text, index)}
+                    isEditing={editingIndex === index}
+                    editText={editText}
+                    onStartEdit={() => startEditMessage(index)}
+                    onCancelEdit={cancelEdit}
+                    onEditTextChange={setEditText}
+                    onSubmitEdit={() => submitEdit(index)}
+                    editInputRef={editInputRef}
+                    isThinking={isThinking}
                     key={`${message.role}-${index}-${message.text.slice(0, 12)}`}
                   />
                 ))}
@@ -988,18 +1043,19 @@ function App() {
   );
 }
 
-function MessageBubble({ message, copied, onCopy, onSuggestion, onRetry, isSpeaking, onToggleSpeak }) {
+function MessageBubble({ message, index, copied, onCopy, onSuggestion, onRetry, isSpeaking, onToggleSpeak, isEditing, editText, onStartEdit, onCancelEdit, onEditTextChange, onSubmitEdit, editInputRef, isThinking }) {
   const isAssistant = message.role === "assistant";
+  const isUser = message.role === "user";
   return (
-    <article className={`message ${message.role}`}>
+    <article className={`message ${message.role} ${isEditing ? "is-editing" : ""}`}>
       <div className="avatar">
         {isAssistant ? <img src={GB_LOGO_URL} alt="Gono Bishwabidyalay logo" /> : <UserRound size={18} />}
       </div>
       <div className="message-body">
-        {!isAssistant && message.attachments?.length > 0 && (
+        {isUser && message.attachments?.length > 0 && (
           <div className="message-attachments">
-            {message.attachments.map((attachment, index) => (
-              <span key={`${attachment.name}-${index}`}>
+            {message.attachments.map((attachment, attIdx) => (
+              <span key={`${attachment.name}-${attIdx}`}>
                 <Paperclip size={13} />
                 {attachment.name}
               </span>
@@ -1046,7 +1102,57 @@ function MessageBubble({ message, copied, onCopy, onSuggestion, onRetry, isSpeak
             </ol>
           </section>
         )}
-        <div className="bubble">{renderMessageText(message.text)}</div>
+        {isUser && isEditing ? (
+          <div className="edit-bubble">
+            <textarea
+              ref={editInputRef}
+              className="edit-textarea"
+              value={editText}
+              onChange={(e) => {
+                onEditTextChange(e.target.value);
+                e.target.style.height = "auto";
+                e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  onSubmitEdit();
+                }
+                if (e.key === "Escape") {
+                  onCancelEdit();
+                }
+              }}
+              rows={1}
+            />
+            <div className="edit-actions">
+              <button className="edit-cancel-btn" type="button" onClick={onCancelEdit}>
+                <X size={14} />
+                <span>Cancel</span>
+              </button>
+              <button className="edit-submit-btn" type="button" onClick={onSubmitEdit} disabled={!editText.trim()}>
+                <ArrowUp size={14} />
+                <span>Send</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="bubble">{renderMessageText(message.text)}</div>
+        )}
+        {isUser && !isEditing && (
+          <div className="message-actions user-actions">
+            <button
+              className="message-action"
+              type="button"
+              onClick={onStartEdit}
+              disabled={isThinking}
+              aria-label="Edit message"
+              title="Edit message"
+            >
+              <Pencil size={14} />
+              <span>Edit</span>
+            </button>
+          </div>
+        )}
         {isAssistant && (
           <div className="message-actions">
             <button className="message-action" type="button" onClick={onCopy} aria-label="Copy response" title="Copy response">
