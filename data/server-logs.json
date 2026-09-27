@@ -526,5 +526,17 @@
     "level": "warn",
     "message": "fetch failed",
     "scope": "chat_ollama"
+  },
+  {
+    "at": "2026-09-27T10:25:43.271Z",
+    "level": "warn",
+    "message": "Groq unavailable (413): {\"error\":{\"message\":\"Request too large for model `qwen/qwen3.8-27b` in organization `org_01m3ejyc07ejc9hndwdgp77eta` ser",
+    "scope": "chat_groq"
+  },
+  {
+    "at": "2026-09-27T10:26:50.250Z",
+    "level": "warn",
+    "message": "Groq unavailable (413): {\"error\":{\"message\":\"Request too large for model `qwen/qwen3.8-27b` in organization `org_01m3ejyc07ejc9hndwdgp77eta` ser",
+    "scope": "chat_groq"
   }
 ]

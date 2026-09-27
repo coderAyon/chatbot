@@ -12,6 +12,7 @@
     "build:knowledge": "node scripts/build-knowledge.mjs",
     "enrich:core": "node scripts/enrich-core-knowledge.mjs",
     "enrich:external": "node scripts/enrich-external-knowledge.mjs",
+    "enrich:club": "node scripts/enrich-club-knowledge.mjs",
     "refresh:people": "node scripts/refresh-people-knowledge.mjs",
     "refresh:pharmacy": "node scripts/refresh-pharmacy-knowledge.mjs",
     "restore:knowledge": "node scripts/restore-seed-knowledge.mjs",

@@ -4,6 +4,7 @@ import {
   directActivePersonAnswer,
   directAnswer,
   mergeConversationHistory,
+  prefersBanglish,
   relevantConversationHistory,
   resolvedPersonFromExchange,
   requiresVerifiedStructuredAnswer,
@@ -42,6 +43,7 @@ const fixture = {
   programs: [
     { name: "B.Sc. in Electrical and Electronic Engineering", department: eee, aliases: ["EEE"], duration: "4 years (8 semesters)", seats: "40", admissionRequirement: "GPA 2.5", source: `${root}admission/undergraduate-admission-requirements/` },
     { name: "B.Sc. (Honours) in Computer Science & Engineering", department: "Department of Computer Science and Engineering (CSE)", aliases: ["CSE", "Computer Science and Engineering"], duration: "4 years (8 semesters)", seats: "50", admissionRequirement: "GPA 2.5", source: `${root}admission/undergraduate-admission-requirements/` },
+    { name: "B.Sc. (Honours) in Microbiology", department: "Department of Microbiology", aliases: ["Microbiology"], duration: "4 years", seats: "40", admissionRequirement: "Science background", source: `${root}admission/undergraduate-admission-requirements/` },
     { name: "Doctor of Veterinary Medicine (DVM)", department: veterinary, aliases: ["DVM", "Veterinary Medicine"], duration: "5 years", seats: "40", admissionRequirement: "Science background", source: `${root}admission/undergraduate-admission-requirements/` },
   ],
 };
@@ -50,6 +52,49 @@ test("greetings and unclear input never dump scraped text", () => {
   assert.equal(directAnswer("hi", fixture).mode, "greeting");
   assert.equal(directAnswer("?", fixture).mode, "clarify");
   assert.equal(requiresVerifiedStructuredAnswer("Explain data structures with examples"), false);
+});
+
+test("student journey modes return guided, role-specific roadmaps", () => {
+  const cases = [
+    ["Start admission journey", "admission", 5],
+    ["Start current student journey", "student", 4],
+    ["Start guardian journey", "guardian", 5],
+    ["Help me choose a program", "career", 5],
+  ];
+  for (const [question, kind, stepCount] of cases) {
+    const answer = directAnswer(question, fixture);
+    assert.equal(answer.mode, "journey");
+    assert.equal(answer.journey.kind, kind);
+    assert.equal(answer.journey.steps.length, stepCount);
+    assert.ok(answer.journey.steps.every((step) => step.title && step.detail));
+  }
+});
+
+test("program-choice follow-ups use verified matching programs", () => {
+  const answer = directAnswer("Ami coding pochondo kori", fixture);
+  assert.equal(answer.mode, "structured");
+  assert.match(answer.text, /Computer Science.*Engineering/i);
+  assert.doesNotMatch(answer.text, /only.*Sociology/i);
+});
+
+test("Roman Bangla tone detection covers natural study questions", () => {
+  assert.equal(prefersBanglish("vet pora jai?"), true);
+  assert.equal(prefersBanglish("ami coding pochondo kori"), true);
+  assert.equal(prefersBanglish("Can I study veterinary medicine?"), false);
+});
+
+test("an explicit new department existence question does not inherit the previous fee intent", () => {
+  const history = [
+    { role: "user", text: "CSE fees koto?" },
+    { role: "assistant", text: "CSE fee information" },
+  ];
+  const answer = directAnswer("Microbiology department ache?", fixture, history);
+  assert.match(answer.text, /Microbiology/i);
+  assert.doesNotMatch(answer.text, /fee record|specific fee|tuition/i);
+
+  const shorthand = directAnswer("vet pora jai?", fixture, history);
+  assert.match(shorthand.text, /Veterinary/i);
+  assert.doesNotMatch(shorthand.text, /fee record|specific fee|tuition/i);
 });
 
 test("role punctuation and institution/union scope are understood", () => {
@@ -74,6 +119,23 @@ test("seats and eligibility do not trigger fee or faculty replies", () => {
   assert.ok(!missingFee || missingFee.mode === "not_found");
   assert.equal(requiresVerifiedStructuredAnswer("pharmacy total tuition fee koto?"), true);
   assert.match(directAnswer("DVM admission requirement?", fixture).text, /Science background/);
+});
+
+test("stated GPA is compared with the published CSE threshold", () => {
+  const eligible = directAnswer("3.5 diye CSE te vorti hote parbo?", fixture);
+  assert.equal(eligible.mode, "structured");
+  assert.match(eligible.text, /3\.50/);
+  assert.match(eligible.text, /2\.50/);
+  assert.match(eligible.text, /হ্যাঁ|yes/i);
+  assert.match(eligible.text, /SSC.*HSC|HSC.*SSC/s);
+
+  const below = directAnswer("2.0 diye CSE te vorti hote parbo?", fixture);
+  assert.match(below.text, /2\.00/);
+  assert.match(below.text, /না|no/i);
+
+  const bengaliDigits = directAnswer("৩.৫ দিয়ে CSE তে ভর্তি হতে পারব?", fixture);
+  assert.match(bengaliDigits.text, /3\.50/);
+  assert.match(bengaliDigits.text, /2\.50/);
 });
 
 test("duration questions are not mistaken for course-list requests", () => {
@@ -329,7 +391,7 @@ test("program catalog excludes malformed and duplicate crawler records", () => {
   ] };
   const answer = directAnswer("show all programs", knowledge);
   assert.doesNotMatch(answer.text, /\b1st\b|30000/);
-  assert.match(answer.text, /3 programs/);
+  assert.match(answer.text, /4 programs/);
 });
 
 test("conflicting official totals ask for the applicable session", () => {
@@ -754,3 +816,98 @@ test("followup with distinct attribute overrides previous conversational attribu
   assert.match(costAnswer.text, /4,50,000/);
   assert.doesNotMatch(costAnswer.text, /course records/i);
 });
+
+test("compound fee question compares total fee vs admission-time payment without dumping requirements", () => {
+  const feeKnowledge = {
+    ...fixture,
+    fees: [
+      {
+        program: "B.Sc. (Honours) in Computer Science & Engineering",
+        aliases: ["CSE"],
+        admissionCost: "Tk. 4,50,000/-",
+        admissionCostIncludes: "Total 4-year tuition fee (admission-time payment: BDT 54,500)",
+        note: "Total 4-year tuition fee is Tk. 4,50,000/-. Initial admission-time payment is BDT 54,500.",
+        source: `${root}admission/fees/`,
+      },
+    ],
+  };
+  const res = directAnswer("CSE total fee ar admission-time payment ki same?", feeKnowledge, []);
+  assert.equal(res.mode, "structured");
+  assert.match(res.text, /এক নয়|না|separate|not the same/i);
+  assert.match(res.text, /4,50,000/);
+  assert.match(res.text, /54,500/);
+  assert.doesNotMatch(res.text, /Admission requirement:\*\*/i);
+});
+
+test("program chooser prioritizes undergraduate programs for biology interest", () => {
+  const bioKnowledge = {
+    ...fixture,
+    programs: [
+      { name: "M.Sc in Biochemistry & Molecular Biology", department: "Department of Biochemistry", aliases: ["Biochemistry"] },
+      { name: "M.Pharm", department: "Department of Pharmacy", aliases: ["Pharmacy"] },
+      { name: "B.Sc (Hons.) in Microbiology", department: "Department of Microbiology", aliases: ["Microbiology"] },
+      { name: "Bachelor of Pharmacy (B.Pharm)", department: "Department of Pharmacy", aliases: ["Pharmacy"] },
+    ],
+  };
+  const res = directAnswer("ami biology pochondo kori", bioKnowledge, []);
+  assert.equal(res.mode, "structured");
+  assert.match(res.text, /1\.\s+\*\*(?:Bachelor|B\.Sc)/i);
+});
+
+test("program chooser recognizes human service and social welfare interest", () => {
+  const serviceKnowledge = {
+    ...fixture,
+    programs: [
+      { name: "B.A. (Honours) in Sociology and Social Work", department: "Department of Sociology", aliases: ["Social Work"] },
+      { name: "Bachelor of Physiotherapy (BPT)", department: "Department of Physiotherapy", aliases: ["Physiotherapy"] },
+    ],
+  };
+  const res = directAnswer("ami manusher sheba korte chai", serviceKnowledge, []);
+  assert.equal(res.mode, "structured");
+  assert.match(res.text, /Social Work|Physiotherapy/i);
+});
+
+test("ordinal memory recalls original fee intent and honors one-line instruction", () => {
+  const feeKnowledge = {
+    ...fixture,
+    fees: [
+      {
+        program: "B.Sc. in Computer Science & Engineering",
+        aliases: ["CSE"],
+        admissionCost: "Tk. 4,50,000/-",
+        source: `${root}admission/fees/`,
+      },
+    ],
+  };
+  const history = [
+    { role: "user", text: "CSE fee koto?" },
+    { role: "assistant", text: "CSE fee details" },
+    { role: "user", text: "VC ke?" },
+    { role: "assistant", text: "VC details" },
+    { role: "user", text: "Campus kothay?" },
+    { role: "assistant", text: "Campus details" },
+  ];
+  const res = directAnswer("prothom topic ta one line-e bolo", feeKnowledge, history);
+  assert.equal(res.mode, "structured");
+  assert.match(res.text, /4,50,000/);
+  assert.doesNotMatch(res.text, /Department Profile|Department Leadership/i);
+  assert.ok(!res.text.includes("\n\n"));
+});
+
+test("library opening hours query explicitly notes hours unavailable in official docs", () => {
+  const res = directAnswer("library kokhon khola?", fixture, []);
+  assert.equal(res.mode, "structured");
+  assert.match(res.text, /সুনির্দিষ্ট খোলার ও বন্ধের সময়সূচি|opening.*hours|not specify/i);
+  assert.match(res.text, /library@gonouniversity\.edu\.bd/);
+});
+
+test("current admission status explicitly confirms ongoing admissions", () => {
+  const resEng = directAnswer("Current admission open?", fixture, []);
+  assert.equal(resEng.mode, "structured");
+  assert.match(resEng.text, /Yes.*admission.*currently active/i);
+
+  const resBangla = directAnswer("vorti ki cholche?", fixture, []);
+  assert.equal(resBangla.mode, "structured");
+  assert.match(resBangla.text, /হ্যাঁ.*ভর্তি কার্যক্রম.*চলমান/i);
+});
+

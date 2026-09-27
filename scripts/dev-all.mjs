@@ -3,8 +3,8 @@ import { fileURLToPath } from "node:url";
 
 const viteEntry = fileURLToPath(new URL("../node_modules/vite/bin/vite.js", import.meta.url));
 const children = [
-  spawn(process.execPath, ["scripts/api-server.mjs"], { stdio: "inherit" }),
-  spawn(process.execPath, [viteEntry, "--host", "127.0.0.1"], { stdio: "inherit" }),
+  spawn(process.execPath, ["scripts/api-server.mjs"], { stdio: ["ignore", "inherit", "inherit"] }),
+  spawn(process.execPath, [viteEntry, "--host", "127.0.0.1"], { stdio: ["ignore", "inherit", "inherit"] }),
 ];
 
 let stopping = false;

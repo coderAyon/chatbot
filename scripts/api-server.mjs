@@ -14,7 +14,7 @@ const SETTINGS_FILE = new URL("../data/settings.json", import.meta.url);
 const CACHE_FILE = new URL("../data/response-cache.json", import.meta.url);
 const CONVERSATION_FILE = new URL("../data/conversation-memory.json", import.meta.url);
 const NOT_VERIFIED = "I couldn't find verified information from the official university data.";
-const ANSWER_ENGINE_VERSION = "2026-09-26-viva-hardening-v48";
+const ANSWER_ENGINE_VERSION = "2026-09-27-gbcdc-integration-v51";
 
 async function loadLocalEnv() {
   try {
@@ -811,8 +811,20 @@ function prefersBanglish(text) {
   return (
     /[\u0980-\u09ff]/.test(raw) ||
     /\b(fe|kto|koyjn|koijon|hed|chairmn|crdt|drtn|phrmcy|vlo|nki|kmn|bl)\b/i.test(raw) ||
-    /\b(ki|ke|kivabe|pabo|lagbe|shuru|hobe|korbo|konta|kontar|porbo|kothay|somporke|chino|cheno|chine|jano|bolo|dao|ache|ase|kono|koto|koyjon|kojon|koyta|er|r|ta|te|vorti|hoy|hoi|kina|kemon|keno|kobe|bhalo|shob|sob|naki|ba|tarpor|porle|jani|janan|bolun|dekhun)\b/i.test(q)
+    /\b(ki|ke|kivabe|pabo|lagbe|shuru|hobe|korbo|konta|kontar|porbo|pora|porte|porashona|jai|jabe|jawa|chai|pochondo|valo|kothay|somporke|chino|cheno|chine|jano|bolo|dao|ache|ase|kono|koto|koyjon|kojon|koyta|er|r|ta|te|vorti|hoy|hoi|kina|kemon|keno|kobe|bhalo|shob|sob|naki|ba|tarpor|porle|jani|janan|bolun|dekhun|ami|amar|amake|tahole|parbo|kon|kintu|tobe|niye|diye|hote|korte|uchit|kokhon|khola|shomoy|somoy|koytay|bondho|ekhon|akhon|cholche|chole|choltese|sheba|seba|manush|manusher)\b/i.test(q)
   );
+}
+
+function dedupeSources(sources = []) {
+  if (!Array.isArray(sources)) return [];
+  const seen = new Set();
+  return sources.filter((item) => {
+    if (!item || !item.url) return false;
+    const cleanUrl = String(item.url).trim().replace(/\/+$/, "").toLowerCase();
+    if (seen.has(cleanUrl)) return false;
+    seen.add(cleanUrl);
+    return true;
+  });
 }
 
 function notVerifiedText(question) {
@@ -900,6 +912,33 @@ function directFeeAnswer(question, knowledge, history = []) {
     return `**${programLabel}** - ${feeType}: **${fee.admissionCost}**${includeText}`;
   };
 
+  const isFeeComparison =
+    /\b(total\s+(?:tuition\s+)?fee|mot\s+fee|shob\s+fee|total\s+cost)\b/i.test(q) &&
+    /\b(admission(?:[\s-]*time)?\s*(?:fee|payment)|vorti(?:r\s+somoy)?\s*(?:fee|taka|khoroch)|initial\s+payment)\b/i.test(q);
+
+  if (isFeeComparison) {
+    const feeItem = ranked.length ? ranked[0].fee : (knowledge.fees || []).find((f) => f.program?.toLowerCase().includes("computer science"));
+    const progName = feeItem ? feeItem.program : "Degree program";
+    const totalFee = feeItem?.admissionCost || "Tk. 4,50,000/-";
+    const admissionTimePayment = feeItem?.note?.match(/initial admission-time payment is ([^.]+)/i)?.[1] || "BDT 54,500";
+    return {
+      text: banglish
+        ? `না, **Total Fee** এবং **Admission-time payment (ভর্তিকালীন ফি)** এক নয়—দুটো আলাদা বিষয়:\n\n` +
+          `1. **Total Fee (মোট ফি):** ৪ বছরের পূর্ণাঙ্গ ডিগ্রি (৮ সেমিস্টার)-র সর্বমোট টিউশন ফি (যেমন **${progName}**-এর জন্য সর্বমোট **${totalFee}**)।\n` +
+          `2. **Admission-time Payment (ভর্তিকালীন প্রদেয় অর্থ):** ভর্তির সময় প্রাথমিক কিস্তি হিসেবে প্রদেয় ফি (যেমন CSE-এর জন্য **${admissionTimePayment}**, যার মধ্যে অ্যাডমিশন ফি ও ১ম সেমিস্টারের টিউশন ফি অন্তর্ভুক্ত)।\n\n` +
+          `বাকি ফি পরবর্তী সেমিস্টারগুলোতে নিয়মিত কিস্তিতে পরিশোধ করতে হয়।`
+        : `No, **Total Fee** and **Admission-time payment** are not the same—they refer to two different amounts:\n\n` +
+          `1. **Total Fee:** The overall tuition and academic fee for the entire degree (8 semesters / 4 years), which for **${progName}** is **${totalFee}**.\n` +
+          `2. **Admission-time Payment:** The initial installment payable at the time of admission (which for CSE is **${admissionTimePayment}**, including admission charge and first semester tuition).\n\n` +
+          `The remaining dues are paid in subsequent semester installments.`,
+      sources: dedupeSources([
+        feeItem?.source && { title: feeItem.sourceTitle || "Tuition and Other Fees - Gono Bishwabidyalay", url: feeItem.source },
+        { title: "Tuition and Other Fees - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/admission/tuition-and-other-fees/" }
+      ].filter(Boolean)),
+      mode: "structured",
+    };
+  }
+
   if (ranked.length) {
     const bestScore = ranked[0].score;
     const matchedFees = ranked.filter((item) => item.score === bestScore).map((item) => item.fee);
@@ -980,6 +1019,7 @@ function directProgramAdmissionAnswer(question, knowledge) {
   const asksPeople = /\b(teacher|teachers|faculty|member|members|head|dean|sir|mam|person|people|staff)\b/i.test(q);
   const asksSeats = /\b(seat|seats|capacity|intake)\b/i.test(q) || (!asksPeople && /\b(koyjon|kojon)\b/i.test(q));
   if (!asksRequirement && !asksDuration && !asksSeats) return null;
+  if (asksFeeDetail(q) && !/\b(requirement|qualification|eligibility|joggota|criteria)\b/i.test(q)) return null;
   const ranked = rankedPrograms(q, knowledge.programs || []);
   if (!ranked.length) return null;
   const bestScore = ranked[0].score;
@@ -989,9 +1029,7 @@ function directProgramAdmissionAnswer(question, knowledge) {
       text: prefersBanglish(question)
         ? `Kon program-ta bujhaccho? Official data-te matching option: ${matches.map((program) => `**${program.name}**`).join(", ")}.`
         : `Which program do you mean? Matching official programs are ${matches.map((program) => `**${program.name}**`).join(", ")}.`,
-      sources: matches
-        .map((program) => ({ title: program.sourceTitle || program.name, url: program.source }))
-        .filter((source, index, list) => list.findIndex((item) => item.url === source.url) === index),
+      sources: dedupeSources(matches.map((program) => ({ title: program.sourceTitle || program.name, url: program.source }))),
       mode: "clarify",
     };
   }
@@ -1006,7 +1044,7 @@ function directProgramAdmissionAnswer(question, knowledge) {
   if (!lines.length) return null;
   return {
     text: `**${program.name}**\n${lines.join("\n")}`,
-    sources: [{ title: program.sourceTitle || "Official admission requirements", url: program.source }],
+    sources: dedupeSources([{ title: program.sourceTitle || "Official admission requirements", url: program.source }]),
     mode: "structured",
   };
 }
@@ -1120,6 +1158,9 @@ const roleAliases = [
   { key: "pro_vice_chancellor", terms: ["pro vc", "pro-vc", "pro vice chancellor", "pro-vice-chancellor"], scope: "institution" },
   { key: "registrar", terms: ["registrar"], scope: "institution" },
   { key: "treasurer", terms: ["treasurer"], scope: "institution" },
+  { key: "proctor", terms: ["proctor"], scope: "institution" },
+  { key: "controller_of_examinations", terms: ["controller of examination", "controller of examinations", "exam controller", "examination controller", "controller"], scope: "institution" },
+  { key: "medical_officer", terms: ["medical officer", "campus doctor", "doctor"], scope: "institution" },
 ];
 
 function termInQuestion(question, term) {
@@ -1150,6 +1191,9 @@ function directRoleAnswer(question, knowledge) {
       pro_vice_chancellor: "Pro-Vice-Chancellor",
       registrar: "Registrar",
       treasurer: "Treasurer",
+      proctor: "Proctor",
+      controller_of_examinations: "Controller of Examinations",
+      medical_officer: "Medical Officer",
       student_union_vice_president: "student union Vice President",
       student_union_general_secretary: "student union General Secretary",
       student_union_joint_general_secretary: "student union Joint General Secretary",
@@ -1252,6 +1296,15 @@ function dedupePeople(people = []) {
   return [...records.values()];
 }
 
+const commonSurnames = new Set([
+  "chowdhury", "choudhury", "chowdhuri",
+  "hossain", "hussain", "hossan",
+  "khan", "ahmed", "ahmad", "islam", "rahman", "sarker", "sarkar",
+  "ali", "hasan", "hassan", "haque", "kazi", "sheikh", "shaikh",
+  "roy", "das", "paul", "debnath", "bhowmik", "mojumder", "majumder",
+  "uddin", "alom", "alam", "akter", "khatun", "begum", "molla"
+]);
+
 function findPeople(question, people = [], knowledge = null) {
   const ignored = new Set([
     ...searchStopWords,
@@ -1291,6 +1344,14 @@ function findPeople(question, people = [], knowledge = null) {
     "leadership",
     "dean",
     "provost",
+    "cheno",
+    "chino",
+    "jano",
+    "about",
+    "somporke",
+    "samparke",
+    "porichoy",
+    "porichito",
   ]);
   const words = tokenize(question).filter((word) => word.length >= 4 && !ignored.has(word));
   if (!words.length) return [];
@@ -1307,6 +1368,23 @@ function findPeople(question, people = [], knowledge = null) {
       const nameTokens = tokenize(person.name);
       const aliasTokens = tokenize(`${person.email || ""} ${person.profileUrl || ""} ${person.source || ""}`)
         .filter((token) => token.length >= 4 && !/^(https?|www|edu|com|bd|gmail|employees|faculty|members|gonouniversity|pharmacy|cse)$/.test(token));
+
+      const exactHits = words.filter((word) => nameTokens.includes(word)).length;
+      const aliasHits = words.filter((word) => aliasTokens.includes(word)).length;
+      const matchedWords = words.filter((word) => nameTokens.includes(word) || aliasTokens.includes(word));
+
+      // Guard against false positive matches on a single common surname when query provides multiple words
+      if (words.length >= 2 && matchedWords.length === 1 && commonSurnames.has(matchedWords[0])) {
+        const otherWords = words.filter((w) => w !== matchedWords[0]);
+        const hasOtherOverlap = otherWords.some((w) =>
+          nameTokens.some((t) => t.length >= 4 && (t.startsWith(w) || w.startsWith(t))) ||
+          aliasTokens.some((t) => t.length >= 4 && (t.startsWith(w) || w.startsWith(t)))
+        );
+        if (!hasOtherOverlap) {
+          return { person, score: 0, exactHits: 0, aliasHits: 0 };
+        }
+      }
+
       const score = words.reduce((total, word) => {
         if (nameTokens.includes(word)) return total + 35;
         if (nameTokens.some((token) => token.length >= 4 && (token.startsWith(word) || word.startsWith(token)))) return total + 22;
@@ -1316,8 +1394,6 @@ function findPeople(question, people = [], knowledge = null) {
         if (fuzzyIncludes(aliasTokens, word)) return total + 10;
         return total;
       }, 0);
-      const exactHits = words.filter((word) => nameTokens.includes(word)).length;
-      const aliasHits = words.filter((word) => aliasTokens.includes(word)).length;
       return { person, score, exactHits, aliasHits };
     })
     .filter((item) => item.score >= 16 || item.exactHits > 0 || item.aliasHits > 0)
@@ -1512,7 +1588,7 @@ function directInstitutionFactAnswer(question, knowledge) {
     };
   }
 
-  if (/\b(?:when|date|year|kobe).*\b(?:founded|established|started|protishthito|protistha|toiri)|\b(?:founded|established|establishment|protishtha|protishthito)\b/i.test(q)) {
+  if (/\b(?:when|date|year|kobe).*\b(?:found|founded|establish|established|establishment|started|start|protishthito|protistha|protishtha|toiri)|\b(?:founded|established|establishment|protishtha|protishthito)\b/i.test(q)) {
     const establishedDate = institution.establishedDate || "14 July 1998";
     return {
       text: prefersBanglish(question)
@@ -1692,13 +1768,23 @@ const universitySources = {
   sports: { title: "Sports Office", url: `${officialSiteUrl}sports/` },
 };
 
+const gbcdcSources = {
+  home: { title: "GBCDC Official Website", url: "https://www.gbcdc.club/" },
+  executive: { title: "GBCDC Executive Committee", url: "https://www.gbcdc.club/executive" },
+  advisory: { title: "GBCDC Advisory Panel", url: "https://www.gbcdc.club/advisory" },
+  mentors: { title: "GBCDC Mentor Panel", url: "https://www.gbcdc.club/mentors" },
+  events: { title: "GBCDC Events & Workshops", url: "https://www.gbcdc.club/events" },
+  courses: { title: "GBCDC Skill Courses", url: "https://www.gbcdc.club/courses" },
+  contact: { title: "GBCDC Contact Portal", url: "https://www.gbcdc.club/contact" },
+};
+
 function academicDepartments(knowledge) {
   const values = [
     ...(knowledge.programs || []).map((program) => program.department),
     ...(knowledge.faculty || []).map((person) => person.department),
   ];
   return [...new Set(values.map(displayDepartmentName).filter((value) =>
-    value && !/library|research|office|administration|student union|sports/i.test(value),
+    value && (!/library|research|office|administration|student union|sports/i.test(value) || /Business\s+Administration/i.test(value)),
   ))].sort((a, b) => a.localeCompare(b));
 }
 
@@ -1745,12 +1831,13 @@ function directUniversityOverviewAnswer(question, knowledge) {
 function directAcademicUnitsAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   if (asksFeeDetail(q)) return null;
-  const asksList = /\b(what|which|ki\s+ki|list|show|all|sob|shob|koyta|koto|how\s+many|available|offer)\b/i.test(q);
-  const asksUnits = /\b(departments?|facult(?:y|ies)|academic\s+units?|programs?|degrees?)\b/i.test(q);
+  const asksList = /\b(what|which|ki\s+ki|list|show|all|sob|shob|koyta|koto|how\s+many|available|offer)\b|কয়টি|কয়টা|কত|কতো|কয়টি|কয়টা|তালিকা|কী\s*কী/iu.test(q);
+  const asksUnits = /\b(departments?|facult(?:y|ies)|academic\s+units?|programs?|degrees?)\b|অনুষদ|বিভাগ|ডিপার্টমেন্ট|ফ্যাকাল্টি|প্রোগ্রাম/iu.test(q);
   if (!asksList || !asksUnits || asksProgramDetail(q)) return null;
 
   const facultyGroups = knowledge.institution?.faculties || [];
   const normalizedQuestion = q.replace(/\s*&\s*/g, " and ");
+
   const requestedFaculty = /\bfacult(?:y|ies)\b/i.test(q) && facultyGroups.find((faculty) => {
     const name = normalizeQuestion(faculty.name || "").replace(/\s*&\s*/g, " and ");
     const core = name.replace(/^faculty\s+of\s+/, "");
@@ -1763,7 +1850,27 @@ function directAcademicUnitsAnswer(question, knowledge) {
       mode: "structured",
     };
   }
+
   if (matchedDepartmentFromQuestion(q, knowledge)) return null;
+
+  const wantsFacultiesSpecifically =
+    (/\bfaculties\b/i.test(q) ||
+      /\b(?:faculty|অনুষদ)\s*(?:list|koyta|koto|count|কয়টি|কয়টা|কত|কতো|আছে)?\b/iu.test(q) ||
+      /\b(?:how\s+many\s+faculties|all\s+faculties|total\s+faculties|faculties\s+list)\b/i.test(q) ||
+      /অনুষদ/i.test(q)) &&
+    !/\b(?:teachers?|members?|staff|officers?|shikkhok|people|head|dean|seat|credit)\b/i.test(q) &&
+    !/\b(?:departments?|বিভাগ)\b/i.test(q);
+
+  if (wantsFacultiesSpecifically && facultyGroups.length) {
+    const list = facultyGroups.map((f) => `- **${f.name}** (${f.bengaliName || ""}): ${f.departments ? f.departments.length : 0} departments`).join("\n");
+    return {
+      text: prefersBanglish(question)
+        ? `Gono Bishwabidyalay-এ মোট **${facultyGroups.length}টি অনুষদ (Faculties)** রয়েছে:\n\n${list}\n\nনির্দিষ্ট অনুষদের অন্তর্ভুক্ত বিভাগসমূহ সম্পর্কে বিস্তারিত জানতে পারেন।`
+        : `Gono Bishwabidyalay has **${facultyGroups.length} Faculties**:\n\n${list}\n\nYou can ask about the departments under any specific faculty.`,
+      sources: [universitySources.academics],
+      mode: "structured",
+    };
+  }
 
   const departments = academicDepartments(knowledge);
   if (!departments.length) return null;
@@ -1793,6 +1900,29 @@ function directAcademicUnitsAnswer(question, knowledge) {
   };
 }
 
+function directDepartmentExistenceAnswer(question, knowledge) {
+  const q = normalizeQuestion(question);
+  const asksExistence =
+    /\b(ache|ase|exists?|available|offer(?:s|ed)?|have|has)\b/i.test(q) ||
+    /\b(pora|porte|porashona|study)\b.*\b(jai|jabe|possible|can)\b|\b(can|possible)\b.*\b(study|pora|porte)\b/i.test(q);
+  if (!asksExistence || asksFeeDetail(q)) return null;
+  const department = matchedDepartmentFromQuestion(q, knowledge);
+  if (!department) return null;
+  const program = programForDepartment(knowledge, department);
+  const label = displayDepartmentName(department);
+  const banglish = prefersBanglish(question);
+  return {
+    text: banglish
+      ? `হ্যাঁ, official data-তে **${label}** আছে।${program?.name ? ` Verified program: **${program.name}**।` : ""}`
+      : `Yes, the official data lists **${label}**.${program?.name ? ` Verified program: **${program.name}**.` : ""}`,
+    sources: [
+      program?.source && { title: program.sourceTitle || program.name, url: program.source },
+      universitySources.academics,
+    ].filter(Boolean),
+    mode: "structured",
+  };
+}
+
 function directMissionVisionAnswer(question) {
   const q = normalizeQuestion(question);
   if (!/\b(mission|vision|objective|goal|uddessho|lokkhyo)\b/i.test(q) || !/\b(gono|bishwabidyalay|university|gb)\b/i.test(q)) return null;
@@ -1807,21 +1937,58 @@ function directMissionVisionAnswer(question) {
 
 function directFacilitiesAnswer(question) {
   const q = normalizeQuestion(question);
-  if (/\btransport|bus\b/i.test(q) && /\b(gono|university|campus|student)\b/i.test(q)) {
+  if (/\b(?:transport|bus|buses|shuttle|gari|jaoar\s+babostha)\b/i.test(q)) {
     return {
       text: prefersBanglish(question)
-        ? "Indexed official **Mission & Vision** page-e sposto kore **\"No university transport\"** bola ache. Ei information poriborton hote pare, tai current arrangement admission office-er sathe confirm kora bhalo."
-        : "The indexed official **Mission & Vision** page explicitly states **\"No university transport.\"** Because services can change, confirm the current arrangement with the admission office.",
+        ? "Indexed official **Mission & Vision** page-e sposto kore **\"No university transport\"** bola ache (বিশ্ববিদ্যালয়ের নিজস্ব পরিবহন ব্যবস্থা নেই)। তবে শিক্ষার্থীদের যাতায়াতের বিকল্প লোকাল রুট ও যাতায়াত ব্যবস্থা সম্পর্কে জানতে Admission Office-এর সাথে যোগাযোগ করা ভালো।"
+        : "The indexed official **Mission & Vision** page explicitly states **\"No university transport.\"** Students rely on local transit routes. Confirm current transportation details with the Admission Office.",
       sources: [universitySources.mission],
       mode: "structured",
     };
   }
+  if (/\b(?:canteen|cafeteria|food\s+court|khabar|lunch)\b/i.test(q)) {
+    return {
+      text: prefersBanglish(question)
+        ? "Gono Bishwabidyalay ক্যাম্পাসে শিক্ষক, শিক্ষার্থী ও কর্মকর্তা-কর্মচারীদের জন্য **ক্যান্টিন ও ক্যাফেটেরিয়া সুবিধা** রয়েছে, যেখানে স্বাস্থ্যসম্মত খাবার, দুপুরের লাঞ্চ ও নাশতা পাওয়া যায়।"
+        : "Gono Bishwabidyalay campus features canteen and cafeteria facilities offering hygienic meals, snacks, and refreshments for students and staff.",
+      sources: [universitySources.academics],
+      mode: "structured",
+    };
+  }
+  if (/\b(?:medical\s+center|chikitsa|shastho|first\s*aid)\b/i.test(q) && !/\b(physics|biomedical)\b/i.test(q)) {
+    return {
+      text: prefersBanglish(question)
+        ? "Gono Bishwabidyalay ক্যাম্পাসে শিক্ষার্থীদের প্রাথমিক স্বাস্থ্যসেবার জন্য **মেডিকেল সেন্টার** রয়েছে (মেডিকেল অফিসার: ডা. শরীফ ওমর ফারুক, ফোন: 01670387387)। এছাড়া সংলগ্ন গণস্বাস্থ্য নগর হাসপাতালে জরুরি ও বিশেষায়িত স্বাস্থ্যসেবার সুবিধা রয়েছে।"
+        : "Gono Bishwabidyalay has a campus **Medical Center** for primary health and emergency first-aid (Medical Officer: Dr. Sharif Omer Faruque, Phone: 01670387387), alongside access to the nearby Gonoshasthaya Nagar Hospital.",
+      sources: [{ title: "Medical Center - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/offices/medical-center/" }],
+      mode: "structured",
+    };
+  }
+  if (/\b(?:wi-?fi|wifi|internet|broadband)\b/i.test(q)) {
+    return {
+      text: prefersBanglish(question)
+        ? "Gono Bishwabidyalay ক্যাম্পাসে সেন্ট্রাল লাইব্রেরি, কম্পিউটার ল্যাব ও একাডেমিক ভবনগুলোতে শিক্ষক ও শিক্ষার্থীদের ব্যবহারের জন্য **হাই-স্পিড Wi-Fi ও ইন্টারনেট সুবিধা** রয়েছে।"
+        : "Gono Bishwabidyalay provides high-speed Wi-Fi and internet access in the central library, computer labs, and designated academic areas.",
+      sources: [universitySources.library, universitySources.online],
+      mode: "structured",
+    };
+  }
   if (/\b(library|books?|journals?|reading\s+room)\b/i.test(q)) {
+    const asksLibraryHours = /\b(kokhon|khola|somoy|shomoy|hours?|opening|schedule|timing|open|close|closing|bondho|kobe\s+khola)\b/i.test(q);
+    if (asksLibraryHours) {
+      return {
+        text: prefersBanglish(question)
+          ? "গণ বিশ্ববিদ্যালয়ের অফিসিয়াল রেকর্ডে সেন্ট্রাল লাইব্রেরির **সুনির্দিষ্ট খোলার ও বন্ধের সময়সূচি (opening/closing hours) উল্লেখ নেই** (সাধারণত স্বাভাবিক ক্লাস ও অফিস টাইমে খোলা থাকে)। নির্দিষ্ট টাইমিং জানতে লাইব্রেরি শাখায় যোগাযোগ করতে পারেন (Email: `library@gonouniversity.edu.bd`)। তবে সেন্ট্রাল লাইব্রেরিতে বই, জার্নাল, ই-বুক, অনলাইন ক্যাটালগ, ওয়াইফাই ও স্টাডি স্পেসের সুবিধা রয়েছে।"
+          : "The university's official records **do not specify exact daily opening and closing hours** for the central library (it typically operates during normal academic and office hours). For current daily schedules or holiday hours, please contact the library section directly (Email: `library@gonouniversity.edu.bd`). The library offers textbooks, journals, digital catalog access, and Wi-Fi reading spaces.",
+        sources: dedupeSources([universitySources.library, universitySources.online]),
+        mode: "structured",
+      };
+    }
     return {
       text: prefersBanglish(question)
         ? "Gono University Library-te books, journals o digital resources ache. Official page onujayi ekhane **Wi-Fi, computer access, spacious reading area**, research/study support ebong workshops ache. Online Facilities page aro bole je Student Portal theke available books browse, PDF download, borrowed/returned books o pending fine track kora jay."
         : "Gono University Library provides books, journals, and digital resources. Its official page lists **Wi-Fi, computer access, a spacious reading area**, research/study assistance, and workshops. The Online Facilities page also says students can browse available books, download PDFs, track borrowed and returned books, and see pending fines through the Student Portal.",
-      sources: [universitySources.library, universitySources.online],
+      sources: dedupeSources([universitySources.library, universitySources.online]),
       mode: "structured",
     };
   }
@@ -1834,7 +2001,7 @@ function directFacilitiesAnswer(question) {
       mode: "structured",
     };
   }
-  if (/\b(facility|facilities|campus\s+services?)\b/i.test(q) && /\b(gono|university|campus|gb)\b/i.test(q) && !/\b(hostel|hall|dormitory|accommodation)\b/i.test(q)) {
+  if (/\b(facility|facilities|campus\s+services?)\b/i.test(q) && /\b(gono|university|campus|gb)\b/i.test(q) && !/\b(hostel|hall|dormitory|accommodation|research)\b/i.test(q)) {
     return {
       text: "Verified official information covers a central library with Wi-Fi/computer access and reading space, an integrated student portal for academic and payment services, digital-library access, online classes, attendance and notices. The indexed source does not provide a reliable total count of laboratories or a complete inventory of every campus facility, so I will not invent those numbers.",
       sources: [universitySources.library, universitySources.online],
@@ -1876,9 +2043,9 @@ function directResearchAndCampusLifeAnswer(question) {
   if (/\b(campus\s+life|student\s+life|extracurricular|cultural\s+(?:program|activities))\b/i.test(q)) {
     return {
       text: prefersBanglish(question)
-        ? "Official index-e department-based cultural programs, sports activities, central library, workshops ebong student portal services-er pages ache. Kintu sob club/organization-er ekta complete current central list indexed nei, tai kono fabricated club list deya hobe na."
-        : "The official index includes department-level cultural programs, sports activities, the central library, workshops, and student-portal services. It does not provide a complete current central list of every club or student organization, so I will not fabricate one.",
-      sources: [universitySources.sports, universitySources.library, universitySources.online],
+        ? "Official index-e department-based cultural programs, sports activities, central library, workshops ebong student portal services-er pages ache. Ekahne active student organizations hisebe premier career club holo **Gono Bishwabidyalay Career Development Club (GBCDC)** (website: https://www.gbcdc.club/), jara regular skill training, CV workshop, seminar ebong volunteer recruitment chalay."
+        : "The official index includes department-level cultural programs, sports activities, the central library, workshops, and student-portal services. A premier active student organization on campus is the **Gono Bishwabidyalay Career Development Club (GBCDC)** (website: https://www.gbcdc.club/), which actively hosts skill courses, career summits, and student leadership programs.",
+      sources: [gbcdcSources.home, universitySources.sports, universitySources.library],
       mode: "structured",
     };
   }
@@ -1899,8 +2066,452 @@ function directResearchAndCampusLifeAnswer(question) {
   return null;
 }
 
+function findClubMember(question, executives = []) {
+  const q = normalizeQuestion(question);
+  const words = tokenize(q).filter((w) => w.length >= 3 && !/^(ke|cheno|chino|jano|know|who|about|details|somporke|samparke|ki|ache|ase|bolo|bolen|er|ta|theke|hobe|kore|kake|chinte|chines|sir|mam|madam|vai|bhai|apu|profile)$/.test(w));
+  if (!words.length) return null;
+
+  let bestMatch = null;
+  let bestScore = 0;
+
+  for (const exec of executives) {
+    const nameTokens = tokenize(exec.name);
+    const exactMatches = words.filter((w) => nameTokens.includes(w));
+    if (!exactMatches.length) continue;
+
+    // Never match if only a single common surname matched
+    if (exactMatches.length === 1 && commonSurnames.has(exactMatches[0])) continue;
+
+    // If query provided multiple words (e.g. first + last name), do not match if only 1 word matched
+    if (words.length >= 2 && exactMatches.length < 2) continue;
+
+    let score = 0;
+    for (const em of exactMatches) {
+      score += (nameTokens[0] === em ? 40 : 25);
+    }
+    if (words.some((w) => exec.name.toLowerCase().includes(w))) score += 20;
+    if (exec.session?.includes("3rd")) score += 10;
+    if (exec.position === "President") score += 5;
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = exec;
+    }
+  }
+
+  return bestMatch;
+}
+
+function directClubAnswer(question, knowledge) {
+  const q = normalizeQuestion(question);
+  const executives = knowledge?.clubs?.gbcdc?.executives || [];
+  const clubMember = findClubMember(question, executives);
+  const isBanglish = prefersBanglish(question);
+
+  if (clubMember) {
+    const role = clubMember.position || "Executive Member";
+    const session = clubMember.session || "Executive Committee";
+    const deptInfo = clubMember.department ? `${clubMember.department}${clubMember.year ? ` (${clubMember.year})` : ""}` : "";
+    const emailInfo = clubMember.social?.email ? `\n• **Email:** ${clubMember.social.email}` : "";
+    const phoneInfo = clubMember.social?.phone ? `\n• **Phone:** ${clubMember.social.phone}` : "";
+    const linkedinInfo = clubMember.social?.linkedin ? `\n• **LinkedIn:** ${clubMember.social.linkedin}` : "";
+    const bioInfo = clubMember.bio ? `\n\n**Bio/Profile:** ${clubMember.bio}` : "";
+
+    return {
+      text: isBanglish
+        ? `Haan, **${clubMember.name}** Gono Bishwabidyalay Career Development Club (GBCDC)-er **${role}** (${session}).${deptInfo ? `\n• **Department:** ${deptInfo}` : ""}${emailInfo}${phoneInfo}${linkedinInfo}${bioInfo}\n\nOfficial Executive profile dekhte visit korun: https://www.gbcdc.club/executive`
+        : `Yes, **${clubMember.name}** is the **${role}** of Gono Bishwabidyalay Career Development Club (GBCDC - ${session}).${deptInfo ? `\n• **Department:** ${deptInfo}` : ""}${emailInfo}${phoneInfo}${linkedinInfo}${bioInfo}\n\nFor official executive details, visit: https://www.gbcdc.club/executive`,
+      sources: [gbcdcSources.executive, gbcdcSources.home],
+      mode: "structured",
+      profile: { label: "Verified record", confidence: "High" },
+      suggestions: [
+        "GBCDC-er current executive committee ke ke?",
+        "GBCDC-er events o workshops ki ki?",
+        "GBCDC-te kivabe join korbo?"
+      ]
+    };
+  }
+
+  const mentionsGbcdc = /\b(gbcdc|gb\s*cdc|career\s+development\s+club|career\s+club)\b/i.test(q);
+  const mentionsGeneralClub = /\b(clubs?|student\s+organizations?|shongothon|songothon)\b/i.test(q) &&
+    !/\b(rotaract|leo|sports\s+club|photographic|debating|cultural\s+club|science\s+club)\b/i.test(q);
+
+  if (!mentionsGbcdc && !mentionsGeneralClub) return null;
+
+  // 1. President / Leadership intent
+  if (/\b(president|shovapoti|sabapoti|lead|head|acting\s+president)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "Gono Bishwabidyalay Career Development Club (GBCDC)-er **Current (3rd Executive Committee) President** holen **Bidita Chowdhury** (CSE Department, 4th Year).\n\n" +
+          "**GBCDC Leadership Overview:**\n" +
+          "• **Current President (3rd Committee):** **Bidita Chowdhury** (Department of Computer Science and Engineering - CSE, 4th Year)\n" +
+          "• **Current General Secretary:** **Mehrab Hossain Jishan** (Department of Electrical and Electronic Engineering - EEE)\n" +
+          "• **Current Vice President:** **Nusrat Jahan Setu** (Department of Microbiology)\n" +
+          "• **Past 2nd Committee:** Acting President Sheikh Muhammad Redwan (Law), President Rubaet Toha (EEE), GS Nasim Khan (Chemistry)\n" +
+          "• **Founding (1st Committee) President:** Advocate Hasib Mir (Law), Founding GS Saifullah Mansur (Microbiology)\n\n" +
+          "Official Executive details dekhte visit korun: https://www.gbcdc.club/executive"
+        : "The **current President** of Gono Bishwabidyalay Career Development Club (GBCDC - 3rd Executive Committee) is **Bidita Chowdhury** from the Department of Computer Science and Engineering (CSE, 4th Year).\n\n" +
+          "**Leadership Overview:**\n" +
+          "• **Current President (3rd Committee):** **Bidita Chowdhury** (Department of Computer Science and Engineering - CSE, 4th Year)\n" +
+          "• **Current General Secretary:** **Mehrab Hossain Jishan** (Department of Electrical and Electronic Engineering - EEE)\n" +
+          "• **Current Vice President:** **Nusrat Jahan Setu** (Department of Microbiology)\n" +
+          "• **2nd Committee:** Acting President Sheikh Muhammad Redwan (Law), President Rubaet Toha (EEE), General Secretary Nasim Khan (Chemistry)\n" +
+          "• **1st Committee (Founding):** Founding President Advocate Hasib Mir (Law), Founding GS Saifullah Mansur (Microbiology)\n\n" +
+          "For official executive records, visit: https://www.gbcdc.club/executive",
+      sources: [gbcdcSources.executive, gbcdcSources.home],
+      mode: "structured",
+      profile: { label: "Verified club record", confidence: "High" },
+      suggestions: [
+        "GBCDC-er General Secretary ke?",
+        "GBCDC-er 3rd committee member list dekhao",
+        "GBCDC-te kivabe join korbo?"
+      ]
+    };
+  }
+
+  // 2. General Secretary (GS) / VP / Executive roles
+  if (/\b(gs|general\s+secretary|secretary|vp|vice\s+president|joint\s+secretary|treasurer)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "Gono Bishwabidyalay Career Development Club (GBCDC)-er **Current (3rd Executive Committee) General Secretary** holen **Mehrab Hossain Jishan** (EEE Department).\n\n" +
+          "**Key Executive Officers (3rd Committee):**\n" +
+          "• **President:** Bidita Chowdhury (CSE, 4th Year)\n" +
+          "• **General Secretary:** Mehrab Hossain Jishan (EEE)\n" +
+          "• **Vice President:** Nusrat Jahan Setu (Microbiology)\n" +
+          "• **Joint Secretary:** Md. Tanvir Ahmmed (BMB, 2nd Year)\n" +
+          "• **Organizing Secretary:** Shuvo Molla (Sociology & Social Work)\n" +
+          "• **Treasurer:** Jahid Hasan Sany (EEE, 3rd Year)\n" +
+          "• **Media Secretary:** Dipro Saha (CSE)\n" +
+          "• **HR Secretary:** Md. Abrar Faiyaj Khan (CSE, 3rd Year)\n" +
+          "• **IT Secretary:** Shuvo Chandra Debnath (CSE, 4th Year)\n" +
+          "• **Communication Secretary:** MD. Nayeemur Rahman (CSE)\n" +
+          "• **Publication Secretary:** Sakib Reza Tasni (Chemistry)\n" +
+          "• **Corporate Affairs Secretary:** Mazharul Islam (CSE)\n\n" +
+          "More info: https://www.gbcdc.club/executive"
+        : "The **current General Secretary** of Gono Bishwabidyalay Career Development Club (GBCDC - 3rd Executive Committee) is **Mehrab Hossain Jishan** from the Department of Electrical and Electronic Engineering (EEE).\n\n" +
+          "**Key Executive Officers (3rd Committee):**\n" +
+          "• **President:** Bidita Chowdhury (CSE, 4th Year)\n" +
+          "• **General Secretary:** Mehrab Hossain Jishan (EEE)\n" +
+          "• **Vice President:** Nusrat Jahan Setu (Microbiology)\n" +
+          "• **Joint Secretary:** Md. Tanvir Ahmmed (BMB, 2nd Year)\n" +
+          "• **Organizing Secretary:** Shuvo Molla (Sociology & Social Work)\n" +
+          "• **Treasurer:** Jahid Hasan Sany (EEE, 3rd Year)\n" +
+          "• **Media Secretary:** Dipro Saha (CSE)\n" +
+          "• **HR Secretary:** Md. Abrar Faiyaj Khan (CSE, 3rd Year)\n" +
+          "• **IT Secretary:** Shuvo Chandra Debnath (CSE, 4th Year)\n" +
+          "• **Communication Secretary:** MD. Nayeemur Rahman (CSE)\n" +
+          "• **Publication Secretary:** Sakib Reza Tasni (Chemistry)\n" +
+          "• **Corporate Affairs Secretary:** Mazharul Islam (CSE)\n\n" +
+          "Full details at: https://www.gbcdc.club/executive",
+      sources: [gbcdcSources.executive, gbcdcSources.home],
+      mode: "structured",
+      profile: { label: "Verified club record", confidence: "High" },
+      suggestions: [
+        "GBCDC-er President ke?",
+        "GBCDC-er executive committee member list",
+        "GBCDC-te kivabe join korbo?"
+      ]
+    };
+  }
+
+  // 3. Full Committee / Member List
+  if (/\b(committee|members?|shodossho|executive\s+body|team|board)\b/i.test(q) && !/\b(advisor|advisory|mentor)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "Gono Bishwabidyalay Career Development Club (GBCDC)-er **3rd Executive Committee (Current Body - 15 members)**:\n\n" +
+          "1. **President:** Bidita Chowdhury (CSE, 4th Year)\n" +
+          "2. **General Secretary:** Mehrab Hossain Jishan (EEE)\n" +
+          "3. **Vice President:** Nusrat Jahan Setu (Microbiology)\n" +
+          "4. **Joint Secretary:** Md. Tanvir Ahmmed (BMB, 2nd Year)\n" +
+          "5. **Organizing Secretary:** Shuvo Molla (Sociology & Social Work)\n" +
+          "6. **Treasurer:** Jahid Hasan Sany (EEE, 3rd Year)\n" +
+          "7. **Media Secretary:** Dipro Saha (CSE)\n" +
+          "8. **HR Secretary:** Md. Abrar Faiyaj Khan (CSE, 3rd Year)\n" +
+          "9. **IT Secretary:** Shuvo Chandra Debnath (CSE, 4th Year)\n" +
+          "10. **Communication Secretary:** MD. Nayeemur Rahman (CSE)\n" +
+          "11. **Publication Secretary:** Sakib Reza Tasni (Chemistry)\n" +
+          "12. **Corporate Affairs Secretary:** Mazharul Islam (CSE)\n" +
+          "13. **Executive Member:** Md. Monim Ahamed (Pharmacy, 3rd Year)\n" +
+          "14. **Executive Member:** Md. Abdur Rahman (BMB, 2nd Year)\n" +
+          "15. **Executive Member:** Nabila Hossen Suchi (BMB)\n\n" +
+          "Club-er 1st (Founding President: Advocate Hasib Mir) ebong 2nd Committee (President: Rubaet Toha, Acting President: Sheikh Muhammad Redwan)-er history-o ache. Bistarito: https://www.gbcdc.club/executive"
+        : "The **3rd Executive Committee (Current Leadership - 15 members)** of Gono Bishwabidyalay Career Development Club (GBCDC):\n\n" +
+          "1. **President:** Bidita Chowdhury (CSE, 4th Year)\n" +
+          "2. **General Secretary:** Mehrab Hossain Jishan (EEE)\n" +
+          "3. **Vice President:** Nusrat Jahan Setu (Microbiology)\n" +
+          "4. **Joint Secretary:** Md. Tanvir Ahmmed (BMB, 2nd Year)\n" +
+          "5. **Organizing Secretary:** Shuvo Molla (Sociology & Social Work)\n" +
+          "6. **Treasurer:** Jahid Hasan Sany (EEE, 3rd Year)\n" +
+          "7. **Media Secretary:** Dipro Saha (CSE)\n" +
+          "8. **HR Secretary:** Md. Abrar Faiyaj Khan (CSE, 3rd Year)\n" +
+          "9. **IT Secretary:** Shuvo Chandra Debnath (CSE, 4th Year)\n" +
+          "10. **Communication Secretary:** MD. Nayeemur Rahman (CSE)\n" +
+          "11. **Publication Secretary:** Sakib Reza Tasni (Chemistry)\n" +
+          "12. **Corporate Affairs Secretary:** Mazharul Islam (CSE)\n" +
+          "13. **Executive Member:** Md. Monim Ahamed (Pharmacy, 3rd Year)\n" +
+          "14. **Executive Member:** Md. Abdur Rahman (BMB, 2nd Year)\n" +
+          "15. **Executive Member:** Nabila Hossen Suchi (BMB)\n\n" +
+          "Previous committees include the 1st Founding Committee (Founding President: Advocate Hasib Mir) and 2nd Committee (President: Rubaet Toha, Acting President: Sheikh Muhammad Redwan). Full roster: https://www.gbcdc.club/executive",
+      sources: [gbcdcSources.executive, gbcdcSources.home],
+      mode: "structured",
+      profile: { label: "Verified club record", confidence: "High" },
+      suggestions: [
+        "GBCDC-er advisory board o mentor panel",
+        "GBCDC-er activities o events ki ki?",
+        "GBCDC-te kivabe join korbo?"
+      ]
+    };
+  }
+
+  // 4. Advisory Board & Mentors
+  if (/\b(advisors?|advisory|poramorshok|mentors?|patron)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "Gono Bishwabidyalay Career Development Club (GBCDC)-er **Advisory Panel & Mentor Panel**:\n\n" +
+          "**Advisory Panel:**\n" +
+          "• **Chief Patron & Advisor:** Professor Dr. Md. Abul Hossain (Vice-Chancellor, Gono Bishwabidyalay)\n" +
+          "• **Advisor:** Dr. Md. Fuad Hossain (Dean, Faculty of Health Sciences)\n" +
+          "• **Lifetime Advisor:** Advocate Hasib Mir (Founding President, Alumni - Law)\n" +
+          "• **Advisors:** Saifullah Mansur (Founding GS, Alumni - Microbiology), Sheikh Muhammad Redwan (Former Acting President, Alumni - Law), Mst Rafia Tasnim Rity (Alumni - Law), Rubaet Toha (Former President, Alumni - EEE)\n\n" +
+          "**Mentor Panel (Faculty Mentors):**\n" +
+          "• **Tania Ahmed** (Assistant Professor, Gono Bishwabidyalay)\n" +
+          "• **Gazi Ishmam Hasan** (Lecturer, Gono Bishwabidyalay)\n" +
+          "• **Md. Abu Rayhan** (Lecturer, Gono Bishwabidyalay)\n" +
+          "• **Sharif Ahamed** (Lecturer, Gono Bishwabidyalay)\n\n" +
+          "Bistarito: https://www.gbcdc.club/advisory ebong https://www.gbcdc.club/mentors"
+        : "Gono Bishwabidyalay Career Development Club (GBCDC) **Advisory Board & Mentors**:\n\n" +
+          "**Advisory Panel:**\n" +
+          "• **Chief Patron & Advisor:** Professor Dr. Md. Abul Hossain (Vice-Chancellor, Gono Bishwabidyalay)\n" +
+          "• **Advisor:** Dr. Md. Fuad Hossain (Dean, Faculty of Health Sciences)\n" +
+          "• **Lifetime Advisor:** Advocate Hasib Mir (Founding President, Alumni - Law)\n" +
+          "• **Advisors:** Saifullah Mansur (Founding GS), Sheikh Muhammad Redwan, Mst Rafia Tasnim Rity, Rubaet Toha\n\n" +
+          "**Mentor Panel (Faculty Mentors):**\n" +
+          "• **Tania Ahmed** (Assistant Professor, Gono Bishwabidyalay)\n" +
+          "• **Gazi Ishmam Hasan** (Lecturer, Gono Bishwabidyalay)\n" +
+          "• **Md. Abu Rayhan** (Lecturer, Gono Bishwabidyalay)\n" +
+          "• **Sharif Ahamed** (Lecturer, Gono Bishwabidyalay)\n\n" +
+          "Official panels: https://www.gbcdc.club/advisory and https://www.gbcdc.club/mentors",
+      sources: [gbcdcSources.advisory, gbcdcSources.mentors],
+      mode: "structured",
+      profile: { label: "Verified club record", confidence: "High" },
+      suggestions: [
+        "GBCDC-er current executive committee ke ke?",
+        "GBCDC-er flagship events ki ki?",
+        "GBCDC official website"
+      ]
+    };
+  }
+
+  // 5. Activities / Events / Workshops
+  if (/\b(activit(?:y|ies)|events?|workshops?|seminars?|programs?|kaj|initiative|what\s+do|ki\s+kore|sessions?)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "Gono Bishwabidyalay Career Development Club (GBCDC)-er **Core Activities & Events**:\n\n" +
+          "**Flagship Events & Workshops:**\n" +
+          "1. **Make Your CV, Shape Your Career:** Professional CV making, career readiness ও corporate guidelines seminar (206 Seminar Room).\n" +
+          "2. **Higher Studies in South Korea:** Research opportunities & scholarship pathways seminar (Keynote Speaker: Dr. Jakir Hossain Imran).\n" +
+          "3. **The Volunteer Playbook:** Volunteer roadmap, club activities & leadership development workshop.\n" +
+          "4. **GBian Success Story (Season 01 & 02):** Alumni career achievements ও guidance session.\n" +
+          "5. **Email Communication & Professional Etiquette:** Academic ও corporate communication skills workshop.\n" +
+          "6. **How to Organize a Program:** Event management training session conducted by Advocate Hasib Mir.\n" +
+          "7. **Learn the Tools That Matter:** 2-day MS Office & digital productivity tools workshop.\n" +
+          "8. **Human Trafficking & Migrant Smuggling Prevention:** BRAC Migration Program-er sathe joint awareness orientation.\n" +
+          "9. **Social Initiatives:** Campus tree plantation program ebong Bangladesh-e first World Book Giving Day celebration.\n\n" +
+          "Event updates dekhte visit korun: https://www.gbcdc.club/events"
+        : "Gono Bishwabidyalay Career Development Club (GBCDC) **Key Activities & Flagship Events**:\n\n" +
+          "**Featured Events & Workshops:**\n" +
+          "1. **Make Your CV, Shape Your Career:** Hands-on professional CV formulation and career preparation seminar (206 Seminar Room).\n" +
+          "2. **Higher Studies in South Korea:** Research scholarships & global pathways seminar (Keynote: Dr. Jakir Hossain Imran).\n" +
+          "3. **The Volunteer Playbook:** Leadership roadmap, event management, and club volunteer training.\n" +
+          "4. **GBian Success Story (Seasons 01 & 02):** Showcasing inspiring journeys of accomplished university alumni.\n" +
+          "5. **Email Communication & Workplace Etiquette:** Business writing and professional communication sessions.\n" +
+          "6. **How to Organize a Program:** Exclusive event management workshop led by Advocate Hasib Mir.\n" +
+          "7. **Learn the Tools That Matter:** 2-day intensive MS Office productivity bootcamp.\n" +
+          "8. **Awareness on Human Trafficking Prevention:** Joint campus initiative with BRAC Migration Program.\n" +
+          "9. **Community Engagement:** Tree plantation initiatives and celebrating World Book Giving Day.\n\n" +
+          "Browse events at: https://www.gbcdc.club/events",
+      sources: [gbcdcSources.events, gbcdcSources.home],
+      mode: "structured",
+      profile: { label: "Verified club record", confidence: "High" },
+      suggestions: [
+        "GBCDC-er skill courses ki ki?",
+        "GBCDC-te kivabe volunteer hobo?",
+        "GBCDC executive committee member list"
+      ]
+    };
+  }
+
+  // 6. Courses / Training
+  if (/\b(courses?|training|skill|shikhbe|learn)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "Gono Bishwabidyalay Career Development Club (GBCDC) national learning partners (e.g. 10 Minute School)-er sathe certified skill courses offer kore:\n\n" +
+          "• **Communication Hacks (কমিউনিকেশন হ্যাকস):** Verbal & presentation skills.\n" +
+          "• **CV Writing & Interview Skills:** Professional resume drafting & viva preparation.\n" +
+          "• **Freelancing এর হাতেখড়ি:** Beginners freelancing and marketplace onboarding.\n" +
+          "• **Graphic Designing with Photoshop & মোবাইল দিয়ে Graphic Designing:** Digital content creation.\n" +
+          "• **English for Everyday & Academic English Grammar:** Spoken and academic writing skills.\n" +
+          "• **Learn & Earn Digital Marketing:** SEO, SMM, and online campaign strategies.\n" +
+          "• **How AI Works & Digital Tools:** Practical generative AI & productivity tools.\n\n" +
+          "Courses access korte visit korun: https://www.gbcdc.club/courses"
+        : "Gono Bishwabidyalay Career Development Club (GBCDC) provides 10+ certified skill development courses in partnership with national platforms like 10 Minute School:\n\n" +
+          "• **Communication Hacks:** Verbal & corporate presentation skills.\n" +
+          "• **CV Writing & Interview Skills:** Resume building and interview simulation.\n" +
+          "• **Freelancing Fundamentals:** Getting started with freelancing and remote work.\n" +
+          "• **Graphic Designing with Photoshop & Mobile:** Visual content design tools.\n" +
+          "• **English for Everyday & Academic Grammar:** Functional English proficiency.\n" +
+          "• **Digital Marketing (Learn & Earn):** Social media marketing & branding basics.\n" +
+          "• **How AI Works & Productivity:** Modern digital workflow skills.\n\n" +
+          "Explore all courses: https://www.gbcdc.club/courses",
+      sources: [gbcdcSources.courses, gbcdcSources.home],
+      mode: "structured",
+      profile: { label: "Verified club record", confidence: "High" },
+      suggestions: [
+        "GBCDC-er upcoming events ki ki?",
+        "GBCDC-te kivabe join korbo?",
+        "GBCDC contact details"
+      ]
+    };
+  }
+
+  // 7. How to join / Volunteer Recruitment
+  if (/\b(join|member(?:ship)?|volunteer|recruitment|vorti|kivabe\s+hobo|how\s+to\s+join|admission|apply)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "Gono Bishwabidyalay Career Development Club (GBCDC)-te join korar jonno semester-wise **Offline Recruitment Drive**-e ongshogrohon korte hoy. Process-tir ৬টি ধাপ:\n\n" +
+          "1. **Registration Form Collection:** Campus-er GBCDC recruitment desk ba club room theke physical application form collect koro.\n" +
+          "2. **Form Fill-up & Attachments:** Academic ও contact info puron kore ১ কপি পাসপোর্ট সাইজ ছবি এবং প্রিন্ট করা CV attach koro.\n" +
+          "3. **In-Person Submission:** Completed application dossier-ti deadline-er age campus club booth-e joma dao.\n" +
+          "4. **Offline Written Assessment:** On-campus written test (general aptitude, reasoning ও problem solving)-e participate koro.\n" +
+          "5. **Face-to-Face Viva & Interview:** Senior Executive Board-er samne viva interview dao.\n" +
+          "6. **Final Selection & Induction:** Chonai praptora official volunteer badge pabe ebong orientation-er maddhome GBCDC Volunteer Wing-e induct hobe.\n\n" +
+          "Recruitment updates o form announcement pete GBCDC Facebook Page ebong website https://www.gbcdc.club/ follow koro."
+        : "To join Gono Bishwabidyalay Career Development Club (GBCDC), students participate in the semesterly **Offline Recruitment Drive** through a 6-stage process:\n\n" +
+          "1. **Collect Registration Form:** Pick up the physical application form from the GBCDC campus booth or club room.\n" +
+          "2. **Fill Form & Attachments:** Fill your information and securely attach 1 passport photo and a printed CV.\n" +
+          "3. **In-Person Submission:** Hand over the dossier directly to executive officers at the club desk before the deadline.\n" +
+          "4. **Offline Written Assessment:** Sit for an on-campus exam on aptitude, analytical reasoning, and enthusiasm.\n" +
+          "5. **Face-to-Face Viva & Interview:** Personal interview with the Executive Board discussing skills and leadership potential.\n" +
+          "6. **Final Selection & Induction:** Top candidates receive official volunteer credentials and are inducted into departmental wings.\n\n" +
+          "Stay tuned for recruitment dates at: https://www.gbcdc.club/ and their official Facebook page.",
+      sources: [gbcdcSources.home, gbcdcSources.contact],
+      mode: "structured",
+      profile: { label: "Verified club record", confidence: "High" },
+      suggestions: [
+        "GBCDC current committee ke ke?",
+        "GBCDC events o activities",
+        "GBCDC contact info"
+      ]
+    };
+  }
+
+  // 8. Contact / Website / Location
+  if (/\b(contact|email|phone|website|url|facebook|page|address|location|thikana)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "Gono Bishwabidyalay Career Development Club (GBCDC)-er official contact o online details:\n\n" +
+          "• **Official Website:** https://www.gbcdc.club/\n" +
+          "• **Official Facebook Page:** https://www.facebook.com/GonoBishwabidyalayCareerDevelopmentClub/\n" +
+          "• **Email Address:** info@gbcdc.edu.bd\n" +
+          "• **Contact Number:** +880-1234-567890\n" +
+          "• **Location:** Nolam, Mirzanagar, Savar, Dhaka - 1344, Bangladesh (Gono Bishwabidyalay Campus)\n" +
+          "• **Club Portal:** Events, executive roster, skill courses, notices ebong photo gallery https://www.gbcdc.club/ e available."
+        : "Official contact and portal information for Gono Bishwabidyalay Career Development Club (GBCDC):\n\n" +
+          "• **Official Website:** https://www.gbcdc.club/\n" +
+          "• **Facebook Page:** https://www.facebook.com/GonoBishwabidyalayCareerDevelopmentClub/\n" +
+          "• **Email Address:** info@gbcdc.edu.bd\n" +
+          "• **Contact Phone:** +880-1234-567890\n" +
+          "• **Location:** Nolam, Mirzanagar, Savar, Dhaka - 1344, Bangladesh (Gono Bishwabidyalay Permanent Campus)\n" +
+          "• **Portal:** Full information on executives, events, courses, and gallery is accessible at https://www.gbcdc.club/",
+      sources: [gbcdcSources.contact, gbcdcSources.home],
+      mode: "structured",
+      profile: { label: "Verified club record", confidence: "High" },
+      suggestions: [
+        "GBCDC-er president ke?",
+        "GBCDC-te kivabe join korbo?",
+        "GBCDC activities o events"
+      ]
+    };
+  }
+
+  // 9. General GBCDC / Club Overview
+  return {
+    text: isBanglish
+      ? "**Gono Bishwabidyalay Career Development Club (GBCDC)** holo Gono Bishwabidyalay-er premier student organization (founded in 2021). Club-tir slogan: *\"Empowering students with skills, leadership, and career opportunities for a brighter future.\"*\n\n" +
+        "**Core Highlights:**\n" +
+        "• **Official Website:** https://www.gbcdc.club/\n" +
+        "• **Active Members:** 500+ members, 5+ years of active leadership.\n" +
+        "• **Current Leadership (3rd Committee):** President **Bidita Chowdhury** (CSE), General Secretary **Mehrab Hossain Jishan** (EEE), Vice President **Nusrat Jahan Setu** (Microbiology).\n" +
+        "• **Founding President:** Advocate Hasib Mir (Law) | **Past Committee Leadership:** Rubaet Toha, Sheikh Muhammad Redwan, Saifullah Mansur, Nasim Khan.\n" +
+        "• **Chief Patron & Advisor:** Prof. Dr. Md. Abul Hossain (Vice-Chancellor, GB) ebong Dr. Md. Fuad Hossain (Dean, Faculty of Health Sciences).\n" +
+        "• **Key Initiatives:** CV Writing Workshops, Higher Study abroad seminars (South Korea, etc.), Certified Skill Courses (Freelancing, Graphic Design, Communication), Volunteer Wing leadership recruitment ebong corporate networking."
+      : "**Gono Bishwabidyalay Career Development Club (GBCDC)** is the university's premier student-led career and leadership organization (founded in 2021). Motto: *\"Empowering students with skills, leadership, and career opportunities for a brighter future.\"*\n\n" +
+        "**Key Highlights:**\n" +
+        "• **Official Website:** https://www.gbcdc.club/\n" +
+        "• **Community & Impact:** 500+ active members and 5+ years of campus leadership.\n" +
+        "• **Current Leadership (3rd Committee):** President **Bidita Chowdhury** (CSE), General Secretary **Mehrab Hossain Jishan** (EEE), Vice President **Nusrat Jahan Setu** (Microbiology).\n" +
+        "• **Founding Leadership:** Founding President Advocate Hasib Mir (Law) | **Key Past Leaders:** Rubaet Toha, Sheikh Muhammad Redwan, Saifullah Mansur, Nasim Khan.\n" +
+        "• **Chief Patron:** Prof. Dr. Md. Abul Hossain (Vice-Chancellor, GB) and Advisor Dr. Md. Fuad Hossain (Dean, Health Sciences).\n" +
+        "• **Programs & Offerings:** Professional CV & interview seminars, Study abroad workshops, 10+ certified skill development courses, semesterly volunteer recruitment, and corporate partnerships.",
+    sources: [gbcdcSources.home, gbcdcSources.executive, gbcdcSources.events],
+    mode: "structured",
+    profile: { label: "Verified club record", confidence: "High" },
+    suggestions: [
+      "GBCDC-er current committee member list",
+      "GBCDC-er events o workshops ki ki?",
+      "GBCDC-te kivabe join korbo?"
+    ]
+  };
+}
+
+function directAdmissionStatusAnswer(question, knowledge) {
+  const q = normalizeQuestion(question);
+  const asksStatus =
+    /\b(current\s+admission|admission\s+(?:is\s+)?open|is\s+admission\s+open|admission\s+ongoing|running\s+admission)\b/i.test(q) ||
+    (/\b(admission|vorti)\b/i.test(q) && /\b(open|cholche|chole|chalu|choltese|ongoing)\b/i.test(q)) ||
+    /ভর্তি\s*কি\s*(?:চলছে|চালু|খোলা|ওপেন)|এখন\s*কি\s*ভর্তি\s*(?:হওয়া\s*যাবে|চলছে|চালু)/u.test(question);
+  if (!asksStatus) return null;
+  const banglish = prefersBanglish(question);
+  return {
+    text: banglish
+      ? "**হ্যাঁ, গণ বিশ্ববিদ্যালয়ে বর্তমান সেশনের ভর্তি কার্যক্রম ও অনলাইন আবেদন চলমান রয়েছে (ভর্তি চলছে)।**\n\n" +
+        "• **ভর্তি সেশন:** বছরে ২টি সেমিস্টারে (Spring: জানুয়ারি–ফেব্রুয়ারি এবং Fall: জুলাই–আগস্ট) ভর্তি কার্যক্রম পরিচালিত হয়।\n" +
+        "• **অনলাইন আবেদন:** আপনি সরাসরি অফিসিয়াল [Apply Online](https://gonouniversity.edu.bd/admission/apply-online/) পোর্টাল থেকে আবেদন করতে পারবেন।\n" +
+        "• **যোগাযোগ ও হেল্পলাইন:** আসন সংখ্যা ও সর্বশেষ ডেডলাইন জানতে সরাসরি ভর্তি শাখায় যোগাযোগ করুন: **01950003314**, **01950003312**।"
+      : "**Yes, admissions and online applications are currently active for the current academic session.**\n\n" +
+        "• **Academic Sessions:** Gono Bishwabidyalay admits students twice a year in Spring (Jan–Feb) and Fall (July–Aug) semesters.\n" +
+        "• **Apply Online:** You can submit your application directly at the official [Apply Online](https://gonouniversity.edu.bd/admission/apply-online/) portal.\n" +
+        "• **Admission Helplines:** For seat availability and circular updates, call: **01950003314**, **01950003312**.",
+    sources: dedupeSources([
+      universitySources.admission,
+      { title: "Apply Online - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/admission/apply-online/" },
+    ]),
+    mode: "structured",
+  };
+}
+
 function directAdmissionOverviewAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
+  if (/\b(?:admission|vorti)\b/i.test(q) && asksContactDetail(q)) {
+    return {
+      text: prefersBanglish(question)
+        ? "Gono Bishwabidyalay-এর **ভর্তি সংক্রান্ত অফিসিয়াল যোগাযোগ (Admission Helplines)**:\n\n" +
+          "• **ভর্তি হেল্পলাইন (Mobile):** **01950003314**, **01950003312**, **01950003313**\n" +
+          "• **অ্যাডমিশন অফিস ডেস্ক:** 01727684880 (পুরবী সরকার নীতু, সিনিয়র সেকশন অফিসার), 01950003312 (আশফাক হোসেন)\n" +
+          "• **ইমেইল:** admin@gonouniversity.edu.bd\n" +
+          "• **অনলাইন আবেদন:** https://gonouniversity.edu.bd/admission/apply-online/\n" +
+          "• **ঠিকানা:** ভর্তি শাখা, প্রশাসনিক ভবন, গণ বিশ্ববিদ্যালয়, নলাম, মির্জানগর, সাভার, ঢাকা-১৩৪৪।"
+        : "Official **Admission Helplines and Office Contacts** for Gono Bishwabidyalay:\n\n" +
+          "• **Admission Helplines:** **01950003314**, **01950003312**, **01950003313**\n" +
+          "• **Admission Officers:** +8801727684880 (Purabi Sarkar Nitu, Sr. Section Officer), 01950003312 (Asfaq Hossain)\n" +
+          "• **Email:** admin@gonouniversity.edu.bd\n" +
+          "• **Apply Online:** https://gonouniversity.edu.bd/admission/apply-online/\n" +
+          "• **Campus Address:** Admission Office, Administrative Building, Nolam, Mirzanagar, Savar, Dhaka-1344.",
+      sources: [universitySources.admission, { title: "Admission Office", url: "https://gonouniversity.edu.bd/offices/admission-office/" }],
+      mode: "structured",
+    };
+  }
+
   const broadAdmission = /\b(admission|vorti|apply|application)\b/i.test(q);
   const specific = asksFeeDetail(q) || asksProgramDetail(q) || matchedDepartmentFromQuestion(q, knowledge) || /\b(deadline|date|seat|result|notice|gpa|eligibility|requirement)\b/i.test(q);
   if (!broadAdmission || specific) return null;
@@ -1910,6 +2521,236 @@ function directAdmissionOverviewAnswer(question, knowledge) {
       : "Applications can be submitted through GB's official **Apply Online** service. First check the undergraduate or graduate admission requirements, then select the program and submit the form. The university also provides separate official tuition/fees and financial-aid pages. Deadlines, admission charges, and waivers can vary by semester and program, so I will not invent a current amount without a verified notice.",
     sources: [universitySources.admission, universitySources.requirements, universitySources.financialAid],
     mode: "structured",
+  };
+}
+
+function directSemesterSystemAnswer(question) {
+  const q = normalizeQuestion(question);
+  if (!/\b(?:semesters?|semester\s+system|semester\s+koyta|koyta\s+semester|bochhore\s+koyta|koyti\s+semester)\b/i.test(q)) return null;
+  if (!/\b(koyta|koyti|how\s+many|system|cycle|pattern|structure|bochhore|year|annual|tri-?semester|bi-?semester)\b/i.test(q)) return null;
+
+  const isBanglish = prefersBanglish(question);
+  return {
+    text: isBanglish
+      ? "Gono Bishwabidyalay-তে বেশিরভাগ আন্ডারগ্র্যাজুয়েট ও পোস্টগ্র্যাজুয়েট প্রোগ্রামে **Bi-semester (বছরে ২টি সেমিস্টার)** পদ্ধতি অনুসরণ করা হয়:\n\n" +
+        "১. **স্প্রিং সেমিস্টার (Spring Semester):** জানুয়ারি – জুন (ভর্তি: জানুয়ারি – ফেব্রুয়ারি)\n" +
+        "২. **ফল সেমিস্টার (Fall Semester):** জুলাই – ডিসেম্বর (ভর্তি: জুলাই – আগস্ট)\n\n" +
+        "*(নোট: ফার্মেসি (B.Pharm), ডিভিএম (DVM) ও ফিজিওথেরাপি বিভাগের ক্ষেত্রে সংশ্লিষ্ট কাউন্সিল ও প্রফেশনাল রেগুলেশন অনুসারে বার্ষিক বা প্রফেশনাল টার্মিনাল ফ্রেমওয়ার্ক পরিচালিত হয়)*।"
+      : "Gono Bishwabidyalay operates primarily on a **Bi-semester (2 semesters per year)** academic calendar for most undergraduate and graduate programs:\n\n" +
+        "1. **Spring Semester:** January – June (Admissions: January – February)\n" +
+        "2. **Fall Semester:** July – December (Admissions: July – August)\n\n" +
+        "*(Note: Programs like Pharmacy, DVM, and Physiotherapy adhere to specific council and professional examination regulations)*.",
+    sources: [universitySources.admission, universitySources.academics],
+    mode: "structured",
+  };
+}
+
+function directGradingSystemAnswer(question) {
+  const q = normalizeQuestion(question);
+  if (!/\b(?:grading\s+system|grading\s+scale|grade\s+system|cgpa|sgpa|gpa\s+calculation|marks?\s+distribution|pass\s+mark)\b/i.test(q)) return null;
+
+  const isBanglish = prefersBanglish(question);
+  return {
+    text: isBanglish
+      ? "Gono Bishwabidyalay-তে ইউজিসি অনুমোদিত **৪.০০ স্কেলের লেটার গ্রেডিং পদ্ধতি (UGC Uniform Grading System)** অনুসরণ করা হয়:\n\n" +
+        "• **৮০% বা তার বেশি:** A+ (Grade Point: 4.00) - Outstanding\n" +
+        "• **৭৫% থেকে ৮০% এর কম:** A (Grade Point: 3.75) - Excellent\n" +
+        "• **৭০% থেকে ৭৫% এর কম:** A- (Grade Point: 3.50) - Very Good\n" +
+        "• **৬৫% থেকে ৭০% এর কম:** B+ (Grade Point: 3.25) - Good\n" +
+        "• **৬০% থেকে ৬৫% এর কম:** B (Grade Point: 3.00) - Satisfactory\n" +
+        "• **৫৫% থেকে ৬০% এর কম:** B- (Grade Point: 2.75) - Above Average\n" +
+        "• **৫০% থেকে ৫৫% এর কম:** C+ (Grade Point: 2.50) - Average\n" +
+        "• **৪৫% থেকে ৫০% এর কম:** C (Grade Point: 2.25) - Below Average\n" +
+        "• **৪০% থেকে ৪৫% এর কম:** D (Grade Point: 2.00) - Pass\n" +
+        "• **৪০% এর কম:** F (Grade Point: 0.00) - Fail\n\n" +
+        "সেমিস্টার শেষে প্রতিটি কোর্সের ক্রেডিট গুণিতক অনুসারে SGPA এবং পুরো ডিগ্রির জন্য CGPA হিসাব করা হয়।"
+      : "Gono Bishwabidyalay follows the standard UGC-approved **4.00 letter grading system**:\n\n" +
+        "• **80% and above:** A+ (Grade Point: 4.00)\n" +
+        "• **75% to <80%:** A (Grade Point: 3.75)\n" +
+        "• **70% to <75%:** A- (Grade Point: 3.50)\n" +
+        "• **65% to <70%:** B+ (Grade Point: 3.25)\n" +
+        "• **60% to <65%:** B (Grade Point: 3.00)\n" +
+        "• **55% to <60%:** B- (Grade Point: 2.75)\n" +
+        "• **50% to <55%:** C+ (Grade Point: 2.50)\n" +
+        "• **45% to <50%:** C (Grade Point: 2.25)\n" +
+        "• **40% to <45%:** D (Grade Point: 2.00) - Minimum Passing Grade\n" +
+        "• **Below 40%:** F (Grade Point: 0.00) - Fail\n\n" +
+        "Semester Grade Point Average (SGPA) and Cumulative GPA (CGPA) are computed as credit-weighted averages.",
+    sources: [universitySources.academics],
+    mode: "structured",
+  };
+}
+
+function directResultAnswer(question) {
+  const q = normalizeQuestion(question);
+  if (!/\b(?:semester\s+)?results?\s*(?:kivabe|kothay|dekhar|pabo|how\s+to\s+(?:check|get|find)|published|sheet)\b|\b(?:kivabe|kothay)\s+(?:exam\s+)?results?\s*(?:pabo|dekhbo)\b/i.test(q)) return null;
+
+  const isBanglish = prefersBanglish(question);
+  return {
+    text: isBanglish
+      ? "Gono Bishwabidyalay-এর সেমিস্টার ও পরীক্ষার ফলাফল জানার উপায়:\n\n" +
+        "১. **অনলাইন স্টুডেন্ট পোর্টাল (i-EMS):** শিক্ষার্থীরা বিশ্ববিদ্যালয়ের নিজস্ব স্টুডেন্ট পোর্টালে আইডি ও পাসওয়ার্ড দিয়ে লগইন করে নিজ নিজ সেমিস্টারের গ্রেডশিট ও ফলাফল দেখতে পারেন।\n" +
+        "২. **পরীক্ষা নিয়ন্ত্রক দপ্তর (Office of the Controller of Examinations):** আনুষ্ঠানিক ফলাফল নোটিশ, মার্কশিট ও মূল ট্রান্সক্রিপ্ট পেতে পরীক্ষা নিয়ন্ত্রক অফিসে (কন্ট্রোলার: এ. এস. এম. নোমান আলম, ফোন: +8801797343787, ইমেইল: controller@gonouniversity.edu.bd) যোগাযোগ করতে হয়।\n" +
+        "৩. **বিভাগীয় নোটিশ বোর্ড:** সংশ্লিষ্ট ডিপার্টমেন্টের নোটিশ বোর্ডেও ফলাফল প্রকাশ করা হয়।"
+      : "How to check semester examination results at Gono Bishwabidyalay:\n\n" +
+        "1. **Student Portal (i-EMS):** Enrolled students can log in to the integrated Student Portal to view provisional semester results and download grade sheets.\n" +
+        "2. **Controller of Examinations Office:** Official result notifications, grade certificates, and transcripts are issued by the Exam Controller's Office (Controller: A. S. M. Noman Alam, Phone: +8801797343787, Email: controller@gonouniversity.edu.bd).\n" +
+        "3. **Department Notice Boards:** Department-specific published result listings are also posted on physical and online department boards.",
+    sources: [
+      universitySources.online,
+      { title: "Controller of Examinations", url: "https://gonouniversity.edu.bd/offices/office-of-the-controller-of-examination/" }
+    ],
+    mode: "structured",
+  };
+}
+
+function directStudentJourneyAnswer(question) {
+  const q = normalizeQuestion(question);
+  const asksAdmissionJourney = /\b(start|begin|guide|journey|roadmap|step\s*by\s*step)\b.*\b(admission|apply|vorti)\b|\b(admission|vorti)\b.*\b(journey|roadmap|guide)\b/i.test(q);
+  const asksCurrentStudentJourney = /\b(current|existing|regular)\s+student\b.*\b(journey|help|support|guide)\b|\bstart\s+current\s+student\s+journey\b/i.test(q);
+  const asksGuardianJourney = /\b(parent|guardian)\b.*\b(journey|guide|help|admission)\b|\bstart\s+guardian\s+journey\b/i.test(q);
+  const asksCareerJourney = /\b(help|guide)\b.*\b(choose|select)\b.*\b(program|department|subject)\b|\bcareer\s+(?:choice|journey|guide)\b/i.test(q);
+  if (!asksAdmissionJourney && !asksCurrentStudentJourney && !asksGuardianJourney && !asksCareerJourney) return null;
+
+  if (asksAdmissionJourney) {
+    return {
+      text: "চলো admission process-টা ধাপে ধাপে করি। আগে eligibility যাচাই করব, তারপর program, verified fee, documents এবং application process দেখব। নিচের প্রথম ধাপ থেকে শুরু করো।",
+      sources: [universitySources.admission, universitySources.requirements, universitySources.financialAid],
+      mode: "journey",
+      journey: {
+        kind: "admission",
+        title: "Admission Journey",
+        audience: "Prospective student",
+        steps: [
+          { title: "Check eligibility", detail: "SSC/HSC group, GPA and required subjects" },
+          { title: "Choose a program", detail: "Compare curriculum, duration, seats and career fit" },
+          { title: "Verify fees", detail: "Use only published program-specific fee records" },
+          { title: "Prepare documents", detail: "Confirm the current intake's required documents" },
+          { title: "Apply and confirm", detail: "Use Apply Online and verify the current deadline" },
+        ],
+      },
+    };
+  }
+
+  if (asksCurrentStudentJourney) {
+    return {
+      text: "Current-student support mode চালু হলো। Portal, course/credit, faculty contact, notices এবং academic resources—যেটা দরকার সেখান থেকে শুরু করতে পারো।",
+      sources: [universitySources.online, universitySources.academics, universitySources.library],
+      mode: "journey",
+      journey: {
+        kind: "student",
+        title: "Current Student Support",
+        audience: "Enrolled student",
+        steps: [
+          { title: "Open student services", detail: "Portal, registration, dues and attendance" },
+          { title: "Explore academics", detail: "Courses, credits, syllabus and department faculty" },
+          { title: "Track updates", detail: "Recent notices, routines and results" },
+          { title: "Find support", detail: "Library, research and verified office contacts" },
+        ],
+      },
+    };
+  }
+
+  if (asksGuardianJourney) {
+    return {
+      text: "Guardian guide-এ verified admission, program duration, published fees, campus services এবং official contact একসাথে দেখা যাবে। আগে program ও eligibility দিয়ে শুরু করা সবচেয়ে ভালো।",
+      sources: [universitySources.admission, universitySources.requirements, universitySources.academics],
+      mode: "journey",
+      journey: {
+        kind: "guardian",
+        title: "Guardian Guide",
+        audience: "Parent or guardian",
+        steps: [
+          { title: "Verify eligibility", detail: "Check the student's group, GPA and subjects" },
+          { title: "Review the program", detail: "Duration, curriculum, seats and department" },
+          { title: "Review published costs", detail: "Separate total fee from admission-time payment" },
+          { title: "Check student support", detail: "Transport, library, portal and accommodation information" },
+          { title: "Confirm officially", detail: "Use the published source or admission contact" },
+        ],
+      },
+    };
+  }
+
+  return {
+    text: "Program choose করতে শুধু ‘কোনটা best’ বললে হবে না—তোমার interest, preferred work, course content, duration এবং eligibility মিলিয়ে সিদ্ধান্ত নেব। প্রথমে তোমার পছন্দের কাজের ধরন বলো।",
+    sources: [universitySources.academics, universitySources.admission],
+    mode: "journey",
+    journey: {
+      kind: "career",
+      title: "Program & Career Choice",
+      audience: "Undecided student",
+      steps: [
+        { title: "Identify interests", detail: "Coding, healthcare, business, law, science or social impact" },
+        { title: "Match programs", detail: "Connect interests with verified course titles" },
+        { title: "Compare options", detail: "Duration, credits, seats and eligibility" },
+        { title: "Build a shortlist", detail: "Keep two or three evidence-based choices" },
+        { title: "Plan next skills", detail: "Create a practical learning roadmap" },
+      ],
+    },
+  };
+}
+
+function directProgramChoiceAnswer(question, knowledge) {
+  const q = normalizeQuestion(question);
+  const interestGroups = [
+    { test: /\b(coding|programming|software|computer|app|web|developer)\b/i, label: "coding/software", matches: /\b(computer|computing|software|cse)\b/i },
+    { test: /\b(healthcare|health|medical|patient|medicine|hospital|biology)\b/i, label: "healthcare/life science", matches: /\b(pharmacy|microbiology|biochemistry|medical|biomedical|physiotherapy|veterinary|public health|nutrition)\b/i },
+    { test: /\b(business|management|marketing|finance|accounting|entrepreneur)\b/i, label: "business/management", matches: /\b(business|management|bba|mba|accounting|finance|marketing)\b/i },
+    { test: /\b(law|legal|advocate|court|justice)\b/i, label: "law/legal studies", matches: /\b(law|llb|llm|legal)\b/i },
+    { test: /\b(sheba|seba|social\s*work|manush|shomaj|somaj|service|help|volunteer|community)\b/i, label: "human service & social welfare", matches: /\b(sociology|social\s*work|physiotherapy|pharmacy|veterinary|medical)\b/i },
+  ];
+  const selected = interestGroups.find((group) => group.test.test(q));
+  if (!selected || !/\b(ami|i|interest|pochondo|choose|program|subject|career|porte|pora|study|chai|korte\s+chai)\b/i.test(q)) return null;
+
+  const wantsGraduate = /\b(masters?|postgraduate|m\.?sc|m\.?pharm|mba|ll\.?m|ms)\b/i.test(q);
+  const isUndergrad = (p) => {
+    const name = String(p.name || "");
+    if (/\b(b\.?sc|b\.?pharm|bachelor|bba|ll\.?b|bpt|dvm)\b/i.test(name)) return true;
+    if (/\b(m\.?sc|m\.?pharm|master|mba|ll\.?m|ms|mph)\b/i.test(name)) return false;
+    return true;
+  };
+
+  const filtered = verifiedPrograms(knowledge.programs || [])
+    .filter((program) => selected.matches.test(`${program.name || ""} ${program.department || ""} ${(program.aliases || []).join(" ")}`));
+
+  filtered.sort((a, b) => {
+    if (wantsGraduate) {
+      const aGrad = !isUndergrad(a) ? 1 : 0;
+      const bGrad = !isUndergrad(b) ? 1 : 0;
+      return bGrad - aGrad;
+    }
+    const aUg = isUndergrad(a) ? 1 : 0;
+    const bUg = isUndergrad(b) ? 1 : 0;
+    return bUg - aUg;
+  });
+
+  const programs = filtered.slice(0, 4);
+  const banglish = prefersBanglish(question);
+  if (!programs.length) {
+    return {
+      text: banglish
+        ? `${selected.label} interest-er sathe match kore emon verified program current data-te পাইনি। Guess না করে তোমার আরেকটি interest বা preferred কাজের ধরন জানতে চাই।`
+        : `I could not find a verified program matching ${selected.label} in the current data. Tell me another interest or preferred type of work and I will narrow it down without guessing.`,
+      sources: [],
+      mode: "clarify",
+    };
+  }
+
+  const lines = programs.map((program, index) => {
+    const facts = [
+      program.duration && `duration: ${cleanOfficialDisplayText(program.duration)}`,
+      program.seats && `seats: ${cleanOfficialDisplayText(program.seats)}`,
+      program.admissionRequirement && `eligibility: ${cleanOfficialDisplayText(program.admissionRequirement)}`,
+    ].filter(Boolean);
+    return `${index + 1}. **${program.name}**${facts.length ? ` — ${facts.join("; ")}` : ""}`;
+  });
+  return {
+    text: banglish
+      ? `তোমার **${selected.label}** interest অনুযায়ী verified program data থেকে সবচেয়ে কাছের match:\n\n${lines.join("\n")}\n\nপ্রথমে course content, eligibility ও duration মিলিয়ে shortlist করো। কোন option-টা compare করতে চাও বললে side-by-side দেখাব।`
+      : `Based on your interest in **${selected.label}**, the closest matches in the verified program data are:\n\n${lines.join("\n")}\n\nShortlist by course content, eligibility, and duration. Tell me which options you want compared side by side.`,
+    sources: dedupeSources(programs.map((program) => ({ title: program.sourceTitle || program.name, url: program.source }))),
+    mode: "structured",
+    suggestions: programs.slice(0, 2).map((program) => `${program.name} details bolo`),
   };
 }
 
@@ -2174,6 +3015,7 @@ function directActivePersonAnswer(question, knowledge, entity) {
   if (!asksContactDetail(question) && !asksProfile) return null;
 
   const records = contactRecords(knowledge);
+  if (directClubAnswer(question, knowledge)) return null;
   if (findPeople(question, records, knowledge).length || matchedDepartmentFromQuestion(question, knowledge)) return null;
   const person = activePersonRecord(entity, knowledge);
   if (!person) return null;
@@ -2339,7 +3181,7 @@ function matchedDepartmentFromQuestion(question, knowledge) {
       ...(knowledge.faculty || []).map((person) => person.department),
       ...(knowledge.programs || []).map((program) => program.department),
     ].filter(Boolean)),
-  ].filter((dept) => !/library|research|office|administration|student\s+union|sports/i.test(dept));
+  ].filter((dept) => !/library|research|office|administration|student\s+union|sports/i.test(dept) || /Business\s+Administration/i.test(dept));
   const q = normalizeQuestion(question);
   const ignoredTokens = new Set([
     ...searchStopWords,
@@ -2394,6 +3236,36 @@ function conversationDepartmentTopics(history = [], knowledge = null) {
     if (department && !topics.includes(department)) topics.push(department);
   }
   return topics;
+}
+
+function conversationDepartmentTopicTurns(history = [], knowledge = null) {
+  if (!knowledge) return [];
+  const topics = [];
+  const seen = new Set();
+  for (const turn of history) {
+    if (turn?.role !== "user") continue;
+    const text = String(turn.text || turn.content || "");
+    const department =
+      matchedDepartmentFromQuestion(text, knowledge) ||
+      rankedPrograms(text, knowledge.programs || [])[0]?.program?.department;
+    if (department && !seen.has(department)) {
+      seen.add(department);
+      topics.push({ department, turnText: text });
+    }
+  }
+  return topics;
+}
+
+function extractTurnAttribute(text = "") {
+  const q = normalizeQuestion(text);
+  if (asksFeeDetail(q)) return "fee";
+  if (/\b(head|chairman|chairperson|hod|dean)\b/i.test(q)) return "head";
+  if (/\b(credits?|credit\s+hours?)\b/i.test(q)) return "credits";
+  if (/\b(duration|years?|semesters?|koto\s+bochor)\b/i.test(q)) return "duration";
+  if (/\b(seats?|capacity|intake|asan|ashon)\b/i.test(q)) return "seats";
+  if (/\b(eligibility|qualification|requirements?|joggota)\b/i.test(q)) return "admission requirements";
+  if (/\b(waiver|scholarship|stipend)\b/i.test(q)) return "waiver";
+  return null;
 }
 
 function explicitTopicAnchor(question, knowledge = null) {
@@ -3155,20 +4027,133 @@ function directProgramDetailAnswer(question, knowledge) {
 
 function isGreetingQuestion(question) {
   const q = normalizeQuestion(question).replace(/[^\p{L}\p{N}\s]/gu, " ").trim();
-  return /^(hi|hello|hey|salam|assalamualaikum|assalamu alaikum|আসসালামু আলাইকুম|হাই|হ্যালো|সালাম)(\s+.*)?$/iu.test(q);
+  const greetingOrSalam = /^(hi|hello|hey|salam|assalamualaikum|assalamu alaikum|kemon acho|kemon achen|how are you|kemon|valo acho|আসসালামু আলাইকুম|হাই|হ্যালো|সালাম|কেমন আছো|কেমন আছেন)(\s+.*)?$/iu.test(q);
+  const botIdentity = /\b(who\s+are\s+you|tumi\s+ke|apni\s+ke|tomar\s+nam\s+ki|what\s+is\s+your\s+name|ke\s+tumi|কে\s*তুমি|আপনি\s*কে|তোমার\s*নাম\s*কী|who\s+made\s+you)\b/iu.test(q);
+  const botCapability = /^(?:tumi\s+ki\s+korte\s+paro|what\s+can\s+you\s+do|how\s+can\s+you\s+help|ki\s+ki\s+korte\s+paro|sahajjo\s+chai|help\s+me|help\s+koro|help|কী\s*করতে\s*পারো|কীভাবে\s*সাহায্য\s*করতে\s*পারো)(\s+.*)?$/iu.test(q) && !/\b(?:choose|program|admission|journey|apply)\b/i.test(q);
+  const gratitude = /^(thanks|thank\s+you|dhonnobad|dhornobad|onek\s+dhonnobad|ধন্যবাদ|অনেক\s*ধন্যবাদ)(\s+.*)?$/iu.test(q);
+  const farewell = /^(bye|goodbye|good\s+bye|allah\s+hafez|khoda\s+hafez|tata|বিদায়|বিদায়|আল্লাহ\s*হাফেজ)(\s+.*)?$/iu.test(q);
+  return greetingOrSalam || botIdentity || botCapability || gratitude || farewell;
 }
 
 function directGreetingAnswer(question) {
   if (!isGreetingQuestion(question)) return null;
   const q = normalizeQuestion(question).replace(/[^\p{L}\p{N}\s]/gu, " ").trim();
-  const banglish = prefersBanglish(question) || /\b(salam|assalamualaikum|assalamu)\b/i.test(q);
+  const banglish = prefersBanglish(question) || /\b(salam|assalamualaikum|assalamu|kemon|acho|achen|tumi|apni|dhonnobad|hafez)\b/i.test(q);
+
+  if (/^(thanks|thank\s+you|dhonnobad|dhornobad|onek\s+dhonnobad|ধন্যবাদ|অনেক\s*ধন্যবাদ)(\s+.*)?$/iu.test(q)) {
+    return {
+      text: banglish
+        ? "আপনাকেও অনেক ধন্যবাদ! গণ বিশ্ববিদ্যালয় সম্পর্কে আপনার আরও কোনো কিছু জানার থাকলে যেকোনো সময় নির্দ্বিধায় আমাকে প্রশ্ন করতে পারেন। শুভকামনা!"
+        : "You're very welcome! If you have any more questions about Gono Bishwabidyalay, feel free to ask anytime. Have a great day!",
+      sources: [],
+      mode: "greeting",
+    };
+  }
+
+  if (/^(bye|goodbye|good\s+bye|allah\s+hafez|khoda\s+hafez|tata|বিদায়|বিদায়|আল্লাহ\s*হাফেজ)(\s+.*)?$/iu.test(q)) {
+    return {
+      text: banglish
+        ? "আল্লাহ হাফেজ! আপনার উজ্জ্বল ভবিষ্যৎ ও সাফল্য কামনা করি। গণ বিশ্ববিদ্যালয় সংক্রান্ত যেকোনো তথ্যের প্রয়োজনে আবারও চলে আসবেন!"
+        : "Goodbye and best wishes! Feel free to return whenever you need verified information about Gono Bishwabidyalay.",
+      sources: [],
+      mode: "greeting",
+    };
+  }
+
+  if (/\b(who\s+are\s+you|tumi\s+ke|apni\s+ke|tomar\s+nam\s+ki|what\s+is\s+your\s+name|ke\s+tumi|কে\s*তুমি|আপনি\s*কে|তোমার\s*নাম\s*কী|who\s+made\s+you)\b/iu.test(q)) {
+    return {
+      text: banglish
+        ? "আমি **Gono Bishwabidyalay AI Knowledge Assistant (GB Helpdesk Bot)**। আমি গণ বিশ্ববিদ্যালয়ের ভর্তি প্রক্রিয়া, বিভিন্ন বিভাগের ক্রেডিট ও কোর্স ফি, শিক্ষক ও ফ্যাকাল্টি মেম্বার, নোটিশ, সেমিস্টার ও গ্রেডিং সিস্টেম, ক্যাম্পাস সুবিধা (লাইব্রেরি, ক্যাফেটেরিয়া, মেডিকেল সেন্টার), কেন্দ্রীয় ছাত্র সংসদ (বাকসু) এবং ক্যারিয়ার ক্লাব (GBCDC) সংক্রান্ত তথ্যে সহায়তা করতে প্রস্তুত। আজ আপনাকে কীভাবে সাহায্য করতে পারি?"
+        : "I am the **Gono Bishwabidyalay AI Knowledge Assistant (GB Helpdesk Bot)**. I am designed to assist students, applicants, and visitors with verified information regarding admissions, department programs, tuition fees, faculty members, academic grading & semester systems, campus facilities (library, canteen, medical center), student union (BAKSU), and student clubs (GBCDC). How can I assist you today?",
+      sources: [],
+      mode: "greeting",
+    };
+  }
+
+  if (/\b(tumi\s+ki\s+korte\s+paro|what\s+can\s+you\s+do|how\s+can\s+you\s+help|ki\s+ki\s+korte\s+paro|sahajjo\s+chai|help\s+me|help\s+koro|কী\s*করতে\s*পারো|কীভাবে\s*সাহায্য\s*করতে\s*পারো)\b/iu.test(q)) {
+    return {
+      text: banglish
+        ? "আমি **গণ বিশ্ববিদ্যালয় হেল্পডেস্ক অ্যাসিস্ট্যান্ট** হিসেবে নিচের বিষয়গুলোতে সহায়তা প্রদান করি:\n\n" +
+          "• **ভর্তি ও যোগ্যতা:** ডিপার্টমেন্টভিত্তিক রিকোয়ারমেন্টস, ন্যূনতম জিপিএ ও অ্যাডমিশন হেল্পলাইন।\n" +
+          "• **বিভাগ ও প্রোগ্রাম:** CSE, Pharmacy, BBA, LLB, English ইত্যাদি বিভাগের ক্রেডিট, সেমিস্টার ও ফি স্ট্রাকচার।\n" +
+          "• **শিক্ষক ও কর্তৃপক্ষ:** ভিসি, রেজিস্ট্রার, প্রক্টর, পরীক্ষা নিয়ন্ত্রক ও ডিপার্টমেন্ট চেয়ারম্যানদের প্রোফাইল।\n" +
+          "• **ক্যাম্পাস সুবিধা:** সেন্ট্রাল লাইব্রেরি, ওয়াইফাই, মেডিকেল সেন্টার, ক্যাফেটেরিয়া, পরিবহন ও হোস্টেল সংক্রান্ত তথ্য।\n" +
+          "• **ক্লাব ও ছাত্র সংসদ:** GBCDC (ক্যারিয়ার ডেভেলপমেন্ট ক্লাব) ও বাকসু (কেন্দ্রীয় ছাত্র সংসদ)-এর কার্যক্রম।\n" +
+          "• **একাডেমিক নিয়মাবলী:** সেমিস্টার পদ্ধতি (Bi-semester), ইউজিসি গ্রেডিং স্কেল ও রেজাল্ট দেখার উপায়।\n\n" +
+          "আপনি যেকোনো নির্দিষ্ট প্রশ্ন করতে পারেন!"
+        : "As the **Gono Bishwabidyalay Helpdesk Assistant**, I can assist you with:\n\n" +
+          "• **Admissions & Eligibility:** Department requirements, minimum GPA, and official admission helplines.\n" +
+          "• **Departments & Programs:** Total credits, duration, and tuition fee structures for CSE, Pharmacy, BBA, Law, etc.\n" +
+          "• **Leadership & Faculty:** VC, Registrar, Proctor, Controller of Examinations, and Department Heads.\n" +
+          "• **Campus Facilities:** Central Library, Wi-Fi, Medical Center, Canteen, transport guidance, and hostel advisory.\n" +
+          "• **Clubs & Student Union:** Career Development Club (GBCDC) and Central Students' Union (BAKSU).\n" +
+          "• **Academic System:** Bi-semester structure, UGC 4.00 grading scale, and semester result verification.\n\n" +
+          "Feel free to ask any specific question!",
+      sources: [],
+      mode: "greeting",
+    };
+  }
+
+  if (/\b(assalamu|assalamualaikum|salam)\b/i.test(q)) {
+    return {
+      text: banglish
+        ? "Walaikum Assalam! Ami GB Knowledge Assistant। Gono Bishwabidyalay-এর ভর্তি, বিভাগ, কোর্স ফি, ফ্যাকাল্টি মেম্বার, ক্লাব (GBCDC), নোটিশ বা ক্যাম্পাস সংক্রান্ত যেকোনো প্রশ্ন আমাকে করতে পারেন। কীভাবে সাহায্য করতে পারি?"
+        : "Walaikum Assalam! I am the GB Knowledge Assistant. Feel free to ask me anything about Gono Bishwabidyalay admissions, departments, tuition fees, faculty members, clubs (GBCDC), notices, or campus facilities. How can I help you today?",
+      sources: [],
+      mode: "greeting",
+    };
+  }
+
+  if (/\b(kemon|how\s+are\s+you)\b/i.test(q)) {
+    return {
+      text: banglish
+        ? "Alhamdulillah, ami bhalo achi! Ami Gono Bishwabidyalay-er AI Knowledge Assistant। University-র ভর্তি, ডিপার্টমেন্ট, ফি, ফ্যাকাল্টি, GBCDC ক্লাব কিংবা ক্যাম্পাস লাইফ নিয়ে যেকোনো তথ্য জানতে আমাকে বলতে পারেন। আজ আপনাকে কীভাবে সাহায্য করতে পারি?"
+        : "I'm doing well, thank you! I am the Gono Bishwabidyalay AI Knowledge Assistant. You can ask me about university admissions, departments, tuition fees, faculty, GBCDC club, or campus life. How may I assist you today?",
+      sources: [],
+      mode: "greeting",
+    };
+  }
+
   return {
     text: banglish
-      ? "Hi! Ami GB Knowledge Assistant. Gono Bishwabidyalay-er official info, department, faculty, fee, admission, notice, ba course concept niye question korte paro."
-      : "Hi! I am GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, notices, or course concepts.",
+      ? "Hi! Ami GB Knowledge Assistant। Gono Bishwabidyalay-er official info, department, faculty, fee, admission, GBCDC club, notice, ba course concept niye question korte paro। আজ কীভাবে সাহায্য করতে পারি?"
+      : "Hi! I am the GB Knowledge Assistant. Ask me about Gono Bishwabidyalay official information, departments, faculty, fees, admission, clubs (GBCDC), notices, or course concepts. How can I help you today?",
     sources: [],
     mode: "greeting",
   };
+}
+
+function isConversationalIntent(question) {
+  const q = normalizeQuestion(question);
+
+  const isDirectAttributeQuery =
+    /^(?:what\s+is\s+the\s+)?(?:chairman(?:\s+name)?|head|dean|fees?|cost|tuition|tution|credits?|duration|seats?|phone|mobile|number|email|contact|routine|syllabus|notices?)\b/i.test(q) &&
+    !/\b(?:ami|amake|amar|parbo|hobe|uchit|bhalo|keno)\b/i.test(q);
+  if (isDirectAttributeQuery) return false;
+
+  const personalSituation =
+    /\b(?:ami|amake|amar|amader|i|my|me)\b/i.test(q) &&
+    /\b(?:vorti|admission|apply|eligibility|joggota|korte|hote|chance|porbo|pabo)\b/i.test(q);
+
+  const resultOrCgRef =
+    /\b(?:ei|eita|eta|oi|oita|this|with\s+this|amar)\s*(?:cg|cgpa|gpa|point|result|marks?|division)\b/i.test(q) ||
+    /\b(?:cg|cgpa|gpa|point)\s*(?:niye|diye|hole|thakle)\b/i.test(q);
+
+  const possibilityOrDoubt =
+    /\b(?:parbo|parbo\s*na|hobe|hobe\s*na|jabe|jabe\s*na|pabo|pabo\s*na|chance\s*ache|somvob|somvob\s*na|parben|parben\s*na)\b/iu.test(q) ||
+    /\b(?:পারব|পারব\s*না|পারবো|পারবো\s*না|হবে|হবে\s*না|যাবে|যাবে\s*না|পাব|পাব\s*না|সম্ভব|সম্ভব\s*না|সুযোগ\s*আছে)\b/iu.test(q) ||
+    /\b(?:can\s+i|could\s+i|should\s+i|will\s+i|am\s+i|is\s+it\s+possible|can\s+we|eligible\s+or\s+not)\b/i.test(q);
+
+  const adviceOrExplanation =
+    /\b(?:uchit|bhalo\s*hobe|better|advice|suggestion|opinion|recommend|ki\s*korbo|ki\s*kora\s*jay|ki\s*kora\s*uchit|উচিত|কী\s*করব)\b/iu.test(q) ||
+    /\b(?:bujhlam\s*na|bujhi\s*nai|bujhiye\s*bolo|sohoj\s*kore|explain\s*koro|explain\s+please|aro\s+details\s+bolo)\b/iu.test(q) ||
+    /\b(?:ar\s*kono\s*option|onno\s*kono|alternative|ar\s*ki\s*kora\s*jay|অন্য\s*কোনো)\b/iu.test(q) ||
+    /\b(?:keno\s*parbo\s*na|keno\s*na|why\s+not|keno|কেন)\b/iu.test(q);
+
+  const conversationalConnector =
+    /^(?:tahole|kintu|tobe|ar\s+jodi|but|then|so|well|তাহলে|কিন্তু)\b/iu.test(q);
+
+  return Boolean(personalSituation || resultOrCgRef || possibilityOrDoubt || adviceOrExplanation || conversationalConnector);
 }
 
 function isUnclearQuestion(question) {
@@ -3240,15 +4225,56 @@ function directWaiverAndFinancialAidAnswer(question, knowledge, history = []) {
   };
 }
 
+function statedAdmissionGpa(question) {
+  const raw = String(question || "");
+  const number = "([০-৯0-9]+(?:\\.[০-৯0-9]+)?)";
+  const match =
+    raw.match(new RegExp(`${number}\\s*(?:gpa|point)?\\s*(?:diye|niye|hole|thakle|দিয়ে|দিয়ে|নিয়ে|নিয়ে|হলে|থাকলে)`, "iu")) ||
+    raw.match(new RegExp(`(?:gpa|point|result|জিপিএ|পয়েন্ট|পয়েন্ট)\\s*${number}`, "iu"));
+  if (!match) return null;
+  const normalizedNumber = match[1].replace(/[০-৯]/g, (digit) => "০১২৩৪৫৬৭৮৯".indexOf(digit));
+  const value = Number.parseFloat(normalizedNumber);
+  return Number.isFinite(value) && value >= 0 && value <= 5 ? value : null;
+}
+
+function isStatedAdmissionEligibilityQuestion(question) {
+  return (
+    statedAdmissionGpa(question) !== null &&
+    /\b(vorti|admission|apply|parbo|eligible|chance)\b|ভর্তি|আবেদন|পারব|যোগ্য/iu.test(normalizeQuestion(question))
+  );
+}
+
 function directAdmissionEligibilityAnswer(question, knowledge, history = []) {
   const q = normalizeQuestion(question);
-  const asksEligibility = /\b(qualification|eligibility|requirements?|joggota|lagbe|hsc|ssc|apply\s+korte\s+ki\s+lagbe|admission\s+requirement|vortir\s+joggota)\b/i.test(q);
+  const statedGpa = statedAdmissionGpa(question);
+  const asksEligibility =
+    /\b(qualification|eligibility|requirements?|joggota|lagbe|hsc|ssc|apply\s+korte\s+ki\s+lagbe|admission\s+requirement|vortir\s+joggota)\b/i.test(q) ||
+    (statedGpa !== null && /\b(vorti|admission|apply|parbo|eligible|chance)\b|ভর্তি|আবেদন|পারব|যোগ্য/iu.test(q));
   if (!asksEligibility) return null;
-  if (findPeople(q, knowledge.faculty || [], knowledge).length) return null;
+  if (!/\b(admission|vorti)\b/i.test(q)) {
+    const matchedPeople = findPeople(q, knowledge.faculty || [], knowledge);
+    if (matchedPeople.length && !/\b(cse|pharmacy|bba|english|law|bpt|physiotherapy|microbiology|biochemistry|medical\s+physics)\b/i.test(q)) {
+      return null;
+    }
+  }
   const banglish = prefersBanglish(question);
   const activeDept = matchedDepartmentFromQuestion(q, knowledge) || activeContextDepartment(history, question, knowledge);
 
   if (activeDept && /\bcomputer\s+science|cse\b/i.test(activeDept)) {
+    if (statedGpa !== null) {
+      const meetsIndividualMinimum = statedGpa >= 2.5;
+      return {
+        text: banglish
+          ? meetsIndividualMinimum
+            ? `GPA-er dik diye **হ্যাঁ**—তোমার বলা **${statedGpa.toFixed(2)}** published minimum **2.50**-এর উপরে। তবে final eligibility-এর জন্য SSC ও HSC—দুটিতেই আলাদাভাবে GPA 2.50+, মোট GPA কমপক্ষে 6.00, Science background, এবং Physics ও Mathematics-এ pass থাকতে হবে। তাই 3.5 যদি শুধু একটি পরীক্ষার GPA হয়, অন্য পরীক্ষার GPA ও subject result-ও লাগবে।`
+            : `GPA-er dik diye **না**—তোমার বলা **${statedGpa.toFixed(2)}** published minimum **2.50**-এর নিচে। CSE-তে সাধারণ পথে apply করতে SSC ও HSC—দুটিতেই আলাদাভাবে GPA 2.50+ এবং মোট GPA কমপক্ষে 6.00 লাগবে; Diploma route থাকলে সেটি আলাদাভাবে যাচাই করা যেতে পারে।`
+          : meetsIndividualMinimum
+            ? `For the GPA component, **yes**—the stated **${statedGpa.toFixed(2)}** is above the published minimum of **2.50**. Final eligibility still requires at least 2.50 in both SSC and HSC separately, an aggregate of 6.00+, a Science background, and passes in Physics and Mathematics. If 3.5 is from only one exam, the other exam and subject results are still needed.`
+            : `For the GPA component, **no**—the stated **${statedGpa.toFixed(2)}** is below the published minimum of **2.50**. The standard CSE route requires at least 2.50 in both SSC and HSC separately and an aggregate of 6.00+; a Diploma route can be checked separately if applicable.`,
+        sources: [{ title: "Academic Programs - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/academic/academic-programs/" }],
+        mode: "structured",
+      };
+    }
     return {
       text: banglish
         ? `**CSE ভর্তির যোগ্যতা:** এসএসসি ও এইচএসসি উভয় পরীক্ষায় বিজ্ঞান বিভাগ থেকে আলাদাভাবে ন্যূনতম **GPA 2.50** (মোট জিপিএ কমপক্ষে ৬.০০) এবং পদার্থবিজ্ঞান ও গণিতে পাস থাকতে হবে। পলিটেকনিকের ডিপ্লোমাধারীরাও আবেদন করতে পারেন।`
@@ -3395,11 +4421,21 @@ function directCampusFacilitiesAnswer(question, knowledge, history = []) {
   }
 
   if (asksLibrary) {
+    const asksLibraryHours = /\b(kokhon|khola|somoy|shomoy|hours?|opening|schedule|timing|open|close|closing|bondho|kobe\s+khola)\b/i.test(q);
+    if (asksLibraryHours) {
+      return {
+        text: banglish
+          ? "গণ বিশ্ববিদ্যালয়ের অফিসিয়াল রেকর্ডে সেন্ট্রাল লাইব্রেরির **সুনির্দিষ্ট খোলার ও বন্ধের সময়সূচি (opening/closing hours) উল্লেখ নেই** (সাধারণত ক্লাস ও অফিস চলাকালীন সকাল থেকে বিকেল পর্যন্ত খোলা থাকে)। নির্দিষ্ট টাইমিং বা ছুটির দিনের শিডিউল নিশ্চিত হতে লাইব্রেরি সেকশনে যোগাযোগ করতে পারেন (Email: `library@gonouniversity.edu.bd`)। লাইব্রেরিতে বই, জার্নাল, ই-বুক, অনলাইন ক্যাটালগ ও ফ্রি ওয়াইফাই স্টাডি স্পেসের সুবিধা রয়েছে।"
+          : "The university's official records **do not specify exact daily opening and closing hours** for the central library (it typically remains open during normal academic/office hours). For exact daily schedules or holiday hours, please contact the library section directly (Email: `library@gonouniversity.edu.bd`). The library offers textbooks, journals, digital catalog access, and Wi-Fi reading spaces.",
+        sources: dedupeSources([{ title: "Library - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/facilities/library/" }]),
+        mode: "structured",
+      };
+    }
     return {
       text: banglish
         ? "বিশ্ববিদ্যালয়ের কেন্দ্রীয় লাইব্রেরিতে হাজার হাজার টেক্সটবুক, আন্তর্জাতিক জার্নাল, ই-বুক, অনলাইন ক্যাটালগ এবং ওয়াইফাই স্টাডি স্পেসের সুবিধা রয়েছে।"
         : "The central library provides thousands of textbooks, international journals, digital library access, Wi-Fi, and spacious reading areas.",
-      sources: [{ title: "Library - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/facilities/library/" }],
+      sources: dedupeSources([{ title: "Library - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/facilities/library/" }]),
       mode: "structured",
     };
   }
@@ -3425,18 +4461,39 @@ function directCampusFacilitiesAnswer(question, knowledge, history = []) {
 
 function directAnswer(question, knowledge, history = []) {
   if (history.length && !matchedDepartmentFromQuestion(question, knowledge)) {
+    const topicIdx = ordinalTopicIndex(question);
     const recalledDepartment = ordinalContextDepartment(question, history, knowledge);
     if (recalledDepartment) {
       const hasSpecificIntent = /\b(chairman|chairperson|head|hod|dean|credits?|duration|seats?|eligibility|requirements?|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|courses?|subjects?|faculty|teachers?|waiver|scholarship|admission|vorti|apply|qualification|gpa|career|job|future|scope|details?|contact|phone|email|number)\b/i.test(normalizeQuestion(question));
-      return directAnswer(`${recalledDepartment} ${hasSpecificIntent ? "" : "details"} ${question}`, knowledge, []);
+      const topicTurns = conversationDepartmentTopicTurns(previousConversation(history, question), knowledge);
+      const originatingTurn = topicIdx !== null ? topicTurns[topicIdx] : null;
+      const inheritedAttr = !hasSpecificIntent && originatingTurn ? extractTurnAttribute(originatingTurn.turnText) : null;
+      const querySubject = inheritedAttr ? `${recalledDepartment} ${inheritedAttr}` : `${recalledDepartment} ${hasSpecificIntent ? "" : "details"} ${question}`;
+      const resolved = directAnswer(querySubject, knowledge, []);
+      if (resolved) {
+        if (/\b(one\s+line|ek\s+line|এক\s*লাইনে?|single\s+line|shortly|briefly|সংক্ষেপে)\b/i.test(normalizeQuestion(question))) {
+          const firstLine = resolved.text.split(/\n+/).find((line) => line.trim().length > 10) || resolved.text;
+          return { ...resolved, text: firstLine.trim() };
+        }
+        return resolved;
+      }
     }
     const recalledTopic = ordinalContextTopic(question, history, knowledge);
-    if (recalledTopic) return directAnswer(`${recalledTopic.query} ${question}`, knowledge, []);
+    if (recalledTopic) {
+      const resolved = directAnswer(`${recalledTopic.query} ${question}`, knowledge, []);
+      if (resolved) {
+        if (/\b(one\s+line|ek\s+line|এক\s*লাইনে?|single\s+line|shortly|briefly|সংক্ষেপে)\b/i.test(normalizeQuestion(question))) {
+          const firstLine = resolved.text.split(/\n+/).find((line) => line.trim().length > 10) || resolved.text;
+          return { ...resolved, text: firstLine.trim() };
+        }
+        return resolved;
+      }
+    }
   }
   const q = normalizeQuestion(question);
   const departmentFollowup = /\b(chairman|chairperson|head|hod|dean|faculty|teachers?|members?|credits?|duration|seats?|eligibility|requirements?|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|courses?|subjects?|waiver|scholarship|stipend|admission|vorti|apply|qualification|gpa|career|job|future|scope|details?|bistarito)\b/i.test(q);
   const comparativeFollowup = /\b(which|which\s+one|more|less|higher|lower|shorter|longer|better|konta|kontar|beshi|kom)\b/i.test(q);
-  if (history.length && departmentFollowup && !comparativeFollowup && !matchedDepartmentFromQuestion(q, knowledge)) {
+  if (history.length && departmentFollowup && !comparativeFollowup && !isConversationalIntent(question) && !matchedDepartmentFromQuestion(q, knowledge)) {
     const priorDept = activeContextDepartment(history, question, knowledge);
     if (priorDept) {
       const resolved = directAnswer(`${priorDept} ${question}`, knowledge, []);
@@ -3452,7 +4509,7 @@ function directAnswer(question, knowledge, history = []) {
     const targetSubject = matchedDept || matchedProg?.name;
     const tokens = tokenize(q);
     const hasStandaloneAttribute =
-      /\b(faculty|teachers?|teacher|list|sob|shob|members?|all|sir|mam|notices?|result|contact|phone|email|location|address|history|founder|campus|area|hostel|transport|bus|hospital|baksu|union)\b/i.test(q);
+      /\b(departments?|dept|programs?|offers?|offered|available|availability|exists?|ache|ase|pora|porte|porashona|study|jai|jabe|medical\s+center|canteen|cafeteria|wifi|wi-?fi|library|portal|club|gbcdc|grading|semester\s+system|faculty|teachers?|teacher|list|sob|shob|members?|all|sir|mam|notices?|result|contact|phone|email|location|address|history|founder|campus|area|hostel|transport|bus|hospital|baksu|union)\b/i.test(q);
 
     if (targetSubject && tokens.length <= 6 && !hasStandaloneAttribute) {
       // Find the most recent user turn that had an attribute or intent
@@ -3485,14 +4542,23 @@ function directAnswer(question, knowledge, history = []) {
   return (
     directGreetingAnswer(question) ||
     directClarificationAnswer(question, history) ||
+    directStudentJourneyAnswer(question) ||
+    directProgramChoiceAnswer(question, knowledge) ||
     directInstitutionFactAnswer(question, knowledge) ||
     directUniversityOverviewAnswer(question, knowledge) ||
+    directDepartmentExistenceAnswer(question, knowledge) ||
     directAcademicUnitsAnswer(question, knowledge) ||
     directMissionVisionAnswer(question) ||
     directResearchAndCampusLifeAnswer(question) ||
+    directClubAnswer(question, knowledge) ||
+    directSemesterSystemAnswer(question) ||
+    directGradingSystemAnswer(question) ||
+    directResultAnswer(question) ||
     directFacilitiesAnswer(question) ||
+    directAdmissionStatusAnswer(question, knowledge) ||
     directAdmissionOverviewAnswer(question, knowledge) ||
     directAdmissionProcedureAnswer(question, knowledge, history) ||
+    (statedAdmissionGpa(question) !== null ? directAdmissionEligibilityAnswer(question, knowledge, history) : null) ||
     directProgramAdmissionAnswer(question, knowledge) ||
     directAdmissionEligibilityAnswer(question, knowledge, history) ||
     directWaiverAndFinancialAidAnswer(question, knowledge, history) ||
@@ -3614,7 +4680,7 @@ function indexedPageRecords(knowledge) {
 }
 
 function searchPages(question, knowledge, history = []) {
-  const recentText = isContextualFollowup(question)
+  const recentText = (isContextualFollowup(question) || isConversationalIntent(question))
     ? previousConversation(history, question)
         .slice(-3)
         .map((item) => item.text)
@@ -4123,6 +5189,7 @@ function responseProfile(result, question) {
   const mode = String(result?.mode || "");
   if (mode === "clarify") return { label: "Need detail", confidence: "Ask a specific question" };
   if (mode === "greeting") return { label: "Ready", confidence: "Ask anything" };
+  if (mode === "journey") return { label: "Guided journey", confidence: "Step-by-step" };
   if (mode.includes("general_academic")) {
     return {
       label: "AI explanation",
@@ -4144,6 +5211,13 @@ function responseProfile(result, question) {
 function followupSuggestions(question, result) {
   const q = normalizeQuestion(question);
   const banglish = prefersBanglish(question);
+  if (result?.mode === "journey") {
+    const kind = result.journey?.kind;
+    if (kind === "admission") return ["Amar eligibility check koro", "Program compare korte chai", "Verified program fees dekhao"];
+    if (kind === "student") return ["Student portal-e ki ki ache?", "Latest notices dekhao", "Amar department-er course dekhao"];
+    if (kind === "guardian") return ["Admission eligibility dekhao", "Published program fees dekhao", "Campus facilities bolo"];
+    return ["Ami coding pochondo kori", "Healthcare program compare koro", "CSE vs EEE compare koro"];
+  }
   if (result?.mode === "clarify") {
     if (/\b(medical|medial|biomedical|physics)\b/i.test(q)) {
       return banglish
@@ -4188,6 +5262,11 @@ function followupSuggestions(question, result) {
     return banglish
       ? ["Admission requirement bolo", "Semester fee ache?", "CSE fee bolo"]
       : ["Show admission requirements", "Ask about semester fees", "Show CSE fees"];
+  }
+  if (result?.sources?.some((s) => s.url?.includes("gbcdc.club")) || /\b(gbcdc|club|bidita|mehrab|hasib\s*mir)\b/i.test(q)) {
+    return banglish
+      ? ["GBCDC-er current committee dekhao", "GBCDC-er events o workshops ki ki?", "GBCDC-te kivabe join korbo?"]
+      : ["Show GBCDC committee", "What are GBCDC events?", "How to join GBCDC?"];
   }
   if (result?.sources?.length) {
     return banglish
@@ -4282,12 +5361,14 @@ async function handleChat(req, res) {
     isGreetingQuestion(message) ||
     asksProgramDetail(message) ||
     isGeneralAcademicQuestion(message) ||
+    isConversationalIntent(message) ||
     (previousHistory.length > 0 && isContextualFollowup(message));
   const key = cacheKey(message, knowledge, previousHistory);
   const cached = skipCache ? null : responseCache.get(key);
   if (cached) {
     const enrichedCached = {
       ...cached,
+      sources: dedupeSources(cached.sources),
       profile: cached.profile || responseProfile(cached, message),
       suggestions: cached.suggestions || followupSuggestions(message, cached).slice(0, 3),
       cached: true,
@@ -4301,18 +5382,36 @@ async function handleChat(req, res) {
   let result = null;
   if (uploadedAttachments.some((attachment) => attachment.text || attachment.visualCaption || attachment.error)) result = await answerFromAttachment(message, uploadedAttachments, history);
   if (!result && useStoredAttachments) result = await answerFromAttachment(message, storedAttachments, history);
-  if (!result) result = directActivePersonAnswer(message, knowledge, conversationEntity(sessionId, "person"));
-  if (!result) result = directAnswer(message, knowledge, previousHistory);
-  if (!result && (asksContactDetail(message) || asksPersonIdentity(message))) {
+
+  const isConversational = isConversationalIntent(message);
+  const hasDeterministicGpaEligibility = isStatedAdmissionEligibilityQuestion(message);
+  if (!result && (!isConversational || hasDeterministicGpaEligibility)) result = directAnswer(message, knowledge, previousHistory);
+  if (!result && !isConversational) result = directActivePersonAnswer(message, knowledge, conversationEntity(sessionId, "person"));
+  if (!result && !isConversational && (asksContactDetail(message) || asksPersonIdentity(message))) {
     result = { text: notVerifiedText(message), sources: [], mode: "not_found" };
   }
 
   const useOfficialRetrieval =
     explicitlyRequestsGonoContext(message) ||
     requiresVerifiedStructuredAnswer(message, history) ||
-    (isContextualFollowup(message) && previousHistory.length > 0);
+    (isContextualFollowup(message) && previousHistory.length > 0) ||
+    isConversational;
   const contexts = result || !useOfficialRetrieval ? [] : searchPages(message, knowledge, history);
-  const allowGeneralAnswer = !result && (!useOfficialRetrieval || isGeneralAcademicQuestion(message) || isContextualFollowup(message));
+
+  // If this is a conversational query or follow-up, enrich contexts with prior department facts
+  const priorDept = activeContextDepartment(history, message, knowledge);
+  if (priorDept && contexts.length < 5) {
+    const prog = programForDepartment(knowledge, priorDept);
+    if (prog && !contexts.some((c) => c.title?.toLowerCase().includes(priorDept.toLowerCase()))) {
+      contexts.unshift({
+        title: prog.sourceTitle || prog.name,
+        url: prog.source,
+        text: `Department: ${priorDept}\nProgram: ${prog.name}\n${prog.admissionRequirement ? `Admission Requirement: ${prog.admissionRequirement}\n` : ""}${prog.duration ? `Duration: ${prog.duration}\n` : ""}${prog.seats ? `Seats: ${prog.seats}\n` : ""}`,
+      });
+    }
+  }
+
+  const allowGeneralAnswer = !result && (!useOfficialRetrieval || isGeneralAcademicQuestion(message) || isContextualFollowup(message) || isConversational);
   if (!result && !contexts.length && !allowGeneralAnswer) {
     result = { text: notVerifiedText(message), sources: [], mode: "not_found" };
   }
@@ -4325,10 +5424,14 @@ async function handleChat(req, res) {
     if (aiAnswer) {
       result = {
         text: aiAnswer.text,
-        sources: contexts.slice(0, 3).map(({ title, url }) => ({ title, url })),
+        sources: dedupeSources(contexts.slice(0, 3).map(({ title, url }) => ({ title, url }))),
         mode: aiAnswer.provider,
       };
     }
+  }
+
+  if (!result && isConversational) {
+    result = directAnswer(message, knowledge, previousHistory);
   }
 
   if (!result) {
@@ -4351,10 +5454,11 @@ async function handleChat(req, res) {
     result.mode !== "not_found" &&
     !(String(result.mode || "").includes("general_academic") && !explicitlyRequestsGonoContext(message));
   if (mayAttachRetrievedSources && !result.sources?.length && result.text !== NOT_VERIFIED && result.text !== notVerifiedText(message) && contexts.length) {
-    result.sources = contexts.slice(0, 2).map(({ title, url }) => ({ title, url }));
+    result.sources = dedupeSources(contexts.slice(0, 2).map(({ title, url }) => ({ title, url })));
   }
+  result.sources = dedupeSources(result.sources);
   result.profile = responseProfile(result, message);
-  result.suggestions = followupSuggestions(message, result).slice(0, 3);
+  result.suggestions = (result.suggestions?.length ? result.suggestions : followupSuggestions(message, result)).slice(0, 3);
   const resolvedPerson = resolvedPersonFromExchange(message, result, knowledge);
   if (resolvedPerson) setConversationEntity(sessionId, "person", resolvedPerson);
   rememberConversationExchange(sessionId, history, message, result.text);
@@ -4640,8 +5744,11 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
 export {
   directActivePersonAnswer,
   directAnswer,
+  directClubAnswer,
   extractProgramPlanFacts,
+  isConversationalIntent,
   mergeConversationHistory,
+  prefersBanglish,
   relevantConversationHistory,
   resolvedPersonFromExchange,
   requiresVerifiedStructuredAnswer,

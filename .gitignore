@@ -14,6 +14,7 @@ dist/
 data/*.log
 
 # Temporary and cache files
+scratch/
 data/.*.tmp
 data/*.tmp
 data/crawl-cache/

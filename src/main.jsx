@@ -8,7 +8,6 @@ import {
   Clipboard,
   Clock,
   DatabaseZap,
-  Download,
   Headphones,
   Link as LinkIcon,
   Loader2,
@@ -393,17 +392,10 @@ function App() {
       return;
     }
 
-    // Check if an empty conversation already exists in the list
-    const existingEmpty = conversations.find((c) => c.messages.length === 0);
-    if (existingEmpty) {
-      setActiveChatId(existingEmpty.id);
-      if (window.innerWidth <= 820) setSidebarOpen(false);
-      composerInputRef.current?.focus();
-      return;
-    }
-
+    // Always create one unambiguous fresh chat. Hidden empty records can otherwise
+    // leave the UI on the current conversation when their ids are stale/duplicated.
     const fresh = createNewConversation();
-    setConversations((prev) => [fresh, ...prev]);
+    setConversations((prev) => [fresh, ...prev.filter((chat) => chat.messages.length > 0)]);
     setActiveChatId(fresh.id);
     if (window.innerWidth <= 820) setSidebarOpen(false);
     composerInputRef.current?.focus();
@@ -654,37 +646,6 @@ function App() {
     } catch {
       setCopiedIndex(null);
     }
-  }
-
-  function exportConversation() {
-    const currentMessages = activeConversation?.messages || [];
-    const content = [
-      "# GB Knowledge Assistant conversation",
-      `Exported: ${new Date().toLocaleString()}`,
-      `Topic: ${activeConversation?.title || "Conversation"}`,
-      "",
-      ...currentMessages.flatMap((message) => {
-        const speaker = message.role === "assistant" ? "Assistant" : "You";
-        const sources = (message.sources || []).filter((source) => source.url);
-        return [
-          `## ${speaker}`,
-          message.text,
-          ...(sources.length ? ["", "Sources:", ...sources.map((source) => `- [${source.title || source.url}](${source.url})`)] : []),
-          "",
-        ];
-      }),
-    ].join("\n");
-    const safeTitle = (activeConversation?.title || "chat")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .slice(0, 24)
-      .replace(/^-+|-+$/g, "");
-    const url = URL.createObjectURL(new Blob([content], { type: "text/markdown;charset=utf-8" }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `gb-assistant-${safeTitle || "chat"}-${new Date().toISOString().slice(0, 10)}.md`;
-    link.click();
-    URL.revokeObjectURL(url);
   }
 
   const composer = (
@@ -943,11 +904,6 @@ function App() {
             <button className="icon-button" type="button" onClick={() => setAdminOpen(true)} aria-label="Open admin" title="Admin">
               <Settings size={18} />
             </button>
-            {hasMessages && (
-              <button className="icon-button optional-mobile-action" type="button" onClick={exportConversation} aria-label="Export conversation" title="Export conversation">
-                <Download size={18} />
-              </button>
-            )}
           </div>
         </header>
 
@@ -961,6 +917,20 @@ function App() {
                   </div>
                   <h2>What would you like to know?</h2>
                   <p>Explore verified admissions, tuition fees, waivers, campus life & academic advice.</p>
+                </div>
+                <div className="welcome-cards-grid" aria-label="Guided student journeys">
+                  {[
+                    { icon: "🎓", title: "Admission journey", desc: "Eligibility থেকে application—step by step", prompt: "Start admission journey" },
+                    { icon: "📚", title: "Current student", desc: "Portal, courses, notices ও academic support", prompt: "Start current student journey" },
+                    { icon: "👨‍👩‍👧", title: "Guardian guide", desc: "Program, fee, facilities ও official contacts", prompt: "Start guardian journey" },
+                    { icon: "🧭", title: "Choose a program", desc: "Interest ও verified curriculum দিয়ে সিদ্ধান্ত", prompt: "Help me choose a program" },
+                  ].map((journey) => (
+                    <button className="welcome-card" type="button" key={journey.title} onClick={() => sendMessage(journey.prompt)} disabled={isThinking}>
+                      <span className="welcome-card-icon" aria-hidden="true">{journey.icon}</span>
+                      <strong className="welcome-card-title">{journey.title}</strong>
+                      <span className="welcome-card-desc">{journey.desc}</span>
+                    </button>
+                  ))}
                 </div>
                 <div className="center-composer">{composer}</div>
               </section>
@@ -1053,6 +1023,28 @@ function MessageBubble({ message, copied, onCopy, onSuggestion, onRetry, isSpeak
               </span>
             )}
           </div>
+        )}
+        {isAssistant && message.journey?.steps?.length > 0 && (
+          <section className="journey-card" aria-label={message.journey.title || "Guided journey"}>
+            <div className="journey-card-heading">
+              <span className="journey-card-icon" aria-hidden="true">🧭</span>
+              <div>
+                <strong>{message.journey.title}</strong>
+                <span>{message.journey.audience}</span>
+              </div>
+            </div>
+            <ol className="journey-steps">
+              {message.journey.steps.map((step, stepIndex) => (
+                <li key={`${step.title}-${stepIndex}`}>
+                  <span className="journey-step-number">{stepIndex + 1}</span>
+                  <div>
+                    <strong>{step.title}</strong>
+                    <span>{step.detail}</span>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
         )}
         <div className="bubble">{renderMessageText(message.text)}</div>
         {isAssistant && (
