@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   directActivePersonAnswer,
   directAnswer,
+  fetchGeneratedImageAsset,
   mergeConversationHistory,
   prefersBanglish,
   relevantConversationHistory,
@@ -10,6 +11,32 @@ import {
   resolvedPersonFromExchange,
   requiresVerifiedStructuredAnswer,
 } from "./api-server.mjs";
+
+test("generated image provider responses are verified before success", async () => {
+  const pngBytes = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00]);
+  const valid = await fetchGeneratedImageAsset("https://image.example/test", async () =>
+    new Response(pngBytes, { status: 200, headers: { "content-type": "image/png" } }),
+  );
+  assert.equal(valid.contentType, "image/png");
+  assert.deepEqual([...valid.buffer], [...pngBytes]);
+
+  await assert.rejects(
+    fetchGeneratedImageAsset("https://image.example/fail", async () => new Response("failed", { status: 500 })),
+    /status 500/i,
+  );
+  await assert.rejects(
+    fetchGeneratedImageAsset("https://image.example/html", async () =>
+      new Response("<html>error</html>", { status: 200, headers: { "content-type": "text/html" } }),
+    ),
+    /invalid file type/i,
+  );
+  await assert.rejects(
+    fetchGeneratedImageAsset("https://image.example/corrupt", async () =>
+      new Response("not a png", { status: 200, headers: { "content-type": "image/png" } }),
+    ),
+    /corrupt image data/i,
+  );
+});
 
 const root = "https://gonouniversity.edu.bd/";
 const eee = "Department of Electrical and Electronic Engineering (EEE)";

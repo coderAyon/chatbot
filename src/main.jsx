@@ -634,6 +634,7 @@ function App() {
     }
     setThinkingLabel(thinkingMsg);
 
+    let reachedServer = false;
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -648,6 +649,7 @@ function App() {
           replaceHistory: options.replaceHistory === true,
         }),
       });
+      reachedServer = true;
       if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
         throw new Error(errorBody.error || `API request failed with status ${response.status}`);
@@ -667,12 +669,14 @@ function App() {
       return assistantMessage;
     } catch (error) {
       if (activeRequestRef.current !== request || request.signal.aborted) return null;
-      setConnectionState("offline");
+      setConnectionState(reachedServer ? "online" : "offline");
       setInput(trimmed);
       setAttachments(selectedAttachments);
       const errorMessage = {
         role: "assistant",
-        text: "Chat service is temporarily offline. Your question is kept in the composer - reconnect the service and press Retry.",
+        text: reachedServer
+          ? `Request failed: ${error.message || "The requested service is temporarily unavailable."}`
+          : "Chat service is temporarily offline. Your question is kept in the composer - reconnect the service and press Retry.",
         sources: [],
         mode: "error",
         retryText: outgoingText,

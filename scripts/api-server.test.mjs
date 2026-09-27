@@ -61,7 +61,10 @@ test("health and static frontend responses include defensive headers", async () 
   assert.equal(frontend.status, 200);
   assert.equal(frontend.headers.get("x-content-type-options"), "nosniff");
   assert.equal(frontend.headers.get("x-frame-options"), "DENY");
-  assert.match(frontend.headers.get("content-security-policy") || "", /frame-ancestors 'none'/);
+  const contentSecurityPolicy = frontend.headers.get("content-security-policy") || "";
+  assert.match(contentSecurityPolicy, /frame-ancestors 'none'/);
+  assert.match(contentSecurityPolicy, /img-src[^;]*https:\/\/image\.pollinations\.ai/);
+  assert.match(contentSecurityPolicy, /connect-src[^;]*https:\/\/image\.pollinations\.ai/);
   assert.equal(await rawPathStatus("/%2e%2e%2f.env"), 403);
 });
 

@@ -55,6 +55,7 @@ const responseCache = new Map();
 const rateBuckets = new Map();
 const attachmentSessions = new Map();
 const conversationSessions = new Map();
+const generatedImageCache = new Map();
 const fileWriteQueues = new Map();
 let imageCaptionerPromise = null;
 let ollamaAvailability = { checkedAt: 0, available: false };
@@ -65,6 +66,10 @@ let retrievalIndexCache = { knowledge: null, records: [] };
 let responseCacheLoadPromise;
 let conversationMemoryLoadPromise;
 let rebuildState = { running: false, startedAt: null, finishedAt: null, exitCode: null, message: "" };
+
+const generatedImageTtlMs = positiveIntegerEnv("GENERATED_IMAGE_TTL_MS", 60 * 60 * 1000, 24 * 60 * 60 * 1000);
+const generatedImageMaxBytes = positiveIntegerEnv("GENERATED_IMAGE_MAX_BYTES", 12 * 1024 * 1024, 25 * 1024 * 1024);
+const generatedImageMaxItems = positiveIntegerEnv("GENERATED_IMAGE_MAX_ITEMS", 40, 200);
 
 function normalizeBaseUrl(value) {
   try {
@@ -5609,69 +5614,284 @@ function isExplicitImageRequest(text) {
   return /^(ছবি আঁকো|ছবি বানাও|ছবি তৈরি করো|একটি ছবি|chobi banao|chobi ako|generate an? image|create an? image|draw an? image)/i.test(String(text || "").trim());
 }
 
-async function handleImageGeneration(message, sessionId, history = []) {
-  let promptText = String(message || "")
-    .replace(/(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|একটি ছবি তৈরি করো|একটি ছবি বানাও|একটি ছবি আঁকো|একটি ছবি|image create koro|chobi banao|chobi ako|generate an? image of|create an? image of|draw an? image of|generate image|create image|draw image|ছবি এঁকে দাও|ছবি একে দাও|ছবি বানিয়ে দাও)[:\s,-]*/gi, "")
+function cleanImagePromptText(text) {
+  let cleaned = String(text || "").trim();
+  // Remove creation action verbs and prefixes/suffixes
+  cleaned = cleaned.replace(
+    /(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|একটি ছবি তৈরি করো|একটি ছবি বানাও|একটি ছবি আঁকো|একটি ছবি|ছবি এঁকে দাও|ছবি একে দাও|ছবি বানিয়ে দাও|ছবি তৈরি করে দাও|ছবি দাও|ছবি|image create koro|image banao|image draw koro|photo banao|photo create koro|picture banao|chobi banao|chobi ako|chobi create koro|chobi create|chobi|generate an? image of|create an? image of|draw an? image of|generate image|create image|draw image|draw a\b|draw an\b|generate an?\b|create an?\b|image of\b|photo of\b|picture of\b|illustration of\b|painting of\b)/gi,
+    ""
+  );
+  // Remove Banglish/Bengali postpositions and articles
+  cleaned = cleaned.replace(/\b(r\s+ekta|er\s+ekta|r\s+akta|er\s+akta|ekta|akta)\b/gi, "");
+  cleaned = cleaned.replace(/(?:^|\s+)(?:একটি|একটা)\s+/g, " ");
+  cleaned = cleaned.replace(/(?:^|\s+)(?:র\s+একটা|এর\s+একটা|র\s+একটি|এর\s+একটি)(?:\s+|$)/g, " ");
+  cleaned = cleaned.replace(/\b(banao|koro|draw|create|generate|photo|image|picture)\b/gi, "");
+  cleaned = cleaned.replace(/er(?=\s*$)/i, "");
+  cleaned = cleaned.replace(/(?:\u09c7\u09b0|এর)(?=\s*$)/, "");
+  // Clean punctuation and excess whitespace
+  cleaned = cleaned.replace(/^[:\s,-]+|[:\s,-]+$/g, "").replace(/\s{2,}/g, " ").trim();
+  return cleaned || text;
+}
+
+function extractImageFieldFromText(text, fieldName) {
+  const line = String(text || "").split("\n").find((l) => new RegExp(fieldName, "i").test(l));
+  if (!line) return "";
+  return line
+    .replace(new RegExp(`.*?${fieldName}[:\\s*]*`, "i"), "")
+    .replace(/^[*_`\s]+|[*_`\s]+$/g, "")
     .trim();
-  if (!promptText) promptText = message;
+}
 
-  let enhancedPrompt = promptText;
+function getLastImageContext(history = []) {
+  if (!Array.isArray(history) || history.length === 0) return null;
+  // Look at history in reverse for the most recent assistant image turn
+  for (let i = history.length - 1; i >= 0; i--) {
+    const turn = history[i];
+    if (!turn) continue;
+    if (turn.role !== "assistant") continue;
+
+    const text = String(turn.text || "");
+    const isImage =
+      turn.mode === "image" ||
+      Boolean(turn.image) ||
+      /FLUX|GB AI Image Studio|Visual Concept:/i.test(text);
+
+    if (isImage) {
+      const extractedConcept = extractImageFieldFromText(text, "Visual Concept");
+      const extractedPrompt = extractImageFieldFromText(text, "Prompt") || extractImageFieldFromText(text, "Updated Prompt");
+      const concept = extractedConcept || (turn.image?.prompt || text);
+      const prompt = extractedPrompt || (turn.image?.originalPrompt || concept);
+      return {
+        concept,
+        prompt,
+        turnIndex: i,
+      };
+    }
+    // If immediate previous assistant turn was not an image, don't treat subsequent turn as image refinement
+    break;
+  }
+  return null;
+}
+
+function isImageRefinementOrFollowup(message, history = []) {
+  const lastImage = getLastImageContext(history);
+  if (!lastImage) return null;
+
+  const t = String(message || "").trim();
+  if (!t) return null;
+
+  // Unrelated university / academic questions are NOT image refinements
+  if (/\b(admission|fee|fees|tuition|cost|khoroc|somoy|timing|open|close|bondho|schedule|routine|bus|transport|result|grade|cgpa|gpa|credit|waiver|scholarship|eligibility|joggot|department|faculty|teacher|dean|vc|vice chancellor|registrar|contact|phone|number|email|address|location|kothay|kokhon|koto|ki ki|kivabe|rules|notice|syllabus|curriculum)\b/i.test(t)) {
+    return null;
+  }
+  if (/(ভর্তি|টিউশন|ফি|খরচ|সময়|খোলা|বন্ধ|বাস|রুটিন|রেজাল্ট|গ্রেড|সিজিপিএ|যোগ্যতা|বিভাগ|শিক্ষক|রেজিস্ট্রার|যোগাযোগ|ফোন|ঠিকানা|কোথায়|কখন|কত|কী কী|কীভাবে|নিয়ম|নোটিশ|সিলেবাস)/.test(t)) {
+    return null;
+  }
+
+  // Greetings and closers
+  if (/^(hi|hello|hey|salam|assalamu\s*alaikum|thanks|thank\s*you|dhonnobad|thx|bye|goodbye|kemon\s*acho)\b/i.test(t)) {
+    return null;
+  }
+
+  // Refinement action / subject / visual keywords
+  const hasRefinementKeywords =
+    /\b(dau|dao|de|dien|add|boshao|rakho|diyo|remove|muche|change|bodlao|paltao|banao|koro|korun|korbi|make|put|include|insert|with|without|chara|shoho|shathe|diye)\b/i.test(t) ||
+    /(দাও|দে|দিন|যোগ|বসাও|রাখো|মুছে|বাদ|পরিবর্তন|পাল্টাও|বানাও|করো|করুন|সহ|ছাড়া|দিয়ে|যুক্ত)/.test(t) ||
+    /\b(vitore|inside|baire|outside|samne|in front|pechone|behind|upore|niche|pashe|beside|corner|background|foreground)\b/i.test(t) ||
+    /(ভিতরে|ভেতরে|বাইরে|সামনে|পেছনে|উপরে|নিচে|পাশে|ব্যাকগ্রাউন্ড)/.test(t) ||
+    /\b(color|colour|light|lighting|bright|dark|andhokar|alo|sunset|sunrise|night|day|morning|rain|rainy|cloudy|sunny|winter|fog|foggy|blur|sharp|clear|style|realistic|cartoon|anime|sketch|3d|cinematic|high quality|portrait|landscape)\b/i.test(t) ||
+    /(রং|কালার|আলো|উজ্জ্বল|অন্ধকার|সূর্যাস্ত|রাত|বৃষ্টি|শীত|কুয়াশা|স্টাইল|কার্টুন)/.test(t) ||
+    /\b(student|students|chatro|chatri|manush|people|person|chele|meye|boy|girl|books|boi|table|chair|computer|tree|gach|flower|ful|building|bhaban|sky|akash)\b/i.test(t) ||
+    /(ছাত্র|ছাত্রী|শিক্ষার্থী|মানুষ|ছেলে|মেয়ে|বই|টেবিল|চেয়ার|গাছ|ফুল|ভবন|আকাশ)/.test(t) ||
+    /\b(abar|arekta|arek|again|redo|regenerate|another|differently|onno|notun|aro|more|less|ar)\b/i.test(t) ||
+    /(আবার|আরেকটা|আরেক|নতুন|আরও|আরো|অন্যভাবে)/.test(t);
+
+  const wordCount = t.split(/\s+/).length;
+  const isShortDirectInstruction = wordCount <= 12 && !/[?？]/.test(t);
+
+  if (hasRefinementKeywords || isShortDirectInstruction) {
+    return lastImage;
+  }
+
+  return null;
+}
+
+function pruneGeneratedImages(now = Date.now()) {
+  for (const [id, item] of generatedImageCache.entries()) {
+    if (now - item.createdAt > generatedImageTtlMs) generatedImageCache.delete(id);
+  }
+  while (generatedImageCache.size >= generatedImageMaxItems) {
+    generatedImageCache.delete(generatedImageCache.keys().next().value);
+  }
+}
+
+async function fetchGeneratedImageAsset(imageUrl, fetchImpl = fetch, timeoutMs = 4000) {
+  let response;
   try {
-    const visualInstruction = "You are a world-class prompt engineer for FLUX AI image generator. Translate and expand the user's concept into a vivid, descriptive, photorealistic English visual prompt. Mention subject details, background environment, lighting (cinematic/natural), camera angle, and composition. Keep it under 40 words. Output ONLY the prompt without quotes, prefixes, or conversational filler.";
-    
-    let aiEnhanced = null;
-    const apiKey = envSecret("OPENAI_API_KEY");
+    response = await fetchImpl(imageUrl, {
+      headers: { accept: "image/png,image/jpeg,image/webp" },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+  } catch (error) {
+    throw new Error(error?.name === "TimeoutError" ? "Image provider timed out." : "Image provider could not be reached.");
+  }
+  if (!response?.ok) throw new Error(`Image provider failed with status ${response?.status || "unknown"}.`);
+
+  const contentType = String(response.headers.get("content-type") || "").split(";", 1)[0].trim().toLowerCase();
+  if (!new Set(["image/png", "image/jpeg", "image/webp"]).has(contentType)) {
+    await response.body?.cancel().catch(() => {});
+    throw new Error("Image provider returned an invalid file type.");
+  }
+  const declaredBytes = Number(response.headers.get("content-length") || 0);
+  if (declaredBytes > generatedImageMaxBytes) {
+    await response.body?.cancel().catch(() => {});
+    throw new Error("Generated image is too large.");
+  }
+  const buffer = Buffer.from(await response.arrayBuffer());
+  if (!buffer.length) throw new Error("Image provider returned an empty image.");
+  if (buffer.length > generatedImageMaxBytes) throw new Error("Generated image is too large.");
+  const hasValidSignature =
+    (contentType === "image/png" && buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) ||
+    (contentType === "image/jpeg" && buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) ||
+    (contentType === "image/webp" && buffer.length >= 12 && buffer.subarray(0, 4).toString("ascii") === "RIFF" && buffer.subarray(8, 12).toString("ascii") === "WEBP");
+  if (!hasValidSignature) throw new Error("Image provider returned corrupt image data.");
+  return { buffer, contentType };
+}
+
+function rememberGeneratedImage(asset, seed) {
+  pruneGeneratedImages();
+  const id = `${Date.now().toString(36)}-${seed.toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  generatedImageCache.set(id, { ...asset, createdAt: Date.now() });
+  return `/api/generated-images/${id}`;
+}
+
+async function handleImageGeneration(message, sessionId, history = []) {
+  const refinementContext = isImageRefinementOrFollowup(message, history);
+  const isRefinement = Boolean(refinementContext);
+  const cleanedPromptText = cleanImagePromptText(message);
+
+  let promptDisplay = cleanedPromptText;
+  let enhancedPrompt = "";
+
+  const apiKey = envSecret("OPENAI_API_KEY");
+
+  if (isRefinement) {
+    const previousConcept = refinementContext.concept;
+    promptDisplay = `${cleanedPromptText} (Refining: ${refinementContext.prompt || "Previous image"})`;
+
     if (apiKey) {
-      const resp = await fetch(`${openAiBaseUrl}/chat/completions`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: openAiModel,
-          temperature: 0.65,
-          max_tokens: 120,
-          messages: [
-            { role: "system", content: visualInstruction },
-            { role: "user", content: promptText },
-          ],
-        }),
-        signal: AbortSignal.timeout(4000),
-      }).catch(() => null);
-      if (resp?.ok) {
-        const data = await resp.json().catch(() => null);
-        aiEnhanced = data?.choices?.[0]?.message?.content?.trim();
+      try {
+        const visualInstruction = `You are a world-class prompt engineer for FLUX AI image generator.
+The user previously generated an image with visual concept:
+"${previousConcept}"
+
+The user now wants to modify/regenerate it with:
+"${message}"
+
+TASK:
+1. Merge the user's modifications (e.g. adding students inside, changing lighting, weather, style, background) directly into the previous concept.
+2. If the user instruction is in Bengali or Banglish (e.g. "vitore student dau" -> students studying inside, "aro bright koro" -> brighter vibrant natural light), translate it to English and integrate seamlessly.
+3. Keep the core subject from the previous concept while applying the requested changes.
+4. Keep it under 45 words. Output ONLY the updated photorealistic English prompt without quotes, markdown, prefixes, or conversational filler.`;
+
+        const resp = await fetch(`${openAiBaseUrl}/chat/completions`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: openAiModel,
+            temperature: 0.65,
+            max_tokens: 450,
+            messages: [
+              { role: "system", content: visualInstruction },
+              { role: "user", content: `Previous concept: ${previousConcept}\nModification: ${message}` },
+            ],
+          }),
+          signal: AbortSignal.timeout(8000),
+        }).catch(() => null);
+
+        if (resp?.ok) {
+          const data = await resp.json().catch(() => null);
+          const aiText = data?.choices?.[0]?.message?.content?.trim();
+          if (aiText && aiText.length > 5) {
+            enhancedPrompt = aiText.replace(/^["']|["']$/g, "").trim();
+          }
+        }
+      } catch {
+        // Fallback below
       }
     }
 
-    if (aiEnhanced && aiEnhanced.length > 5) {
-      enhancedPrompt = aiEnhanced.replace(/^["']|["']$/g, "").trim();
-    } else {
-      const hasBangla = /[\u0980-\u09FF]/.test(promptText);
-      if (!hasBangla) {
-        enhancedPrompt = `${promptText}, cinematic lighting, photorealistic, 8k resolution, highly detailed, sharp focus`;
-      } else {
-        enhancedPrompt = `${promptText}, cinematic lighting, high quality, photorealistic, 8k resolution`;
+    if (!enhancedPrompt) {
+      enhancedPrompt = `${previousConcept}, incorporating ${cleanedPromptText}, cinematic lighting, photorealistic, 8k resolution, highly detailed, sharp focus`;
+    }
+  } else {
+    // New image generation
+    if (apiKey) {
+      try {
+        const visualInstruction = "You are a world-class prompt engineer for FLUX AI image generator. Translate and expand the user's concept into a vivid, descriptive, photorealistic English visual prompt. Mention subject details, background environment, lighting (cinematic/natural), camera angle, and composition. Keep it under 40 words. Output ONLY the prompt without quotes, prefixes, or conversational filler.";
+
+        const resp = await fetch(`${openAiBaseUrl}/chat/completions`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: openAiModel,
+            temperature: 0.65,
+            max_tokens: 450,
+            messages: [
+              { role: "system", content: visualInstruction },
+              { role: "user", content: cleanedPromptText },
+            ],
+          }),
+          signal: AbortSignal.timeout(8000),
+        }).catch(() => null);
+
+        if (resp?.ok) {
+          const data = await resp.json().catch(() => null);
+          const aiText = data?.choices?.[0]?.message?.content?.trim();
+          if (aiText && aiText.length > 5) {
+            enhancedPrompt = aiText.replace(/^["']|["']$/g, "").trim();
+          }
+        }
+      } catch {
+        // Fallback below
       }
     }
-  } catch {
-    enhancedPrompt = `${promptText}, cinematic lighting, photorealistic, 8k resolution`;
+
+    if (!enhancedPrompt) {
+      const hasBangla = /[\u0980-\u09FF]/.test(cleanedPromptText);
+      if (!hasBangla) {
+        enhancedPrompt = `${cleanedPromptText}, cinematic lighting, photorealistic, 8k resolution, highly detailed, sharp focus`;
+      } else {
+        enhancedPrompt = `${cleanedPromptText}, cinematic lighting, high quality, photorealistic, 8k resolution`;
+      }
+    }
   }
 
   const seed = Math.floor(Math.random() * 10000000);
   const encoded = encodeURIComponent(enhancedPrompt);
-  const imageUrl = `https://image.pollinations.ai/prompt/${encoded}?width=1024&height=1024&nologo=true&seed=${seed}&model=flux`;
+  const providerImageUrl = `https://image.pollinations.ai/prompt/${encoded}?width=1024&height=1024&nologo=true&seed=${seed}&model=flux`;
+  let imageUrl = providerImageUrl;
+  try {
+    imageUrl = rememberGeneratedImage(await fetchGeneratedImageAsset(providerImageUrl), seed);
+  } catch {
+    imageUrl = providerImageUrl;
+  }
 
   return {
-    text: `✨ **GB AI Image Studio**\n\n🎨 **Prompt:** ${promptText}\n🔍 **Visual Concept:** *${enhancedPrompt}*`,
+    text: `✨ **GB AI Image Studio**\n\n🎨 **${isRefinement ? "Updated Prompt" : "Prompt"}:** ${promptDisplay}\n🔍 **Visual Concept:** *${enhancedPrompt}*`,
     mode: "image",
     medium: "gb-ai",
     aiModel: "FLUX.1 (High Definition)",
     image: {
       url: imageUrl,
       prompt: enhancedPrompt,
-      originalPrompt: promptText,
+      originalPrompt: promptDisplay,
       seed,
       model: "FLUX.1-HD",
       width: 1024,
@@ -5704,10 +5924,13 @@ function isImageCreationIntent(text) {
   if (/(সমাধান|ব্যাখ্যা|উত্তর|কী|কেন|কীভাবে|কোথায়|কখন|কার|প্রোগ্রাম|কোড|ফাংশন|বাগ|ত্রুটি)/.test(t) && !/(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো)/.test(t)) {
     return false;
   }
-  if (/(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|ছবি এঁকে দাও|ছবি একে দাও|ছবি বানিয়ে দাও|ছবি তৈরি করে দাও|ছবি দাও|image create koro|image banao|image draw koro|chobi banao|chobi ako|chobi create|generate an? image|create an? image|draw an? image|draw a\b|generate image|create image|draw image|image of|photo of|picture of|illustration of|painting of|wallpaper of)/i.test(t)) {
-    return true;
-  }
-  return false;
+  const asksForExistingImage =
+    /\b(show|find|search|look\s+up|where\s+(?:is|can\s+i\s+find)|do\s+you\s+have|official)\b.*\b(image|photo|picture|portrait|logo|course\s+plan)\b/i.test(t) ||
+    /\b(image|photo|picture|portrait|logo)\s+of\s+(?:the\s+)?(?:vice\s+chancellor|vc|founder|faculty|teacher|dean|registrar|course\s+plan)\b/i.test(t) ||
+    /(ছবি|ফটো|ইমেজ|লোগো).*(দেখাও|খুঁজে|কোথায়|অফিশিয়াল)|(ভিসি|ভাইস[\s-]*চ্যান্সেলর|প্রতিষ্ঠাতা|শিক্ষক|ডিন|রেজিস্ট্রার|কোর্স[\s-]*প্ল্যান).*(ছবি|ফটো|ইমেজ|লোগো)/i.test(t);
+  if (asksForExistingImage) return false;
+
+  return /(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|ছবি এঁকে দাও|ছবি একে দাও|ছবি বানিয়ে দাও|ছবি তৈরি করে দাও|image create koro|image banao|image draw koro|chobi banao|chobi ako|chobi create(?: koro)?|photo banao|picture banao|logo banao|generate an? image|create an? image|draw an? image|draw a\b|generate image|create image|draw image)/i.test(t);
 }
 
 async function handleGbAiQuestion(message, attachments = [], history = [], sessionId = "") {
@@ -5922,13 +6145,17 @@ async function handleChat(req, res) {
   if (hasAttachments) rememberSessionAttachments(sessionId, uploadedAttachments);
   const storedAttachments = sessionAttachments(sessionId);
 
-  // GB AI mode: Image creation if requested, otherwise Universal Problem & Screenshot Solver
+  const imageRefinement = !hasAttachments ? isImageRefinementOrFollowup(message, history) : null;
+
+  // GB AI mode: Image creation if requested or refinement, otherwise Universal Problem & Screenshot Solver
   if (body.medium === "gb-ai") {
-    const isImageRequest = !hasAttachments && (body.mode === "image" || isImageCreationIntent(message));
+    const isImageRequest = !hasAttachments && (body.mode === "image" || isImageCreationIntent(message) || Boolean(imageRefinement));
     if (isImageRequest) {
       const imageResponse = await handleImageGeneration(message, sessionId, history);
       rememberConversationExchange(sessionId, history, message, imageResponse.text);
-      return json(res, 200, imageResponse);
+      const statusCode = imageResponse.statusCode || 200;
+      delete imageResponse.statusCode;
+      return json(res, statusCode, imageResponse);
     }
 
     const aiResponse = await handleGbAiQuestion(message, uploadedAttachments, history, sessionId);
@@ -5936,11 +6163,13 @@ async function handleChat(req, res) {
     return json(res, 200, aiResponse);
   }
 
-  // Normal Chatbot mode - image creation fallback
-  if (body.mode === "image" || isExplicitImageRequest(message)) {
+  // Normal Chatbot mode - image creation & refinement support
+  if (!hasAttachments && (body.mode === "image" || isImageCreationIntent(message) || isExplicitImageRequest(message) || Boolean(imageRefinement))) {
     const imageResponse = await handleImageGeneration(message, sessionId, history);
     rememberConversationExchange(sessionId, history, message, imageResponse.text);
-    return json(res, 200, imageResponse);
+    const statusCode = imageResponse.statusCode || 200;
+    delete imageResponse.statusCode;
+    return json(res, statusCode, imageResponse);
   }
 
   const knowledge = await loadKnowledge();
@@ -6215,6 +6444,25 @@ async function adminRefresh(req, res) {
   return json(res, 202, { rebuild: rebuildState });
 }
 
+function serveGeneratedImage(req, res, pathname) {
+  if (req.method !== "GET" && req.method !== "HEAD") return json(res, 405, { error: "Method not allowed" });
+  const id = pathname.slice("/api/generated-images/".length);
+  if (!/^[a-z0-9-]{8,80}$/i.test(id)) return json(res, 404, { error: "Generated image not found" });
+  pruneGeneratedImages();
+  const item = generatedImageCache.get(id);
+  if (!item) return json(res, 404, { error: "Generated image expired or was not found" });
+  res.writeHead(200, {
+    "content-type": item.contentType,
+    "content-length": item.buffer.length,
+    "cache-control": `private, max-age=${Math.floor(generatedImageTtlMs / 1000)}`,
+    "content-disposition": `inline; filename="gb-ai-${id}.jpg"`,
+    "x-content-type-options": "nosniff",
+    "cross-origin-resource-policy": "same-origin",
+  });
+  if (req.method === "HEAD") return res.end();
+  res.end(item.buffer);
+}
+
 async function route(req, res) {
   if (req.method === "OPTIONS") return json(res, 200, {});
 
@@ -6232,6 +6480,7 @@ async function route(req, res) {
   }
   if (url.pathname === "/api/chat" && req.method !== "POST") return json(res, 405, { error: "Method not allowed" });
   if (req.method === "POST" && url.pathname === "/api/chat") return handleChat(req, res);
+  if (url.pathname.startsWith("/api/generated-images/")) return serveGeneratedImage(req, res, url.pathname);
   if (req.method === "GET" && url.pathname === "/api/admin/status") return adminStatus(req, res);
   if (url.pathname.startsWith("/api/admin") && !requireAdmin(req, res)) return;
   if (req.method === "GET" && url.pathname === "/api/admin/logs") return adminLogs(req, res);
@@ -6306,7 +6555,7 @@ async function serveStatic(req, res, pathname) {
       "x-frame-options": "DENY",
       "referrer-policy": "no-referrer",
       "permissions-policy": "camera=(), geolocation=(), payment=()",
-      "content-security-policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "content-security-policy": "default-src 'self'; img-src 'self' data: https://image.pollinations.ai; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://image.pollinations.ai; media-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
     });
     if (req.method === "HEAD") {
       res.end();
@@ -6341,6 +6590,7 @@ export {
   directAnswer,
   directClubAnswer,
   extractProgramPlanFacts,
+  fetchGeneratedImageAsset,
   isConversationalIntent,
   mergeConversationHistory,
   resolveConversationHistory,
@@ -6348,4 +6598,8 @@ export {
   relevantConversationHistory,
   resolvedPersonFromExchange,
   requiresVerifiedStructuredAnswer,
+  cleanImagePromptText,
+  getLastImageContext,
+  isImageRefinementOrFollowup,
+  isImageCreationIntent,
 };
