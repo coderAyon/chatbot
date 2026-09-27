@@ -3073,6 +3073,42 @@ body {
   color: #475569;
 }
 
+/* ── Mobile: always show edit button (no hover on touch) ── */
+@media (max-width: 820px) {
+  .user-actions {
+    opacity: 1;
+  }
+
+  .user-actions .message-action span {
+    display: none;
+  }
+
+  .edit-bubble {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .edit-textarea {
+    font-size: 1rem;
+  }
+
+  .edit-actions {
+    gap: 6px;
+  }
+
+  .edit-cancel-btn,
+  .edit-submit-btn {
+    padding: 8px 12px;
+    font-size: 0.78rem;
+  }
+}
+
+@media (hover: none) {
+  .user-actions {
+    opacity: 1;
+  }
+}
+
 .suggestion-row {
   display: flex;
   flex-wrap: wrap;
