@@ -322,11 +322,23 @@ function App() {
       composerRecognitionRef.current = recognition;
       recognition.lang = "bn-BD";
       recognition.interimResults = true;
-      recognition.continuous = false;
+      recognition.continuous = true;
+      recognition.maxAlternatives = 1;
 
       let finalCaptured = "";
+      let silenceTimer = null;
+
+      const resetSilenceTimer = () => {
+        if (silenceTimer) clearTimeout(silenceTimer);
+        silenceTimer = setTimeout(() => {
+          // Auto-stop after 2.5s silence so the captured text stays in composer
+          recognition.stop();
+        }, 2500);
+      };
+
       recognition.onstart = () => {
         setIsListeningComposer(true);
+        resetSilenceTimer();
       };
       recognition.onresult = (event) => {
         let currentInterim = "";
@@ -345,11 +357,17 @@ function App() {
             resizeComposer(composerInputRef.current);
           }
         }
+        // Reset silence timer on every new result so it doesn't cut off mid-sentence
+        resetSilenceTimer();
       };
-      recognition.onerror = () => {
+      recognition.onerror = (e) => {
+        if (silenceTimer) clearTimeout(silenceTimer);
+        // "no-speech" is normal during pauses — don't kill the listener
+        if (e.error === "no-speech" || e.error === "aborted") return;
         setIsListeningComposer(false);
       };
       recognition.onend = () => {
+        if (silenceTimer) clearTimeout(silenceTimer);
         setIsListeningComposer(false);
         composerInputRef.current?.focus();
       };
@@ -1500,17 +1518,31 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
     }
 
     let recognition = null;
+    let silenceTimer = null;
+    const clearSilenceTimer = () => { if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; } };
+
     try {
       recognition = new SpeechRecognition();
       recognitionRef.current = recognition;
       recognition.lang = voiceLang;
       recognition.interimResults = true;
-      recognition.continuous = false;
+      recognition.continuous = true;
+      recognition.maxAlternatives = 1;
 
       let finalCaptured = "";
 
+      const startSilenceTimer = () => {
+        clearSilenceTimer();
+        silenceTimer = setTimeout(() => {
+          if (finalCaptured.trim()) {
+            try { recognition.stop(); } catch {}
+          }
+        }, 2000);
+      };
+
       recognition.onstart = () => {
         setErrorMessage("");
+        startSilenceTimer();
       };
 
       recognition.onresult = (event) => {
@@ -1527,27 +1559,28 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
         if (finalCaptured) {
           setUserTranscript(finalCaptured.trim());
         }
+        startSilenceTimer();
       };
 
       recognition.onerror = (e) => {
-        if (e.error === "no-speech") {
-          if (voiceStatus === "listening" && isComponentMounted.current && !isMuted) {
-            try {
-              recognition.start();
-            } catch {}
-          }
+        if (e.error === "no-speech" || e.error === "aborted") {
+          // Normal during pauses — continuous mode handles this automatically
+          return;
         } else if (e.error === "not-allowed") {
+          clearSilenceTimer();
           setErrorMessage("মাইক্রোফোনের অনুমতি দেওয়া হয়নি। অনুগ্রহ করে ব্রাউজার সেটিংসে মাইক অ্যাক্সেস অ্যালাউ করুন।");
           setVoiceStatus("idle");
         }
       };
 
-      recognition.onend = async () => {
+      recognition.onend = () => {
+        clearSilenceTimer();
         setInterimTranscript("");
         const query = finalCaptured.trim();
         if (query && voiceStatus === "listening") {
           handleUserVoiceQuery(query);
         } else if (voiceStatus === "listening" && !isMuted && isComponentMounted.current) {
+          finalCaptured = "";
           try {
             recognition.start();
           } catch {}
@@ -1560,6 +1593,7 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
     }
 
     return () => {
+      clearSilenceTimer();
       recognition?.abort();
     };
   }, [isOpen, voiceStatus, voiceLang, isMuted]);
