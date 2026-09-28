@@ -5966,13 +5966,14 @@ function cleanFencedCodeBlocks(text) {
         lines.shift();
         continue;
       }
-      if (
-        (/^#{1,4}\s+/.test(first) ||
-          /^\*\*[^*]+\*\*/.test(first) ||
-          /^(here\s+is|here's|below\s+is|this\s+is|code\s*:|solution\s*:|the\s+following|নিচে|এখানে|কোড\s*:)\b/i.test(first)) &&
-        !/^[#\/\-*;<!]/.test(first)
-      ) {
-        outsidePrefix.push(first);
+      const isConversationalIntro =
+        /^(?:#+|\/\/|\/\*+|--|;)?\s*(here\s+is|here's|below\s+is|this\s+is|code\s*:|solution\s*:|the\s+following|requested\s+by|note\s*:|নিচে|এখানে|কোড\s*:)\b/i.test(first) ||
+        /^#{1,4}\s+/.test(first) ||
+        /^\*\*[^*]+\*\*/.test(first);
+
+      if (isConversationalIntro) {
+        const cleanedText = first.replace(/^(?:#+|\/\/|\/\*+|--|;)\s*/, "").replace(/\*+\/$/, "").trim();
+        outsidePrefix.push(cleanedText);
         lines.shift();
       } else {
         break;
@@ -5985,13 +5986,14 @@ function cleanFencedCodeBlocks(text) {
         lines.pop();
         continue;
       }
-      if (
-        (/^#{1,4}\s+/.test(last) ||
-          /^\*\*[^*]+\*\*/.test(last) ||
-          /^(output|explanation|sample\s+run|example\s+run|note|ব্যাখ্যা|আউটপুট)\s*:/i.test(last)) &&
-        !/^[#\/\-*;<!]/.test(last)
-      ) {
-        outsideSuffix.unshift(last);
+      const isConversationalOutro =
+        /^(?:#+|\/\/|\/\*+|--|;)?\s*(output|explanation|sample\s+run|example\s+run|note|let\s+me\s+know|hope\s+this\s+helps|ব্যাখ্যা|আউটপুট)\s*:/i.test(last) ||
+        /^#{1,4}\s+/.test(last) ||
+        /^\*\*[^*]+\*\*/.test(last);
+
+      if (isConversationalOutro) {
+        const cleanedText = last.replace(/^(?:#+|\/\/|\/\*+|--|;)\s*/, "").replace(/\*+\/$/, "").trim();
+        outsideSuffix.unshift(cleanedText);
         lines.pop();
       } else {
         break;
@@ -6559,21 +6561,22 @@ function isImageRefinementOrFollowup(message, history = []) {
   // Examples: "drink bottol beside the person", "bottle beside him", "dog next to boy", "vitore student dau", "pashe ekta bottle"
   const hasSpatialPreposition =
     /\b(beside|next\s+to|near|behind|in\s+front\s+of|on\s+(?:the\s+)?ground|on\s+top\s+of|under|above|around|in\s+(?:the\s+)?background|in\s+(?:the\s+)?foreground|in\s+(?:the\s+)?sky|on\s+(?:the\s+)?(?:grass|table|floor|hill|bench|road)|in\s+(?:his|her|the)?\s*hand|at\s+(?:his|her|the)\s+side|to\s+(?:the\s+)?(?:left|right))\b/i.test(t) ||
-    /\b(vitore|inside|moddhe|background|foreground|samne|pechone|upore|niche|pashe|shathe|kache)\b/i.test(t) ||
-    /(ভিতরে|ভেতরে|মধ্যে|ব্যাকগ্রাউন্ড|সামনে|পেছনে|পাশে|সাথে|কাছে|উপরে|নিচে)/.test(t);
+    /\b(vitore|inside|moddhe|background|foreground|samne|pechone|upore|niche|pashe|shathe|kache|hate|mathay|chokhe|gaye|mukhe)\b/i.test(t) ||
+    /(ভিতরে|ভেতরে|মধ্যে|ব্যাকগ্রাউন্ড|সামনে|পেছনে|পাশে|সাথে|কাছে|উপরে|নিচে|হাতে|মাথায়|চোখে|মুখে)/.test(t);
 
   const isSpatialPlacementEdit =
     hasSpatialPreposition &&
-    (/\b(drink|bottol|bottle|can|cup|mug|glass|soda|water|juice|coffee|tea|bag|backpack|hat|cap|glasses|sunglasses|shoe|shoes|jacket|shirt|t-shirt|pants|phone|watch|laptop|book|books|guitar|cat|dog|pet|bird|tree|trees|flower|flowers|car|bike|table|chair|bench|umbrella|food|sun|moon|stars?|clouds?|person|boy|girl|man|woman|guy|child|kid|him|her|them|character|subject|chatro|chatri|chele|meye|manush|gach|ful|boi|kukur|biral|nodi|pahar)\b/i.test(t) ||
+    (/\b(drink|bottol|bottle|can|cup|mug|glass|soda|water|juice|coffee|tea|bag|backpack|hat|cap|glasses|sunglasses|shoe|shoes|jacket|shirt|t-shirt|tshirt|hoodie|pants|phone|watch|laptop|book|books|bookshelf|bookshelves|shelf|shelves|guitar|cat|dog|pet|bird|tree|trees|flower|flowers|car|bike|table|chair|bench|umbrella|food|sun|shurjo|surjo|chad|pani|alo|bristi|kuasha|moon|stars?|clouds?|person|people|boy|girl|man|woman|guy|child|kid|him|her|them|student|students|character|subject|chatro|chatri|chele|meye|manush|gach|ful|boi|kukur|biral|nodi|pahar)\b/i.test(t) ||
       /\b(dau|dao|boshao|rakho|add|put|de|diyo|banao|koro|make|insert|place|keep|show)\b/i.test(t) ||
-      /(দাও|দে|দিন|বসাও|রাখো|যোগ|বানাও|করো)/.test(t));
+      /(দাও|দে|দিন|বসাও|রাখো|যোগ|বানাও|করো|সূর্য|চাঁদ|পানি|বৃষ্টি|কুয়াশা|ছাত্র|ছাত্রী|মানুষ|বই)/.test(t));
 
   // 2. Subject clothing, accessories, posture, actions & expressions:
   const isSubjectAppearanceOrAction =
-    /\b(wearing|dressed\s+in|holding|carrying|with\s+(?:a\s+)?(?:hat|cap|glasses|sunglasses|guitar|bag|backpack|drink|bottle|bottol|cup|phone|smile)|sitting\s+(?:on|in)|standing\s+(?:on|near|in)|lying\s+on|walking|running|smiling)\b/i.test(t) ||
+    /\b(wearing|dressed\s+in|holding|carrying|sitting\s+(?:on|in|beside|near)|standing\s+(?:on|near|in|beside)|lying\s+on|walking|running|smiling)\b/i.test(t) ||
+    /\bwith\s+(?:an?\s+)?(?:[a-zA-Z-]+\s+)?(?:hat|cap|glasses|sunglasses|hoodie|jacket|shirt|t-shirt|tshirt|sweater|coat|dress|suit|pants|guitar|bag|backpack|drink|bottle|bottol|cup|phone|camera|smile)\b/i.test(t) ||
     /\b(?:look|looking)\s+(?:at\s+(?:the\s+)?camera|forward|away|back|up|down)\b/i.test(t) ||
     /\b(?:face|chehra|mukhta)\s*(?:dekha\s+jabe|visible|clear|show)\b/i.test(t) ||
-    /(?:পড়ে\s*আছে|পরে\s*আছে|হাতে\s*আছে|ধরে\s*আছে|বসে\s*আছে|দাঁড়িয়ে\s*আছে|হাসিমুখ|চশমা)/.test(t);
+    /(?:পড়ে\s*আছে|পরে\s*আছে|হাতে\s*আছে|ধরে\s*আছে|বসে\s*আছে|দাঁড়িয়ে\s*আছে|হাসিমুখ|চশমা|হুডি|ক্যাপ)/.test(t);
 
   // 3. Camera angle, framing & perspective:
   const isCameraOrPerspectiveEdit =
@@ -6587,21 +6590,22 @@ function isImageRefinementOrFollowup(message, history = []) {
   const isLightingAtmosphereOrStyle =
     /\b(?:aro|more|less)\s+(?:bright|dark|andhokar|alo|clear|vibrant|colorful|cinematic|realistic)\b/i.test(t) ||
     /\b(?:sunset|sunrise|golden\s+hour|blue\s+hour|night|morning|evening|rain|rainy|snow|snowy|fog|foggy|cloudy|sunny|winter|autumn|summer|spring)\s*(?:lighting|view|scene|time|weather|sky)?\b/i.test(t) ||
-    /\b(?:cinematic|photorealistic|hyperrealistic|anime|cartoon|watercolor|oil\s+painting|3d\s+render|sketch|black\s+and\s+white|vintage)\s*(?:style|look|render)?\b/i.test(t) ||
+    /\b(?:cinematic|photorealistic|hyperrealistic|anime|cartoon|watercolor|oil\s+painting|3d\s+render|sketch|pencil\s+sketch|black\s+and\s+white|vintage|retro|cyberpunk|steampunk|synthwave|neon|isometric|minimalist|concept\s+art|digital\s+art)\s*(?:style|look|render|lighting)?\b/i.test(t) ||
+    /\b(?:raat|raater|shokal|shokale|bikal|bikale|dupur|dupure|shondha|shondhay|kuasha|alo|andhokar|bristi)\b/i.test(t) ||
     /(?:রং|কালার|আলো|উজ্জ্বল|অন্ধকার|সূর্যাস্ত|রাত|বৃষ্টি|কুয়াশা|স্টাইল|কার্টুন|সকাল|সন্ধ্যা)/.test(t);
 
   // 5. Direct element addition or substitution:
   const isElementAdditionOrChange =
-    /\b(?:add|put|insert|place|include)\s+.*\b(?:drink|bottle|bottol|can|cup|hat|cap|glasses|sunglasses|guitar|cat|dog|tree|flower|car|bike|table|chair|bench|clouds?|stars?|student|students|people|person)\b/i.test(t) ||
-    /\b(?:student|students|chatro|chatri|manush|people|person|boi|books|table|chair|computer|tree|gach|flower|ful)\s+(?:add|yog|যুক্ত)\s*(?:koro|dao|dau)?\b/i.test(t) ||
+    /\b(?:add|put|insert|place|include)\s+.*\b(?:drink|bottle|bottol|can|cup|hat|cap|glasses|sunglasses|hoodie|jacket|guitar|cat|dog|tree|flower|car|bike|table|chair|bench|clouds?|stars?|student|students|people|person)\b/i.test(t) ||
+    /\b(?:student|students|chatro|chatri|manush|people|person|boi|book|books|bookshelf|bookshelves|table|chair|computer|tree|gach|flower|ful)\s+(?:add|yog|যুক্ত)\s*(?:koro|dao|dau)?\b/i.test(t) ||
     /\b(?:change|paltao|bodlao|replace|instead\s+of|bodole|jaygay)\b/i.test(t) ||
     /\b(?:make\s+it|turn\s+it)\b/i.test(t) ||
     /(?:পরিবর্তন|বদলে|জায়গায়|যোগ\s*করো)/.test(t);
 
   // 6. Visual object attribute modifier:
   const isVisualObjectAttribute =
-    /\b(drink|bottol|bottle|can|cup|mug|glass|soda|water|juice|coffee|tea|bag|backpack|hat|cap|glasses|sunglasses|shoe|shoes|jacket|shirt|t-shirt|pants|guitar|umbrella)\b/i.test(t) &&
-    /\b(red|blue|black|white|green|yellow|brown|grey|gray|dark|light|beside|with|on|in|next\s+to|near)\b/i.test(t);
+    /\b(drink|bottol|bottle|can|cup|mug|glass|soda|water|juice|coffee|tea|bag|backpack|hat|cap|glasses|sunglasses|shoe|shoes|jacket|shirt|t-shirt|tshirt|hoodie|sweater|coat|dress|suit|pants|guitar|umbrella|camera|laptop|phone)\b/i.test(t) &&
+    /\b(red|blue|black|white|green|yellow|brown|grey|gray|dark|light|pink|purple|orange|golden|silver|beside|with|on|in|next\s+to|near)\b/i.test(t);
 
   // 7. Removal / negative instruction:
   const isRemovalEdit =
@@ -6837,9 +6841,10 @@ TASK:
 function isExistingImageLookupIntent(text) {
   const t = String(text || "").trim();
   return (
-    /\b(show|find|search|look\s+up|where\s+(?:is|can\s+i\s+find)|do\s+you\s+have|official)\b.*\b(image|photo|picture|portrait|logo|course\s+plan)\b/i.test(t) ||
-    /\b(image|photo|picture|portrait|logo|course\s+plan)\b.*\b(dekhao|dekhaw|khujte|khuje|find|show)\b/i.test(t) ||
-    /\b(image|photo|picture|portrait|logo)\s+of\s+(?:the\s+)?(?:vice\s+chancellor|vc|founder|faculty|teacher|dean|registrar|course\s+plan)\b/i.test(t) ||
+    /\b(show|find|search|look\s+up|where\s+(?:is|can\s+i\s+find)|do\s+you\s+have|official)\b.*\b(image|photo|picture|portrait|logo|chobi|chobita|course\s+plan)\b/i.test(t) ||
+    /\b(image|photo|picture|portrait|logo|chobi|chobita|course\s+plan)\b.*\b(dekhao|dekhaw|khujte|khuje|find|show)\b/i.test(t) ||
+    /\b(image|photo|picture|portrait|logo|chobi|chobita)\s+of\s+(?:the\s+)?(?:vice\s+chancellor|vc|founder|faculty|teacher|dean|registrar|course\s+plan)\b/i.test(t) ||
+    /\b(?:vc|vice\s+chancellor|registrar|proctor|teacher|faculty|founder)\b.*\b(?:official\s+)?(?:chobi|chobita|photo|image|picture)\b.*\b(?:dekhao|show|dao|khujte)\b/i.test(t) ||
     /(ছবি|ফটো|ইমেজ|লোগো).*(দেখাও|খুঁজে|কোথায়|অফিশিয়াল)|(ভিসি|ভাইস[\s-]*চ্যান্সেলর|প্রতিষ্ঠাতা|শিক্ষক|ডিন|রেজিস্ট্রার|কোর্স[\s-]*প্ল্যান).*(ছবি|ফটো|ইমেজ|লোগো)/i.test(t)
   );
 }
@@ -7040,6 +7045,31 @@ function isUniversityInquiry(message, knowledge, history = []) {
         return true;
       }
     }
+
+    // Pronouns referring to university persons or departments (unir, tar, etar, eitar, unir designation, unir phone, etc.)
+    const hasUniversityContinuationPronoun =
+      /\b(unir|uni|unake|unara|tar|tahr|tini|take|etar|eitar|er|oitar|his|her|their|its|that|this)\b/i.test(t) ||
+      /(তাঁর|তার|উনার|ইনি|তিনি|এটার|ওইটার|এর)/.test(t);
+    const hasUniversityAttributeInquiry =
+      /\b(designation|post|pad|pod|rank|phone|mobile|number|email|contact|office|room|fee|cost|credit|credits|duration|seats?|requirement|eligibility|syllabus|routine|head|dept|department)\b/i.test(t) ||
+      /(পদবী|পদবি|ফোন|নম্বর|মোবাইল|ইমেইল|যোগাযোগ|ফি|খরচ|ক্রেডিট|মেয়াদ|আসন|যোগ্যতা|সিলেবাস|রুটিন|বিভাগ)/.test(t);
+
+    if (hasUniversityContinuationPronoun && hasUniversityAttributeInquiry) {
+      const lastAss = getLastAssistantTurn(history);
+      if (
+        lastAss &&
+        (lastAss.mode === "gb_ai_university_chatbot" ||
+          lastAss.isUniversityQuery ||
+          /গণ\s*বিশ্ববিদ্যালয়|gono\s*bishwabidyalay|Department|Faculty|Abu Daud|Professor|Head|Dean|VC/i.test(lastAss.text || ""))
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // Filter out image creation requests
+  if (isImageCreationIntent(t)) {
+    return false;
   }
 
   // Filter out pure programming/code, math formulas, or non-university general questions
