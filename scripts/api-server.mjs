@@ -6469,12 +6469,28 @@ function isExplicitFreshImageIntent(text) {
   return false;
 }
 
+function isExplicitPromptWritingRequest(text) {
+  const t = String(text || "").trim();
+  if (!t) return false;
+  return (
+    /\b(?:write|give|suggest|create|generate|provide)\s+(?:me\s+)?(?:an?\s+)?(?:image\s+|flux\s+|midjourney\s+)?prompt\b/i.test(t) ||
+    /\b(?:prompt\s+(?:likhe?\s*dao|dao|dau|banao|chai|lagbe|likho|din|koro|diyo)|(?:likhe?\s*dao|dao|dau|banao|likho|din|koro)\s+.*prompt)\b/i.test(t) ||
+    /(?:প্রম্পট|prompt)\s*(?:লিখো|লিখে\s*দাও|দাও|দিন|বানাও|তৈরি\s*করো|চাই|প্রয়োজন)/i.test(t) ||
+    /(?:লিখো|লিখে\s*দাও|দাও|দিন|বানাও)\s*.*(?:প্রম্পট|prompt)/i.test(t)
+  );
+}
+
 function isImageRefinementOrFollowup(message, history = []) {
   const lastImage = getLastImageContext(history);
   if (!lastImage) return null;
 
   const t = String(message || "").trim();
   if (!t) return null;
+
+  // If user explicitly asks to write a text prompt, let the text engine answer rather than generating an image
+  if (isExplicitPromptWritingRequest(t)) {
+    return null;
+  }
 
   // If user explicitly asks for a fresh new image of another subject, don't treat as refinement
   if (isExplicitFreshImageIntent(t)) {
@@ -6513,7 +6529,7 @@ function isImageRefinementOrFollowup(message, history = []) {
 
   // Unrelated university / academic questions are NOT image refinements
   if (
-    /\b(admission|fee|fees|tuition|cost|khoroc|somoy|timing|open|close|bondho|schedule|routine|bus|transport|result|grade|cgpa|gpa|credit|waiver|scholarship|eligibility|joggot|department|faculty|teacher|dean|vc|vice chancellor|registrar|contact|phone|number|email|address|location|kothay|kokhon|koto|ki ki|kivabe|rules|notice|syllabus|curriculum|versity|university|varsity|campus|gono|bishwabidyalay)\b/i.test(t) &&
+    /\b(admission|fee|fees|tuition|cost|khoroc|somoy|timing|open|close(?!\s*up)|bondho|schedule|routine|bus|transport|result|grade|cgpa|gpa|credit|waiver|scholarship|eligibility|joggot|department|faculty|teacher|dean|vc|vice chancellor|registrar|contact|phone|number|email|address|location|kothay|kokhon|koto|ki ki|kivabe|rules|notice|syllabus|curriculum|versity|university|varsity|campus|gono|bishwabidyalay)\b/i.test(t) &&
     !hasExplicitImageTerm
   ) {
     return null;
@@ -6530,46 +6546,88 @@ function isImageRefinementOrFollowup(message, history = []) {
     return null;
   }
 
-  // Visual scene editing and refinement patterns:
-  // 1. Placement / addition inside or around the scene:
-  const isPlacementOrSceneEdit =
-    /(?:vitore|inside|moddhe|background|foreground|samne|pechone|upore|niche|pashe)\s+.*\b(?:dau|dao|boshao|rakho|add|put|de|diyo|banao|koro|make|insert)\b/i.test(t) ||
-    /\b(?:dau|dao|boshao|rakho|add|put|insert)\b.*\b(?:vitore|inside|moddhe|background|foreground|samne|pechone|upore|niche|pashe)\b/i.test(t) ||
-    /(?:ভিতরে|ভেতরে|মধ্যে|ব্যাকগ্রাউন্ড|সামনে|পেছনে|পাশে)\s+.*\b(?:দাও|দে|দিন|বসাও|রাখো|যোগ|বানাও|করো)/.test(t);
+  // Pure compliments and acknowledgments are NOT refinements (don't generate new image for "nice", "ok", "wow", etc.)
+  if (
+    /^(ok|okay|thik\s*ache|valo|bhalo|nice|good|great|wow|super|awesome|sundor|shundor|khub\s*valo|khub\s*sundor|fine|perfect|cool)[!.]*$/i.test(t) ||
+    /^(ঠিক আছে|ভালো|সুন্দর|দারুণ|ধন্যবাদ|অসাধারণ)[!.]*$/.test(t)
+  ) {
+    return null;
+  }
 
-  // 2. Removal / negative instruction:
+  // Visual scene editing and refinement patterns:
+  // 1. Spatial placement / relational positioning (with or without imperative verbs):
+  // Examples: "drink bottol beside the person", "bottle beside him", "dog next to boy", "vitore student dau", "pashe ekta bottle"
+  const hasSpatialPreposition =
+    /\b(beside|next\s+to|near|behind|in\s+front\s+of|on\s+(?:the\s+)?ground|on\s+top\s+of|under|above|around|in\s+(?:the\s+)?background|in\s+(?:the\s+)?foreground|in\s+(?:the\s+)?sky|on\s+(?:the\s+)?(?:grass|table|floor|hill|bench|road)|in\s+(?:his|her|the)?\s*hand|at\s+(?:his|her|the)\s+side|to\s+(?:the\s+)?(?:left|right))\b/i.test(t) ||
+    /\b(vitore|inside|moddhe|background|foreground|samne|pechone|upore|niche|pashe|shathe|kache)\b/i.test(t) ||
+    /(ভিতরে|ভেতরে|মধ্যে|ব্যাকগ্রাউন্ড|সামনে|পেছনে|পাশে|সাথে|কাছে|উপরে|নিচে)/.test(t);
+
+  const isSpatialPlacementEdit =
+    hasSpatialPreposition &&
+    (/\b(drink|bottol|bottle|can|cup|mug|glass|soda|water|juice|coffee|tea|bag|backpack|hat|cap|glasses|sunglasses|shoe|shoes|jacket|shirt|t-shirt|pants|phone|watch|laptop|book|books|guitar|cat|dog|pet|bird|tree|trees|flower|flowers|car|bike|table|chair|bench|umbrella|food|sun|moon|stars?|clouds?|person|boy|girl|man|woman|guy|child|kid|him|her|them|character|subject|chatro|chatri|chele|meye|manush|gach|ful|boi|kukur|biral|nodi|pahar)\b/i.test(t) ||
+      /\b(dau|dao|boshao|rakho|add|put|de|diyo|banao|koro|make|insert|place|keep|show)\b/i.test(t) ||
+      /(দাও|দে|দিন|বসাও|রাখো|যোগ|বানাও|করো)/.test(t));
+
+  // 2. Subject clothing, accessories, posture, actions & expressions:
+  const isSubjectAppearanceOrAction =
+    /\b(wearing|dressed\s+in|holding|carrying|with\s+(?:a\s+)?(?:hat|cap|glasses|sunglasses|guitar|bag|backpack|drink|bottle|bottol|cup|phone|smile)|sitting\s+(?:on|in)|standing\s+(?:on|near|in)|lying\s+on|walking|running|smiling)\b/i.test(t) ||
+    /\b(?:look|looking)\s+(?:at\s+(?:the\s+)?camera|forward|away|back|up|down)\b/i.test(t) ||
+    /\b(?:face|chehra|mukhta)\s*(?:dekha\s+jabe|visible|clear|show)\b/i.test(t) ||
+    /(?:পড়ে\s*আছে|পরে\s*আছে|হাতে\s*আছে|ধরে\s*আছে|বসে\s*আছে|দাঁড়িয়ে\s*আছে|হাসিমুখ|চশমা)/.test(t);
+
+  // 3. Camera angle, framing & perspective:
+  const isCameraOrPerspectiveEdit =
+    /\b(?:from\s+)?(?:front|back|side|top|rear|aerial|drone|wide|close\s*up|macro|profile)\s*(?:view|side|angle|shot|perspective)\b/i.test(t) ||
+    /\b(?:front|back|side|top|rear)\s+(?:view|angle|shot|side)\b/i.test(t) ||
+    /\b(?:close\s*up|wide\s*shot|drone\s*shot|aerial\s*view|eye\s*level)\b/i.test(t) ||
+    /\b(?:samner|pichoner|pasher|uporer)\s+(?:dik|side|theke)\b/i.test(t) ||
+    /(?:সামনের\s*দিক|পেছনের\s*দিক|পাশের\s*দিক|ক্লোজ\s*আপ)/.test(t);
+
+  // 4. Lighting, atmosphere, weather & artistic style:
+  const isLightingAtmosphereOrStyle =
+    /\b(?:aro|more|less)\s+(?:bright|dark|andhokar|alo|clear|vibrant|colorful|cinematic|realistic)\b/i.test(t) ||
+    /\b(?:sunset|sunrise|golden\s+hour|blue\s+hour|night|morning|evening|rain|rainy|snow|snowy|fog|foggy|cloudy|sunny|winter|autumn|summer|spring)\s*(?:lighting|view|scene|time|weather|sky)?\b/i.test(t) ||
+    /\b(?:cinematic|photorealistic|hyperrealistic|anime|cartoon|watercolor|oil\s+painting|3d\s+render|sketch|black\s+and\s+white|vintage)\s*(?:style|look|render)?\b/i.test(t) ||
+    /(?:রং|কালার|আলো|উজ্জ্বল|অন্ধকার|সূর্যাস্ত|রাত|বৃষ্টি|কুয়াশা|স্টাইল|কার্টুন|সকাল|সন্ধ্যা)/.test(t);
+
+  // 5. Direct element addition or substitution:
+  const isElementAdditionOrChange =
+    /\b(?:add|put|insert|place|include)\s+.*\b(?:drink|bottle|bottol|can|cup|hat|cap|glasses|sunglasses|guitar|cat|dog|tree|flower|car|bike|table|chair|bench|clouds?|stars?|student|students|people|person)\b/i.test(t) ||
+    /\b(?:student|students|chatro|chatri|manush|people|person|boi|books|table|chair|computer|tree|gach|flower|ful)\s+(?:add|yog|যুক্ত)\s*(?:koro|dao|dau)?\b/i.test(t) ||
+    /\b(?:change|paltao|bodlao|replace|instead\s+of|bodole|jaygay)\b/i.test(t) ||
+    /\b(?:make\s+it|turn\s+it)\b/i.test(t) ||
+    /(?:পরিবর্তন|বদলে|জায়গায়|যোগ\s*করো)/.test(t);
+
+  // 6. Visual object attribute modifier:
+  const isVisualObjectAttribute =
+    /\b(drink|bottol|bottle|can|cup|mug|glass|soda|water|juice|coffee|tea|bag|backpack|hat|cap|glasses|sunglasses|shoe|shoes|jacket|shirt|t-shirt|pants|guitar|umbrella)\b/i.test(t) &&
+    /\b(red|blue|black|white|green|yellow|brown|grey|gray|dark|light|beside|with|on|in|next\s+to|near)\b/i.test(t);
+
+  // 7. Removal / negative instruction:
   const isRemovalEdit =
-    /\b(?:remove|muche|bad|chara)\b.*\b(?:koro|dao|dau|de|banao|make)\b/i.test(t) ||
+    /\b(?:remove|delete|muche|bad|chara|without|no\s+more)\b/i.test(t) ||
     /\b(?:student|students|chatro|chatri|manush|people|person|tree|trees|building)\s+(?:shob\s+)?(?:remove|bad|muche)\b/i.test(t) ||
     /\b(?:remove\s+all\s+.*\s+from\s+the\s+scene|vitore\s+kono\s+manush\s+thakbe\s+na)\b/i.test(t) ||
-    /(?:মুছে\s*দাও|বাদ\s*দাও|বাদ\s*করো|ছাড়া\s*বানাও)/.test(t);
+    /(?:মুছে\s*দাও|বাদ\s*দাও|বাদ\s*করো|ছাড়া\s*বানাও|বাদ)/.test(t);
 
-  // 3. Lighting / color / atmosphere / style adjustment:
-  const isLightingOrAtmosphereEdit =
-    /\b(?:aro|more|less)\s+(?:bright|dark|andhokar|alo|clear|vibrant|colorful|cinematic|realistic)\b/i.test(t) ||
-    /\b(?:sunset|sunrise|night|day|morning|rain|rainy|cloudy|sunny|winter|fog|foggy)\s*(?:lighting|view|scene)?\s*(?:e\s+)?(?:banao|dau|dao|koro|make)\b/i.test(t) ||
-    /(?:রং|কালার|আলো|উজ্জ্বল|অন্ধকার|সূর্যাস্ত|রাত|বৃষ্টি|কুয়াশা|স্টাইল|কার্টুন)\s*.*\b(?:করো|দাও|বানাও|হবে)/.test(t);
-
-  // 4. Element addition / modification with subjects:
-  const isElementAddition =
-    /\b(?:student|students|chatro|chatri|manush|people|person|boi|books|table|chair|computer|tree|gach|flower|ful)\s+(?:add|yog|যুক্ত)\s*(?:koro|dao|dau)?\b/i.test(t) ||
-    /\b(?:vitore|inside)\s+.*\b(?:boshe|porche|stand|sit|walk|read|porashona)\b.*\b(?:emon\s+)?(?:banao|dau|dao|koro)\b/i.test(t);
-
-  // 5. Continuation / regeneration:
+  // 8. Continuation / regeneration:
   const isContinuation =
-    /\b(?:arekta|abar|notun\s+kore|arek|another\s+one|regenerate|redo)\s*(?:banao|dao|dau|try\s*koro|koro|make|draw)?\b/i.test(t) ||
+    /\b(?:arekta|abar|notun\s+kore|arek|another\s+one|regenerate|redo|once\s+more|one\s+more)\s*(?:banao|dao|dau|try\s*koro|koro|make|draw)?\b/i.test(t) ||
     /(?:আবার|আরেকটা|আরেকবার)\s*(?:বানাও|দাও|আঁকো)/.test(t);
 
-  // 6. Explicit image modifier:
+  // 9. Explicit image modifier:
   const isExplicitImageModification =
     hasExplicitImageTerm &&
     /\b(dau|dao|de|add|boshao|rakho|remove|muche|change|bodlao|paltao|banao|koro|make|put|bright|dark|sunset|night|style|color|realistic|cinematic)\b/i.test(t);
 
   if (
-    isPlacementOrSceneEdit ||
+    isSpatialPlacementEdit ||
+    isSubjectAppearanceOrAction ||
+    isCameraOrPerspectiveEdit ||
+    isLightingAtmosphereOrStyle ||
+    isElementAdditionOrChange ||
+    isVisualObjectAttribute ||
     isRemovalEdit ||
-    isLightingOrAtmosphereEdit ||
-    isElementAddition ||
     isContinuation ||
     isExplicitImageModification
   ) {
@@ -6757,6 +6815,7 @@ TASK:
       originalPrompt: promptDisplay,
       seed,
       model: "FLUX.1-HD",
+      isRefinement,
       width: 1024,
       height: 1024,
       createdAt: new Date().toISOString(),
@@ -7144,6 +7203,14 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
       `- If expand: Provide a detailed, in-depth explanation with context and practical implications.\n` +
       `- If simplify: Explain in simple, intuitive terms.\n` +
       `STRICTLY PRESERVE all facts, numbers, dates, equations, and code from the previous answer. DO NOT ask what to reformat; answer directly in the requested format.`;
+  }
+
+  const asksForPrompt = isExplicitPromptWritingRequest(message);
+  if (!asksForPrompt) {
+    systemInstruction +=
+      `\n\nCRITICAL NEGATIVE CONSTRAINT REGARDING IMAGE GENERATION PROMPTS:\n` +
+      `- NEVER output text like "Here's an updated prompt you can use:", "Prompt: ...", or generate Midjourney/FLUX prompts. The student did NOT ask for a prompt.\n` +
+      `- If the user's message is an academic question, coding question, or general query, answer their question directly.\n`;
   }
 
   let userPrompt = "";
@@ -7875,4 +7942,5 @@ export {
   isCodingQuestion,
   asksCodeExplanation,
   cleanFencedCodeBlocks,
+  isExplicitPromptWritingRequest,
 };

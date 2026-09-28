@@ -149,6 +149,40 @@ test("in GB AI mode, general question after image generation is NOT treated as i
   assert.equal(data.image, undefined);
 });
 
+test("in GB AI mode, visual suggestion after image generation creates refined image instead of text prompt", async () => {
+  const historyWithImage = [
+    { role: "user", text: "alone boy sitting on hill" },
+    {
+      role: "assistant",
+      mode: "image",
+      text: "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** alone boy on hill\n🔍 **Visual Concept:** *Boy on a hill with drink*",
+      image: {
+        prompt: "Boy on a hill with drink",
+        originalPrompt: "alone boy on hill",
+      },
+    },
+  ];
+
+  const res = await fetch(`${baseUrl}/api/chat`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      message: "drink bottol beside the person",
+      medium: "gb-ai",
+      history: historyWithImage,
+    }),
+  });
+
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  assert.equal(data.mode, "image");
+  assert.ok(data.image, "Should generate an image object");
+  assert.ok(data.image.url, "Image object should have an image url");
+  assert.equal(data.image.isRefinement, true);
+  assert.match(data.text, /GB AI Image Studio/);
+  assert.doesNotMatch(data.text, /Here's an updated prompt you can use/i);
+});
+
 test("in GB AI mode, university questions route to gb_ai_university_chatbot with GB Chatbot branding", async () => {
   const res = await fetch(`${baseUrl}/api/chat`, {
     method: "POST",

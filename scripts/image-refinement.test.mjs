@@ -9,6 +9,7 @@ import {
   isExistingImageLookupIntent,
   isWebSearchIntent,
   isUniversityInquiry,
+  isExplicitPromptWritingRequest,
 } from "./api-server.mjs";
 
 test("cleanImagePromptText strips action verbs, articles, and genitive particles", () => {
@@ -98,6 +99,34 @@ test("isImageRefinementOrFollowup detects scene modifications following an image
   assert.ok(result1, "Should detect 'Vitore student dau' as refinement");
   assert.equal(result1.prompt, "Library");
 
+  // User's exact second prompt from screenshot (drink bottol beside the person)
+  const solitaryBoyHistory = [
+    { role: "user", text: "create image that alone boy sitting on the hill with drink. image from back side" },
+    {
+      role: "assistant",
+      text: "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** that alone boy sitting on the hill with drink. from back side\n🔍 **Visual Concept:** *Back view of a solitary teenage boy perched on a grassy hill at sunset, holding a soda, golden light casting long shadows, distant mountains blurred, low-angle shot, wide composition, cinematic natural lighting.*",
+    },
+  ];
+
+  const drinkBottolResult = isImageRefinementOrFollowup("drink bottol beside the person", solitaryBoyHistory);
+  assert.ok(drinkBottolResult, "Should detect 'drink bottol beside the person' as refinement");
+  assert.match(drinkBottolResult.concept, /solitary teenage boy/i);
+
+  // Other natural spatial and visual modifications
+  assert.ok(isImageRefinementOrFollowup("drink bottle beside him", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("water bottle next to the boy", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("dog sitting beside him", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("wearing sunglasses", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("with sunglasses", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("guitar in his hand", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("sitting on a wooden bench", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("sunset in the background", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("front side view", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("close up shot", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("pashe ekta bottle", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("clouds in the sky", solitaryBoyHistory));
+  assert.ok(isImageRefinementOrFollowup("change shirt color to blue", solitaryBoyHistory));
+
   // Other Banglish / Bengali refinements
   assert.ok(isImageRefinementOrFollowup("student add koro", historyWithImage));
   assert.ok(isImageRefinementOrFollowup("vitore kichu chatro boshe porche emon banao", historyWithImage));
@@ -113,6 +142,18 @@ test("isImageRefinementOrFollowup detects scene modifications following an image
   assert.ok(isImageRefinementOrFollowup("student chara banao", historyWithImage));
   assert.ok(isImageRefinementOrFollowup("vitore kono manush thakbe na", historyWithImage));
   assert.ok(isImageRefinementOrFollowup("remove all people from the scene", historyWithImage));
+
+  // Compliments and acknowledgments must NOT generate an image
+  assert.equal(isImageRefinementOrFollowup("nice", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("good", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("ok", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("khub sundor", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("wow", historyWithImage), null);
+
+  // When user explicitly asks to WRITE a prompt, it must NOT create an image
+  assert.equal(isImageRefinementOrFollowup("prompt likhe dao", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("write a prompt for midjourney", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("ekta prompt banao", historyWithImage), null);
 
   // Must NOT trigger for unrelated academic, coding, math, general questions, or university queries
   assert.equal(isImageRefinementOrFollowup("CSE admission fee koto?", historyWithImage), null);
@@ -136,6 +177,19 @@ test("isImageRefinementOrFollowup detects scene modifications following an image
   assert.equal(isImageRefinementOrFollowup("Campus main gate er chobi banao", historyWithImage), null);
   assert.equal(isImageRefinementOrFollowup("create a new image of a futuristic flying car", historyWithImage), null);
   assert.equal(isImageRefinementOrFollowup("একটি সম্পূর্ণ নতুন রোবটের ছবি আঁকো", historyWithImage), null);
+});
+
+test("isExplicitPromptWritingRequest detects explicit prompt requests and rejects visual scene edits", () => {
+  assert.equal(isExplicitPromptWritingRequest("prompt likhe dao"), true);
+  assert.equal(isExplicitPromptWritingRequest("write a prompt for midjourney"), true);
+  assert.equal(isExplicitPromptWritingRequest("give me an image prompt"), true);
+  assert.equal(isExplicitPromptWritingRequest("ekta prompt banao"), true);
+  assert.equal(isExplicitPromptWritingRequest("একটি সুন্দর প্রম্পট লিখে দাও"), true);
+
+  assert.equal(isExplicitPromptWritingRequest("drink bottol beside the person"), false);
+  assert.equal(isExplicitPromptWritingRequest("sunset lighting e banao"), false);
+  assert.equal(isExplicitPromptWritingRequest("wearing sunglasses"), false);
+  assert.equal(isExplicitPromptWritingRequest("cat er ekta chobi banao"), false);
 });
 
 test("isWebSearchIntent detects live search inquiries", () => {
