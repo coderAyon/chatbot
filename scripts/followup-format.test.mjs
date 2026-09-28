@@ -225,3 +225,50 @@ test("in GB AI mode, general academic questions preserve academic context across
   assert.match(pointsResult.text, /Photosynthesis|plants|chemical energy/i);
   assert.match(pointsResult.text, /-\s+/); // Bullet points
 });
+
+test("asksCodeExplanation correctly separates pure code requests from explanation requests", async () => {
+  const { asksCodeExplanation } = await import("./api-server.mjs");
+  // Pure code requests
+  assert.equal(asksCodeExplanation("python e binary search er code dao"), false);
+  assert.equal(asksCodeExplanation("c++ e linked list code likho"), false);
+  assert.equal(asksCodeExplanation("write python code for calculator"), false);
+  assert.equal(asksCodeExplanation("javascript function banao"), false);
+
+  // Explanation / Details requested
+  assert.equal(asksCodeExplanation("code ta bujhiye dao"), true);
+  assert.equal(asksCodeExplanation("explain this python code line by line"), true);
+  assert.equal(asksCodeExplanation("ei code kivabe kaj kore?"), true);
+  assert.equal(asksCodeExplanation("code er details bolo"), true);
+  assert.equal(asksCodeExplanation("এই কোডটি বুঝিয়ে বলো"), true);
+});
+
+test("cleanFencedCodeBlocks strips conversational headers and narrative notes from inside code blocks", async () => {
+  const { cleanFencedCodeBlocks } = await import("./api-server.mjs");
+
+  const messyResponse =
+    "Here is the solution:\n" +
+    "```python\n" +
+    "Here is the python code for binary search:\n" +
+    "def binary_search(arr, target):\n" +
+    "    low, high = 0, len(arr) - 1\n" +
+    "    while low <= high:\n" +
+    "        mid = (low + high) // 2\n" +
+    "        if arr[mid] == target:\n" +
+    "            return mid\n" +
+    "        elif arr[mid] < target:\n" +
+    "            low = mid + 1\n" +
+    "        else:\n" +
+    "            high = mid - 1\n" +
+    "    return -1\n" +
+    "Output: Returns index\n" +
+    "```\n" +
+    "This algorithm runs in O(log n).";
+
+  const cleaned = cleanFencedCodeBlocks(messyResponse);
+  // Ensure the conversational line "Here is the python code for binary search:" was moved outside the code fence
+  assert.ok(!cleaned.includes("```python\nHere is the python code for binary search:"));
+  // Ensure the code fence starts directly with the valid python def
+  assert.match(cleaned, /```python\ndef binary_search/);
+  // Ensure the Output line was moved outside
+  assert.ok(!cleaned.includes("return -1\nOutput: Returns index\n```"));
+});

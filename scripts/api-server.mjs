@@ -3014,6 +3014,14 @@ function isCodingQuestion(question) {
   return codingTerms && (actionTerms || /\b(python|java|javascript|c\+\+|cpp|c\s+program|sql|html|css|php)\b/i.test(q));
 }
 
+function asksCodeExplanation(question) {
+  const q = normalizeQuestion(question);
+  return (
+    /\b(explain|bujhiye|bujhao|bujhte|somjhao|line\s*by\s*line|breakdown|walkthrough|step\s*by\s*step|details|bistarito|kivabe\s*kaj\s*kore|how\s*it\s*works|working\s*principle|logic|complexity|karon|keno|theory)\b/i.test(q) ||
+    /(বুঝিয়ে|বোঝাও|ব্যাখ্যা|লাইন\s*বাই\s*লাইন|ডিটেইলস|বিস্তারিত|কীভাবে\s*কাজ\s*করে|বিশ্লেষণ)/.test(question)
+  );
+}
+
 function isGeneralAcademicQuestion(question) {
   const q = normalizeQuestion(question);
   if (asksOfficialInstitutionFact(q) || asksPersonIdentity(q)) return false;
@@ -3228,6 +3236,21 @@ async function callAiReformat({ cleanText, originalQuestion, instruction, format
     formatDirective = "Explain the information in very simple, easy-to-understand terms with an intuitive real-world explanation.";
   }
 
+  const hasCode = /```[a-z]*\r?\n[\s\S]*?```/i.test(cleanText);
+  let codeDirective = "";
+  if (hasCode) {
+    if (formatType === "expand") {
+      codeDirective =
+        "\n5. STRICT CODE SEPARATION: Keep the code block (```language ... ```) 100% clean, pure, and runnable. Put all detailed explanations, line-by-line breakdowns, complexity analysis, and edge cases OUTSIDE the code block using markdown headings and bullet points. NEVER put explanation essays or tutorial comments inside the code block.";
+    } else if (formatType === "shorten") {
+      codeDirective =
+        "\n5. STRICT CODE SEPARATION: Provide only the minimal core function/class inside ```language ... ``` with no extra comments and no conversational filler.";
+    } else {
+      codeDirective =
+        "\n5. STRICT CODE SEPARATION: The code block must remain 100% clean, runnable source code with NO essay comments inside.";
+    }
+  }
+
   const systemPrompt =
     `You are an expert AI editor and academic tutor for students.\n` +
     `The student previously asked: "${originalQuestion || "the previous topic"}"\n` +
@@ -3238,7 +3261,8 @@ async function callAiReformat({ cleanText, originalQuestion, instruction, format
     `1. ${formatDirective}\n` +
     `2. STRICT FACTUAL INTEGRITY: Strictly preserve all accurate facts, figures, fees, numbers, names, and requirements mentioned in the previous answer. DO NOT invent, remove, or modify real data.\n` +
     `3. ${langPrompt}\n` +
-    `4. Directly provide the reformatted answer without filler phrases like "Sure!", "Here is the summary:", or "Here are the points:".`;
+    `4. Directly provide the reformatted answer without filler phrases like "Sure!", "Here is the summary:", or "Here are the points:".` +
+    codeDirective;
 
   const userPrompt = `Reformat the previous answer according to: "${instruction}"`;
 
@@ -5929,13 +5953,65 @@ function attachmentFallbackAnswer(question, contexts) {
   };
 }
 
+function cleanFencedCodeBlocks(text) {
+  if (!text || typeof text !== "string") return text;
+  return text.replace(/```([a-zA-Z0-9_+-]*)\r?\n([\s\S]*?)```/g, (match, lang, code) => {
+    let lines = code.split(/\r?\n/);
+    const outsidePrefix = [];
+    const outsideSuffix = [];
+
+    while (lines.length > 0) {
+      const first = lines[0].trim();
+      if (!first) {
+        lines.shift();
+        continue;
+      }
+      if (
+        (/^#{1,4}\s+/.test(first) ||
+          /^\*\*[^*]+\*\*/.test(first) ||
+          /^(here\s+is|here's|below\s+is|this\s+is|code\s*:|solution\s*:|the\s+following|নিচে|এখানে|কোড\s*:)\b/i.test(first)) &&
+        !/^[#\/\-*;<!]/.test(first)
+      ) {
+        outsidePrefix.push(first);
+        lines.shift();
+      } else {
+        break;
+      }
+    }
+
+    while (lines.length > 0) {
+      const last = lines[lines.length - 1].trim();
+      if (!last) {
+        lines.pop();
+        continue;
+      }
+      if (
+        (/^#{1,4}\s+/.test(last) ||
+          /^\*\*[^*]+\*\*/.test(last) ||
+          /^(output|explanation|sample\s+run|example\s+run|note|ব্যাখ্যা|আউটপুট)\s*:/i.test(last)) &&
+        !/^[#\/\-*;<!]/.test(last)
+      ) {
+        outsideSuffix.unshift(last);
+        lines.pop();
+      } else {
+        break;
+      }
+    }
+
+    const cleanCode = lines.join("\n").trim();
+    const prefixStr = outsidePrefix.length ? outsidePrefix.join("\n") + "\n\n" : "";
+    const suffixStr = outsideSuffix.length ? "\n\n" + outsideSuffix.join("\n") : "";
+    return `${prefixStr}\`\`\`${lang}\n${cleanCode}\n\`\`\`${suffixStr}`;
+  });
+}
+
 function safeAnswer(text, question = "") {
   const trimmed = cleanExtractedText(text).replace(/【[^】]+】/g, "").replace(/[ \t]+\n/g, "\n").trim();
   if (!trimmed) return NOT_VERIFIED;
   if (/not (in|available|provided|found)|no verified|do not have verified|don't have verified|cannot verify/i.test(trimmed)) {
     return notVerifiedText(question);
   }
-  return trimmed;
+  return cleanFencedCodeBlocks(trimmed);
 }
 
 function aiSystemInstruction(question) {
@@ -5946,8 +6022,17 @@ function aiSystemInstruction(question) {
       ? "Reply in natural, friendly Banglish matching the user's wording and level of formality."
       : "Reply in concise, natural English matching the user's level of formality.";
   const isCode = isCodingQuestion(question);
+  const wantsDetails = asksCodeExplanation(question);
   const codingHint = isCode
-    ? `For Code & Programming requests: provide clean, production-ready, working code inside fenced markdown code blocks (\`\`\`language ... \`\`\`) with meaningful comments. Include a runnable Example Run with sample input and expected output, state Big-O Time & Space Complexity, and explain the logic clearly. `
+    ? wantsDetails
+      ? `For Code & Programming requests with explanation:
+1. Provide the complete, production-ready, clean code inside fenced markdown code blocks (\`\`\`language ... \`\`\`). The code block must contain 100% PURE RUNNABLE CODE ONLY with ZERO tutorial comments.
+2. Put the full detailed explanation OUTSIDE the code block using markdown headings and bullet points: explain the algorithm, line-by-line breakdown, Time & Space Complexity, and edge cases. NEVER put explanations inside the code block itself. `
+      : `For Code & Programming requests:
+1. The code block (\`\`\`language ... \`\`\`) must contain 100% PURE, CLEAN, PRODUCTION-READY, DIRECTLY RUNNABLE CODE ONLY.
+2. ABSOLUTELY NO narrative explanations, tutorial paragraphs, or multi-line essay comments inside the code block. The student will click the "Copy" button to run the code in their IDE; any text inside the code block that is not clean source code ruins copy-pasting.
+3. Keep comments to an absolute minimum (only short 2-4 word notes where strictly needed).
+4. First Attempt: Present clean code directly with a 1-line description before the code and a concise Example Run / Output block after the code. DO NOT dump long essay explanations unless the student explicitly asks for details. `
     : "";
   const academicHint = isGeneralAcademicQuestion(question) && !isCode
     ? `This is a general academic/course explainer question. You may use general educational knowledge when official context is missing, but clearly say when the answer is general and not a verified Gono Bishwabidyalay-specific fact. `
@@ -7036,12 +7121,12 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
       `1. Provide direct, step-by-step solutions with clear reasoning.\n` +
       `2. For Math/Science: State given values, the formula/principle used, step-by-step arithmetic/algebra, and underline or box the final answer.\n` +
       `3. For Code & Programming:\n` +
-      `   - Clearly explain the algorithmic approach or logic before presenting the code.\n` +
-      `   - Provide complete, clean, production-ready code inside fenced markdown code blocks (\`\`\`language ... \`\`\`) with descriptive variable names and helpful inline comments. Never truncate, omit lines, or leave "// TODO" placeholders.\n` +
-      `   - Always include a working Example Run with sample input and expected output so the user can test immediately.\n` +
-      `   - State Big-O Time Complexity and Space Complexity with a brief justification.\n` +
-      `   - Mention important edge cases handled (e.g. empty input, boundary conditions, zero, negative values).\n` +
-      `   - If debugging or fixing code/errors: identify the root cause, provide the fully corrected code, and summarize the key fixes made.\n` +
+      `   - STRICT CLEAN CODE SEPARATION: The code block (\`\`\`language ... \`\`\`) must contain 100% PURE, CLEAN, PRODUCTION-READY, RUNNABLE CODE ONLY.\n` +
+      `   - ABSOLUTELY NO tutorial explanations, essay paragraphs, or multi-line comments inside the code block. The student will click the "Copy" button to run the code directly in their IDE/compiler; any cluttered explanation inside the code block ruins copy-pasting.\n` +
+      `   - Keep comments inside the code to an absolute minimum (only short 2-4 word notes where strictly needed). Never truncate, omit lines, or leave "// TODO" placeholders.\n` +
+      `   - First Attempt (when code is requested): Present the clean code directly with a 1-line description before the code and a concise working Example Run with sample input and expected output after the code. DO NOT dump long essay explanations unless the student explicitly asks for details.\n` +
+      `   - When Explanation/Details are explicitly requested (e.g. "bujhiye dao", "explain", "details bolo", "line-by-line", or follow-up "ektu boro kore dau"): Provide a rich, structured breakdown OUTSIDE the code block using markdown sections (Line-by-line breakdown, Algorithm trace, Big-O Time & Space Complexity, Edge cases). NEVER put explanations inside the code block.\n` +
+      `   - If debugging or fixing code/errors: identify the root cause in 1 line, provide the fully corrected clean code block, and summarize the key fixes in bullet points below the code.\n` +
       `4. For Screenshots: Carefully read the extracted OCR text from the student's screenshot. Identify the specific problem(s) and solve them completely.\n` +
       `5. Formatting: Use markdown bolding, numbered steps, bullet points, and headers for high readability.\n` +
       `6. ${langInstruction}`;
@@ -7189,7 +7274,7 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
     : universityContexts.map((c) => ({ title: c.title, url: c.url || "" }));
 
   return {
-    text: answerText,
+    text: cleanFencedCodeBlocks(answerText),
     mode: isWebSearchActive
       ? "gb_ai_web_search"
       : hasAttachments
@@ -7787,4 +7872,7 @@ export {
   isFollowupFormatInstruction,
   handleFollowupFormatRequest,
   reformatTextDeterministically,
+  isCodingQuestion,
+  asksCodeExplanation,
+  cleanFencedCodeBlocks,
 };

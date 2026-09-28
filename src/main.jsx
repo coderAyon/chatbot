@@ -1720,16 +1720,28 @@ function Metric({ label, value }) {
   );
 }
 
+function sanitizeCodeForExecution(rawCode) {
+  let text = String(rawCode || "").trim();
+  if (text.startsWith("```")) {
+    text = text.replace(/^```[^\n]*\n?/, "");
+  }
+  if (text.endsWith("```")) {
+    text = text.replace(/\n?```$/, "");
+  }
+  return text.trim();
+}
+
 function CodeBlock({ code, lang = "" }) {
   const [copied, setCopied] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const codeLines = code.split("\n");
+  const cleanCode = sanitizeCodeForExecution(code);
+  const codeLines = cleanCode.split("\n");
   const normalizedLang = (lang || "").toLowerCase().trim();
   const canPreview = ["html", "svg", "htm"].includes(normalizedLang);
 
   const handleCopy = () => {
     try {
-      navigator.clipboard?.writeText(code);
+      navigator.clipboard?.writeText(cleanCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {}
@@ -1753,7 +1765,7 @@ function CodeBlock({ code, lang = "" }) {
       go: "go",
     };
     const ext = extMap[normalizedLang] || "txt";
-    const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+    const blob = new Blob([cleanCode], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
