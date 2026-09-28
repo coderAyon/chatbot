@@ -13,6 +13,7 @@ import {
   DatabaseZap,
   Download,
   Eye,
+  Globe,
   Headphones,
   Image as ImageIcon,
   Link as LinkIcon,
@@ -152,6 +153,15 @@ function detectSpeechLanguage(text) {
   return /[\u0980-\u09FF]/.test(text) ? "bn-BD" : "en-US";
 }
 
+const VOICE_LANGUAGE_KEY = "university-voice-language";
+
+function preferredVoiceLanguage() {
+  if (typeof window === "undefined") return "en-US";
+  const saved = window.localStorage?.getItem(VOICE_LANGUAGE_KEY);
+  if (saved === "bn-BD" || saved === "en-US") return saved;
+  return String(window.navigator?.language || "en-US").toLowerCase().startsWith("bn") ? "bn-BD" : "en-US";
+}
+
 function speakUtterance(text, { lang, onStart, onEnd, onError, isVoiceMode = false } = {}) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     onError?.(new Error("Speech synthesis not supported in this browser"));
@@ -286,6 +296,7 @@ function App() {
   const activeRequestRef = useRef(null);
   const modeDropdownRef = useRef(null);
   const [currentMedium, setCurrentMedium] = useState("chatbot"); // "chatbot" | "gb-ai"
+  const [webSearchEnabled, setWebSearchEnabled] = useState(false);
   const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState(null);
 
@@ -341,7 +352,9 @@ function App() {
     try {
       const recognition = new SpeechRecognition();
       composerRecognitionRef.current = recognition;
-      recognition.lang = "bn-BD";
+      // Use the language selected in Voice Mode (or the browser language on
+      // first use) instead of forcing every English utterance through bn-BD.
+      recognition.lang = preferredVoiceLanguage();
       recognition.interimResults = true;
       recognition.continuous = true;
       recognition.maxAlternatives = 1;
@@ -630,6 +643,8 @@ function App() {
         thinkingMsg = "GB AI is reading screenshot & solving...";
       } else if (/^(ছবি আঁকো|ছবি বানাও|ছবি তৈরি করো|একটি ছবি|chobi banao|chobi ako|generate an? image|create an? image|draw an? image)/i.test(outgoingText.trim())) {
         thinkingMsg = "GB AI is creating your image...";
+      } else if (webSearchEnabled) {
+        thinkingMsg = "GB AI is searching the web & synthesizing...";
       } else {
         thinkingMsg = "GB AI is solving your question...";
       }
@@ -648,6 +663,7 @@ function App() {
           sessionId: target.sessionId || target.id,
           history: nextMessages.slice(-10).map(({ role, text }) => ({ role, text })),
           medium: currentMedium,
+          webSearch: webSearchEnabled,
           replaceHistory: options.replaceHistory === true,
         }),
       });
@@ -791,15 +807,31 @@ function App() {
           }}
           placeholder={
             currentMedium === "gb-ai"
-              ? isMobile
-                ? "প্রশ্ন লিখুন, স্ক্রিনশট দিন বা ছবি আঁকুন..."
-                : "Ask any question, upload screenshot to solve, or generate image..."
+              ? webSearchEnabled
+                ? isMobile
+                  ? "লাইভ ওয়েব সার্চ ও প্রশ্নের উত্তর..."
+                  : "Search the live web or ask GB AI..."
+                : isMobile
+                  ? "প্রশ্ন লিখুন, স্ক্রিনশট দিন বা ছবি আঁকুন..."
+                  : "Ask any question, upload screenshot to solve, or generate image..."
               : isMobile
                 ? "Ask anything..."
                 : "Ask or attach PDF/image..."
           }
           rows={1}
         />
+        {currentMedium === "gb-ai" && (
+          <button
+            type="button"
+            className={`composer-web-btn ${webSearchEnabled ? "active" : ""}`}
+            onClick={() => setWebSearchEnabled((prev) => !prev)}
+            title={webSearchEnabled ? "Web Search: ON (Live web search active - click to turn off)" : "Web Search: OFF (Click to search live web)"}
+            aria-pressed={webSearchEnabled}
+          >
+            <Globe size={14} />
+            <span className="web-btn-label">{webSearchEnabled ? "Search: ON" : "Web"}</span>
+          </button>
+        )}
         <div className="composer-mode-dropdown-wrap" ref={modeDropdownRef}>
           <button
             type="button"
@@ -1198,6 +1230,18 @@ function MessageBubble({ message, index, copied, onCopy, onSuggestion, onRetry, 
               <BookOpen size={13} />
               {message.profile.confidence}
             </span>
+            {message.isUniversityQuery && (
+              <span className="meta-badge-university" title="Official GB Chatbot Knowledge">
+                <Bot size={13} />
+                GB Chatbot
+              </span>
+            )}
+            {message.webSearchUsed && (
+              <span className="meta-badge-web" title="Sourced from live web search">
+                <Globe size={13} />
+                Live Web
+              </span>
+            )}
             {message.aiModel && (
               <span className="model-chip" title={`Model: ${message.aiModel}`}>
                 <Sparkles size={13} />
@@ -1863,7 +1907,7 @@ function renderInlineText(text, keyPrefix) {
 
 function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) {
   const [voiceStatus, setVoiceStatus] = useState("listening"); // "listening" | "thinking" | "speaking" | "idle"
-  const [voiceLang, setVoiceLang] = useState("bn-BD");
+  const [voiceLang, setVoiceLang] = useState(preferredVoiceLanguage);
   const [isMuted, setIsMuted] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   const [userTranscript, setUserTranscript] = useState("");
@@ -1872,6 +1916,13 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
   const [errorMessage, setErrorMessage] = useState("");
   const recognitionRef = useRef(null);
   const isComponentMounted = useRef(true);
+
+  useEffect(() => {
+    isComponentMounted.current = true;
+    return () => {
+      isComponentMounted.current = false;
+    };
+  }, []);
 
   // Monitor microphone volume via Web Audio API for reactive Orb glow/scale
   useEffect(() => {
@@ -1951,11 +2002,12 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
       recognition.maxAlternatives = 1;
 
       let finalCaptured = "";
+      let latestInterim = "";
 
       const startSilenceTimer = () => {
         clearSilenceTimer();
         silenceTimer = setTimeout(() => {
-          if (finalCaptured.trim()) {
+          if (finalCaptured.trim() || latestInterim.trim()) {
             try { recognition.stop(); } catch {}
           }
         }, 2000);
@@ -1971,11 +2023,12 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const res = event.results[i];
           if (res.isFinal) {
-            finalCaptured += res[0].transcript;
+            finalCaptured = `${finalCaptured} ${res[0].transcript}`.trim();
           } else {
-            currentInterim += res[0].transcript;
+            currentInterim = `${currentInterim} ${res[0].transcript}`.trim();
           }
         }
+        latestInterim = currentInterim;
         setInterimTranscript(currentInterim);
         if (finalCaptured) {
           setUserTranscript(finalCaptured.trim());
@@ -1989,7 +2042,19 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
           return;
         } else if (e.error === "not-allowed") {
           clearSilenceTimer();
-          setErrorMessage("মাইক্রোফোনের অনুমতি দেওয়া হয়নি। অনুগ্রহ করে ব্রাউজার সেটিংসে মাইক অ্যাক্সেস অ্যালাউ করুন।");
+          setErrorMessage(
+            voiceLang === "bn-BD"
+              ? "মাইক্রোফোনের অনুমতি দেওয়া হয়নি। অনুগ্রহ করে ব্রাউজার সেটিংসে মাইক অ্যাক্সেস অ্যালাউ করুন।"
+              : "Microphone access was not allowed. Please enable microphone access in your browser settings.",
+          );
+          setVoiceStatus("idle");
+        } else {
+          clearSilenceTimer();
+          setErrorMessage(
+            voiceLang === "bn-BD"
+              ? "কথা শনাক্ত করা যায়নি। আবার চেষ্টা করুন।"
+              : "I couldn't recognize the speech. Please try again.",
+          );
           setVoiceStatus("idle");
         }
       };
@@ -1997,7 +2062,7 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
       recognition.onend = () => {
         clearSilenceTimer();
         setInterimTranscript("");
-        const query = finalCaptured.trim();
+        const query = (finalCaptured || latestInterim).trim();
         if (query && voiceStatus === "listening") {
           handleUserVoiceQuery(query);
         } else if (voiceStatus === "listening" && !isMuted && isComponentMounted.current) {
@@ -2022,6 +2087,8 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
   async function handleUserVoiceQuery(text) {
     if (!text) return;
     setVoiceStatus("thinking");
+    setInterimTranscript("");
+    setUserTranscript(text);
     setAssistantReply("");
     try {
       const result = await onSendMessage(text);
@@ -2058,7 +2125,15 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
 
   function toggleLanguage() {
     window.speechSynthesis?.cancel();
-    setVoiceLang((prev) => (prev === "bn-BD" ? "en-US" : "bn-BD"));
+    setVoiceLang((prev) => {
+      const next = prev === "bn-BD" ? "en-US" : "bn-BD";
+      window.localStorage?.setItem(VOICE_LANGUAGE_KEY, next);
+      return next;
+    });
+    setUserTranscript("");
+    setInterimTranscript("");
+    setAssistantReply("");
+    setErrorMessage("");
     setVoiceStatus("listening");
   }
 
@@ -2080,7 +2155,6 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      isComponentMounted.current = false;
     };
   }, [voiceStatus]);
 

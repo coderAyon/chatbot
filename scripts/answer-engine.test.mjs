@@ -82,6 +82,20 @@ test("greetings and unclear input never dump scraped text", () => {
   assert.equal(requiresVerifiedStructuredAnswer("Explain data structures with examples"), false);
 });
 
+test("Bangla university overview requests resolve from verified institution data", () => {
+  for (const question of [
+    "গণ বিশ্ববিদ্যালয় সম্পর্কে কিছু বল",
+    "হ্যালো কোন বিশ্ববিদ্যালয় সম্পর্কে কিছু বল",
+    "গন বিশ্ববিদ্যালয় নিয়ে বিস্তারিত জানাও",
+  ]) {
+    const answer = directAnswer(question, fixture);
+    assert.ok(answer);
+    assert.notEqual(answer.mode, "not_found");
+    assert.match(answer.text, /Gono Bishwabidyalay|গণ বিশ্ববিদ্যালয়/u);
+    assert.ok(answer.sources.length >= 2);
+  }
+});
+
 test("student journey modes return guided, role-specific roadmaps", () => {
   const cases = [
     ["Start admission journey", "admission", 5],

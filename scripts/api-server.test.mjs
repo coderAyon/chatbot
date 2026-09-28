@@ -126,3 +126,61 @@ test("admin settings reject invalid crawler configuration without saving it", as
   });
   assert.equal(invalidUrl.status, 400);
 });
+
+test("in GB AI mode, general question after image generation is NOT treated as image creation", async () => {
+  const historyWithImage = [
+    { role: "user", text: "cat er chobi banao" },
+    { role: "assistant", mode: "image", text: "✨ GB AI Image Studio: cat", image: { prompt: "cat" } },
+  ];
+
+  const res = await fetch(`${baseUrl}/api/chat`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      message: "what is photosynthesis?",
+      medium: "gb-ai",
+      history: historyWithImage,
+    }),
+  });
+
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  assert.notEqual(data.mode, "image");
+  assert.equal(data.image, undefined);
+});
+
+test("in GB AI mode, university questions route to gb_ai_university_chatbot with GB Chatbot branding", async () => {
+  const res = await fetch(`${baseUrl}/api/chat`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      message: "CSE admission fee koto?",
+      medium: "gb-ai",
+    }),
+  });
+
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  assert.equal(data.mode, "gb_ai_university_chatbot");
+  assert.equal(data.isUniversityQuery, true);
+  assert.equal(data.profile.label, "GB Chatbot");
+  assert.match(data.text, /গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট|GB Chatbot/);
+});
+
+test("in GB AI mode, webSearch parameter enables live web search mode", async () => {
+  const res = await fetch(`${baseUrl}/api/chat`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      message: "latest news",
+      medium: "gb-ai",
+      webSearch: true,
+    }),
+  });
+
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  assert.equal(data.mode, "gb_ai_web_search");
+  assert.equal(data.webSearchUsed, true);
+  assert.equal(data.profile.label, "Web Search");
+});

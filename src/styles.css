@@ -2305,6 +2305,30 @@ textarea::placeholder {
   background: rgba(255, 255, 255, 0.66);
 }
 
+.response-meta .meta-badge-university {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(16, 185, 129, 0.45);
+  color: #34d399;
+}
+
+[data-theme="light"] .response-meta .meta-badge-university {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #059669;
+}
+
+.response-meta .meta-badge-web {
+  background: rgba(14, 165, 233, 0.16);
+  border-color: rgba(14, 165, 233, 0.45);
+  color: #38bdf8;
+}
+
+[data-theme="light"] .response-meta .meta-badge-web {
+  background: rgba(14, 165, 233, 0.12);
+  border-color: rgba(14, 165, 233, 0.35);
+  color: #0284c7;
+}
+
 .admin-backdrop {
   position: fixed;
   inset: 0;
@@ -4990,6 +5014,44 @@ body,
   box-shadow: 0 0 16px rgba(168, 85, 247, 0.32);
 }
 
+.composer-web-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 160ms ease;
+  white-space: nowrap;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.composer-web-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.composer-web-btn.active {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(37, 99, 235, 0.22));
+  border-color: rgba(56, 189, 248, 0.6);
+  color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+}
+
+.composer-web-btn.active:hover {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.32), rgba(37, 99, 235, 0.3));
+  border-color: rgba(56, 189, 248, 0.8);
+  color: #e0f2fe;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+}
+
 .mode-caret {
   color: #94a3b8;
   transition: transform 180ms ease;
@@ -5146,6 +5208,24 @@ body,
   border-color: rgba(168, 85, 247, 0.4);
   color: #7c3aed;
   box-shadow: 0 0 12px rgba(168, 85, 247, 0.16);
+}
+
+[data-theme="light"] .composer-web-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #64748b;
+}
+
+[data-theme="light"] .composer-web-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.16);
+  color: #0f172a;
+}
+
+[data-theme="light"] .composer-web-btn.active {
+  background: rgba(14, 165, 233, 0.14);
+  border-color: rgba(14, 165, 233, 0.5);
+  color: #0284c7;
 }
 
 [data-theme="light"] .composer-mode-menu {

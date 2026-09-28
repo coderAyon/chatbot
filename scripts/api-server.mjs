@@ -4,6 +4,7 @@ import { copyFile, mkdir, readFile, rename, stat, unlink, writeFile } from "node
 import { existsSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import * as cheerio from "cheerio";
 
 const DIST_DIR = new URL("../dist/", import.meta.url);
 const DATA_DIR = new URL("../data/", import.meta.url);
@@ -1877,8 +1878,16 @@ function academicDepartments(knowledge) {
 
 function directUniversityOverviewAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
-  const broadUniversity = /\b(gono|gono\s+bishwabidyalay|gono\s+university|gb)\b/i.test(q);
-  const asksOverview = /\b(about|overview|introduction|profile|general\s+information|details|somporke|somproke|niye\s+bolo|tell\s+me|aro\s+info|information)\b/i.test(q);
+  // Keep the original Bengali text for intent detection. The general normalizer
+  // expands short words such as "কে" and "কি", including when they occur inside
+  // longer Bengali words (for example "সম্পর্কে" and "কিছু").
+  const rawQuestion = String(question || "").toLowerCase().normalize("NFKC");
+  const broadUniversity =
+    /\b(gono|gono\s+bishwabidyalay|gono\s+university|gb)\b/i.test(q) ||
+    /(?:গণ|গন|কোন)\s*বিশ্ববিদ্যাল[য়য়]|বিশ্ববিদ্যাল[য়য়]/u.test(rawQuestion);
+  const asksOverview =
+    /\b(about|overview|introduction|profile|general\s+information|details|somporke|somproke|niye\s+bolo|tell\s+me|aro\s+info|information)\b/i.test(q) ||
+    /(?:সম্পর্কে|সম্বন্ধে|বিষ[য়য়]ে|নিয়ে|নিয়ে).*(?:বল|জানা|তথ্য)|(?:কিছু|বিস্তারিত|পরিচিতি|তথ্য).*(?:বল|জানা|দাও)/u.test(rawQuestion);
   const specific = /\b(founder|founded|established|location|address|area|size|acre|student|faculty|staff|department|program|course|credit|fee|admission|apply|library|facility|facilities|portal|transport|mission|vision|contact|phone|email|notice|result|vc|chancellor|registrar|research|journal|sports?|campus\s+life|cultural|scholarship|waiver|hostel)\b/i.test(q);
   if (!broadUniversity || !asksOverview || specific) return null;
 
@@ -3044,9 +3053,501 @@ function requiresVerifiedStructuredAnswer(question, history = []) {
   return false;
 }
 
+function detectFollowupFormatType(text) {
+  const t = String(text || "").trim().toLowerCase();
+  if (!t) return null;
+
+  // Real questions asking about GPA points or short courses are not formatting follow-ups
+  if (/\b(gpa|cgpa|grading|grade|credit)\s*(?:point|points)?\b/i.test(t) && !/\b(akare|bullet|list)\b/i.test(t)) {
+    return null;
+  }
+  if (/\b(short\s*course|short\s*term)\b/i.test(t)) {
+    return null;
+  }
+
+  // Ordinal recall queries (first, second, third topic) are handled by ordinal topic recall
+  if (typeof ordinalTopicIndex === "function" && ordinalTopicIndex(t) !== null) {
+    return null;
+  }
+  if (/\b(prothom|first|1st|second|2nd|third|3rd|tritiyo|ager\s+topic|agerta)\b/i.test(t)) {
+    return null;
+  }
+
+  // Bullet points / in points / list
+  if (
+    /(point\s*akare|point\s*kore|point\s*by\s*point|bullet\s*points?|in\s*points?|points?\s*e|list\s*akare|list\s*kore|পয়েন্ট|পয়েন্ট|বুলেট)/i.test(t) ||
+    (/\b(point|points|bullet|list)\b/i.test(t) && /\b(dau|dao|den|din|bolo|bolun|koro|korun|diyo|format|make|give|akare)\b/i.test(t))
+  ) return "points";
+
+  // Shorten / summarize / brief
+  if (
+    /(choto\s*kore|short\s*kore|shongkhepe|brief\s*e|one\s*line\s*e|ek\s*line\s*e|make\s*it\s*shorter|ছোট\s*করে|সংক্ষেপে|এক\s*লাইনে|সংক্ষিপ্ত)/i.test(t) ||
+    (/\b(choto|short|brief|shorter|summarize|summary|tldr)\b/i.test(t) && /\b(dau|dao|den|din|bolo|bolun|koro|korun|kore|make|give|keep|in)\b/i.test(t)) ||
+    /^(choto|short|shorter|summary|summarize|সংক্ষেপে|ছোট\s*করে\b)/i.test(t)
+  ) return "shorten";
+
+  // Expand / elaborate / longer / details
+  if (
+    /(boro\s*kore|aro\s*boro|details\s*e|aro\s*details|bistarito|make\s*it\s*longer|explain\s*in\s*detail|বড়\s*করে|বিস্তারিত|আরও\s*বড়)/i.test(t) ||
+    (/\b(boro|longer|expand|elaborate|details|bistarito)\b/i.test(t) && /\b(dau|dao|den|din|bolo|bolun|koro|korun|kore|make|give|more|in)\b/i.test(t)) ||
+    /^(boro|longer|expand|elaborate|বিস্তারিত|বড়\s*করে\b)/i.test(t)
+  ) return "expand";
+
+  // Simplify
+  if (
+    /(shohoj\s*kore|sohoj\s*kore|shohoj\s*vabe|shohoj\s*bhashay|সহজ\s*করে|সহজ\s*ভাষায়|সহজ\s*করে\s*বলুন|simplify)/i.test(t) ||
+    (/\b(shohoj|sohoj|simple|simplify)\b/i.test(t) && /\b(dau|dao|den|din|bolo|bolun|koro|korun|kore|terms)\b/i.test(t))
+  ) return "simplify";
+
+  return null;
+}
+
+function isFollowupFormatInstruction(text) {
+  return Boolean(detectFollowupFormatType(text));
+}
+
+function getLastAssistantTurn(history = []) {
+  if (!Array.isArray(history)) return null;
+  for (let i = history.length - 1; i >= 0; i--) {
+    const item = history[i];
+    if (item && (item.role === "assistant" || item.role === "model") && item.text && item.text.trim()) {
+      return item;
+    }
+  }
+  return null;
+}
+
+function getLastUserTurn(history = []) {
+  if (!Array.isArray(history)) return null;
+  for (let i = history.length - 1; i >= 0; i--) {
+    const item = history[i];
+    if (item && item.role === "user" && item.text && item.text.trim()) {
+      return item;
+    }
+  }
+  return null;
+}
+
+function getRecentExchangeFromHistory(history = [], currentMessage = "") {
+  const clean = previousConversation(history, currentMessage).filter((item) => item?.role && item?.text);
+  let lastAssistant = null;
+  let lastUser = null;
+  for (let i = clean.length - 1; i >= 0; i--) {
+    const item = clean[i];
+    if (!lastAssistant && (item.role === "assistant" || item.role === "model")) {
+      lastAssistant = item;
+      continue;
+    }
+    if (lastAssistant && !lastUser && item.role === "user") {
+      lastUser = item;
+      break;
+    }
+  }
+  if (!lastUser) {
+    for (let i = clean.length - 1; i >= 0; i--) {
+      if (clean[i].role === "user") {
+        lastUser = clean[i];
+        break;
+      }
+    }
+  }
+  return { lastAssistant, lastUser };
+}
+
+function getOriginalTopicUserTurn(history = [], currentMessage = "") {
+  const clean = previousConversation(history, currentMessage).filter((item) => item?.role && item?.text);
+  for (let i = clean.length - 1; i >= 0; i--) {
+    const item = clean[i];
+    if (item.role === "user" && !isFollowupFormatInstruction(item.text)) {
+      return item;
+    }
+  }
+  return null;
+}
+
+function cleanTextOfPrefix(text) {
+  return String(text || "")
+    .replace(/^🏛️\s*\*\*[^*]+\*\*\s*\n\n?/i, "")
+    .trim();
+}
+
+function followupFormatSuggestions(formatType, isUniv, language) {
+  if (formatType === "shorten") {
+    if (language === "Bengali") {
+      return ["আরও বিস্তারিত দেখতে চাই", "পয়েন্ট আকারে দেখাও", isUniv ? "ভর্তির নিয়মাবলি কী?" : "উদাহরণ দিয়ে বোঝাও"];
+    }
+    if (language === "Banglish") {
+      return ["Aro details dekhte chai", "Point akare dekhao", isUniv ? "Admission rules ki?" : "Udahoron diye bojhau"];
+    }
+    return ["Show in more detail", "Show in bullet points", isUniv ? "Admission requirements" : "Explain with an example"];
+  }
+
+  if (formatType === "points") {
+    if (language === "Bengali") {
+      return ["সংক্ষেপে সারসংক্ষেপ বলো", "আরও বিস্তারিত দেখতে চাই", isUniv ? "টিউশন ফি ও ওয়েভার কত?" : "সহজ ভাষায় বলো"];
+    }
+    if (language === "Banglish") {
+      return ["Shongkhepe summary bolo", "Aro details dekhao", isUniv ? "Tuition fee o waiver koto?" : "Shohoj bhashay bolo"];
+    }
+    return ["Give a short summary", "Explain in detail", isUniv ? "Tuition fees & waivers" : "Explain simply"];
+  }
+
+  if (formatType === "expand") {
+    if (language === "Bengali") {
+      return ["সংক্ষেপে সারসংক্ষেপ বলো", "পয়েন্ট আকারে দেখাও", isUniv ? "যোগাযোগের ফোন নম্বর কত?" : "মূল বিষয়গুলো কী?"];
+    }
+    if (language === "Banglish") {
+      return ["Shongkhepe bolo", "Point akare dekhao", isUniv ? "Contact number koto?" : "Main point gulo ki?"];
+    }
+    return ["Give a short summary", "Show in bullet points", isUniv ? "Contact phone number" : "Key takeaways"];
+  }
+
+  if (language === "Bengali") {
+    return ["পয়েন্ট আকারে দেখাও", "আরও বিস্তারিত জানতে চাই", "সংক্ষেপে সারসংক্ষেপ বলো"];
+  }
+  return ["Show in bullet points", "Explain in more detail", "Give a short summary"];
+}
+
+async function callAiReformat({ cleanText, originalQuestion, instruction, formatType }) {
+  const isBn = /[\u0980-\u09ff]/.test(instruction + (originalQuestion || ""));
+  const isBanglish = !isBn && (prefersBanglish(instruction) || prefersBanglish(originalQuestion || ""));
+  const langPrompt = isBn
+    ? "Reply in natural, clear Bengali (বাংলা)."
+    : isBanglish
+    ? "Reply in natural, conversational Banglish matching the student's conversational style."
+    : "Reply in clear, structured English.";
+
+  let formatDirective = "";
+  if (formatType === "points") {
+    formatDirective = "Convert the information into neat, clear markdown bullet points with bold subheadings (- **Topic:** Details). Ensure every distinct fact, number, fee, requirement, or key point is on its own bullet.";
+  } else if (formatType === "shorten") {
+    formatDirective = "Make the response concise, punchy, and summarized (2-3 concise bullet points or 1 concise paragraph). STRICTLY PRESERVE all key facts, numbers, fees, and requirements.";
+  } else if (formatType === "expand") {
+    formatDirective = "Expand the response into a thorough, comprehensive explanation with detailed context, background, and structured sections, while keeping all specific facts, numbers, and fees accurate.";
+  } else if (formatType === "simplify") {
+    formatDirective = "Explain the information in very simple, easy-to-understand terms with an intuitive real-world explanation.";
+  }
+
+  const systemPrompt =
+    `You are an expert AI editor and academic tutor for students.\n` +
+    `The student previously asked: "${originalQuestion || "the previous topic"}"\n` +
+    `The assistant previously answered:\n` +
+    `"""\n${cleanText}\n"""\n\n` +
+    `The student now requests: "${instruction}"\n` +
+    `Instructions:\n` +
+    `1. ${formatDirective}\n` +
+    `2. STRICT FACTUAL INTEGRITY: Strictly preserve all accurate facts, figures, fees, numbers, names, and requirements mentioned in the previous answer. DO NOT invent, remove, or modify real data.\n` +
+    `3. ${langPrompt}\n` +
+    `4. Directly provide the reformatted answer without filler phrases like "Sure!", "Here is the summary:", or "Here are the points:".`;
+
+  const userPrompt = `Reformat the previous answer according to: "${instruction}"`;
+
+  const openAiKey = envSecret("OPENAI_API_KEY");
+  if (openAiKey) {
+    try {
+      const isGroq = openAiBaseUrl.includes("groq.com");
+      const models = isGroq ? [openAiModel, "openai/gpt-oss-120b"] : [openAiModel];
+      for (const model of models.filter(Boolean)) {
+        try {
+          const resp = await fetch(`${openAiBaseUrl}/chat/completions`, {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              authorization: `Bearer ${openAiKey}`,
+            },
+            body: JSON.stringify({
+              model,
+              temperature: 0.2,
+              max_tokens: formatType === "expand" ? 1200 : 600,
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt },
+              ],
+            }),
+            signal: AbortSignal.timeout(6000),
+          });
+          if (resp.ok) {
+            const data = await resp.json().catch(() => null);
+            const content = data?.choices?.[0]?.message?.content?.trim();
+            if (content) return content;
+          }
+        } catch {}
+      }
+    } catch {}
+  }
+
+  const geminiKey = envSecret("GEMINI_API_KEY");
+  if (geminiKey) {
+    try {
+      const resp = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+            generationConfig: { temperature: 0.2, maxOutputTokens: formatType === "expand" ? 1000 : 500 },
+          }),
+          signal: AbortSignal.timeout(6000),
+        }
+      );
+      if (resp.ok) {
+        const data = await resp.json().catch(() => null);
+        const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("").trim();
+        if (text) return text;
+      }
+    } catch {}
+  }
+
+  return null;
+}
+
+function reformatTextDeterministically(cleanText, formatType, instruction = "", originalQuestion = "", knowledge = null) {
+  const isBn = /[\u0980-\u09ff]/.test(instruction + (originalQuestion || "") + cleanText);
+  const isBanglish = !isBn && (prefersBanglish(instruction) || prefersBanglish(originalQuestion || "") || prefersBanglish(cleanText));
+  
+  const rawLines = cleanText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+
+  if (formatType === "points") {
+    const banner = isBn
+      ? "📌 **পয়েন্ট আকারে মূল তথ্য:**\n\n"
+      : isBanglish
+      ? "📌 **Point akare mul tothyo:**\n\n"
+      : "📌 **Key Points:**\n\n";
+
+    const points = [];
+    for (const line of rawLines) {
+      const unbulleted = line.replace(/^[•*\-\d.]+\s*/, "").trim();
+      if (!unbulleted) continue;
+      
+      if (unbulleted.includes(":") && !unbulleted.startsWith("-")) {
+        const [label, ...rest] = unbulleted.split(":");
+        const val = rest.join(":").trim();
+        const cleanLabel = label.replace(/\*\*/g, "").trim();
+        points.push(`- **${cleanLabel}:** ${val}`);
+      } else {
+        const sentences = unbulleted.split(/(?<=[.।!?])\s+/).filter((s) => s.length > 5);
+        if (sentences.length > 1) {
+          for (const s of sentences) {
+            points.push(`- ${s}`);
+          }
+        } else {
+          points.push(`- ${unbulleted}`);
+        }
+      }
+    }
+    return banner + (points.length ? points.join("\n") : cleanText);
+  }
+
+  if (formatType === "shorten") {
+    const banner = isBn
+      ? "⚡ **সংক্ষেপে:**\n\n"
+      : isBanglish
+      ? "⚡ **Short Summary:**\n\n"
+      : "⚡ **In Short:**\n\n";
+
+    const scored = rawLines.map((line) => {
+      let score = 0;
+      const lower = line.toLowerCase();
+      if (/(fee|tuition|cost|টাকা|tk|bdt|payment|খরচ|ফি)/i.test(lower)) score += 10;
+      if (/(credit|duration|year|semester|বছর|সেমিস্টার|ক্রেডিট)/i.test(lower)) score += 8;
+      if (/(eligibility|requirement|gpa|জিপিএ|যোগ্যতা|ভর্তি)/i.test(lower)) score += 8;
+      if (/(head|chairman|chairperson|উপাচার্য|vc|প্রধান)/i.test(lower)) score += 7;
+      if (/(result|exam|পরীক্ষা|নম্বর)/i.test(lower)) score += 6;
+      if (line.length > 20 && line.length < 180) score += 3;
+      return { line, score };
+    });
+
+    scored.sort((a, b) => b.score - a.score);
+    const topLines = (scored.length > 0 && scored[0].score > 0)
+      ? scored.slice(0, 3).map((item) => {
+          const l = item.line.replace(/^[•*\-\d.]+\s*/, "").trim();
+          return l.startsWith("-") ? l : `- ${l}`;
+        })
+      : rawLines.slice(0, 2);
+
+    return banner + topLines.join("\n");
+  }
+
+  if (formatType === "expand") {
+    const banner = isBn
+      ? "📖 **বিস্তারিত বিবরণ:**\n\n"
+      : isBanglish
+      ? "📖 **Bistarito Biboron (Detailed Overview):**\n\n"
+      : "📖 **Detailed Overview:**\n\n";
+
+    const dept = knowledge && typeof matchedDepartmentFromQuestion === "function"
+      ? matchedDepartmentFromQuestion(originalQuestion + " " + cleanText, knowledge)
+      : null;
+    if (dept && knowledge && typeof programForDepartment === "function") {
+      const prog = programForDepartment(knowledge, dept);
+      let credit = null;
+      let people = [];
+      let leaders = [];
+      try {
+        if (typeof departmentCreditFact === "function") credit = departmentCreditFact(knowledge, dept);
+      } catch {}
+      try {
+        if (typeof departmentPeople === "function") people = departmentPeople(knowledge, dept).filter(isTeachingFaculty);
+      } catch {}
+      try {
+        if (typeof departmentLeaderRecords === "function") leaders = departmentLeaderRecords(knowledge, dept, people);
+      } catch {}
+
+      const parts = [
+        banner,
+        `### **${displayDepartmentName(dept)}**\n`,
+        cleanText + "\n",
+        "**অতিরিক্ত প্রয়োজনীয় প্রাতিষ্ঠানিক তথ্য:**",
+        prog?.name ? `- **অফিশিয়াল ডিগ্রি:** ${prog.name}` : null,
+        prog?.duration ? `- **কোর্সের মোট মেয়াদ:** ${prog.duration}` : null,
+        credit?.value ? `- **সর্বমোট ক্রেডিট সংখ্যা:** ${credit.value}` : null,
+        prog?.seats ? `- **অনুমোদিত আসন সংখ্যা:** ${prog.seats}` : null,
+        leaders.length ? `- **বিভাগীয় প্রধান (Head):** ${leaders.map((p) => p.name).join(", ")}` : null,
+        people.length ? `- **অনুষদ সদস্য (Faculty):** ${people.length} জন শিক্ষক` : null,
+        prog?.admissionRequirement ? `- **ভর্তির ন্যূনতম যোগ্যতা:** ${prog.admissionRequirement}` : null,
+        "- **অন্যান্য সুবিধা:** আধুনিক কম্পিউটার ল্যাব, সমৃদ্ধ সেমিনার লাইব্রেরি, ওয়াইফাই ক্যাম্পাস এবং বিষয়ভিত্তিক ক্লাব কার্যক্রম।",
+        isBn
+          ? "\n*ভর্তি সংক্রান্ত যেকোনো হালনাগাদ তথ্যের জন্য বিশ্ববিদ্যালয়ের ভর্তি অফিসে যোগাযোগ করার পরামর্শ দেওয়া হলো।*"
+          : "\n*For official admissions updates, please visit the university Admissions Office.*",
+      ].filter(Boolean);
+
+      return parts.join("\n");
+    }
+
+    const intro = isBn
+      ? "উক্ত বিষয়টি আরও স্পষ্টভাবে বোঝার জন্য নিচের বিস্তারিত দিকগুলো লক্ষ্য করুন:\n\n"
+      : isBanglish
+      ? "Ei topic ta aro details e bujhar jonno nicher point gulo kheyal korun:\n\n"
+      : "Here is a more comprehensive breakdown of the topic:\n\n";
+
+    return banner + intro + cleanText;
+  }
+
+  if (formatType === "simplify") {
+    const banner = isBn
+      ? "💡 **সহজ ভাষায় সংক্ষেপে:**\n\n"
+      : isBanglish
+      ? "💡 **Shohoj Bhashay:**\n\n"
+      : "💡 **In Simple Terms:**\n\n";
+
+    const lines = rawLines.map((l) => l.replace(/^[•*\-\d.]+\s*/, "").trim());
+    return banner + lines.slice(0, 3).map((l) => `- ${l}`).join("\n");
+  }
+
+  return cleanText;
+}
+
+async function handleFollowupFormatRequest({ message, history, knowledge, sessionId, isGbAi }) {
+  const formatType = detectFollowupFormatType(message);
+  if (!formatType) return null;
+
+  const { lastAssistant, lastUser } = getRecentExchangeFromHistory(history, message);
+  const isBn = /[\u0980-\u09ff]/.test(message);
+  const isBanglish = !isBn && prefersBanglish(message);
+
+  if (!lastAssistant || !lastAssistant.text) {
+    return {
+      text: isBn
+        ? "আপনি কোন বিষয়টি সংক্ষেপে বা পয়েন্ট আকারে দেখতে চান? দয়া করে আপনার কাঙ্ক্ষিত প্রশ্ন বা বিষয়টি লিখে জানান।"
+        : isBanglish
+        ? "Apni kon topic ta choto kore ba point akare dekhte chan? Please apnar question-ta ektu likhe janan."
+        : "Which topic or question would you like me to format or summarize? Please type your question first.",
+      mode: "clarify",
+      medium: isGbAi ? "gb-ai" : "chat",
+      sources: [],
+      suggestions: isBn
+        ? ["CSE ভর্তি ফি কত?", "গণ বিশ্ববিদ্যালয়ের উপাচার্য কে?", "ভর্তির ন্যূনতম যোগ্যতা কী?"]
+        : isBanglish
+        ? ["CSE admission fee koto?", "Gono Bishwabidyalay er VC ke?", "Admission eligibility ki?"]
+        : ["What is the CSE admission fee?", "Who is the Vice-Chancellor?", "Admission eligibility criteria"],
+    };
+  }
+
+  const origUser = getOriginalTopicUserTurn(history, message) || lastUser;
+  const rawAssistantText = String(lastAssistant.text || "");
+  const hadUnivHeader =
+    rawAssistantText.includes("গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস") ||
+    rawAssistantText.includes("GB Chatbot • Official University Knowledge Base") ||
+    lastAssistant.isUniversityQuery ||
+    lastAssistant.mode === "gb_ai_university_chatbot";
+
+  const cleanText = cleanTextOfPrefix(rawAssistantText);
+  const isUniv =
+    hadUnivHeader ||
+    Boolean(knowledge && origUser?.text && isUniversityInquiry(origUser.text, knowledge, [])) ||
+    Boolean(knowledge && cleanText && isUniversityInquiry(cleanText, knowledge, []));
+
+  const language = isBn
+    ? "Bengali"
+    : isBanglish || prefersBanglish(origUser?.text || "") || prefersBanglish(cleanText)
+    ? "Banglish"
+    : "English";
+
+  let reformattedText = await callAiReformat({
+    cleanText,
+    originalQuestion: origUser?.text || lastUser?.text || "",
+    instruction: message,
+    formatType,
+  });
+
+  if (!reformattedText) {
+    reformattedText = reformatTextDeterministically(
+      cleanText,
+      formatType,
+      message,
+      origUser?.text || lastUser?.text || "",
+      knowledge
+    );
+  }
+
+  if (isGbAi && isUniv) {
+    const prefix = language === "English"
+      ? "🏛️ **GB Chatbot • Official University Knowledge Base:**\n\n"
+      : "🏛️ **গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস (GB Chatbot):**\n\n";
+    if (!reformattedText.startsWith("🏛️")) {
+      reformattedText = prefix + reformattedText;
+    }
+  }
+
+  const effectiveSources = Array.isArray(lastAssistant.sources) ? lastAssistant.sources : [];
+  const suggestions = followupFormatSuggestions(formatType, isUniv, language);
+
+  return {
+    text: reformattedText,
+    mode: isGbAi
+      ? isUniv
+        ? "gb_ai_university_chatbot"
+        : "gb_ai_solution"
+      : "structured_format_followup",
+    medium: isGbAi ? "gb-ai" : "chat",
+    isUniversityQuery: Boolean(isUniv),
+    aiModel: isGbAi
+      ? isUniv
+        ? "GB Chatbot (Official Knowledge)"
+        : "GB AI"
+      : undefined,
+    profile: {
+      label: isGbAi
+        ? isUniv
+          ? "GB Chatbot"
+          : "GB AI"
+        : "Follow-up Answer",
+      confidence: isUniv ? "Official University Knowledge" : "Context Preserved",
+    },
+    sources: effectiveSources,
+    suggestions,
+  };
+}
+
 function isContextualFollowup(question) {
   const q = normalizeQuestion(question);
-  return asksContactDetail(q) || /\b(his|her|their|that|this|profile|details|tar|or|oder|etar|eitar|oitar|about|career|future|job|scope|waiver|scholarship|eligibility|qualification|kobe|shuru|start|dates?|timing)\b/i.test(q);
+  return (
+    isFollowupFormatInstruction(q) ||
+    asksContactDetail(q) ||
+    /\b(his|her|their|that|this|profile|details|tar|or|oder|etar|eitar|oitar|about|career|future|job|scope|waiver|scholarship|eligibility|qualification|kobe|shuru|start|dates?|timing)\b/i.test(q)
+  );
 }
 
 function previousConversation(history = [], message = "") {
@@ -4918,6 +5419,22 @@ function directCorrectionOrNumberFollowup(question, knowledge, history = []) {
 function directAnswer(question, knowledge, history = []) {
   const correctionFollowup = directCorrectionOrNumberFollowup(question, knowledge, history);
   if (correctionFollowup) return correctionFollowup;
+
+  if (history && history.length > 0 && isFollowupFormatInstruction(question)) {
+    const { lastAssistant, lastUser } = getRecentExchangeFromHistory(history, question);
+    if (lastAssistant && lastAssistant.text) {
+      const origUser = getOriginalTopicUserTurn(history, question) || lastUser;
+      const formatType = detectFollowupFormatType(question);
+      const cleanText = cleanTextOfPrefix(lastAssistant.text);
+      const reformatted = reformatTextDeterministically(cleanText, formatType, question, origUser?.text, knowledge);
+      return {
+        text: reformatted,
+        sources: Array.isArray(lastAssistant.sources) ? lastAssistant.sources : [],
+        mode: lastAssistant.mode || "structured",
+      };
+    }
+  }
+
   if (history.length && !matchedDepartmentFromQuestion(question, knowledge)) {
     const topicIdx = ordinalTopicIndex(question);
     const recalledDepartment = ordinalContextDepartment(question, history, knowledge);
@@ -5879,11 +6396,47 @@ function isImageRefinementOrFollowup(message, history = []) {
     return null;
   }
 
-  // Unrelated university / academic questions are NOT image refinements
-  if (/\b(admission|fee|fees|tuition|cost|khoroc|somoy|timing|open|close|bondho|schedule|routine|bus|transport|result|grade|cgpa|gpa|credit|waiver|scholarship|eligibility|joggot|department|faculty|teacher|dean|vc|vice chancellor|registrar|contact|phone|number|email|address|location|kothay|kokhon|koto|ki ki|kivabe|rules|notice|syllabus|curriculum)\b/i.test(t)) {
+  const hasExplicitImageTerm =
+    /\b(chobi|chobita|image|photo|picture|drawing|artwork|illustration|wallpaper|render)\b/i.test(t) ||
+    /(ছবি|ছবিটা|ইমেজ|চিত্র|ফটো|অঙ্কন)/.test(t);
+
+  // Follow-up formatting instructions (shorten, expand, points) for text are NOT image refinements
+  if (isFollowupFormatInstruction(t) && !hasExplicitImageTerm) {
     return null;
   }
-  if (/(ভর্তি|টিউশন|ফি|খরচ|সময়|খোলা|বন্ধ|বাস|রুটিন|রেজাল্ট|গ্রেড|সিজিপিএ|যোগ্যতা|বিভাগ|শিক্ষক|রেজিস্ট্রার|যোগাযোগ|ফোন|ঠিকানা|কোথায়|কখন|কত|কী কী|কীভাবে|নিয়ম|নোটিশ|সিলেবাস)/.test(t)) {
+
+  // Questions with question marks are inquiries, NOT image refinements, unless explicitly asking about image modification
+  if (/[?？]/.test(t) && !hasExplicitImageTerm) {
+    return null;
+  }
+
+  // Question words or informational queries are NOT image refinements
+  if (
+    /^(what|who|why|how|when|where|which|whose|whom|can\s+you|could\s+you|please\s+explain|explain|define|solve|calculate|write|tell\s+me|show\s+me|find|search|ki|kivabe|keno|kobe|kothay|ke|bolo|bolun|bujhiye|somadhan|likhe)\b/i.test(t) &&
+    !hasExplicitImageTerm
+  ) {
+    return null;
+  }
+
+  // Coding, programming, math, science, and general knowledge questions are NOT image refinements
+  if (
+    /\b(python|javascript|code|programming|java|c\+\+|html|css|sql|function|loop|array|algorithm|debug|bug|error|math|physics|chemistry|biology|science|gravity|history|bangladesh|dhaka|capital|currency|president|prime\s+minister|formula|derivative|integral|solve|equation|web\s*search|google|search)\b/i.test(t) &&
+    !hasExplicitImageTerm
+  ) {
+    return null;
+  }
+
+  // Unrelated university / academic questions are NOT image refinements
+  if (
+    /\b(admission|fee|fees|tuition|cost|khoroc|somoy|timing|open|close|bondho|schedule|routine|bus|transport|result|grade|cgpa|gpa|credit|waiver|scholarship|eligibility|joggot|department|faculty|teacher|dean|vc|vice chancellor|registrar|contact|phone|number|email|address|location|kothay|kokhon|koto|ki ki|kivabe|rules|notice|syllabus|curriculum|versity|university|varsity|campus|gono|bishwabidyalay)\b/i.test(t) &&
+    !hasExplicitImageTerm
+  ) {
+    return null;
+  }
+  if (
+    /(ভর্তি|টিউশন|ফি|খরচ|সময়|খোলা|বন্ধ|বাস|রুটিন|রেজাল্ট|গ্রেড|সিজিপিএ|যোগ্যতা|বিভাগ|শিক্ষক|রেজিস্ট্রার|যোগাযোগ|ফোন|ঠিকানা|কোথায়|কখন|কত|কী কী|কীভাবে|নিয়ম|নোটিশ|সিলেবাস|বিশ্ববিদ্যালয়|ভার্সিটি|ক্যাম্পাস)/.test(t) &&
+    !hasExplicitImageTerm
+  ) {
     return null;
   }
 
@@ -5892,23 +6445,49 @@ function isImageRefinementOrFollowup(message, history = []) {
     return null;
   }
 
-  // Refinement action / subject / visual keywords
-  const hasRefinementKeywords =
-    /\b(dau|dao|de|dien|add|boshao|rakho|diyo|remove|muche|change|bodlao|paltao|banao|koro|korun|korbi|make|put|include|insert|with|without|chara|shoho|shathe|diye)\b/i.test(t) ||
-    /(দাও|দে|দিন|যোগ|বসাও|রাখো|মুছে|বাদ|পরিবর্তন|পাল্টাও|বানাও|করো|করুন|সহ|ছাড়া|দিয়ে|যুক্ত)/.test(t) ||
-    /\b(vitore|inside|baire|outside|samne|in front|pechone|behind|upore|niche|pashe|beside|corner|background|foreground)\b/i.test(t) ||
-    /(ভিতরে|ভেতরে|বাইরে|সামনে|পেছনে|উপরে|নিচে|পাশে|ব্যাকগ্রাউন্ড)/.test(t) ||
-    /\b(color|colour|light|lighting|bright|dark|andhokar|alo|sunset|sunrise|night|day|morning|rain|rainy|cloudy|sunny|winter|fog|foggy|blur|sharp|clear|style|realistic|cartoon|anime|sketch|3d|cinematic|high quality|portrait|landscape)\b/i.test(t) ||
-    /(রং|কালার|আলো|উজ্জ্বল|অন্ধকার|সূর্যাস্ত|রাত|বৃষ্টি|শীত|কুয়াশা|স্টাইল|কার্টুন)/.test(t) ||
-    /\b(student|students|chatro|chatri|manush|people|person|chele|meye|boy|girl|books|boi|table|chair|computer|tree|gach|flower|ful|building|bhaban|sky|akash)\b/i.test(t) ||
-    /(ছাত্র|ছাত্রী|শিক্ষার্থী|মানুষ|ছেলে|মেয়ে|বই|টেবিল|চেয়ার|গাছ|ফুল|ভবন|আকাশ)/.test(t) ||
-    /\b(abar|arekta|arek|again|redo|regenerate|another|differently|onno|notun|aro|more|less|ar)\b/i.test(t) ||
-    /(আবার|আরেকটা|আরেক|নতুন|আরও|আরো|অন্যভাবে)/.test(t);
+  // Visual scene editing and refinement patterns:
+  // 1. Placement / addition inside or around the scene:
+  const isPlacementOrSceneEdit =
+    /(?:vitore|inside|moddhe|background|foreground|samne|pechone|upore|niche|pashe)\s+.*\b(?:dau|dao|boshao|rakho|add|put|de|diyo|banao|koro|make|insert)\b/i.test(t) ||
+    /\b(?:dau|dao|boshao|rakho|add|put|insert)\b.*\b(?:vitore|inside|moddhe|background|foreground|samne|pechone|upore|niche|pashe)\b/i.test(t) ||
+    /(?:ভিতরে|ভেতরে|মধ্যে|ব্যাকগ্রাউন্ড|সামনে|পেছনে|পাশে)\s+.*\b(?:দাও|দে|দিন|বসাও|রাখো|যোগ|বানাও|করো)/.test(t);
 
-  const wordCount = t.split(/\s+/).length;
-  const isShortDirectInstruction = wordCount <= 12 && !/[?？]/.test(t);
+  // 2. Removal / negative instruction:
+  const isRemovalEdit =
+    /\b(?:remove|muche|bad|chara)\b.*\b(?:koro|dao|dau|de|banao|make)\b/i.test(t) ||
+    /\b(?:student|students|chatro|chatri|manush|people|person|tree|trees|building)\s+(?:shob\s+)?(?:remove|bad|muche)\b/i.test(t) ||
+    /\b(?:remove\s+all\s+.*\s+from\s+the\s+scene|vitore\s+kono\s+manush\s+thakbe\s+na)\b/i.test(t) ||
+    /(?:মুছে\s*দাও|বাদ\s*দাও|বাদ\s*করো|ছাড়া\s*বানাও)/.test(t);
 
-  if (hasRefinementKeywords || isShortDirectInstruction) {
+  // 3. Lighting / color / atmosphere / style adjustment:
+  const isLightingOrAtmosphereEdit =
+    /\b(?:aro|more|less)\s+(?:bright|dark|andhokar|alo|clear|vibrant|colorful|cinematic|realistic)\b/i.test(t) ||
+    /\b(?:sunset|sunrise|night|day|morning|rain|rainy|cloudy|sunny|winter|fog|foggy)\s*(?:lighting|view|scene)?\s*(?:e\s+)?(?:banao|dau|dao|koro|make)\b/i.test(t) ||
+    /(?:রং|কালার|আলো|উজ্জ্বল|অন্ধকার|সূর্যাস্ত|রাত|বৃষ্টি|কুয়াশা|স্টাইল|কার্টুন)\s*.*\b(?:করো|দাও|বানাও|হবে)/.test(t);
+
+  // 4. Element addition / modification with subjects:
+  const isElementAddition =
+    /\b(?:student|students|chatro|chatri|manush|people|person|boi|books|table|chair|computer|tree|gach|flower|ful)\s+(?:add|yog|যুক্ত)\s*(?:koro|dao|dau)?\b/i.test(t) ||
+    /\b(?:vitore|inside)\s+.*\b(?:boshe|porche|stand|sit|walk|read|porashona)\b.*\b(?:emon\s+)?(?:banao|dau|dao|koro)\b/i.test(t);
+
+  // 5. Continuation / regeneration:
+  const isContinuation =
+    /\b(?:arekta|abar|notun\s+kore|arek|another\s+one|regenerate|redo)\s*(?:banao|dao|dau|try\s*koro|koro|make|draw)?\b/i.test(t) ||
+    /(?:আবার|আরেকটা|আরেকবার)\s*(?:বানাও|দাও|আঁকো)/.test(t);
+
+  // 6. Explicit image modifier:
+  const isExplicitImageModification =
+    hasExplicitImageTerm &&
+    /\b(dau|dao|de|add|boshao|rakho|remove|muche|change|bodlao|paltao|banao|koro|make|put|bright|dark|sunset|night|style|color|realistic|cinematic)\b/i.test(t);
+
+  if (
+    isPlacementOrSceneEdit ||
+    isRemovalEdit ||
+    isLightingOrAtmosphereEdit ||
+    isElementAddition ||
+    isContinuation ||
+    isExplicitImageModification
+  ) {
     return lastImage;
   }
 
@@ -6212,9 +6791,175 @@ function isImageCreationIntent(text) {
   return /(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|ছবি এঁকে দাও|ছবি একে দাও|ছবি বানিয়ে দাও|ছবি তৈরি করে দাও|image create koro|image banao|image draw koro|chobi banao|chobi ako|chobi create(?: koro)?|photo banao|picture banao|logo banao|generate an? image|create an? image|draw an? image|draw a\b|generate image|create image|draw image)/i.test(t);
 }
 
-async function handleGbAiQuestion(message, attachments = [], history = [], sessionId = "") {
+async function performWebSearch(query, { maxResults = 5 } = {}) {
+  const cleanQuery = String(query || "")
+    .replace(/^(web\s*search|search\s+the\s+web\s+for|search\s+the\s+web|search\s+for|search|google|khuje\s+dao|খুঁজে\s*দাও)[:\s]*/i, "")
+    .trim();
+  if (!cleanQuery) return [];
+
+  const results = [];
+  const seenUrls = new Set();
+
+  // 1. DuckDuckGo HTML search
+  try {
+    const ddgUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(cleanQuery)}`;
+    const resp = await fetch(ddgUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9,bn;q=0.8",
+      },
+      signal: AbortSignal.timeout(6000),
+    });
+
+    if (resp.ok) {
+      const html = await resp.text();
+      const $ = cheerio.load(html);
+
+      $(".result__body").each((_, el) => {
+        if (results.length >= maxResults) return false;
+        const title = $(el).find(".result__title a").text().trim();
+        let rawUrl = $(el).find(".result__title a").attr("href") || "";
+        if (rawUrl.includes("uddg=")) {
+          try {
+            const u = new URL("https://duckduckgo.com" + rawUrl);
+            rawUrl = decodeURIComponent(u.searchParams.get("uddg") || rawUrl);
+          } catch {}
+        }
+        const snippet = $(el).find(".result__snippet").text().trim();
+        if (title && snippet && rawUrl.startsWith("http") && !seenUrls.has(rawUrl)) {
+          seenUrls.add(rawUrl);
+          results.push({ title, url: rawUrl, snippet });
+        }
+      });
+    }
+  } catch {}
+
+  // 2. Wikipedia search API fallback or enrichment
+  if (results.length < 3) {
+    try {
+      const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQuery)}&utf8=&format=json`;
+      const wikiResp = await fetch(wikiUrl, {
+        headers: { "User-Agent": "GB-AI-Assistant/1.0" },
+        signal: AbortSignal.timeout(4000),
+      });
+      if (wikiResp.ok) {
+        const wikiData = await wikiResp.json();
+        const hits = wikiData?.query?.search || [];
+        for (const hit of hits) {
+          if (results.length >= maxResults) break;
+          const hitUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(hit.title.replace(/\s+/g, "_"))}`;
+          if (!seenUrls.has(hitUrl)) {
+            seenUrls.add(hitUrl);
+            const cleanSnippet = hit.snippet ? cheerio.load(hit.snippet).text().trim() : "";
+            results.push({
+              title: `${hit.title} - Wikipedia`,
+              url: hitUrl,
+              snippet: cleanSnippet || hit.title,
+            });
+          }
+        }
+      }
+    } catch {}
+  }
+
+  return results;
+}
+
+function isWebSearchIntent(text) {
+  const t = String(text || "").trim();
+  if (!t) return false;
+  return (
+    /\b(web\s*search|search\s+the\s+web|search\s+online|search\s+internet|google\s+koro|khuje\s+dao|khuje\s+dekho|search\s+koro|latest\s+news|recent\s+news|today's\s+news|current\s+affairs|live\s+score)\b/i.test(t) ||
+    /(ওয়েব\s*সার্চ|সার্চ\s*করো|গুগল\s*করো|ইন্টারনেট\s*থেকে|খুঁজে\s*দাও|সাম্প্রতিক\s*খবর|তাজা\s*খবর)/.test(t)
+  );
+}
+
+function isUniversityInquiry(message, knowledge, history = []) {
+  const t = String(message || "").trim();
+  if (!t) return false;
+
+  // If this is a follow-up or format modification, check conversation history
+  if (Array.isArray(history) && history.length > 0) {
+    if (isFollowupFormatInstruction(t) || isContextualFollowup(t)) {
+      const origUser = getOriginalTopicUserTurn(history, t);
+      if (origUser && origUser.text && origUser.text !== t && isUniversityInquiry(origUser.text, knowledge, [])) {
+        return true;
+      }
+      const lastAss = getLastAssistantTurn(history);
+      if (
+        lastAss &&
+        (lastAss.mode === "gb_ai_university_chatbot" ||
+          lastAss.isUniversityQuery ||
+          /গণ\s*বিশ্ববিদ্যালয়|gono\s*bishwabidyalay/i.test(lastAss.text || ""))
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // Filter out pure programming/code, math formulas, or non-university general questions
+  if (/^(solve|calculate|write\s+code|python\s+code|write\s+a\s+python|javascript|c\+\+|html|css|bug|derivative|integral|equation)\b/i.test(t)) {
+    return false;
+  }
+
+  // Explicit university keywords
+  if (/\b(gono|bishwabidyalay|university|varsity|versity|campus|savar|mirzanagar|nolam|gb|gk|gbkc|baksu|gono\s*shasthaya)\b/i.test(t)) {
+    return true;
+  }
+  if (/(গণ\s*বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|ভার্সিটি|ক্যাম্পাস|সাভার|মির্জানগর|নলাম|বাকসু)/.test(t)) {
+    return true;
+  }
+
+  // University administration, leadership, or officers
+  if (/\b(vice\s*chancellor|vc\s+sir|vc|registrar|proctor|treasurer|exam\s*controller|examinations?|dean|zafrullah)\b/i.test(t)) {
+    return true;
+  }
+  if (/(উপাচার্য|ভিসি|রেজিস্ট্রার|প্রক্টর|কোষাধ্যক্ষ|পরীক্ষা\s*নিয়ন্ত্রক|ডিন|জাফরুল্লাহ)/.test(t)) {
+    return true;
+  }
+
+  // University academic departments / programs at Gono Bishwabidyalay
+  const mentionsDept = /\b(cse|eee|pharmacy|bba|dvm|law|microbiology|biochemistry|english|bangla|agriculture|applied\s+math|medical\s+physics)\b/i.test(t);
+  const mentionsDeptContext =
+    /\b(department|dept|faculty|program|subject|course|syllabus|curriculum|credit|credits|class|routine|exam|faculty\s+member|teacher|chairperson|head|admission|fee|cost)\b/i.test(t) ||
+    /(বিভাগ|অনুষদ|প্রোগ্রাম|সিলেবাস|ক্রেডিট|ক্লাস|রুটিন|শিক্ষক|ভর্তি|ফি|খরচ)/.test(t);
+  if (mentionsDept && mentionsDeptContext) {
+    return true;
+  }
+
+  // Admissions, fees, tuition, waiver, hostel, transport specific to university
+  if (/\b(admission|vorti|tuition|waiver|scholarship|hostel|transport|bus\s+route|admit\s+card|student\s+portal)\b/i.test(t)) {
+    return true;
+  }
+  if (/(ভর্তি|টিউশন|ওয়েভার|বৃত্তি|হোস্টেল|বাস\s*রুট|অ্যাডমিট\s*কার্ড|স্টুডেন্ট\s*পোর্টাল)/.test(t)) {
+    return true;
+  }
+
+  // Specific query functions from official engine
+  if (explicitlyRequestsGonoContext(t) || asksFeeDetail(t) || asksProgramDetail(t)) {
+    return true;
+  }
+
+  // If asking about a person with university context or indexed staff
+  if (asksPersonIdentity(t)) {
+    if (/\b(gono|bishwabidyalay|university|varsity|versity|campus|savar|faculty|department|dept|teacher|sir|madam|officer|proctor|registrar|controller|vice\s+chancellor|vc|dean|founder|trustee)\b/i.test(t)) {
+      return true;
+    }
+    if (knowledge && typeof matchPeople === "function") {
+      const allPeople = [...(knowledge.faculty || []), ...(knowledge.officers || [])];
+      const matched = matchPeople(t, allPeople);
+      if (matched.length > 0) return true;
+    }
+  }
+
+  return false;
+}
+
+async function handleGbAiQuestion(message, attachments = [], history = [], sessionId = "", options = {}) {
   const hasAttachments = Array.isArray(attachments) && attachments.length > 0;
   const isBangla = /[\u0980-\u09ff]/.test(message) || prefersBanglish(message);
+  const wantsWebSearch = Boolean(options.webSearch) || (!hasAttachments && isWebSearchIntent(message));
 
   if (hasAttachments) {
     const hasAnyText = attachments.some(
@@ -6240,6 +6985,13 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
     }
   }
 
+  let webResults = [];
+  if (wantsWebSearch && message && message !== "Read this attachment and answer from it.") {
+    try {
+      webResults = await performWebSearch(message, { maxResults: 5 });
+    } catch {}
+  }
+
   let universityContexts = [];
   try {
     const knowledge = await loadKnowledge();
@@ -6258,27 +7010,56 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
     langInstruction = "Reply in friendly, clear Banglish matching the student's conversational style.";
   }
 
-  const systemInstruction =
-    `You are GB AI, an expert academic tutor, problem solver, and multi-disciplinary AI assistant for students.\n` +
-    `You excel at solving and explaining:\n` +
-    `- Mathematics (Calculus, Algebra, Differential Equations, Geometry, Trigonometry, Statistics)\n` +
-    `- Computer Science & Programming (Python, C, C++, Java, JavaScript, Data Structures, Algorithms, SQL, OOP, Bug fixing)\n` +
-    `- Physics, Chemistry, Biology, Pharmacy, Medical Physics, Health Sciences\n` +
-    `- Solving exam questions, assignments, and problem sets from uploaded screenshots or text\n` +
-    `- Gono Bishwabidyalay university details (if relevant)\n\n` +
-    `Instructions:\n` +
-    `1. Provide direct, step-by-step solutions with clear reasoning.\n` +
-    `2. For Math/Science: State given values, the formula/principle used, step-by-step arithmetic/algebra, and underline or box the final answer.\n` +
-    `3. For Code & Programming:\n` +
-    `   - Clearly explain the algorithmic approach or logic before presenting the code.\n` +
-    `   - Provide complete, clean, production-ready code inside fenced markdown code blocks (\`\`\`language ... \`\`\`) with descriptive variable names and helpful inline comments. Never truncate, omit lines, or leave "// TODO" placeholders.\n` +
-    `   - Always include a working Example Run with sample input and expected output so the user can test immediately.\n` +
-    `   - State Big-O Time Complexity and Space Complexity with a brief justification.\n` +
-    `   - Mention important edge cases handled (e.g. empty input, boundary conditions, zero, negative values).\n` +
-    `   - If debugging or fixing code/errors: identify the root cause, provide the fully corrected code, and summarize the key fixes made.\n` +
-    `4. For Screenshots: Carefully read the extracted OCR text from the student's screenshot. Identify the specific problem(s) and solve them completely.\n` +
-    `5. Formatting: Use markdown bolding, numbered steps, bullet points, and headers for high readability.\n` +
-    `6. ${langInstruction}`;
+  const isWebSearchActive = webResults.length > 0;
+  let systemInstruction = "";
+
+  if (isWebSearchActive) {
+    systemInstruction =
+      `You are GB AI, an expert academic and real-time knowledge assistant with live web search capability.\n` +
+      `You have searched the web and received fresh, live results for the user's query.\n` +
+      `Instructions:\n` +
+      `1. Provide an up-to-date, highly accurate, and comprehensive answer synthesized from the live search results.\n` +
+      `2. Reference key facts, entities, and sources directly from the retrieved web information.\n` +
+      `3. Be direct, clear, and well-structured using markdown formatting (bullet points, bolding, headings).\n` +
+      `4. If the results contain specific statistics, dates, or official announcements, highlight them clearly.\n` +
+      `5. ${langInstruction}`;
+  } else {
+    systemInstruction =
+      `You are GB AI, an expert academic tutor, problem solver, and multi-disciplinary AI assistant for students.\n` +
+      `You excel at solving and explaining:\n` +
+      `- Mathematics (Calculus, Algebra, Differential Equations, Geometry, Trigonometry, Statistics)\n` +
+      `- Computer Science & Programming (Python, C, C++, Java, JavaScript, Data Structures, Algorithms, SQL, OOP, Bug fixing)\n` +
+      `- Physics, Chemistry, Biology, Pharmacy, Medical Physics, Health Sciences\n` +
+      `- Solving exam questions, assignments, and problem sets from uploaded screenshots or text\n` +
+      `- Gono Bishwabidyalay university details (if relevant)\n\n` +
+      `Instructions:\n` +
+      `1. Provide direct, step-by-step solutions with clear reasoning.\n` +
+      `2. For Math/Science: State given values, the formula/principle used, step-by-step arithmetic/algebra, and underline or box the final answer.\n` +
+      `3. For Code & Programming:\n` +
+      `   - Clearly explain the algorithmic approach or logic before presenting the code.\n` +
+      `   - Provide complete, clean, production-ready code inside fenced markdown code blocks (\`\`\`language ... \`\`\`) with descriptive variable names and helpful inline comments. Never truncate, omit lines, or leave "// TODO" placeholders.\n` +
+      `   - Always include a working Example Run with sample input and expected output so the user can test immediately.\n` +
+      `   - State Big-O Time Complexity and Space Complexity with a brief justification.\n` +
+      `   - Mention important edge cases handled (e.g. empty input, boundary conditions, zero, negative values).\n` +
+      `   - If debugging or fixing code/errors: identify the root cause, provide the fully corrected code, and summarize the key fixes made.\n` +
+      `4. For Screenshots: Carefully read the extracted OCR text from the student's screenshot. Identify the specific problem(s) and solve them completely.\n` +
+      `5. Formatting: Use markdown bolding, numbered steps, bullet points, and headers for high readability.\n` +
+      `6. ${langInstruction}`;
+  }
+
+  const isFormatFollowup = isFollowupFormatInstruction(message);
+  if (isFormatFollowup) {
+    const formatType = detectFollowupFormatType(message);
+    systemInstruction +=
+      `\n\nCRITICAL FOLLOW-UP FORMATTING INSTRUCTION:\n` +
+      `The student's request is a follow-up formatting instruction (${String(formatType || "").toUpperCase()}) regarding your PREVIOUS response in the conversation.\n` +
+      `You MUST directly reformat, adjust, and transform your previous answer according to their requested length and style:\n` +
+      `- If points: Output clean markdown bullet points with bold subheaders.\n` +
+      `- If shorten: Provide a concise, punchy summary preserving all crucial facts and figures.\n` +
+      `- If expand: Provide a detailed, in-depth explanation with context and practical implications.\n` +
+      `- If simplify: Explain in simple, intuitive terms.\n` +
+      `STRICTLY PRESERVE all facts, numbers, dates, equations, and code from the previous answer. DO NOT ask what to reformat; answer directly in the requested format.`;
+  }
 
   let userPrompt = "";
   const recentHistory = (history || []).slice(-6).filter((h) => h?.role && h?.text);
@@ -6297,6 +7078,13 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
       if (att.visualCaption) userPrompt += `Visual Scene: ${att.visualCaption}\n`;
       if (att.text) userPrompt += `Extracted Text (OCR):\n${att.text.trim()}\n`;
       userPrompt += "\n";
+    });
+  }
+
+  if (isWebSearchActive) {
+    userPrompt += "### Live Web Search Results (Current Web Information):\n";
+    webResults.forEach((res, idx) => {
+      userPrompt += `[Source ${idx + 1}: ${res.title}]\nURL: ${res.url}\nSummary: ${res.snippet}\n\n`;
     });
   }
 
@@ -6333,7 +7121,7 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
           },
           body: JSON.stringify({
             model,
-            temperature: 0.25,
+            temperature: isWebSearchActive ? 0.3 : 0.25,
             max_tokens: 1500,
             messages: [
               { role: "system", content: systemInstruction },
@@ -6358,7 +7146,12 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
   }
 
   if (!answerText) {
-    if (hasAttachments && attachments.some((a) => a.text)) {
+    if (isWebSearchActive) {
+      const summaryList = webResults.map((r, i) => `${i + 1}. **${r.title}**: ${r.snippet}`).join("\n\n");
+      answerText = isBangla
+        ? `🌐 **লাইভ ওয়েব সার্চ ফলাফল:**\n\n${summaryList}\n\n*সরাসরি তথ্য জানতে উপরের সোর্স লিংকে ক্লিক করুন।*`
+        : `🌐 **Live Web Search Results:**\n\n${summaryList}\n\n*Please refer to the source links below for details.*`;
+    } else if (hasAttachments && attachments.some((a) => a.text)) {
       const combinedText = attachments.map((a) => a.text).filter(Boolean).join("\n\n");
       answerText = isBangla
         ? `📷 **স্ক্রিনশট থেকে প্রাপ্ত টেক্সট:**\n\n${combinedText.slice(0, 1000)}\n\n*বর্তমানে এআই সার্ভার রেসপন্স করতে পারছে না। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।*`
@@ -6373,7 +7166,11 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
   const lowerMsg = (message || "").toLowerCase();
   const lowerAns = answerText.toLowerCase();
   let suggestions = [];
-  if (lowerMsg.includes("code") || lowerAns.includes("```") || lowerMsg.includes("python") || lowerMsg.includes("java") || lowerMsg.includes("c++") || lowerMsg.includes("program") || lowerMsg.includes("algorithm")) {
+  if (isWebSearchActive) {
+    suggestions = isBangla
+      ? ["আরও বিস্তারিত সার্চ করো", "সম্পর্কিত সাম্প্রতিক খবর দেখাও", "মূল তথ্যগুলো সংক্ষেপে বলো"]
+      : ["Search in more detail", "Show related recent updates", "Summarize key takeaways"];
+  } else if (lowerMsg.includes("code") || lowerAns.includes("```") || lowerMsg.includes("python") || lowerMsg.includes("java") || lowerMsg.includes("c++") || lowerMsg.includes("program") || lowerMsg.includes("algorithm")) {
     suggestions = isBangla
       ? ["কোডের প্রতিটি লাইন বুঝিয়ে দাও", "টাইম ও স্পেস কমপ্লেক্সিটি কত?", "আরও অপ্টিমাইজড সমাধান আছে?", "টেস্ট কেস ও ড্রাই রান দেখাও", "অন্য কোনো ভাষায় রূপান্তর করো"]
       : ["Explain code line-by-line", "Time & Space Complexity analysis", "Can this be optimized further?", "Show test cases and dry run", "Convert to another language"];
@@ -6387,16 +7184,29 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
       : ["Explain in more detail", "Give key summary points", "Explain with real-world analogy"];
   }
 
+  const effectiveSources = isWebSearchActive
+    ? webResults.map((c) => ({ title: c.title, url: c.url || "" }))
+    : universityContexts.map((c) => ({ title: c.title, url: c.url || "" }));
+
   return {
     text: answerText,
-    mode: hasAttachments ? "gb_ai_screenshot_solution" : "gb_ai_solution",
+    mode: isWebSearchActive
+      ? "gb_ai_web_search"
+      : hasAttachments
+      ? "gb_ai_screenshot_solution"
+      : "gb_ai_solution",
     medium: "gb-ai",
-    aiModel: "GB AI (Deep Academic Solver)",
+    webSearchUsed: isWebSearchActive,
+    aiModel: isWebSearchActive ? "GB AI (Web Search)" : "GB AI (Deep Academic Solver)",
     profile: {
-      label: hasAttachments ? "Screenshot Solved" : "GB AI Solution",
-      confidence: "Step-by-step",
+      label: isWebSearchActive
+        ? "Web Search"
+        : hasAttachments
+        ? "Screenshot Solved"
+        : "GB AI Solution",
+      confidence: isWebSearchActive ? "Live Web" : "Step-by-step",
     },
-    sources: universityContexts.map((c) => ({ title: c.title, url: c.url || "" })),
+    sources: effectiveSources,
     suggestions,
   };
 }
@@ -6438,7 +7248,7 @@ async function handleChat(req, res) {
     return json(res, 200, lookupResponse);
   }
 
-  // GB AI mode: Image creation if requested or refinement, otherwise Universal Problem & Screenshot Solver
+  // GB AI mode: Image creation if requested or refinement, otherwise University Routing, Web Search or Academic Solver
   if (body.medium === "gb-ai") {
     const isImageRequest = !hasAttachments && (body.mode === "image" || isImageCreationIntent(message) || Boolean(imageRefinement));
     if (isImageRequest) {
@@ -6449,7 +7259,67 @@ async function handleChat(req, res) {
       return json(res, statusCode, imageResponse);
     }
 
-    const aiResponse = await handleGbAiQuestion(message, uploadedAttachments, history, sessionId);
+    // Check for follow-up formatting instructions (e.g. boro kore dau, choto kore dau, point akare dau)
+    const knowledge = await loadKnowledge();
+    if (!hasAttachments && isFollowupFormatInstruction(message) && previousHistory.length > 0) {
+      const formatResult = await handleFollowupFormatRequest({
+        message,
+        history,
+        knowledge,
+        sessionId,
+        isGbAi: true,
+      });
+      if (formatResult) {
+        rememberConversationExchange(sessionId, history, message, formatResult.text);
+        return json(res, 200, formatResult);
+      }
+    }
+
+    // Check if question is a university inquiry in GB AI mode
+    const isUniv = !hasAttachments && isUniversityInquiry(message, knowledge, history);
+    if (isUniv) {
+      let univResult = directAnswer(message, knowledge, previousHistory);
+      if (!univResult) univResult = directActivePersonAnswer(message, knowledge, conversationEntity(sessionId, "person"));
+      if (!univResult) {
+        const contexts = searchPages(message, knowledge, history);
+        if (contexts.length > 0) {
+          const aiAnswer = await askAiProvider(message, contexts, history, "chat");
+          if (aiAnswer) {
+            univResult = {
+              text: aiAnswer.text,
+              sources: dedupeSources(contexts.slice(0, 3).map(({ title, url }) => ({ title, url }))),
+            };
+          }
+        }
+      }
+
+      if (univResult) {
+        const isBn = /[\u0980-\u09ff]/.test(message) || prefersBanglish(message);
+        const prefix = isBn
+          ? "🏛️ **গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস (GB Chatbot):**\n\n"
+          : "🏛️ **GB Chatbot • Official University Knowledge Base:**\n\n";
+        const formattedText = univResult.text.startsWith("🏛️") ? univResult.text : prefix + univResult.text;
+        const respPayload = {
+          text: formattedText,
+          mode: "gb_ai_university_chatbot",
+          medium: "gb-ai",
+          isUniversityQuery: true,
+          aiModel: "GB Chatbot (Official Knowledge)",
+          profile: {
+            label: "GB Chatbot",
+            confidence: "Official University Knowledge",
+          },
+          sources: univResult.sources || [],
+          suggestions: univResult.suggestions || followupSuggestions(message, univResult).slice(0, 3),
+        };
+        rememberConversationExchange(sessionId, history, message, respPayload.text);
+        return json(res, 200, respPayload);
+      }
+    }
+
+    const aiResponse = await handleGbAiQuestion(message, uploadedAttachments, history, sessionId, {
+      webSearch: Boolean(body.webSearch),
+    });
     rememberConversationExchange(sessionId, history, message, aiResponse.text);
     return json(res, 200, aiResponse);
   }
@@ -6497,6 +7367,20 @@ async function handleChat(req, res) {
   let result = null;
   if (uploadedAttachments.some((attachment) => attachment.text || attachment.visualCaption || attachment.error)) result = await answerFromAttachment(message, uploadedAttachments, history);
   if (!result && useStoredAttachments) result = await answerFromAttachment(message, storedAttachments, history);
+
+  // Check for follow-up formatting instructions in Chatbot mode
+  if (!result && !hasAttachments && isFollowupFormatInstruction(message) && previousHistory.length > 0) {
+    const formatResult = await handleFollowupFormatRequest({
+      message,
+      history,
+      knowledge,
+      sessionId,
+      isGbAi: false,
+    });
+    if (formatResult) {
+      result = formatResult;
+    }
+  }
 
   const isConversational = isConversationalIntent(message);
   const hasDeterministicGpaEligibility = isStatedAdmissionEligibilityQuestion(message);
@@ -6896,4 +7780,11 @@ export {
   isImageCreationIntent,
   isExistingImageLookupIntent,
   isExplicitFreshImageIntent,
+  performWebSearch,
+  isWebSearchIntent,
+  isUniversityInquiry,
+  detectFollowupFormatType,
+  isFollowupFormatInstruction,
+  handleFollowupFormatRequest,
+  reformatTextDeterministically,
 };

@@ -7,6 +7,8 @@ import {
   isImageRefinementOrFollowup,
   isImageCreationIntent,
   isExistingImageLookupIntent,
+  isWebSearchIntent,
+  isUniversityInquiry,
 } from "./api-server.mjs";
 
 test("cleanImagePromptText strips action verbs, articles, and genitive particles", () => {
@@ -112,12 +114,21 @@ test("isImageRefinementOrFollowup detects scene modifications following an image
   assert.ok(isImageRefinementOrFollowup("vitore kono manush thakbe na", historyWithImage));
   assert.ok(isImageRefinementOrFollowup("remove all people from the scene", historyWithImage));
 
-  // Must NOT trigger for unrelated academic questions
+  // Must NOT trigger for unrelated academic, coding, math, general questions, or university queries
   assert.equal(isImageRefinementOrFollowup("CSE admission fee koto?", historyWithImage), null);
   assert.equal(isImageRefinementOrFollowup("Library kothay?", historyWithImage), null);
   assert.equal(isImageRefinementOrFollowup("VC sir er nam ki?", historyWithImage), null);
   assert.equal(isImageRefinementOrFollowup("Hello", historyWithImage), null);
   assert.equal(isImageRefinementOrFollowup("Thanks", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("tell me about bangladesh", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("what is photosynthesis?", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("explain gravity", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("write python code for binary search", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("how to make tea?", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("versity somporke bolo", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("who is einstein", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("solve 2x + 10 = 20", historyWithImage), null);
+  assert.equal(isImageRefinementOrFollowup("web search koro", historyWithImage), null);
 
   // Fresh image queries for new subjects after an image turn must NOT be treated as refinement
   assert.equal(isImageRefinementOrFollowup("Notun ekta football ground er chobi banao", historyWithImage), null);
@@ -125,6 +136,33 @@ test("isImageRefinementOrFollowup detects scene modifications following an image
   assert.equal(isImageRefinementOrFollowup("Campus main gate er chobi banao", historyWithImage), null);
   assert.equal(isImageRefinementOrFollowup("create a new image of a futuristic flying car", historyWithImage), null);
   assert.equal(isImageRefinementOrFollowup("একটি সম্পূর্ণ নতুন রোবটের ছবি আঁকো", historyWithImage), null);
+});
+
+test("isWebSearchIntent detects live search inquiries", () => {
+  assert.equal(isWebSearchIntent("web search koro"), true);
+  assert.equal(isWebSearchIntent("search the web for latest cricket score"), true);
+  assert.equal(isWebSearchIntent("google koro ajker khobor"), true);
+  assert.equal(isWebSearchIntent("khuje dao recent news"), true);
+  assert.equal(isWebSearchIntent("আজকের তাজা খবর সার্চ করো"), true);
+
+  assert.equal(isWebSearchIntent("explain theory of relativity"), false);
+  assert.equal(isWebSearchIntent("what is calculus?"), false);
+  assert.equal(isWebSearchIntent("solve x^2 + 5x + 6 = 0"), false);
+});
+
+test("isUniversityInquiry identifies Gono Bishwabidyalay topics and rejects general academic/code topics", () => {
+  assert.equal(isUniversityInquiry("CSE admission fee koto?"), true);
+  assert.equal(isUniversityInquiry("VC sir er nam ki?"), true);
+  assert.equal(isUniversityInquiry("Campus kothay?"), true);
+  assert.equal(isUniversityInquiry("versity somporke bolo"), true);
+  assert.equal(isUniversityInquiry("Gono Bishwabidyalay founder ke?"), true);
+  assert.equal(isUniversityInquiry("Pharmacy department e koyta credit?"), true);
+  assert.equal(isUniversityInquiry("গণ বিশ্ববিদ্যালয়ের উপাচার্য কে?"), true);
+
+  assert.equal(isUniversityInquiry("what is photosynthesis?"), false);
+  assert.equal(isUniversityInquiry("write a python code to sort an array"), false);
+  assert.equal(isUniversityInquiry("solve 2x + 10 = 20"), false);
+  assert.equal(isUniversityInquiry("who is albert einstein?"), false);
 });
 
 test("isImageCreationIntent supports broad Banglish/English creation verbs and rejects admin photo queries", () => {
