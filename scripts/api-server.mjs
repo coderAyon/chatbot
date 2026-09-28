@@ -2995,9 +2995,20 @@ function directProgramChoiceAnswer(question, knowledge) {
   };
 }
 
+function isCodingQuestion(question) {
+  const q = normalizeQuestion(question);
+  if (asksOfficialInstitutionFact(q) || asksPersonIdentity(q)) return false;
+  const codingTerms =
+    /\b(code|coding|program|programming|script|python|java|javascript|js|typescript|ts|c\+\+|cpp|c\s+program|sql|html|css|php|rust|golang|algorithm|data\s+structure|debug|bug|function|loop|array|linked\s*list|stack|queue|tree|graph|binary\s*search|sorting|recursion|oop|class|regex)\b/i.test(q);
+  const actionTerms =
+    /\b(code|write|program|solve|banao|kore\s+dao|likhe\s+dao|implement|create|debug|fix|explain|example|how\s+to|kivabe|error|exception|output|solution|dry\s*run)\b/i.test(q);
+  return codingTerms && (actionTerms || /\b(python|java|javascript|c\+\+|cpp|c\s+program|sql|html|css|php)\b/i.test(q));
+}
+
 function isGeneralAcademicQuestion(question) {
   const q = normalizeQuestion(question);
   if (asksOfficialInstitutionFact(q) || asksPersonIdentity(q)) return false;
+  if (isCodingQuestion(question)) return true;
   const asksExplainer =
     /\b(what\s+is|ki|kake\s+bole|define|explain|meaning|concept|basic|overview|somporke|somproke|about|details|subject|course|syllabus|topic|learn|study|pore|porano|porashona)\b/i.test(q);
   const academicTopic =
@@ -5417,7 +5428,11 @@ function aiSystemInstruction(question) {
     : prefersBanglish(question)
       ? "Reply in natural, friendly Banglish matching the user's wording and level of formality."
       : "Reply in concise, natural English matching the user's level of formality.";
-  const academicHint = isGeneralAcademicQuestion(question)
+  const isCode = isCodingQuestion(question);
+  const codingHint = isCode
+    ? `For Code & Programming requests: provide clean, production-ready, working code inside fenced markdown code blocks (\`\`\`language ... \`\`\`) with meaningful comments. Include a runnable Example Run with sample input and expected output, state Big-O Time & Space Complexity, and explain the logic clearly. `
+    : "";
+  const academicHint = isGeneralAcademicQuestion(question) && !isCode
     ? `This is a general academic/course explainer question. You may use general educational knowledge when official context is missing, but clearly say when the answer is general and not a verified Gono Bishwabidyalay-specific fact. `
     : "";
   return (
@@ -5425,6 +5440,7 @@ function aiSystemInstruction(question) {
     `Infer the user's real intent from fragments, common typos, shorthand, omitted words, and conversation context. Silently repair obvious wording mistakes. If one interpretation is clearly most likely, answer it directly; ask one short clarification only when two materially different interpretations remain plausible. ` +
     `Keep continuity with earlier turns, remember which person/program/topic pronouns refer to, and sound natural rather than like a search engine or form. ${languageHint} ` +
     academicHint +
+    codingHint +
     `If the user asks a yes/no question and the context supports it, start with "Yes" or "No" and then give one short reason. ` +
     `For names, phone numbers, emails, fees, designations, departments, deadlines, and admission requirements, answer only when the exact fact is present in the supplied context. ` +
     `Distinguish total tuition, admission-time payment, semester fee, and other charges; never present one as another. ` +
@@ -6253,7 +6269,13 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
     `Instructions:\n` +
     `1. Provide direct, step-by-step solutions with clear reasoning.\n` +
     `2. For Math/Science: State given values, the formula/principle used, step-by-step arithmetic/algebra, and underline or box the final answer.\n` +
-    `3. For Code: Provide clean, working code inside fenced markdown code blocks (\`\`\`language ... \`\`\`) with comments and complexity explanation.\n` +
+    `3. For Code & Programming:\n` +
+    `   - Clearly explain the algorithmic approach or logic before presenting the code.\n` +
+    `   - Provide complete, clean, production-ready code inside fenced markdown code blocks (\`\`\`language ... \`\`\`) with descriptive variable names and helpful inline comments. Never truncate, omit lines, or leave "// TODO" placeholders.\n` +
+    `   - Always include a working Example Run with sample input and expected output so the user can test immediately.\n` +
+    `   - State Big-O Time Complexity and Space Complexity with a brief justification.\n` +
+    `   - Mention important edge cases handled (e.g. empty input, boundary conditions, zero, negative values).\n` +
+    `   - If debugging or fixing code/errors: identify the root cause, provide the fully corrected code, and summarize the key fixes made.\n` +
     `4. For Screenshots: Carefully read the extracted OCR text from the student's screenshot. Identify the specific problem(s) and solve them completely.\n` +
     `5. Formatting: Use markdown bolding, numbered steps, bullet points, and headers for high readability.\n` +
     `6. ${langInstruction}`;
@@ -6351,10 +6373,10 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
   const lowerMsg = (message || "").toLowerCase();
   const lowerAns = answerText.toLowerCase();
   let suggestions = [];
-  if (lowerMsg.includes("code") || lowerAns.includes("```") || lowerMsg.includes("python") || lowerMsg.includes("java")) {
+  if (lowerMsg.includes("code") || lowerAns.includes("```") || lowerMsg.includes("python") || lowerMsg.includes("java") || lowerMsg.includes("c++") || lowerMsg.includes("program") || lowerMsg.includes("algorithm")) {
     suggestions = isBangla
-      ? ["কোডের প্রতিটি লাইন বুঝিয়ে দাও", "টাইম ও স্পেস কমপ্লেক্সিটি কত?", "অন্য কোনো অপ্টিমাইজড সমাধান আছে?"]
-      : ["Explain code line-by-line", "What is the time complexity?", "Can this be optimized?"];
+      ? ["কোডের প্রতিটি লাইন বুঝিয়ে দাও", "টাইম ও স্পেস কমপ্লেক্সিটি কত?", "আরও অপ্টিমাইজড সমাধান আছে?", "টেস্ট কেস ও ড্রাই রান দেখাও", "অন্য কোনো ভাষায় রূপান্তর করো"]
+      : ["Explain code line-by-line", "Time & Space Complexity analysis", "Can this be optimized further?", "Show test cases and dry run", "Convert to another language"];
   } else if (/(\+|\-|\*|\/|=|\^|derivative|integral|equation|formula|ক্ষেত্রফল|সমীকরণ|ঘনত্ব)/i.test(message + answerText)) {
     suggestions = isBangla
       ? ["আরেকটি উদাহরণ দিয়ে বোঝাও", "ধাপগুলো আরেকটু সহজ করে বলো", "অন্য কোনো নিয়মে করা যায়?"]

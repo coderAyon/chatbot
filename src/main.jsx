@@ -9,8 +9,10 @@ import {
   ChevronDown,
   Clipboard,
   Clock,
+  Copy,
   DatabaseZap,
   Download,
+  Eye,
   Headphones,
   Image as ImageIcon,
   Link as LinkIcon,
@@ -1674,6 +1676,115 @@ function Metric({ label, value }) {
   );
 }
 
+function CodeBlock({ code, lang = "" }) {
+  const [copied, setCopied] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const codeLines = code.split("\n");
+  const normalizedLang = (lang || "").toLowerCase().trim();
+  const canPreview = ["html", "svg", "htm"].includes(normalizedLang);
+
+  const handleCopy = () => {
+    try {
+      navigator.clipboard?.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
+
+  const handleDownload = () => {
+    const extMap = {
+      python: "py", py: "py",
+      javascript: "js", js: "js",
+      typescript: "ts", ts: "ts",
+      cpp: "cpp", "c++": "cpp",
+      c: "c",
+      java: "java",
+      html: "html",
+      css: "css",
+      sql: "sql",
+      json: "json",
+      bash: "sh", sh: "sh",
+      php: "php",
+      rust: "rs",
+      go: "go",
+    };
+    const ext = extMap[normalizedLang] || "txt";
+    const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `solution.${ext}`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="message-code-block">
+      <div className="code-block-header">
+        <div className="code-block-lang-wrap">
+          <span className="code-lang-dot" />
+          <span className="code-lang-label">{lang || "CODE"}</span>
+          <span className="code-lines-count">{codeLines.length} {codeLines.length === 1 ? "line" : "lines"}</span>
+        </div>
+        <div className="code-block-actions">
+          {canPreview && (
+            <button
+              type="button"
+              className={`code-action-btn ${showPreview ? "active" : ""}`}
+              onClick={() => setShowPreview((prev) => !prev)}
+              title={showPreview ? "Show Code" : "Live Preview"}
+            >
+              <Eye size={13} />
+              <span>{showPreview ? "Code" : "Preview"}</span>
+            </button>
+          )}
+          <button
+            type="button"
+            className="code-action-btn"
+            onClick={handleDownload}
+            title="Download Code File"
+          >
+            <Download size={13} />
+            <span>Download</span>
+          </button>
+          <button
+            type="button"
+            className={`code-action-btn ${copied ? "copied" : ""}`}
+            onClick={handleCopy}
+            title="Copy Code"
+          >
+            {copied ? <Check size={13} /> : <Copy size={13} />}
+            <span>{copied ? "Copied!" : "Copy"}</span>
+          </button>
+        </div>
+      </div>
+      {showPreview && canPreview ? (
+        <div className="code-preview-frame-wrap">
+          <iframe
+            srcDoc={code}
+            title="Code Preview"
+            sandbox="allow-scripts"
+            className="code-preview-frame"
+          />
+        </div>
+      ) : (
+        <div className="code-pre-wrap">
+          <pre className="code-pre">
+            <code>
+              {codeLines.map((lineText, idx) => (
+                <div key={idx} className="code-line">
+                  <span className="code-line-num">{idx + 1}</span>
+                  <span className="code-line-text">{lineText || "\n"}</span>
+                </div>
+              ))}
+            </code>
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function renderMessageText(text) {
   const lines = String(text || "").split("\n");
   const output = [];
@@ -1699,10 +1810,7 @@ function renderMessageText(text) {
         index += 1;
       }
       output.push(
-        <div key={`codeblock-${index}`} className="message-code-block">
-          {lang && <div className="code-block-header"><span>{lang}</span></div>}
-          <pre><code>{codeLines.join("\n")}</code></pre>
-        </div>
+        <CodeBlock key={`codeblock-${index}`} code={codeLines.join("\n")} lang={lang} />
       );
       continue;
     }
