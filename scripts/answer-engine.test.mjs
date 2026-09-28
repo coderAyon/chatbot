@@ -633,6 +633,68 @@ test("academic-unit and program lists come from structured knowledge", () => {
   assert.doesNotMatch(health.text, /people records/i);
 });
 
+test("department count questions never fall through to contact phone numbers", () => {
+  const question = "total number of departments in gono university?";
+  const answer = directAnswer(question, fixture);
+  assert.match(answer.text, /6 departments\/program groups.*2 faculties/s);
+  assert.doesNotMatch(answer.text, /Phone|0195/);
+
+  const history = [
+    { role: "user", text: question },
+    { role: "assistant", text: "Mobile: Phone: 01950003312" },
+  ];
+  const correction = directAnswer("i said number of department", fixture, history);
+  assert.match(correction.text, /6 departments\/program groups/);
+  assert.doesNotMatch(correction.text, /Phone|0195|not have enough/i);
+});
+
+test("basic count, contact, correction, and short-number conversations stay on intent", () => {
+  const banglaCount = directAnswer("কয়টা ডিপার্টমেন্ট আছে?", fixture);
+  assert.match(banglaCount.text, /6\D*departments?\/program group/s);
+
+  assert.match(directAnswer("depertment koyta", fixture).text, /6\D*departments?\/program group/s);
+  assert.match(directAnswer("departmnt count", fixture).text, /6\D*departments?\/program group/s);
+
+  const genericPhone = directAnswer("department phone number", fixture);
+  assert.equal(genericPhone.mode, "clarify");
+  assert.match(genericPhone.text, /Which department/i);
+  assert.doesNotMatch(genericPhone.text, /6 departments/);
+
+  const csePhone = directAnswer("CSE department phone number", fixture);
+  assert.equal(csePhone.mode, "not_found");
+  assert.match(csePhone.text, /do not provide a separate office phone/i);
+  assert.doesNotMatch(csePhone.text, /people records|faculty member.*Phone/i);
+
+  assert.match(directAnswer("how many teachers are there?", fixture).text, /180\+ faculty members/i);
+  assert.match(directAnswer("how many students are there?", fixture).text, /4,?200\+ undergraduate.*500\+ graduate/s);
+  assert.match(directAnswer("office staff count", fixture).text, /120\+ office staff/i);
+
+  const departmentHistory = [
+    { role: "user", text: "how many departments are there?" },
+    { role: "assistant", text: "There are 6 departments." },
+  ];
+  assert.match(directAnswer("no, I meant faculties", fixture, departmentHistory).text, /2 faculties/i);
+
+  const listHistory = [
+    { role: "user", text: "list all departments" },
+    { role: "assistant", text: "Department list" },
+  ];
+  assert.equal(directAnswer("just the number", fixture, listHistory).text, "**6**");
+
+  const creditHistory = [
+    { role: "user", text: "CSE total credits" },
+    { role: "assistant", text: "Total credits: 160" },
+  ];
+  assert.equal(directAnswer("just number", fixture, creditHistory).text, "**160**");
+
+  const facultyCount = directAnswer("faculty count?", fixture);
+  assert.match(facultyCount.text, /2 faculties/i);
+  assert.doesNotMatch(facultyCount.text, /Science & Engineering/);
+  const programCount = directAnswer("program count?", fixture);
+  assert.match(programCount.text, /4 programs.*6 academic/s);
+  assert.doesNotMatch(programCount.text, /B\.Sc\./);
+});
+
 test("person qualifications never fall through to admission eligibility", () => {
   const knowledge = { ...fixture, faculty: [
     ...fixture.faculty,

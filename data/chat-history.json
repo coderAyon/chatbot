@@ -6208,5 +6208,41 @@
     "mode": "structured",
     "sourceCount": 1,
     "latencyMs": 132
+  },
+  {
+    "at": "2026-09-27T16:26:59.263Z",
+    "sessionId": "chat_1790447076074_9uthz9",
+    "question": "chat 1",
+    "answer": "Sure! How can I help you today?",
+    "mode": "groq",
+    "sourceCount": 0,
+    "latencyMs": 1033
+  },
+  {
+    "at": "2026-09-27T16:27:07.449Z",
+    "sessionId": "chat_1790526422578_64n3gr",
+    "question": "chat 2",
+    "answer": "Could you clarify what you mean by “chat 2”?",
+    "mode": "groq",
+    "sourceCount": 0,
+    "latencyMs": 1109
+  },
+  {
+    "at": "2026-09-28T05:42:12.511Z",
+    "sessionId": "dept-conversation-c585ca53e1a349b796fd5955d3bc9753",
+    "question": "total number of departments in gono university?",
+    "answer": "According to the official academic structure, Gono Bishwabidyalay has **17 departments/program groups** organized under **5 faculties**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 357
+  },
+  {
+    "at": "2026-09-28T05:42:12.803Z",
+    "sessionId": "dept-conversation-c585ca53e1a349b796fd5955d3bc9753",
+    "question": "i said number of department",
+    "answer": "According to the official academic structure, Gono Bishwabidyalay has **17 departments/program groups** organized under **5 faculties**.",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 223
   }
 ]

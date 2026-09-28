@@ -157,6 +157,7 @@ const banglishPatterns = [
   [/\b(koy|koto)\s+(?:bosor|bochor|year)\b/g, " koto year "],
   [/\b(hed|headd|hod)\b/g, " head "],
   [/\b(chairmn|chairmanne|chairmaan)\b/g, " chairman "],
+  [/\b(depertment|departmnt|departmant|deparment)\b/g, " department "],
   [/\b(deen)\b/g, " dean "],
   [/\b(vet(?:erinary)?\s+(?:er\s+)?)(din)\b/g, "$1 dean "],
   [/\b(tchr|tchrs|teachr|teachrs)\b/g, " teacher "],
@@ -1123,6 +1124,39 @@ function directOfficeContactAnswer(question, knowledge) {
   };
 }
 
+function directDepartmentContactAnswer(question, knowledge) {
+  const q = normalizeQuestion(question);
+  if (!asksContactDetail(q) || !/\b(departments?|dept)\b|বিভাগ|ডিপার্টমেন্ট/iu.test(q)) return null;
+  const department = matchedDepartmentFromQuestion(q, knowledge);
+  if (!department) {
+    return {
+      text: prefersBanglish(question)
+        ? "Kon department-er official phone/email chacchen? Department-er naam bolun—jemon CSE, Law, ba Pharmacy."
+        : "Which department's official phone or email do you need? Specify a department such as CSE, Law, or Pharmacy.",
+      sources: [universitySources.academics],
+      mode: "clarify",
+    };
+  }
+  const aliases = departmentAliases(department);
+  const contact = (knowledge.contacts || []).find((item) => {
+    const identity = normalizeQuestion(`${item.label || ""} ${item.title || ""} ${item.department || ""}`);
+    return aliases.some((alias) => alias.length >= 3 && termInQuestion(identity, alias));
+  });
+  if (contact) return directOfficeContactAnswer(question, { ...knowledge, contacts: [contact] });
+
+  const normDept = displayDepartmentName(department).replace(/^Department of\s+/i, "").toLowerCase();
+  const program = (knowledge.programs || []).find((item) => displayDepartmentName(item.department).replace(/^Department of\s+/i, "").toLowerCase() === normDept);
+  const person = (knowledge.faculty || []).find((item) => displayDepartmentName(item.department).replace(/^Department of\s+/i, "").toLowerCase() === normDept);
+  const sourceUrl = program?.source || person?.source || officialSiteUrl;
+  return {
+    text: prefersBanglish(question)
+      ? `**${displayDepartmentName(department)}**-er আলাদা official office phone/email indexed record-e নেই। Faculty member-er personal number-ke department office number হিসেবে দেখাচ্ছি না।`
+      : `The indexed official records do not provide a separate office phone or email for **${displayDepartmentName(department)}**. I will not present a faculty member's personal number as the department office number.`,
+    sources: [{ title: displayDepartmentName(department), url: sourceUrl }],
+    mode: "not_found",
+  };
+}
+
 function directNoticeAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   if (!/\b(notice|notices|routine|result|schedule)\b/i.test(q) && !/নোটিশ|বিজ্ঞপ্তি/u.test(question)) return null;
@@ -1457,6 +1491,11 @@ function directPeopleAnswer(question, knowledge) {
 
 function asksContactDetail(question) {
   const q = normalizeQuestion(question);
+  if (/\b(phone|mobile|contact|cell|call|email|mail)\b/i.test(q)) return true;
+  const asksNonContactCount =
+    /\b(?:number|count|total|how\s+many|koto|koyta|koita)\b.*\b(?:departments?|facult(?:y|ies)|academic\s+units?|programs?|courses?|credits?|seats?|students?|teachers?|staff)\b/i.test(q) ||
+    /\b(?:departments?|facult(?:y|ies)|academic\s+units?|programs?|courses?|credits?|seats?|students?|teachers?|staff)\b.*\b(?:number|count|total|koto|koyta|koita)\b/i.test(q);
+  if (asksNonContactCount) return false;
   return (
     /\b(phone|mobile|contact|cell|call|number)\b/i.test(q) ||
     /\b(email|mail)\b/i.test(q)
@@ -1515,6 +1554,26 @@ function directInstitutionFactAnswer(question, knowledge) {
   const campusSource = { title: "Gono University Campus", url: `${officialSiteUrl}about-gb/general-information/gb-campus/` };
   const locationSource = { title: "Official location", url: `${officialSiteUrl}about-gb/general-information/location/` };
   const contactSource = { title: "Contact Gono Bishwabidyalay", url: `${officialSiteUrl}contact-us/` };
+
+  const asksPublishedCount = /\b(?:how\s+many|number|count|total|koto|kojon|koyjon)\b/i.test(q);
+  const targetsDepartment = matchedDepartmentFromQuestion(q, knowledge);
+  const wantsStudents = /\bstudents?|undergrads?|postgraduate\s+students?\b/i.test(q);
+  const wantsFacultyMembers = /\b(?:faculty\s+members?|teachers?|teaching\s+staff)\b/i.test(q) || (wantsStudents && /\bfaculty\b/i.test(q));
+  const wantsOfficeStaff = /\b(?:office\s+staff|administrative\s+staff)\b/i.test(q);
+  if (asksPublishedCount && !targetsDepartment && (wantsStudents || wantsFacultyMembers || wantsOfficeStaff)) {
+    const values = [];
+    if (wantsStudents && institution.statistics?.undergraduateStudents) values.push([institution.statistics.undergraduateStudents, "undergraduate students"]);
+    if (wantsStudents && institution.statistics?.graduateStudents) values.push([institution.statistics.graduateStudents, "graduate students"]);
+    if (wantsFacultyMembers && institution.statistics?.facultyMembers) values.push([institution.statistics.facultyMembers, "faculty members"]);
+    if (wantsOfficeStaff && institution.statistics?.officeStaff) values.push([institution.statistics.officeStaff, "office staff"]);
+    if (!values.length) return null;
+    const displayValue = (value) => String(value).replace(/^(\d{4,})/, (digits) => Number(digits).toLocaleString("en-US"));
+    return {
+      text: `The official homepage publishes ${values.map(([value, label]) => `**${displayValue(value)} ${label}**`).join(" and ")}. These are headline figures, not live registrar counts.`,
+      sources: [homeSource],
+      mode: "structured",
+    };
+  }
 
   if (asksInstitutionArea(q)) {
     if (external.campusArea?.value) {
@@ -1660,8 +1719,13 @@ function directInstitutionFactAnswer(question, knowledge) {
   }
 
   if (/\b(?:how\s+many|koyti|koyta|list|names?)\s+(?:faculties|faculty)\b|\b(?:faculties|faculty)\s+(?:koyti|koyta|ki\s+ki)\b/i.test(q)) {
+    const wantsOnlyCount = /\b(?:how\s+many|koyti|koyta|count|total|number)\b/i.test(q) && !/\b(?:list|names?|which|ki\s+ki|all)\b/i.test(q);
     return {
-      text: prefersBanglish(question)
+      text: wantsOnlyCount
+        ? (prefersBanglish(question)
+          ? `Gono Bishwabidyalay-e মোট **${institution.faculties?.length || 5}টি অনুষদ (Faculties)** আছে।`
+          : `Gono Bishwabidyalay has **${institution.faculties?.length || 5} Faculties**.`)
+        : prefersBanglish(question)
         ? `Gono Bishwabidyalay-তে প্রধান **৫টি অনুষদ (Faculty)** রয়েছে:\n` +
           `১. **Faculty of Science & Engineering** (CSE, EEE, Medical Physics, Math, Physics, Chemistry)\n` +
           `২. **Faculty of Health Sciences** (Pharmacy, Microbiology, Biochemistry)\n` +
@@ -1797,12 +1861,17 @@ const gbcdcSources = {
 };
 
 function academicDepartments(knowledge) {
+  const officialStructure = (knowledge.institution?.faculties || [])
+    .flatMap((faculty) => faculty.departments || [])
+    .map(cleanOfficialDisplayText)
+    .filter(Boolean);
+  if (officialStructure.length) return [...new Set(officialStructure)].sort((a, b) => a.localeCompare(b));
   const values = [
     ...(knowledge.programs || []).map((program) => program.department),
     ...(knowledge.faculty || []).map((person) => person.department),
   ];
   return [...new Set(values.map(displayDepartmentName).filter((value) =>
-    value && (!/library|research|office|administration|student union|sports/i.test(value) || /Business\s+Administration/i.test(value)),
+    value && (!/library|research|office|administration|students? union|sports/i.test(value) || /Business\s+Administration/i.test(value)),
   ))].sort((a, b) => a.localeCompare(b));
 }
 
@@ -1848,8 +1917,8 @@ function directUniversityOverviewAnswer(question, knowledge) {
 
 function directAcademicUnitsAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
-  if (asksFeeDetail(q)) return null;
-  const asksList = /\b(what|which|ki\s+ki|list|show|all|sob|shob|koyta|koto|how\s+many|available|offer)\b|কয়টি|কয়টা|কত|কতো|কয়টি|কয়টা|তালিকা|কী\s*কী/iu.test(q);
+  if (asksFeeDetail(q) || asksContactDetail(q)) return null;
+  const asksList = /\b(what|which|ki\s+ki|list|show|all|sob|shob|number|count|total|koyta|koto|how\s+many|available|offer)\b|সংখ্যা|কয়টি|কয়টা|কত|কতো|কয়টি|কয়টা|তালিকা|কী\s*কী/iu.test(q);
   const asksUnits = /\b(departments?|facult(?:y|ies)|academic\s+units?|programs?|degrees?)\b|অনুষদ|বিভাগ|ডিপার্টমেন্ট|ফ্যাকাল্টি|প্রোগ্রাম/iu.test(q);
   if (!asksList || !asksUnits || asksProgramDetail(q)) return null;
 
@@ -1880,6 +1949,17 @@ function directAcademicUnitsAnswer(question, knowledge) {
     !/\b(?:departments?|বিভাগ)\b/i.test(q);
 
   if (wantsFacultiesSpecifically && facultyGroups.length) {
+    const countOnly = /\b(?:count|total|number|how\s+many|koyta|koto)\b|(?:সংখ্যা|কত|কয়টা|কয়টা|কয়টি|কয়টি)/iu.test(q) &&
+      !/\b(?:list|show|which|names?|ki\s+ki|all|sob|shob)\b|তালিকা|কী\s*কী/iu.test(q);
+    if (countOnly) {
+      return {
+        text: prefersBanglish(question)
+          ? `Gono Bishwabidyalay-e মোট **${facultyGroups.length}টি অনুষদ (Faculties)** আছে।`
+          : `Gono Bishwabidyalay has **${facultyGroups.length} Faculties**.`,
+        sources: [universitySources.academics],
+        mode: "structured",
+      };
+    }
     const list = facultyGroups.map((f) => `- **${f.name}** (${f.bengaliName || ""}): ${f.departments ? f.departments.length : 0} departments`).join("\n");
     return {
       text: prefersBanglish(question)
@@ -1892,6 +1972,22 @@ function directAcademicUnitsAnswer(question, knowledge) {
 
   const departments = academicDepartments(knowledge);
   if (!departments.length) return null;
+  const wantsDepartmentCount =
+    /\b(?:total(?:\s+number)?|number\s+of|count|how\s+many|koyta|koto)\b.*\bdepartments?\b/i.test(q) ||
+    /\bdepartments?\b.*\b(?:total|number|count|koyta|koto)\b/i.test(q) ||
+    /(?:কত|কতো|কয়টা|কয়টা|কয়টি|কয়টি).*\bdepartments?\b|\bdepartments?\b.*(?:সংখ্যা|কত|কতো|কয়টা|কয়টা|কয়টি|কয়টি)/iu.test(q) ||
+    /(?:ডিপার্টমেন্ট|বিভাগ).*(?:সংখ্যা|কত|কতো|কয়টা|কয়টা|কয়টি|কয়টি)|(?:সংখ্যা|কত|কতো|কয়টা|কয়টা|কয়টি|কয়টি).*(?:ডিপার্টমেন্ট|বিভাগ)/iu.test(q);
+  if (wantsDepartmentCount) {
+    const listedDepartments = facultyGroups.flatMap((faculty) => faculty.departments || []);
+    const departmentCount = listedDepartments.length || departments.length;
+    return {
+      text: prefersBanglish(question)
+        ? `Official academic structure onujayi Gono Bishwabidyalay-e মোট **${departmentCount}টি department/program group** আছে, যা **${facultyGroups.length}টি faculty**-র অধীনে organized.`
+        : `According to the official academic structure, Gono Bishwabidyalay has **${departmentCount} departments/program groups** organized under **${facultyGroups.length} faculties**.`,
+      sources: [universitySources.academics],
+      mode: "structured",
+    };
+  }
   const wantsPrograms = /\b(programs?|degrees?)\b/i.test(q);
   if (wantsPrograms) {
     const grouped = new Map();
@@ -1904,8 +2000,12 @@ function directAcademicUnitsAnswer(question, knowledge) {
     }
     const lines = [...grouped.entries()].sort(([a], [b]) => a.localeCompare(b))
       .map(([department, programs]) => `- **${department}:** ${programs.join(", ")}`);
+    const countOnly = /\b(?:count|total|number|how\s+many|koyta|koto)\b/i.test(q) &&
+      !/\b(?:list|show|which|names?|all|offer|offered)\b/i.test(q);
     return {
-      text: `The verified official catalog currently contains **${programs.length} programs** across **${departments.length} academic units**:\n${lines.join("\n")}`,
+      text: countOnly
+        ? `The verified official catalog contains **${programs.length} programs** across **${departments.length} academic departments/program groups**.`
+        : `The verified official catalog currently contains **${programs.length} programs** across **${departments.length} academic units**:\n${lines.join("\n")}`,
       sources: [universitySources.academics, universitySources.admission],
       mode: "structured",
     };
@@ -3735,9 +3835,13 @@ function mentionedDepartments(question, knowledge) {
 }
 
 function programForDepartment(knowledge, department, wantsGraduate = false) {
-  const programs = verifiedPrograms(knowledge.programs || []).filter(
-    (program) => displayDepartmentName(program.department).toLowerCase() === displayDepartmentName(department).toLowerCase(),
-  );
+  const normTarget = displayDepartmentName(department).replace(/^Department of\s+/i, "").toLowerCase();
+  const programs = verifiedPrograms(knowledge.programs || []).filter((program) => {
+    const normProgDept = displayDepartmentName(program.department).replace(/^Department of\s+/i, "").toLowerCase();
+    if (normProgDept === normTarget) return true;
+    const aliases = departmentAliases(program.department);
+    return aliases.some((alias) => normalizeQuestion(alias) === normTarget);
+  });
   return programs.find((program) =>
     wantsGraduate ? isGraduateProgramName(program.name) : !isGraduateProgramName(program.name),
   ) || programs[0];
@@ -3892,7 +3996,10 @@ function directComparisonFollowupAnswer(question, knowledge, history = []) {
 
   if (/\b(duration|years?|semesters?|shorter|longer)\b/i.test(q)) {
     const facts = departments
-      .map((department) => ({ department, program: programForDepartment(knowledge, department) }))
+      .map((department) => ({
+        department,
+        program: programForDepartment(knowledge, department),
+      }))
       .filter((item) => item.program?.duration)
       .map((item) => ({ ...item, years: Number(String(item.program.duration).match(/\d+(?:\.\d+)?/)?.[0]) }));
     if (facts.length < 2) return null;
@@ -4411,7 +4518,7 @@ function bareAcademicTopic(question) {
   const q = normalizeQuestion(question).replace(/[^\p{L}\p{N}\s]/gu, " ").trim();
   if (!q || tokenize(q).length > 4) return "";
   const hasSpecificIntent =
-    /\b(what\s+is|ki|kake\s+bole|explain|define|overview|about|details|courses?|subject|syllabus|credits?|duration|seats?|seat|asan|ashon|intake|capacity|qualification|eligibility|requirements?|joggota|lagbe|faculty|teacher|head|fee|fees?|fe|cost|costs?|tuition|tution|taka|tk|khoroch|khroch|kharach|kharoch|charge|charges|expense|expenses|payment|payments|package|admission|vorti|career|learn|study|somporke|somproke|bolo|dao|koto|how|why|list|show|compare|comparison|versus|vs|better|bhalo|naki|difference)\b/i.test(q);
+    /\b(what\s+is|ki|kake\s+bole|explain|define|overview|about|details|courses?|subject|syllabus|credits?|duration|seats?|seat|asan|ashon|intake|capacity|qualification|eligibility|requirements?|joggota|lagbe|faculty|teacher|head|fee|fees?|fe|cost|costs?|tuition|tution|taka|tk|khoroch|khroch|kharach|kharoch|charge|charges|expense|expenses|payment|payments|package|admission|vorti|career|learn|study|somporke|somproke|bolo|dao|koto|how|why|list|show|compare|comparison|versus|vs|better|bhalo|naki|difference|phone|mobile|contact|call|cell|email|number)\b/i.test(q);
   if (hasSpecificIntent) return "";
   if (/\b(medical\s+physics|biomedical(?:\s+engineering)?)\b/i.test(q)) return "Medical Physics and Biomedical Engineering";
   if (/\b(cse|computer\s+science)\b/i.test(q)) return "CSE";
@@ -4421,7 +4528,7 @@ function bareAcademicTopic(question) {
 }
 
 function directClarificationAnswer(question, history = []) {
-  if (asksFeeDetail(question)) return null;
+  if (asksFeeDetail(question) || asksContactDetail(question)) return null;
   if (history && history.length > 0) return null;
   const topic = bareAcademicTopic(question);
   if (!isUnclearQuestion(question) && !topic) return null;
@@ -4749,7 +4856,57 @@ function directCampusFacilitiesAnswer(question, knowledge, history = []) {
   };
 }
 
+function directCorrectionOrNumberFollowup(question, knowledge, history = []) {
+  if (!history.length) return null;
+  const q = normalizeQuestion(question);
+  const raw = String(question || "");
+  const correction = /\b(?:i\s+(?:meant|said)|no|not|rather)\b|(?:না|বলেছি|বললাম|মানে)/iu.test(raw);
+  const wantsDepartments = /\b(?:departments?|dept)\b|বিভাগ|ডিপার্টমেন্ট/iu.test(q);
+  const wantsFaculties = /\bfacult(?:y|ies)\b|অনুষদ|ফ্যাকাল্টি/iu.test(q) && !/\bmembers?\b/i.test(q);
+  const wantsPrograms = /\bprograms?\b|প্রোগ্রাম/iu.test(q);
+  if (correction && (wantsDepartments || wantsFaculties || wantsPrograms)) {
+    const correctedQuestion = wantsDepartments
+      ? "how many departments are there?"
+      : wantsFaculties
+        ? "how many faculties are there?"
+        : "how many programs are offered?";
+    return directAnswer(correctedQuestion, knowledge, []);
+  }
+
+  const justNumber = /\b(?:just|only)\s+(?:the\s+)?number\b|\bnumber\s+only\b|শুধু\s+(?:সংখ্যা|নাম্বার)|কেবল\s+(?:সংখ্যা|নাম্বার)/iu.test(raw);
+  if (!justNumber) return null;
+  const priorUserTurn = previousConversation(history, question).filter((item) => item.role === "user").at(-1);
+  const priorAssistantTurn = previousConversation(history, question).filter((item) => item.role === "assistant").at(-1);
+  if (!priorUserTurn?.text && !priorAssistantTurn?.text) return null;
+  const priorQ = normalizeQuestion(priorUserTurn?.text || "");
+  let value = "";
+  let resolved = null;
+  if (/\bdepartments?\b|বিভাগ|ডিপার্টমেন্ট/iu.test(priorQ)) {
+    value = String(academicDepartments(knowledge).length);
+    resolved = directAcademicUnitsAnswer("how many departments are there?", knowledge);
+  } else if (/\bfacult(?:y|ies)\b|অনুষদ|ফ্যাকাল্টি/iu.test(priorQ) && !/\bmembers?\b/i.test(priorQ)) {
+    value = String((knowledge.institution?.faculties || []).length);
+    resolved = directAcademicUnitsAnswer("faculty count?", knowledge);
+  } else if (/\bprograms?\b|প্রোগ্রাম/iu.test(priorQ)) {
+    value = String(verifiedPrograms(knowledge.programs || []).length);
+    resolved = directAcademicUnitsAnswer("program count?", knowledge);
+  } else {
+    const assistantMatch = priorAssistantTurn?.text?.match(/(?:total credits?|credits?|seats?|faculty|departments?)\D{0,20}\b(\d+(?:\.\d+)?)\b/i);
+    if (assistantMatch) {
+      value = assistantMatch[1];
+    } else if (priorUserTurn?.text) {
+      resolved = directAnswer(priorUserTurn.text, knowledge, []);
+      const metricMatch = resolved?.text?.match(/(?:total credits?|credits?|seats?)\D{0,20}\*\*(\d+(?:\.\d+)?)\*\*/i);
+      if (metricMatch) value = metricMatch[1];
+    }
+  }
+  if (!value) return null;
+  return { text: `**${value}**`, sources: resolved?.sources || priorAssistantTurn?.sources || [], mode: "structured" };
+}
+
 function directAnswer(question, knowledge, history = []) {
+  const correctionFollowup = directCorrectionOrNumberFollowup(question, knowledge, history);
+  if (correctionFollowup) return correctionFollowup;
   if (history.length && !matchedDepartmentFromQuestion(question, knowledge)) {
     const topicIdx = ordinalTopicIndex(question);
     const recalledDepartment = ordinalContextDepartment(question, history, knowledge);
@@ -4861,6 +5018,7 @@ function directAnswer(question, knowledge, history = []) {
     directRoleAnswer(question, knowledge) ||
     directProgramDetailAnswer(question, knowledge) ||
     directNoticeAnswer(question, knowledge) ||
+    directDepartmentContactAnswer(question, knowledge) ||
     directOfficeContactAnswer(question, knowledge) ||
     directDepartmentLeaderAnswer(question, knowledge) ||
     directDepartmentOverviewAnswer(question, knowledge) ||

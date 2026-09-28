@@ -2513,5 +2513,61 @@
         "Show CSE fees"
       ]
     }
+  },
+  {
+    "key": "2026-09-27-gbcdc-integration-v51:2026-09-24T17:02:58.321Z::chat 1",
+    "value": {
+      "text": "Sure! How can I help you today?",
+      "sources": [],
+      "mode": "groq",
+      "profile": {
+        "label": "groq assisted",
+        "confidence": "AI fallback"
+      },
+      "suggestions": [
+        "Explain with examples",
+        "Make it shorter",
+        "Check official data"
+      ]
+    }
+  },
+  {
+    "key": "2026-09-27-gbcdc-integration-v51:2026-09-24T17:02:58.321Z::chat 2",
+    "value": {
+      "text": "Could you clarify what you mean by “chat 2”?",
+      "sources": [],
+      "mode": "groq",
+      "profile": {
+        "label": "groq assisted",
+        "confidence": "AI fallback"
+      },
+      "suggestions": [
+        "Explain with examples",
+        "Make it shorter",
+        "Check official data"
+      ]
+    }
+  },
+  {
+    "key": "2026-09-27-gbcdc-integration-v51:2026-09-24T17:02:58.321Z::total number of departments in gono university?",
+    "value": {
+      "text": "According to the official academic structure, Gono Bishwabidyalay has **17 departments/program groups** organized under **5 faculties**.",
+      "sources": [
+        {
+          "title": "Academics",
+          "url": "https://gonouniversity.edu.bd/academics/"
+        }
+      ],
+      "mode": "structured",
+      "profile": {
+        "label": "Verified record",
+        "confidence": "High"
+      },
+      "suggestions": [
+        "Summarize the source",
+        "Give more details",
+        "Show related official info"
+      ]
+    }
   }
 ]
