@@ -91,7 +91,11 @@ function envSecret(name) {
 
 const languagePatterns = [
   [/গণ\s*বিশ্ববিদ্যাল(?:য়|য়)(?:ের)?/g, " gono bishwabidyalay university "],
-  [/প্রতিষ্ঠাতা/g, " founder "],
+  [/প্রতিষ্ঠাত(?:া|ার|াকে)/g, " founder "],
+  [/সহকারী\s*অধ্যাপক/g, " assistant professor "],
+  [/সহযোগী\s*অধ্যাপক/g, " associate professor "],
+  [/প্রভাষক|লেকচারার/g, " lecturer "],
+  [/অধ্যাপক/g, " professor "],
   [/প্রতিষ্ঠিত|প্রতিষ্ঠা/g, " established "],
   [/কবে/g, " when "],
   [/এবং/g, " and "],
@@ -146,6 +150,9 @@ const languagePatterns = [
 ];
 
 const banglishPatterns = [
+  [/\b(?:protish?th?[a-z]*ta(?:r|ke)?|protis?t[a-z]*ta(?:r|ke)?|protishthata|protisthata|protishtata|protistata|fondar|foundar)\b/gi, " founder "],
+  [/\b(?:asst|asst\.|assistant)\s*prof(?:essor)?s?\b/gi, " assistant professor "],
+  [/\b(?:assoc|assoc\.|associate)\s*prof(?:essor)?s?\b/gi, " associate professor "],
   [/\bcrest\s+(?:total|otal)\b/g, " credit total "],
   [/\bcredit\s+otal\b/g, " credit total "],
   [/\bmedial\s+physics\b/g, " medical physics "],
@@ -1045,6 +1052,32 @@ function directProgramAdmissionAnswer(question, knowledge) {
   const bestScore = ranked[0].score;
   const matches = ranked.filter((item) => item.score === bestScore).slice(0, 4).map((item) => item.program);
   if (matches.length > 1) {
+    const multiProgramLines = [];
+    for (const prog of matches) {
+      const progDetails = [];
+      if (asksRequirement && prog.admissionRequirement) {
+        progDetails.push(`• **যোগ্যতা (Requirement):** ${cleanOfficialDisplayText(prog.admissionRequirement)}`);
+      }
+      if (asksDuration && prog.duration) {
+        progDetails.push(`• **মেয়াদ (Duration):** ${cleanOfficialDisplayText(prog.duration)}`);
+      }
+      if (asksSeats && prog.seats) {
+        progDetails.push(`• **আসন (Seats):** ${cleanOfficialDisplayText(prog.seats)}`);
+      }
+      if (progDetails.length) {
+        multiProgramLines.push(`**${prog.name}**:\n${progDetails.join("\n")}`);
+      }
+    }
+
+    if (multiProgramLines.length) {
+      const banglish = prefersBanglish(question);
+      return {
+        text: (banglish ? "Official data অনুযায়ী সংশ্লিষ্ট প্রোগ্রামসমূহের তথ্য:\n\n" : "Official program details for matching programs:\n\n") + multiProgramLines.join("\n\n"),
+        sources: dedupeSources(matches.map((program) => ({ title: program.sourceTitle || program.name, url: program.source }))),
+        mode: "clarify",
+      };
+    }
+
     return {
       text: prefersBanglish(question)
         ? `Kon program-ta bujhaccho? Official data-te matching option: ${matches.map((program) => `**${program.name}**`).join(", ")}.`
@@ -1214,6 +1247,7 @@ const roleAliases = [
   { key: "proctor", terms: ["proctor"], scope: "institution" },
   { key: "controller_of_examinations", terms: ["controller of examination", "controller of examinations", "exam controller", "examination controller", "controller"], scope: "institution" },
   { key: "medical_officer", terms: ["medical officer", "campus doctor", "doctor"], scope: "institution" },
+  { key: "trustee_board_chairman", terms: ["trustee board chairman", "bot chairman", "trustee chairman", "chairman of trustee board", "chairman trustee board", "board of trustees chairman", "trustee board er chairman"], scope: "institution" },
 ];
 
 function termInQuestion(question, term) {
@@ -1247,6 +1281,7 @@ function directRoleAnswer(question, knowledge) {
       proctor: "Proctor",
       controller_of_examinations: "Controller of Examinations",
       medical_officer: "Medical Officer",
+      trustee_board_chairman: "Chairman, Board of Trustees",
       student_union_vice_president: "student union Vice President",
       student_union_general_secretary: "student union General Secretary",
       student_union_joint_general_secretary: "student union Joint General Secretary",
@@ -1568,6 +1603,13 @@ function directInstitutionFactAnswer(question, knowledge) {
     if (wantsFacultyMembers && institution.statistics?.facultyMembers) values.push([institution.statistics.facultyMembers, "faculty members"]);
     if (wantsOfficeStaff && institution.statistics?.officeStaff) values.push([institution.statistics.officeStaff, "office staff"]);
     if (!values.length) return null;
+    if (prefersBanglish(question) && wantsFacultyMembers && !wantsStudents && !wantsOfficeStaff) {
+      return {
+        text: `গণ বিশ্ববিদ্যালয়ের অফিসিয়াল ওয়েবসাইট অনুসারে ক্যাম্পাসে **১৮০+ ফ্যাকাল্টি মেম্বার (শিক্ষক)** রয়েছেন (তবে বিস্তারিত বিভাগীয় ডিরেক্টরিতে মোট ২৯১ জন অ্যাকাডেমিক শিক্ষক তালিকাভুক্ত আছেন)।`,
+        sources: [homeSource],
+        mode: "structured",
+      };
+    }
     const displayValue = (value) => String(value).replace(/^(\d{4,})/, (digits) => Number(digits).toLocaleString("en-US"));
     return {
       text: `The official homepage publishes ${values.map(([value, label]) => `**${displayValue(value)} ${label}**`).join(" and ")}. These are headline figures, not live registrar counts.`,
@@ -1652,14 +1694,14 @@ function directInstitutionFactAnswer(question, knowledge) {
     };
   }
 
-  if (/\b(?:who\s+(?:is|was)\s+(?:the\s+)?founder|who\s+founded|founder|protishthata|protisthata)\b/i.test(q)) {
+  if (/\b(?:who\s+(?:is|was)\s+(?:the\s+)?founder|who\s+founded|founder|protishthata|protisthata|protishtata|protistata|protishtatha)\b/i.test(q)) {
     const founder = institution.founder || "Dr. Zafrullah Chowdhury";
     const organization = institution.foundingOrganization || "Gonoshasthaya Kendra (GK) Public Charitable Trust";
     const established = institution.establishedDate || "14 July 1998";
     const asksWhen = /\b(when|date|year|kobe|established|founded)\b/i.test(q);
     return {
       text: prefersBanglish(question)
-        ? `Gono Bishwabidyalay-এর প্রতিষ্ঠাতা বীর মুক্তিযোদ্ধা **${founder}**। এটি ${organization}-এর অধীনে পরিচালিত${asksWhen ? ` এবং **${established}** তারিখে আনুষ্ঠানিকভাবে প্রতিষ্ঠিত` : ""}।`
+        ? `Gono Bishwabidyalay-এর প্রতিষ্ঠাতা বীর মুক্তিযোদ্ধা **${founder}** (ডা. জাফরুল্লাহ চৌধুরী)। এটি ${organization}-এর অধীনে পরিচালিত${asksWhen ? ` এবং **${established}** তারিখে আনুষ্ঠানিকভাবে প্রতিষ্ঠিত` : ""}।`
         : `Gono Bishwabidyalay was founded by the **${organization}**, under the vision of **${founder}**${asksWhen ? `, and was formally established on **${established}**` : ""}.`,
       sources: [homeSource, generalSource],
       mode: "structured",
@@ -1815,11 +1857,31 @@ function directInstitutionFactAnswer(question, knowledge) {
   }
 
   if (/\b(?:trustee|trustees|trust|board\s+of\s+trustees|ট্রাস্টি|ট্রাস্ট)\b/i.test(q)) {
+    const asksChairman = /\b(?:chairman|president|head|protinidhi|সভাপতি|চেয়ারম্যান)\b/i.test(q);
+    if (asksChairman) {
+      return {
+        text: prefersBanglish(question)
+          ? "Gono Bishwabidyalay Trustee Board-এর বর্তমান সভাপতি/চেয়ারম্যান হলেন **Waliul Islam** (ওয়ালিউল ইসলাম)।"
+          : "The Chairman of the Gono Bishwabidyalay Board of Trustees is **Waliul Islam**.",
+        sources: [{ title: "Board of Trustees - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/administration/authority/board-of-trustees/" }],
+        mode: "structured",
+      };
+    }
+    const asksMembers = /\b(?:members?|ke\s+ke|member\s+list|sodossho|সদস্য)\b/i.test(q);
+    if (asksMembers) {
+      return {
+        text: prefersBanglish(question)
+          ? "Gono Bishwabidyalay Trustee Board-এর চেয়ারম্যান **Waliul Islam** এবং বিশিষ্ট ট্রাস্টি সদস্যদের মধ্যে রয়েছেন: Professor Dr. Serajul Islam, Dilara Choudhury, Dr. Salehuddin Ahmed (সাবেক গভর্নর, বাংলাদেশ ব্যাংক), Shireen Huq, Farida Akhter, Dr. Md. Nazrul Islam (Asif Nazrul) প্রমুখ।"
+          : "The Chairman of the GB Board of Trustees is **Waliul Islam**, and prominent trustees include Professor Dr. Serajul Islam, Dilara Choudhury, Dr. Salehuddin Ahmed, Shireen Huq, Farida Akhter, and Dr. Md. Nazrul Islam (Asif Nazrul).",
+        sources: [{ title: "Board of Trustees - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/administration/authority/board-of-trustees/" }],
+        mode: "structured",
+      };
+    }
     return {
       text: prefersBanglish(question)
-        ? "Gono Bishwabidyalay **গণস্বাস্থ্য কেন্দ্র (GK) পাবলিক চ্যারিটেবল ট্রাস্ট**-এর অধীনে পরিচালিত হয়। বীর মুক্তিযোদ্ধা ডা. জাফরুল্লাহ চৌধুরী এই ট্রাস্টের মূল স্বপ্নদ্রষ্টা ছিলেন।"
-        : "Gono Bishwabidyalay is governed under the **Gonoshasthaya Kendra (GK) Public Charitable Trust**, founded by freedom fighter Dr. Zafrullah Chowdhury.",
-      sources: [homeSource, generalSource],
+        ? "Gono Bishwabidyalay **গণস্বাস্থ্য কেন্দ্র (GK) পাবলিক চ্যারিটেবল ট্রাস্ট**-এর অধীনে পরিচালিত হয়। এর Trustee Board-এর বর্তমান চেয়ারম্যান **Waliul Islam** এবং বীর মুক্তিযোদ্ধা ডা. জাফরুল্লাহ চৌধুরী ছিলেন এই ট্রাস্টের মূল স্বপ্নদ্রষ্টা।"
+        : "Gono Bishwabidyalay is governed under the **Gonoshasthaya Kendra (GK) Public Charitable Trust** (Chairman: **Waliul Islam**), originally envisioned by freedom fighter Dr. Zafrullah Chowdhury.",
+      sources: [{ title: "Board of Trustees - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/administration/authority/board-of-trustees/" }, homeSource],
       mode: "structured",
     };
   }
@@ -2032,12 +2094,55 @@ function directDepartmentExistenceAnswer(question, knowledge) {
   const asksExistence =
     /\b(ache|ase|exists?|available|offer(?:s|ed)?|have|has)\b/i.test(q) ||
     /\b(pora|porte|porashona|study)\b.*\b(jai|jabe|possible|can)\b|\b(can|possible)\b.*\b(study|pora|porte)\b/i.test(q);
-  if (!asksExistence || asksFeeDetail(q)) return null;
+  if (
+    !asksExistence ||
+    asksFeeDetail(q) ||
+    asksProgramDetail(q) ||
+    asksContactDetail(q) ||
+    /\b(how\s+many|count|koto|kojon|koyjon|koyta|shongkha|sonkha)\b/i.test(q) ||
+    /\b(faculty|teacher|teachers|professor|lecturer|sir|mam|head|dean|member|members|list)\b/i.test(q) ||
+    /(কতজন|সংখ্যা|কয়জন|তালিকা)/.test(question)
+  ) {
+    return null;
+  }
+
+  // Campus facilities should NOT be intercepted as academic departments
+  if (/\b(medical\s+center|hospital|clinic|canteen|cafeteria|transport|bus|hostel|hall|library|auditorium|sports?|playground|field)\b/i.test(q) && !/\b(physics|biomedical)\b/i.test(q)) {
+    return null;
+  }
+
+  const banglish = prefersBanglish(question);
+
+  // Handle queries about programs not offered by Gono Bishwabidyalay
+  const unsupportedSubjects = [
+    [/\b(civil\s*(?:engineering)?|সিভিল)\b/i, "Civil Engineering", "বিজ্ঞান ও প্রকৌশল অনুষদে Computer Science & Engineering (CSE) এবং Electrical & Electronic Engineering (EEE)"],
+    [/\b(mechanical\s*(?:engineering)?|মেকানিক্যাল)\b/i, "Mechanical Engineering", "বিজ্ঞান ও প্রকৌশল অনুষদে Computer Science & Engineering (CSE) এবং Electrical & Electronic Engineering (EEE)"],
+    [/\b(aeronautical\s*(?:engineering)?|এ্যারোনটিক্যাল)\b/i, "Aeronautical Engineering", "বিজ্ঞান ও প্রকৌশল অনুষদে Computer Science & Engineering (CSE) এবং Electrical & Electronic Engineering (EEE)"],
+    [/\b(marine\s*(?:engineering)?|মেরিন)\b/i, "Marine Engineering", "বিজ্ঞান ও প্রকৌশল অনুষদে Computer Science & Engineering (CSE) এবং Electrical & Electronic Engineering (EEE)"],
+    [/\b(textile\s*(?:engineering)?|টেক্সটাইল)\b/i, "Textile Engineering", "বিজ্ঞান ও প্রকৌশল অনুষদে Computer Science & Engineering (CSE) এবং Electrical & Electronic Engineering (EEE)"],
+    [/\b(architecture|আর্কিটেকচার|স্থাপত্য)\b/i, "Architecture", "প্রকৌশল বিভাগে CSE এবং EEE"],
+    [/\b(dental|bds|দাঁত|ডেন্টাল)\b/i, "BDS (Dental)", "স্বাস্থ্য বিজ্ঞান অনুষদে Pharmacy, Microbiology, Biochemistry ও Medical Physics"],
+    [/\b(nursing|নার্সিং)\b/i, "B.Sc. in Nursing", "স্বাস্থ্য বিজ্ঞান অনুষদে Pharmacy, Microbiology, Biochemistry ও Medical Physics"],
+    [/\b(journalism|mass\s+communication|সাংবাদিকতা)\b/i, "Journalism & Mass Communication", "কলা ও সামাজিক বিজ্ঞান অনুষদে English, Bangla, Politics & Governance, Sociology and Social Work ও BBA"],
+    [/\b(psychology|মনোবিজ্ঞান)\b/i, "Psychology", "কলা ও সামাজিক বিজ্ঞান অনুষদে Sociology and Social Work ও Politics & Governance"],
+    [/\b(economics|অর্থনীতি)\b/i, "Economics", "ব্যবসা প্রশাসন অনুষদে BBA এবং সামাজিক বিজ্ঞান অনুষদে Politics & Governance"],
+  ];
+  for (const [pattern, subjectName, alternativePrograms] of unsupportedSubjects) {
+    if (pattern.test(q)) {
+      return {
+        text: banglish
+          ? `না, Gono Bishwabidyalay-তে **${subjectName}** বিভাগটি চালু নেই। তবে সম্পর্কিত বিষয়ে এখানে ${alternativePrograms} প্রোগ্রাম পরিচালিত হয়।`
+          : `No, Gono Bishwabidyalay does not offer a department of **${subjectName}**. Relevant accredited programs offered include ${alternativePrograms}.`,
+        sources: [universitySources.academics],
+        mode: "structured",
+      };
+    }
+  }
+
   const department = matchedDepartmentFromQuestion(q, knowledge);
   if (!department) return null;
   const program = programForDepartment(knowledge, department);
   const label = displayDepartmentName(department);
-  const banglish = prefersBanglish(question);
   return {
     text: banglish
       ? `হ্যাঁ, official data-তে **${label}** আছে।${program?.name ? ` Verified program: **${program.name}**।` : ""}`
@@ -3889,6 +3994,134 @@ function directFollowupAnswer(question, knowledge, history = []) {
   return null;
 }
 
+const DEANS_OF_FACULTIES = [
+  {
+    faculty: "Faculty of Science & Engineering",
+    bengaliFaculty: "বিজ্ঞান ও প্রকৌশল অনুষদ",
+    name: "Dr. Wahida Zaman Loskor",
+    bengaliName: "ড. ওয়াহিদা জামান লস্কর",
+    designation: "Dean, Faculty of Science & Engineering",
+    phone: "+8801789138687",
+    email: "loskor.baiust@gmail.com",
+    source: "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/",
+    matchPatterns: [
+      /\b(science\s*(?:and|&)?\s*engineering|faculty\s+of\s+science|science\s+faculty|engineering\s+faculty|physical\s+and\s+mathematical)\b/i,
+      /(বিজ্ঞান\s*ও\s*প্রকৌশল|বিজ্ঞান\s*অনুষদ|প্রকৌশল\s*অনুষদ)/,
+    ],
+  },
+  {
+    faculty: "Faculty of Health Sciences",
+    bengaliFaculty: "স্বাস্থ্য বিজ্ঞান অনুষদ",
+    name: "Dr. Md. Fuad Hossain",
+    bengaliName: "ড. মো. ফুয়াদ হোসেন",
+    designation: "Dean, Faculty of Health Sciences",
+    phone: "",
+    email: "",
+    source: "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/",
+    matchPatterns: [
+      /\b(health\s+sciences?|faculty\s+of\s+health|health\s+faculty)\b/i,
+      /(স্বাস্থ্য\s*বিজ্ঞান|স্বাস্থ্য\s*অনুষদ)/,
+    ],
+  },
+  {
+    faculty: "Faculty of Arts & Social Sciences",
+    bengaliFaculty: "কলা ও সামাজিক বিজ্ঞান অনুষদ",
+    name: "Professor Nilufar Sultana",
+    bengaliName: "অধ্যাপক নিলুফার সুলতানা",
+    designation: "Dean, Faculty of Arts & Social Sciences",
+    phone: "",
+    email: "",
+    source: "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/",
+    matchPatterns: [
+      /\b(arts\s*(?:and|&)?\s*social\s+sciences?|social\s+sciences?|arts\s+faculty|social\s+faculty)\b/i,
+      /(কলা\s*ও\s*সামাজিক|সামাজিক\s*বিজ্ঞান\s*অনুষদ|কলা\s*অনুষদ)/,
+    ],
+  },
+  {
+    faculty: "Faculty of Veterinary & Animal Sciences",
+    bengaliFaculty: "ভেটেরিনারি ও অ্যানিম্যাল সায়েন্সেস অনুষদ",
+    name: "Prof. Dr. Md. Zahirul Islam Khan",
+    bengaliName: "প্রফেসর ড. মো. জহিরুল ইসলাম খান",
+    designation: "Dean, Faculty of Veterinary & Animal Sciences",
+    phone: "",
+    email: "",
+    source: "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/",
+    matchPatterns: [
+      /\b(vet(?:erinary)?\s*(?:and|&)?\s*animal\s+sciences?|veterinary\s+faculty|dvm\s+faculty)\b/i,
+      /(ভেটেরিনারি\s*অনুষদ|ডিভিএম)/,
+    ],
+  },
+  {
+    faculty: "Faculty of Agriculture",
+    bengaliFaculty: "কৃষি অনুষদ",
+    name: "Prof. Dr. Md. Fazlul Karim",
+    bengaliName: "প্রফেসর ড. মো. ফজলুল করিম",
+    designation: "Dean, Faculty of Agriculture",
+    phone: "",
+    email: "",
+    source: "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/",
+    matchPatterns: [
+      /\b(agri(?:culture)?\s+faculty|faculty\s+of\s+agri(?:culture)?|krishi\s+faculty)\b/i,
+      /(কৃষি\s*অনুষদ)/,
+    ],
+  },
+];
+
+function directDeanAnswer(question, knowledge) {
+  const q = normalizeQuestion(question);
+  if (!/\b(dean|deans)\b/i.test(q) && !/(ডিন)/.test(q)) return null;
+  const banglish = prefersBanglish(question);
+
+  // Check if a specific faculty is targeted
+  for (const item of DEANS_OF_FACULTIES) {
+    if (item.matchPatterns.some((pattern) => pattern.test(q))) {
+      const asksPhone = /\b(phone|mobile|cell|contact|number)\b/i.test(q);
+      const asksEmail = /\b(email|mail)\b/i.test(q);
+      if (asksPhone) {
+        return {
+          text: `**${item.name}** (${item.faculty} Dean): ${item.phone ? `**${item.phone}**` : "official phone number is not listed in the directory"}`,
+          sources: [{ title: "Deans of Faculties - Gono Bishwabidyalay", url: item.source }],
+          mode: "structured",
+        };
+      }
+      if (asksEmail) {
+        return {
+          text: `**${item.name}** (${item.faculty} Dean): ${item.email ? `**${item.email}**` : "official email is not listed in the directory"}`,
+          sources: [{ title: "Deans of Faculties - Gono Bishwabidyalay", url: item.source }],
+          mode: "structured",
+        };
+      }
+      return {
+        text: banglish
+          ? `Gono Bishwabidyalay-এর **${item.faculty}**-এর ডিন (Dean) হলেন **${item.name}** (${item.bengaliName})।`
+          : `The Dean of the **${item.faculty}** at Gono Bishwabidyalay is **${item.name}**.`,
+        sources: [{ title: "Deans of Faculties - Gono Bishwabidyalay", url: item.source }],
+        mode: "structured",
+      };
+    }
+  }
+
+  // If asking generally about all deans or list of deans
+  const isGeneralDeanInquiry =
+    /\b(deans|all|list|sob|shob|koyjon|kojon|authority|ke\s+ke)\b/i.test(q) ||
+    !matchedDepartmentFromQuestion(q, knowledge);
+
+  if (isGeneralDeanInquiry) {
+    const lines = DEANS_OF_FACULTIES.map(
+      (item, idx) => `${idx + 1}. **${item.faculty} (${item.bengaliFaculty}):** **${item.name}**`
+    );
+    return {
+      text: banglish
+        ? `Gono Bishwabidyalay-এর ৫টি অনুষদের বর্তমান ডিনবৃন্দ (Deans of Faculties):\n\n${lines.join("\n")}`
+        : `Current Deans of Faculties across the 5 faculties of Gono Bishwabidyalay:\n\n${lines.join("\n")}`,
+      sources: [{ title: "Deans of Faculties - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/" }],
+      mode: "structured",
+    };
+  }
+
+  return null;
+}
+
 function directDepartmentLeaderAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   const asksLeader = /\b(chairman|chairperson|chair|head|hod|dean|department\s+head|dept\s+head)\b/i.test(q);
@@ -3960,6 +4193,7 @@ function matchedDepartmentFromQuestion(question, knowledge) {
     ].filter(Boolean)),
   ].filter((dept) => !/library|research|office|administration|student\s+union|sports/i.test(dept) || /Business\s+Administration/i.test(dept));
   const q = normalizeQuestion(question);
+  const genericTokens = new Set(["engineering", "science", "sciences", "studies", "technology", "honours", "honors", "bachelor", "master", "masters"]);
   const ignoredTokens = new Set([
     ...searchStopWords,
     "department", "dept", "faculty", "teacher", "teachers", "sir", "mam", "list", "dao", "dau", "er",
@@ -3973,20 +4207,39 @@ function matchedDepartmentFromQuestion(question, knowledge) {
   return departments
     .map((department) => {
       const aliases = departmentAliases(department);
-      let score = 0;
+      let bestScore = 0;
+      let hasSpecificTokenMatch = false;
+
       for (const alias of aliases) {
         const normalizedAlias = normalizeQuestion(alias);
         if (!normalizedAlias) continue;
-        if (termInQuestion(q, normalizedAlias)) score = Math.max(score, 100 + normalizedAlias.length);
+        if (termInQuestion(q, normalizedAlias)) {
+          bestScore = Math.max(bestScore, 100 + normalizedAlias.length);
+          hasSpecificTokenMatch = true;
+        }
         const aliasTokens = tokenize(normalizedAlias).filter((token) => !["department", "dept", "of", "and"].includes(token) && !ignoredTokens.has(token));
+        let aliasScore = 0;
+        let aliasHasSpecific = false;
         for (const token of aliasTokens) {
-          if (qTokens.has(token)) score += token.length > 3 ? 18 : 10;
-          else if (token.length >= 4 && fuzzyIncludes([...qTokens], token)) score += token.length > 3 ? 10 : 4;
+          if (qTokens.has(token)) {
+            const isGeneric = genericTokens.has(token);
+            if (!isGeneric) aliasHasSpecific = true;
+            aliasScore += token.length > 3 ? (isGeneric ? 6 : 22) : 10;
+          } else if (token.length >= 4 && !genericTokens.has(token) && fuzzyIncludes([...qTokens], token)) {
+            aliasHasSpecific = true;
+            aliasScore += 10;
+          }
+        }
+        if (aliasHasSpecific) {
+          hasSpecificTokenMatch = true;
+          bestScore = Math.max(bestScore, aliasScore);
         }
       }
-      return { department, score };
+
+      if (!hasSpecificTokenMatch) bestScore = 0;
+      return { department, score: bestScore };
     })
-    .filter((item) => item.score >= 25)
+    .filter((item) => item.score >= 20)
     .sort((a, b) => b.score - a.score)[0]?.department;
 }
 
@@ -4652,6 +4905,137 @@ function directDepartmentProfileAnswer(question, knowledge) {
     ...courseSources,
   ].filter(Boolean).filter((source, index, list) => source.url && list.findIndex((item) => item.url === source.url) === index).slice(0, 5);
   return { text: `**${displayDepartmentName(matchedDepartment)}**\n${facts.join("\n")}`, sources, mode: "structured" };
+}
+
+function detectFacultyDesignation(q, raw) {
+  const text = `${q} ${raw}`.toLowerCase();
+  if (/\b(?:assistant\s+prof(?:essor)?s?|asst\.?\s*prof(?:essor)?s?|sohokari\s+odd?hap[ao]k(?:ra|der)?)\b|সহকারী\s*অধ্যাপক/i.test(text)) {
+    return {
+      key: "assistant_professor",
+      labelEn: "Assistant Professor",
+      labelBn: "সহকারী অধ্যাপক (Assistant Professor)",
+      matcher: (d) => /\bassistant\s+professor\b|সহকারী\s*অধ্যাপক/i.test(d),
+    };
+  }
+  if (/\b(?:associate\s+prof(?:essor)?s?|assoc\.?\s*prof(?:essor)?s?|sohojogi\s+odd?hap[ao]k(?:ra|der)?)\b|সহযোগী\s*অধ্যাপক/i.test(text)) {
+    return {
+      key: "associate_professor",
+      labelEn: "Associate Professor",
+      labelBn: "সহযোগী অধ্যাপক (Associate Professor)",
+      matcher: (d) => /\bassociate\s+professor\b|সহযোগী\s*অধ্যাপক/i.test(d),
+    };
+  }
+  if (/\b(?:lecturers?|probhash?ok(?:ra|der)?|probhasok(?:ra|der)?|probashok(?:ra|der)?)\b|প্রভাষক|লেকচারার/i.test(text)) {
+    return {
+      key: "lecturer",
+      labelEn: "Lecturer",
+      labelBn: "প্রভাষক (Lecturer)",
+      matcher: (d) => /\blecturer\b|প্রভাষক|লেকচারার/i.test(d),
+    };
+  }
+  if (/\b(?:full\s+professors?|prof(?:essor)?s?|odd?hap[ao]k(?:ra|der)?)\b|অধ্যাপক/i.test(text) && !/\b(?:assistant|associate|asst|assoc)\b/i.test(text)) {
+    return {
+      key: "professor",
+      labelEn: "Professor",
+      labelBn: "অধ্যাপক (Professor)",
+      matcher: (d) => /\bprofessor\b|অধ্যাপক/i.test(d) && !/\b(?:assistant|associate)\b/i.test(d),
+    };
+  }
+  return null;
+}
+
+function directFacultyDesignationCountAnswer(question, knowledge) {
+  const q = normalizeQuestion(question);
+  if (asksFeeDetail(q) || asksContactDetail(q) || asksProgramDetail(q)) return null;
+
+  const desig = detectFacultyDesignation(q, question);
+  if (!desig) return null;
+
+  const asksCount =
+    /\b(?:how\s+many|number|count|total|koto|koyjon|kojon|koyta|shongkha|sonkha)\b/i.test(q) ||
+    /(কতজন|সংখ্যা|কয়জন)/.test(question);
+  const asksList =
+    /\b(?:list|names?|ke\s+ke|kara|tader\s+nam|tader\s+naam|nam\s+bolo)\b/i.test(q) ||
+    /(তালিকা|নাম|কারা)/.test(question);
+  const asksAvailable =
+    /\b(?:ache|ase|have|has|exist|exists)\b/i.test(q) ||
+    /(আছে|আছেন)/.test(question);
+
+  const matchedDept = matchedDepartmentFromQuestion(q, knowledge);
+  if (!asksCount && !asksList && !asksAvailable && matchedDept) return null;
+
+  const banglish = prefersBanglish(question);
+  const allFaculty = Array.isArray(knowledge.faculty) ? knowledge.faculty : [];
+
+  // Subcase A: Specific Department targeted
+  if (matchedDept) {
+    const displayDept = displayDepartmentName(matchedDept);
+    const deptFaculty = departmentPeople(knowledge, matchedDept).filter(isTeachingFaculty);
+    const matchingPeople = deptFaculty.filter((person) => desig.matcher(person.designation || ""));
+    const leaders = departmentLeaderRecords(knowledge, matchedDept, deptFaculty);
+    const leadInfo = leaders.length ? ` (বিভাগীয় প্রধান: **${leaders.map((p) => p.name).join(", ")}**)` : "";
+    const sourceUrl = matchingPeople.find((p) => p.source)?.source || deptFaculty.find((p) => p.source)?.source || officialSiteUrl;
+    const namesList = matchingPeople.map((p, idx) => `${idx + 1}. **${p.name}** (${p.designation})`).join("\n");
+
+    if (matchingPeople.length > 0) {
+      return {
+        text: banglish
+          ? `গণ বিশ্ববিদ্যালয়ের **${displayDept}** বিভাগে অফিসিয়াল তথ্য অনুযায়ী মোট **${matchingPeople.length} জন ${desig.labelBn}** রয়েছেন${leadInfo}:\n\n${namesList}\n\n(উল্লেখ্য, এই বিভাগে মোট শিক্ষক সংখ্যা: **${deptFaculty.length} জন**)।`
+          : `According to official faculty records, the **${displayDept}** at Gono Bishwabidyalay has **${matchingPeople.length} ${desig.labelEn}${matchingPeople.length > 1 ? "s" : ""}**${leaders.length ? ` (Head: **${leaders.map((p) => p.name).join(", ")}**)` : ""}:\n\n${namesList}\n\n(Total departmental teaching faculty: **${deptFaculty.length}**).`,
+        sources: [{ title: `${displayDept} Faculty Members`, url: sourceUrl }],
+        mode: "structured",
+      };
+    }
+
+    return {
+      text: banglish
+        ? `গণ বিশ্ববিদ্যালয়ের **${displayDept}**-এর বর্তমান অফিসিয়াল তালিকায় নির্দিষ্টভাবে কোনো **${desig.labelBn}** পাওয়া যায়নি (এই বিভাগে মোট শিক্ষক: **${deptFaculty.length} জন**)।`
+        : `The indexed official faculty records for **${displayDept}** do not currently list any **${desig.labelEn}** (Total departmental teaching faculty: **${deptFaculty.length}**).`,
+      sources: [{ title: `${displayDept} Faculty Members`, url: sourceUrl }],
+      mode: "structured",
+    };
+  }
+
+  // Subcase B: University-wide designation count (e.g. "koto jon assistant professor ache??")
+  const matchingFaculty = allFaculty.filter((person) => desig.matcher(person.designation || ""));
+  const deptBreakdown = new Map();
+  for (const person of matchingFaculty) {
+    let dept = String(person.department || "General / Administration")
+      .replace(/^Department of\s+/i, "")
+      .replace(/^Faculty of\s+/i, "")
+      .trim();
+    if (/^offices$|^administration$/i.test(dept)) {
+      dept = "Administration & Proctorial Body";
+    }
+    deptBreakdown.set(dept, (deptBreakdown.get(dept) || 0) + 1);
+  }
+
+  const sortedDepts = [...deptBreakdown.entries()].sort((a, b) => b[1] - a[1]);
+  const summaryLines = sortedDepts
+    .slice(0, 10)
+    .map(([dept, count]) => `• **${dept}:** ${count} জন`);
+  const remainingCount = sortedDepts.slice(10).reduce((sum, [, count]) => sum + count, 0);
+  if (remainingCount > 0) {
+    summaryLines.push(`• **অন্যান্য বিভাগ ও ইউনিট:** ${remainingCount} জন`);
+  }
+
+  const enSummaryLines = sortedDepts
+    .slice(0, 10)
+    .map(([dept, count]) => `• **${dept}:** ${count}`);
+  if (remainingCount > 0) {
+    enSummaryLines.push(`• **Other departments & units:** ${remainingCount}`);
+  }
+
+  return {
+    text: banglish
+      ? `গণ বিশ্ববিদ্যালয়ের অফিসিয়াল ফ্যাকাল্টি ডিরেক্টরি অনুযায়ী সর্বমোট **${matchingFaculty.length} জন ${desig.labelBn}** কর্মরত আছেন।\n\n**বিভাগভিত্তিক প্রধান পরিসংখ্যান:**\n${summaryLines.join("\n")}\n\nআপনি কি নির্দিষ্ট কোনো ডিপার্টমেন্টের (যেমন CSE, Pharmacy, Law, English) শিক্ষকদের বিস্তারিত তালিকা জানতে চান?`
+      : `According to the official faculty directory, Gono Bishwabidyalay has a total of **${matchingFaculty.length} ${desig.labelEn}${matchingFaculty.length > 1 ? "s" : ""}** across various academic departments.\n\n**Key Department Breakdown:**\n${enSummaryLines.join("\n")}\n\nWould you like the full faculty list or details for a specific department (e.g., CSE, Pharmacy, Law)?`,
+    sources: [
+      { title: "Academics & Faculty Directory - Gono Bishwabidyalay", url: `${officialSiteUrl}academics/` },
+      { title: "General Information - Gono Bishwabidyalay", url: `${officialSiteUrl}about-gb/general-information/` },
+    ],
+    mode: "structured",
+  };
 }
 
 function directDepartmentOverviewAnswer(question, knowledge) {
@@ -5544,6 +5928,7 @@ function directAnswer(question, knowledge, history = []) {
     directStudentJourneyAnswer(question) ||
     directProgramChoiceAnswer(question, knowledge) ||
     directInstitutionFactAnswer(question, knowledge) ||
+    directFacultyDesignationCountAnswer(question, knowledge) ||
     directUniversityOverviewAnswer(question, knowledge) ||
     directDepartmentExistenceAnswer(question, knowledge) ||
     directAcademicUnitsAnswer(question, knowledge) ||
@@ -5572,6 +5957,7 @@ function directAnswer(question, knowledge, history = []) {
     directNoticeAnswer(question, knowledge) ||
     directDepartmentContactAnswer(question, knowledge) ||
     directOfficeContactAnswer(question, knowledge) ||
+    directDeanAnswer(question, knowledge) ||
     directDepartmentLeaderAnswer(question, knowledge) ||
     directDepartmentOverviewAnswer(question, knowledge) ||
     directPeopleAnswer(question, knowledge) ||
@@ -5659,6 +6045,44 @@ function pageRecords(knowledge) {
       publishedAt: notice.publishedAt || "",
       text: `Category: ${notice.category || "Notice"}\nPublished: ${notice.publishedAt || ""}\n${notice.summary || ""}`,
     });
+  }
+  if (Array.isArray(knowledge.faculty) && knowledge.faculty.length > 0) {
+    const totalFaculty = knowledge.faculty.length;
+    const teaching = knowledge.faculty.filter(isTeachingFaculty);
+    const asstProfCount = knowledge.faculty.filter((p) => /assistant professor|সহকারী অধ্যাপক/i.test(p.designation || "")).length;
+    const assocProfCount = knowledge.faculty.filter((p) => /associate professor|সহযোগী অধ্যাপক/i.test(p.designation || "")).length;
+    const profCount = knowledge.faculty.filter((p) => /professor|অধ্যাপক/i.test(p.designation || "") && !/assistant|associate/i.test(p.designation || "")).length;
+    const lecturerCount = knowledge.faculty.filter((p) => /lecturer|প্রভাষক|লেকচারার/i.test(p.designation || "")).length;
+    records.push({
+      id: "faculty:university-summary",
+      title: "Gono Bishwabidyalay University Faculty Statistics and Teacher Counts",
+      url: `${officialSiteUrl}about-gb/general-information/`,
+      kind: "faculty",
+      text: `Gono Bishwabidyalay Faculty Summary:\nOfficial homepage statistic: 180+ faculty members\nTotal indexed faculty directory records: ${totalFaculty} (Academic teaching faculty: ${teaching.length})\nTotal Assistant Professors: ${asstProfCount}\nTotal Lecturers: ${lecturerCount}\nTotal Professors: ${profCount}\nTotal Associate Professors: ${assocProfCount}\nFaculties include Science & Engineering, Health Sciences, Arts & Social Sciences, Veterinary & Animal Sciences, Agriculture.`,
+    });
+
+    const facultyByDept = new Map();
+    for (const person of knowledge.faculty) {
+      const dept = person.department || "General";
+      if (!facultyByDept.has(dept)) facultyByDept.set(dept, []);
+      facultyByDept.get(dept).push(person);
+    }
+    for (const [dept, people] of facultyByDept) {
+      const deptTeaching = people.filter(isTeachingFaculty);
+      const asstProfs = people.filter((p) => /assistant professor|সহকারী অধ্যাপক/i.test(p.designation || ""));
+      const assocProfs = people.filter((p) => /associate professor|সহযোগী অধ্যাপক/i.test(p.designation || ""));
+      const profs = people.filter((p) => /professor|অধ্যাপক/i.test(p.designation || "") && !/assistant|associate/i.test(p.designation || ""));
+      const lecturers = people.filter((p) => /lecturer|প্রভাষক|লেকচারার/i.test(p.designation || ""));
+      const sampleNames = people.slice(0, 10).map((p) => `${p.name} (${p.designation})`).join(", ");
+      records.push({
+        id: `faculty:${dept}`,
+        title: `${dept} Faculty Members and Teachers`,
+        url: people.find((p) => p.source)?.source || officialSiteUrl,
+        kind: "faculty",
+        department: dept,
+        text: `Department: ${dept}\nTotal Faculty Members: ${people.length} (Teaching: ${deptTeaching.length})\nProfessors: ${profs.length}\nAssociate Professors: ${assocProfs.length}\nAssistant Professors: ${asstProfs.length}\nLecturers: ${lecturers.length}\nFaculty Members: ${sampleNames}`,
+      });
+    }
   }
   return records;
 }
@@ -7946,6 +8370,7 @@ export {
   directActivePersonAnswer,
   directAnswer,
   directClubAnswer,
+  directFacultyDesignationCountAnswer,
   directOfficialImageLookupAnswer,
   extractProgramPlanFacts,
   fetchGeneratedImageAsset,

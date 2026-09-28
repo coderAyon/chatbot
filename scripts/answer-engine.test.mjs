@@ -724,6 +724,45 @@ test("combined founder questions include both founder and establishment date", (
   assert.match(answer.text, /Dr\. Zafrullah Chowdhury.*14 July 1998/s);
   const bengali = directAnswer("গণ বিশ্ববিদ্যালয়ের প্রতিষ্ঠাতা কে এবং কবে প্রতিষ্ঠিত?", fixture);
   assert.match(bengali.text, /Dr\. Zafrullah Chowdhury.*14 July 1998/s);
+  const banglishFounder = directAnswer("protishtata ke?", fixture);
+  assert.equal(banglishFounder.mode, "structured");
+  assert.match(banglishFounder.text, /Dr\. Zafrullah Chowdhury/i);
+  const banglishFounder2 = directAnswer("protisthata ke?", fixture);
+  assert.equal(banglishFounder2.mode, "structured");
+  assert.match(banglishFounder2.text, /Dr\. Zafrullah Chowdhury/i);
+});
+
+test("academic designation count queries resolve correctly university-wide and departmentally", () => {
+  const knowledge = {
+    ...fixture,
+    faculty: [
+      { name: "AP One", department: eee, designation: "Assistant Professor", source: root },
+      { name: "AP Two", department: eee, designation: "Assistant Professor", source: root },
+      { name: "Assoc One", department: eee, designation: "Associate Professor", source: root },
+      { name: "Prof One", department: chemistry, designation: "Professor", source: root },
+      { name: "Lec One", department: veterinary, designation: "Lecturer", source: root },
+    ],
+  };
+  const apQuery = directAnswer("koto jon assistant professor ache??", knowledge);
+  assert.equal(apQuery.mode, "structured");
+  assert.match(apQuery.text, /2 জন সহকারী অধ্যাপক/);
+
+  const deptAp = directAnswer("EEE te koto jon assistant professor ache?", knowledge);
+  assert.equal(deptAp.mode, "structured");
+  assert.match(deptAp.text, /2 জন সহকারী অধ্যাপক/);
+  assert.match(deptAp.text, /AP One.*AP Two/s);
+
+  const assocQuery = directAnswer("koto jon associate professor ache?", knowledge);
+  assert.equal(assocQuery.mode, "structured");
+  assert.match(assocQuery.text, /1 জন সহযোগী অধ্যাপক/);
+
+  const profQuery = directAnswer("koto jon professor ache?", knowledge);
+  assert.equal(profQuery.mode, "structured");
+  assert.match(profQuery.text, /1 জন অধ্যাপক/);
+
+  const lecQuery = directAnswer("koto jon lecturer ache?", knowledge);
+  assert.equal(lecQuery.mode, "structured");
+  assert.match(lecQuery.text, /1 জন প্রভাষক/);
 });
 
 test("deadline and hostel questions do not invent current availability", () => {

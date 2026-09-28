@@ -90,7 +90,7 @@
     "viceChancellor": "Professor Dr. Md. Abul Hossain (অধ্যাপক ড. মোঃ আবুল হোসেন)",
     "treasurer": "Prof. Md. Serajul Islam (অধ্যাপক মোঃ সিরাজুল ইসলাম)",
     "registrar": "Engr. Md. Ohiduzzaman (ইঞ্জিনিয়ার মোঃ ওহিদুজ্জামান)",
-    "examinationController": "Mir Murtoza Ali (মীর মুর্ত্তজা আলী)",
+    "examinationController": "A. S. M. Noman Alam (এ. এস. এম. নোমান আলম)",
     "accreditations": [
       "University Grants Commission (UGC) of Bangladesh",
       "Ministry of Education, Government of Bangladesh",
@@ -3943,6 +3943,66 @@
       "email": "",
       "sourceTitle": "Medical Center - Gono Bishwabidyalay",
       "source": "https://gonouniversity.edu.bd/offices/medical-center/"
+    },
+    {
+      "key": "trustee_board_chairman",
+      "title": "Chairman, GB Trustee Board",
+      "name": "Waliul Islam",
+      "group": "authority",
+      "phone": "+8801714006386",
+      "email": "wislam2003@yahoo.com",
+      "sourceTitle": "Board of Trustees - Gono Bishwabidyalay",
+      "source": "https://gonouniversity.edu.bd/administration/authority/board-of-trustees/"
+    },
+    {
+      "key": "dean_science_engineering",
+      "title": "Dean, Faculty of Science & Engineering",
+      "name": "Dr. Wahida Zaman Loskor",
+      "group": "authority",
+      "phone": "+8801789138687",
+      "email": "loskor.baiust@gmail.com",
+      "sourceTitle": "Deans of Faculties - Gono Bishwabidyalay",
+      "source": "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/"
+    },
+    {
+      "key": "dean_health_sciences",
+      "title": "Dean, Faculty of Health Sciences",
+      "name": "Dr. Md. Fuad Hossain",
+      "group": "authority",
+      "phone": "",
+      "email": "",
+      "sourceTitle": "Deans of Faculties - Gono Bishwabidyalay",
+      "source": "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/"
+    },
+    {
+      "key": "dean_arts_social_sciences",
+      "title": "Dean, Faculty of Arts & Social Sciences",
+      "name": "Professor Nilufar Sultana",
+      "group": "authority",
+      "phone": "",
+      "email": "",
+      "sourceTitle": "Deans of Faculties - Gono Bishwabidyalay",
+      "source": "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/"
+    },
+    {
+      "key": "dean_veterinary_animal_sciences",
+      "title": "Dean, Faculty of Veterinary & Animal Sciences",
+      "name": "Prof. Dr. Md. Zahirul Islam Khan",
+      "group": "authority",
+      "phone": "",
+      "email": "",
+      "sourceTitle": "Deans of Faculties - Gono Bishwabidyalay",
+      "source": "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/"
+    },
+    {
+      "key": "dean_agriculture",
+      "title": "Dean, Faculty of Agriculture",
+      "name": "Prof. Dr. Md. Fazlul Karim",
+      "group": "authority",
+      "phone": "",
+      "email": "",
+      "sourceTitle": "Deans of Faculties - Gono Bishwabidyalay",
+      "source": "https://gonouniversity.edu.bd/administration/authority/deans-of-faculties/"
     }
   ],
   "fees": [
