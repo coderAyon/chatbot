@@ -7,7 +7,10 @@ export function inferMessageMedium(text, attachments = [], history = [], webSear
     /\b(web\s*search|search\s+(?:the\s+)?web|search\s+online|search\s+(?:the\s+)?internet|google\s+(?:it|this|koro|kore)|look\s+it\s+up|latest\s+news|current\s+news)\b/i.test(normalized) ||
     /(?:ওয়েব\s*সার্চ|ওয়েব\s*সার্চ|গুগল\s*কর|ইন্টারনেট\s*থেকে\s*খুঁজ|সাম্প্রতিক\s*খবর)/u.test(normalized);
   const creationIntent =
-    /\b(create|generate|draw|design|build|compose)\b/i.test(normalized) ||
+    /^(?:please\s+)?(?:create|generate|draw|design|build|compose)\b/i.test(normalized) ||
+    /\b(?:can|could|would|will)\s+you\s+(?:please\s+)?(?:create|generate|draw|design|build|compose)\b/i.test(normalized) ||
+    /\b(?:i\s+want\s+you\s+to|help\s+me)\s+(?:create|generate|draw|design|build|compose)\b/i.test(normalized) ||
+    /\bhow\s+to\s+(?:create|generate|draw|design|build|compose)\b/i.test(normalized) ||
     /\b(?:ban(?:ao|a|ai|ate)|toiri\s+koro|design\s+koro|likhe\s+(?:dao|dau))\b/i.test(normalized) ||
     /(?:তৈরি\s*কর|বানাও|আঁকো|ডিজাইন\s*কর|লিখে\s*দাও)/u.test(normalized) ||
     /\b(create|generate|draw|design|make|build|develop|compose|write)\b[\s\S]{0,60}\b(image|photo|picture|logo|poster|banner|illustration|website|webpage|app|application|code|program|presentation|slides?|document|report|cv|resume)\b/i.test(normalized) ||

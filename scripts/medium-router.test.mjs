@@ -30,6 +30,9 @@ test("routes ordinary and university questions to Chatbot", () => {
   assert.equal(inferMessageMedium("hello"), "chatbot");
   assert.equal(inferMessageMedium("Gono University kobe established?"), "chatbot");
   assert.equal(inferMessageMedium("CSE admission fee koto?"), "chatbot");
+  assert.equal(inferMessageMedium("What does create mean?"), "chatbot");
+  assert.equal(inferMessageMedium("Who created the C language?"), "chatbot");
+  assert.equal(inferMessageMedium("What is database design?"), "chatbot");
 });
 
 test("keeps an AI creation follow-up in GB AI", () => {
