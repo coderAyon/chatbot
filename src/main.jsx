@@ -41,6 +41,7 @@ import {
   X,
 } from "lucide-react";
 import "./styles.css";
+import { inferMessageMedium } from "./medium-router.js";
 
 const GB_LOGO_URL = "/gb-logo.png";
 const CHAT_HISTORY_KEY = "university-chat-history-v3";
@@ -528,8 +529,16 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages, isThinking, activeChatId]);
+    endRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
+  }, [activeChatId]);
+
+  useEffect(() => {
+    // Follow the user's new message and the thinking indicator, but leave the
+    // viewport at the beginning of a long assistant response once it arrives.
+    if (messages.at(-1)?.role === "user") {
+      endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [messages.length]);
 
   useEffect(() => {
     refreshStatus();
@@ -620,6 +629,14 @@ function App() {
       target = { ...target, messages: options.baseMessages };
     }
 
+    const effectiveMedium = inferMessageMedium(
+      outgoingText,
+      selectedAttachments,
+      target.messages,
+      webSearchEnabled,
+    );
+    setCurrentMedium(effectiveMedium);
+
     const isFirstMessage = target.messages.length === 0;
     const newTitle = isFirstMessage ? generateChatTitle(outgoingText, selectedAttachments) : target.title;
     const nextMessages = [...target.messages, userMessage];
@@ -638,7 +655,7 @@ function App() {
     setAttachmentError("");
     setIsThinking(true);
     let thinkingMsg = "Thinking...";
-    if (currentMedium === "gb-ai") {
+    if (effectiveMedium === "gb-ai") {
       if (selectedAttachments?.length > 0) {
         thinkingMsg = "GB AI is reading screenshot & solving...";
       } else if (/^(ছবি আঁকো|ছবি বানাও|ছবি তৈরি করো|একটি ছবি|chobi banao|chobi ako|generate an? image|create an? image|draw an? image)/i.test(outgoingText.trim())) {
@@ -662,7 +679,7 @@ function App() {
           attachments: selectedAttachments,
           sessionId: target.sessionId || target.id,
           history: nextMessages.slice(-10).map(({ role, text }) => ({ role, text })),
-          medium: currentMedium,
+          medium: effectiveMedium,
           webSearch: webSearchEnabled,
           replaceHistory: options.replaceHistory === true,
         }),
@@ -1846,6 +1863,16 @@ function renderMessageText(text) {
   const output = [];
   let index = 0;
 
+  const parseTableRow = (value) => {
+    const normalized = String(value || "").trim().replace(/^\|/, "").replace(/\|$/, "");
+    return normalized.split("|").map((cell) => cell.trim());
+  };
+
+  const isTableDivider = (value) => {
+    const cells = parseTableRow(value);
+    return cells.length > 1 && cells.every((cell) => /^:?-{3,}:?$/.test(cell));
+  };
+
   while (index < lines.length) {
     const rawLine = lines[index];
     const line = rawLine.trim();
@@ -1867,6 +1894,39 @@ function renderMessageText(text) {
       }
       output.push(
         <CodeBlock key={`codeblock-${index}`} code={codeLines.join("\n")} lang={lang} />
+      );
+      continue;
+    }
+
+    if (line.includes("|") && index + 1 < lines.length && isTableDivider(lines[index + 1])) {
+      const headers = parseTableRow(line);
+      const rows = [];
+      index += 2;
+      while (index < lines.length) {
+        const candidate = lines[index].trim();
+        if (!candidate || !candidate.includes("|")) break;
+        const cells = parseTableRow(candidate);
+        if (cells.length < 2 || isTableDivider(candidate)) break;
+        rows.push(cells);
+        index += 1;
+      }
+      output.push(
+        <div className="message-table-wrap" key={`table-${index}`}>
+          <table className="message-table">
+            <thead>
+              <tr>{headers.map((cell, cellIndex) => <th key={`head-${cellIndex}`}>{renderInlineText(cell, `head-${cellIndex}`)}</th>)}</tr>
+            </thead>
+            <tbody>
+              {rows.map((cells, rowIndex) => (
+                <tr key={`row-${rowIndex}`}>
+                  {headers.map((_, cellIndex) => (
+                    <td key={`cell-${rowIndex}-${cellIndex}`}>{renderInlineText(cells[cellIndex] || "", `cell-${rowIndex}-${cellIndex}`)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       );
       continue;
     }

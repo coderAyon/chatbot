@@ -5843,6 +5843,12 @@ function directAnswer(question, knowledge, history = []) {
     }
   }
 
+  // An explicit request for a university overview starts a new topic. Resolve it
+  // before history-based department inference so a previous Law/CSE discussion
+  // cannot hijack a broad question such as "gono niye kisu bolo".
+  const explicitUniversityOverview = directUniversityOverviewAnswer(question, knowledge);
+  if (explicitUniversityOverview) return explicitUniversityOverview;
+
   if (history.length && !matchedDepartmentFromQuestion(question, knowledge)) {
     const topicIdx = ordinalTopicIndex(question);
     const recalledDepartment = ordinalContextDepartment(question, history, knowledge);

@@ -1340,6 +1340,68 @@ body,
   margin: 10px 0;
 }
 
+.message-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.message-table {
+  width: 100%;
+  min-width: 420px;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.message-table th,
+.message-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  text-align: left;
+  vertical-align: top;
+}
+
+.message-table th {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.message-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+[data-theme="light"] .message-table-wrap {
+  border-color: #bed2e7;
+  background: #f8fbff;
+}
+
+[data-theme="light"] .message-table th,
+[data-theme="light"] .message-table td {
+  border-bottom-color: #d5e2ef;
+}
+
+[data-theme="light"] .message-table th {
+  background: #eaf3fc;
+}
+
+@media (max-width: 540px) {
+  .message-table {
+    min-width: 360px;
+    font-size: 0.8rem;
+  }
+
+  .message-table th,
+  .message-table td {
+    padding: 8px 9px;
+  }
+}
+
 .admin-inline-error {
   margin: 0;
   padding: 10px 12px;
@@ -4903,6 +4965,7 @@ body,
 /* AI Mode Purple Glowing Search Bar */
 .composer.is-ai-mode,
 .center-composer .composer.is-ai-mode {
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto auto;
   border-color: rgba(168, 85, 247, 0.45);
   box-shadow:
     0 16px 45px rgba(0, 0, 0, 0.4),
@@ -5254,6 +5317,19 @@ body,
     padding: 6px 8px !important;
   }
 
+  .composer.is-ai-mode,
+  .center-composer .composer.is-ai-mode {
+    grid-template-columns: auto minmax(0, 1fr) auto auto auto auto !important;
+    gap: 4px !important;
+  }
+
+  .composer-web-btn {
+    height: 32px;
+    padding: 3px 7px;
+    gap: 4px;
+    font-size: 0.75rem;
+  }
+
   .composer-mode-dropdown-wrap {
     position: relative;
     display: flex;
@@ -5337,6 +5413,17 @@ body,
     height: 30px;
     padding: 2px 7px;
     font-size: 0.74rem;
+  }
+
+  .composer-web-btn {
+    height: 30px;
+    padding: 2px 6px;
+    font-size: 0.72rem;
+  }
+
+  .composer.is-ai-mode textarea {
+    min-width: 0;
+    padding-inline: 0;
   }
 }
 
