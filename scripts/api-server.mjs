@@ -560,7 +560,19 @@ async function extractPdfText(buffer) {
   const parser = new PDFParse({ data: buffer });
   try {
     const result = await parser.getText({ first: 30 });
-    return cleanExtractedText(result.text);
+    const text = cleanExtractedText(result.text);
+    if (text.length >= 40) return text;
+
+    // Image-only notices and scanned result sheets have no PDF text layer.
+    // Render a bounded number of pages and pass them through the same OCR path
+    // used for screenshots instead of silently returning an empty document.
+    const screenshots = await parser.getScreenshot({ first: 3, desiredWidth: 1600, imageDataUrl: false, imageBuffer: true });
+    const ocrPages = [];
+    for (const page of screenshots.pages || []) {
+      const pageText = await extractImageText(Buffer.from(page.data)).catch(() => "");
+      if (pageText) ocrPages.push(`Page ${page.pageNumber}\n${pageText}`);
+    }
+    return cleanExtractedText([text, ...ocrPages].filter(Boolean).join("\n\n"));
   } finally {
     await parser.destroy();
   }
@@ -800,6 +812,17 @@ function fuzzyIncludes(tokens, term) {
     if (term.length < 5 || token[0] !== term[0]) return false;
     return editDistance(token, term) <= 1 || hasSingleAdjacentTransposition(token, term);
   });
+}
+
+function phoneticPersonTokenMatch(token, term) {
+  if (token.length < 4 || term.length < 4) return false;
+  const collapse = (value) => value.toLowerCase().replace(/(.)\1+/g, "$1");
+  const left = collapse(token);
+  const right = collapse(term);
+  if (left === right) return true;
+  const vowels = /^[aeiou]/;
+  if (vowels.test(left) && vowels.test(right) && editDistance(left.slice(1), right.slice(1)) <= 1) return true;
+  return left[0] === right[0] && editDistance(left, right) <= (Math.max(left.length, right.length) >= 7 ? 2 : 1);
 }
 
 function vectorize(text) {
@@ -1440,6 +1463,11 @@ function findPeople(question, people = [], knowledge = null) {
     "samparke",
     "porichoy",
     "porichito",
+    "onar",
+    "unar",
+    "onake",
+    "unake",
+    "unir",
   ]);
   const words = tokenize(question).filter((word) => word.length >= 4 && !ignored.has(word));
   if (!words.length) return [];
@@ -1479,6 +1507,7 @@ function findPeople(question, people = [], knowledge = null) {
         if (aliasTokens.includes(word)) return total + 28;
         if (aliasTokens.some((token) => token.length >= 4 && (token.startsWith(word) || word.startsWith(token)))) return total + 18;
         if (fuzzyIncludes(nameTokens, word)) return total + 16;
+        if (nameTokens.some((token) => phoneticPersonTokenMatch(token, word))) return total + 18;
         if (fuzzyIncludes(aliasTokens, word)) return total + 10;
         return total;
       }, 0);
@@ -1504,7 +1533,18 @@ function directPeopleAnswer(question, knowledge) {
   const asksQualification = /\b(qualification|education|degree|study|porashona)\b/i.test(q);
   const asksProfile = /\b(chino|cheno|know|who|ke|about|details|info|profile|sir|mam|maam|madam|teacher|faculty)\b/i.test(q);
   const matches = findPeople(q, knowledge.faculty, knowledge);
-  if (!matches.length || !(asksPhone || asksEmail || asksGeneralContact || asksProfile || asksQualification)) return null;
+  if (!matches.length) {
+    const matchedDepartment = matchedDepartmentFromQuestion(q, knowledge);
+    const hasGenericHonorific = /\b(sir|mam|maam|madam|teacher|faculty)\b/i.test(q);
+    if (matchedDepartment && hasGenericHonorific && (asksPhone || asksEmail || asksGeneralContact)) {
+      const departmentCandidates = departmentPeople(knowledge, matchedDepartment).filter(isTeachingFaculty);
+      const honorificCandidates = departmentCandidates.filter((person) => matchesRequestedHonorific(q, person));
+      const candidates = honorificCandidates.length ? honorificCandidates : departmentCandidates;
+      if (candidates.length) return followupClarification(question, candidates);
+    }
+    return null;
+  }
+  if (!(asksPhone || asksEmail || asksGeneralContact || asksProfile || asksQualification)) return null;
   if (asksPhone || asksEmail || asksGeneralContact) return formatPeopleContact(question, matches);
   if (asksQualification) {
     return {
@@ -3812,6 +3852,9 @@ function explicitSubjectFillerWords() {
     "er",
     "r",
     "unar",
+    "onar",
+    "onake",
+    "unake",
     "uni",
     "he",
     "him",
@@ -3962,11 +4005,22 @@ function lastMentionedPeople(history = [], people = []) {
 function directFollowupAnswer(question, knowledge, history = []) {
   const q = normalizeQuestion(question);
   const asksProfile = /\b(profile|details|info|about|chino|cheno|know|ke|tar|tader|oder)\b/i.test(q);
+  const records = contactRecords(knowledge);
+  const previousItems = previousConversation(history, question);
+  const currentExactMatches = exactMentionedRecords(question, records);
+  const lastUserTurn = [...previousItems].reverse().find((item) => item?.role === "user");
+
+  // A name-only reply can be the answer to our "which person?" clarification.
+  // Preserve the immediately preceding contact intent instead of sending the
+  // partial conversation to an AI provider that may miss structured fields.
+  if (currentExactMatches.length === 1 && lastUserTurn?.text && asksContactDetail(lastUserTurn.text)) {
+    return formatContactRecords(lastUserTurn.text, currentExactMatches);
+  }
+
   if (!asksContactDetail(question) && !asksProfile) return null;
   if (currentQuestionHasExplicitSubject(question, knowledge)) return null;
 
-  const records = contactRecords(knowledge);
-  const recent = previousConversation(history, question)
+  const recent = previousItems
     .slice(-8)
     .reverse()
     .map((item) => ({ role: item.role || "", text: item.text || "" }));
@@ -4476,6 +4530,21 @@ function departmentLeaderRecords(knowledge, department, people = departmentPeopl
 
 function isTeachingFaculty(person) {
   return !/\b(?:lab|it|administrative|admin|section|support)\s+(?:officer|assistant)|\bofficer\b/i.test(person.designation || "");
+}
+
+function matchesRequestedHonorific(question, person) {
+  const q = normalizeQuestion(question);
+  const name = normalizeQuestion(cleanPersonName(person?.name || ""));
+  const femaleGivenNames = new Set([
+    "adila", "afroza", "amina", "bipasa", "farhana", "farzana", "fatema", "jannat",
+    "mahmuda", "mariam", "mim", "nazia", "nusrat", "sabina", "sadika", "shanta",
+    "sharmin", "shatabdee", "sultana", "sumaiya", "tania", "tasnim", "umme",
+  ]);
+  const isKnownFemale = /\b(?:mrs|ms|miss)\.?\b/i.test(person?.name || "") ||
+    name.split(" ").some((token) => femaleGivenNames.has(token));
+  if (/\b(?:mam|maam|madam)\b/i.test(q)) return isKnownFemale;
+  if (/\bsir\b/i.test(q)) return !isKnownFemale;
+  return true;
 }
 
 function departmentAcademicRecords(knowledge, department) {
@@ -6852,8 +6921,11 @@ function extractImageFieldFromText(text, fieldName) {
 
 function getLastImageContext(history = []) {
   if (!Array.isArray(history) || history.length === 0) return null;
-  // Look at history in reverse for the most recent assistant image turn
-  for (let i = history.length - 1; i >= 0; i--) {
+  // Keep the latest generated image available across a longer conversation.
+  // The refinement classifier applies stricter intent checks when text turns
+  // occurred after the image, so unrelated questions do not edit stale media.
+  const oldestIndex = Math.max(0, history.length - 40);
+  for (let i = history.length - 1; i >= oldestIndex; i--) {
     const turn = history[i];
     if (!turn) continue;
     if (turn.role !== "assistant") continue;
@@ -6873,10 +6945,9 @@ function getLastImageContext(history = []) {
         concept,
         prompt,
         turnIndex: i,
+        turnsSince: history.length - i - 1,
       };
     }
-    // If immediate previous assistant turn was not an image, don't treat subsequent turn as image refinement
-    break;
   }
   return null;
 }
@@ -6927,6 +6998,15 @@ function isImageRefinementOrFollowup(message, history = []) {
   // If user explicitly asks for a fresh new image of another subject, don't treat as refinement
   if (isExplicitFreshImageIntent(t)) {
     return null;
+  }
+
+  if (lastImage.turnsSince > 1) {
+    const hasLongRangeReference =
+      /\b(?:same|previous|last|earlier|ager|oi|oita|eita|this|that)\s+(?:chobi|image|photo|picture|artwork|render)\b/i.test(t) ||
+      /(?:আগের|ওই|সেই|এটার|এই)\s*(?:ছবি|ছবিটা|ইমেজ|ফটো|চিত্র)/i.test(t) ||
+      /\b(?:image|photo|picture|chobi|chobita|background|foreground|lighting|color|colour|style|angle|view)\b.*\b(?:change|replace|remove|add|edit|update|modify|koro|dao|dau|banao)\b/i.test(t) ||
+      /\b(?:change|replace|remove|add|edit|update|modify)\b.*\b(?:image|photo|picture|chobi|background|foreground|lighting|color|colour|style|angle|view)\b/i.test(t);
+    if (!hasLongRangeReference) return null;
   }
 
   const hasExplicitImageTerm =

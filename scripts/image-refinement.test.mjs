@@ -76,13 +76,17 @@ test("getLastImageContext extracts concept from assistant image response in hist
   );
   assert.equal(context.prompt, "Library");
 
-  // If latest assistant message was a text answer, returns null
+  // Text turns do not erase the image; the intent classifier decides whether
+  // a later message explicitly refers back to this retained context.
   const historyAfterText = [
     ...historyWithImage,
     { role: "user", text: "Library timing ki?" },
     { role: "assistant", text: "Library remains open from 9:00 AM to 5:00 PM." },
   ];
-  assert.equal(getLastImageContext(historyAfterText), null);
+  const retainedContext = getLastImageContext(historyAfterText);
+  assert.ok(retainedContext);
+  assert.equal(retainedContext.prompt, "Library");
+  assert.equal(retainedContext.turnsSince, 2);
 });
 
 test("isImageRefinementOrFollowup detects scene modifications following an image turn", () => {

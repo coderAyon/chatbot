@@ -82,6 +82,50 @@ test("greetings and unclear input never dump scraped text", () => {
   assert.equal(requiresVerifiedStructuredAnswer("Explain data structures with examples"), false);
 });
 
+test("a person name after a phone clarification returns the verified number", () => {
+  const contactFixture = {
+    ...fixture,
+    faculty: [
+      ...fixture.faculty,
+      { name: "Adila Nuzhat", department: "Department of Computer Science and Engineering (CSE)", designation: "Lecturer", phone: "01957202891", email: "tithiadila91@gmail.com", source: `${root}cse/faculty-members/`, profileUrl: `${root}cse/employees/adila-nuzhat/` },
+      { name: "Engr. Md. Ohiduzzaman", department: "Department of Electrical and Electronic Engineering (EEE)", designation: "Lecturer", phone: "+8801902544006", source: `${root}eee/faculty-members/` },
+    ],
+  };
+  const history = [
+    { role: "user", text: "CSE faculty list dekhao" },
+    { role: "assistant", text: "Faculty: Example CSE Head, Adila Nuzhat." },
+    { role: "user", text: "number dau" },
+    { role: "assistant", text: "Kon jon-er info chai? Example CSE Head, Adila Nuzhat" },
+  ];
+  const answer = directAnswer("adila nuzhat", contactFixture, history);
+  assert.equal(answer.mode, "structured");
+  assert.match(answer.text, /Adila Nuzhat/);
+  assert.match(answer.text, /01957202891/);
+
+  const ambiguous = directAnswer("cse er mam er number dao", contactFixture);
+  assert.equal(ambiguous.mode, "clarify");
+  assert.match(ambiguous.text, /Kon jon-er info chai/i);
+  assert.match(ambiguous.text, /Adila Nuzhat/);
+  assert.doesNotMatch(ambiguous.text, /Example CSE Head/);
+
+  for (const typo of ["Odila mam er number dao", "Adilla Nuzhat number dao", "adila mam er phone dao"]) {
+    const typoAnswer = directAnswer(typo, contactFixture);
+    assert.equal(typoAnswer.mode, "structured", typo);
+    assert.match(typoAnswer.text, /Adila Nuzhat/);
+    assert.match(typoAnswer.text, /01957202891/);
+  }
+
+  const personHistory = [
+    { role: "user", text: "Adila Nuzhat ke cheno?" },
+    { role: "assistant", text: "Yes, **Adila Nuzhat** is Lecturer in CSE." },
+  ];
+  for (const followup of ["onar number dao", "ওনার number দাও", "tar phone number dao"]) {
+    const memoryAnswer = directAnswer(followup, contactFixture, personHistory);
+    assert.equal(memoryAnswer.mode, "structured", followup);
+    assert.match(memoryAnswer.text, /01957202891/);
+  }
+});
+
 test("Bangla university overview requests resolve from verified institution data", () => {
   for (const question of [
     "গণ বিশ্ববিদ্যালয় সম্পর্কে কিছু বল",

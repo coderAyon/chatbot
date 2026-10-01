@@ -340,6 +340,33 @@ test("COMPLEX HARD: Diverse visual scene modifications following image generatio
   }
 });
 
+test("COMPLEX HARD: Explicit image edits retain context across a long mixed conversation", () => {
+  const longHistory = [
+    { role: "user", text: "create an image of a student reading beside a university lake" },
+    {
+      role: "assistant",
+      mode: "image",
+      text: "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** student reading beside a lake\n🔍 **Visual Concept:** *A student reading beside a calm university lake at sunset*",
+      image: { prompt: "A student reading beside a calm university lake at sunset" },
+    },
+    { role: "user", text: "what is photosynthesis?" },
+    { role: "assistant", text: "Photosynthesis converts light energy into chemical energy." },
+    { role: "user", text: "CSE admission fee koto?" },
+    { role: "assistant", text: "The verified fee information is available in the university records." },
+    { role: "user", text: "thanks" },
+    { role: "assistant", text: "You're welcome." },
+  ];
+
+  const refinement = isImageRefinementOrFollowup("ager image-er background night view koro", longHistory);
+  assert.ok(refinement);
+  assert.match(refinement.prompt, /student reading beside a lake/i);
+  assert.ok(refinement.turnsSince >= 6);
+
+  assert.equal(isImageRefinementOrFollowup("what is machine learning?", longHistory), null);
+  assert.equal(isImageRefinementOrFollowup("bottle beside him", longHistory), null);
+  assert.equal(isImageRefinementOrFollowup("create a new image of a red car", longHistory), null);
+});
+
 // -------------------------------------------------------------
 // TEST SUITE 4: Hard Negative Rejections Following Image Generation
 // -------------------------------------------------------------
