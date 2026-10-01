@@ -17,6 +17,8 @@ import {
   Headphones,
   Image as ImageIcon,
   Link as LinkIcon,
+  LockKeyhole,
+  LogIn,
   Loader2,
   Maximize2,
   MessageSquare,
@@ -31,6 +33,7 @@ import {
   RotateCcw,
   Search,
   Settings,
+  ShieldCheck,
   Sparkles,
   Square,
   Sun,
@@ -163,6 +166,26 @@ function preferredVoiceLanguage() {
   return String(window.navigator?.language || "en-US").toLowerCase().startsWith("bn") ? "bn-BD" : "en-US";
 }
 
+function bestRecognitionTranscript(result, lang) {
+  const alternatives = Array.from(result || []).map((item) => String(item?.transcript || "").trim()).filter(Boolean);
+  if (!alternatives.length) return "";
+  const wantsBangla = String(lang || "").startsWith("bn");
+  return alternatives.find((text) => /[\u0980-\u09FF]/.test(text) === wantsBangla) || alternatives[0];
+}
+
+function preferredSynthesisVoice(voices, lang) {
+  const locale = String(lang || "en-US").toLowerCase();
+  const language = locale.slice(0, 2);
+  const matching = voices.filter((voice) => String(voice.lang || "").toLowerCase().startsWith(language));
+  return (
+    matching.find((voice) => String(voice.lang || "").toLowerCase() === locale) ||
+    matching.find((voice) => language === "en" && /aria|zira|google.*english|samantha|daniel/i.test(voice.name || "")) ||
+    matching.find((voice) => language === "bn" && /bangla|bengali/i.test(voice.name || "")) ||
+    matching[0] ||
+    null
+  );
+}
+
 function speakUtterance(text, { lang, onStart, onEnd, onError, isVoiceMode = false } = {}) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     onError?.(new Error("Speech synthesis not supported in this browser"));
@@ -194,15 +217,8 @@ function speakUtterance(text, { lang, onStart, onEnd, onError, isVoiceMode = fal
   utterance.pitch = 1.0;
 
   const voices = window.speechSynthesis.getVoices?.() || [];
-  if (voices.length > 0) {
-    const match = voices.find(
-      (v) =>
-        v.lang.toLowerCase().startsWith(determinedLang.slice(0, 2).toLowerCase()) ||
-        (determinedLang.startsWith("bn") &&
-          (v.name.toLowerCase().includes("bangla") || v.name.toLowerCase().includes("bengali")))
-    );
-    if (match) utterance.voice = match;
-  }
+  const voice = preferredSynthesisVoice(voices, determinedLang);
+  if (voice) utterance.voice = voice;
 
   utterance.onstart = () => onStart?.();
   utterance.onend = () => onEnd?.();
@@ -358,7 +374,7 @@ function App() {
       recognition.lang = preferredVoiceLanguage();
       recognition.interimResults = true;
       recognition.continuous = true;
-      recognition.maxAlternatives = 1;
+      recognition.maxAlternatives = 3;
 
       let finalCaptured = "";
       let silenceTimer = null;
@@ -380,9 +396,9 @@ function App() {
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const item = event.results[i];
           if (item.isFinal) {
-            finalCaptured += item[0].transcript + " ";
+            finalCaptured += bestRecognitionTranscript(item, recognition.lang) + " ";
           } else {
-            currentInterim += item[0].transcript;
+            currentInterim += bestRecognitionTranscript(item, recognition.lang);
           }
         }
         const full = (finalCaptured + currentInterim).trim();
@@ -546,7 +562,7 @@ function App() {
 
   async function refreshStatus() {
     try {
-      const response = await fetch("/api/admin/status");
+      const response = await fetch("/api/health");
       if (response.ok) {
         setStatus(await response.json());
         setConnectionState("online");
@@ -1221,6 +1237,18 @@ function App() {
 function MessageBubble({ message, index, copied, onCopy, onSuggestion, onRetry, isSpeaking, onToggleSpeak, isEditing, editText, onStartEdit, onCancelEdit, onEditTextChange, onSubmitEdit, editInputRef, isThinking, onOpenLightbox }) {
   const isAssistant = message.role === "assistant";
   const isUser = message.role === "user";
+  const [allCodeCopied, setAllCodeCopied] = useState(false);
+  const completeCode = isAssistant ? extractCompleteCode(message.text) : "";
+
+  const copyCompleteCode = async () => {
+    if (!completeCode) return;
+    try {
+      await navigator.clipboard.writeText(completeCode);
+      setAllCodeCopied(true);
+      setTimeout(() => setAllCodeCopied(false), 2000);
+    } catch {}
+  };
+
   return (
     <article className={`message ${message.role} ${isEditing ? "is-editing" : ""}`}>
       <div className="avatar">
@@ -1347,6 +1375,18 @@ function MessageBubble({ message, index, copied, onCopy, onSuggestion, onRetry, 
         )}
         {isAssistant && (
           <div className="message-actions">
+            {completeCode && (
+              <button
+                className={`message-action ${allCodeCopied ? "is-copied" : ""}`}
+                type="button"
+                onClick={copyCompleteCode}
+                aria-label="Copy all code"
+                title="Copy every code block"
+              >
+                {allCodeCopied ? <Check size={16} /> : <Copy size={16} />}
+                <span>{allCodeCopied ? "Code copied" : "Copy all code"}</span>
+              </button>
+            )}
             <button className="message-action" type="button" onClick={onCopy} aria-label="Copy response" title="Copy response">
               {copied ? <Check size={16} /> : <Clipboard size={16} />}
               <span>{copied ? "Copied" : "Copy"}</span>
@@ -1570,24 +1610,27 @@ function ImageLightboxModal({ image, onClose }) {
 
 function AdminPanel({ status, onClose, onRefreshStatus }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [logs, setLogs] = useState([]);
   const [chats, setChats] = useState([]);
   const [settings, setSettings] = useState(null);
+  const [dashboardStatus, setDashboardStatus] = useState(null);
   const [adminError, setAdminError] = useState("");
   const [adminToken, setAdminToken] = useState(() => sessionStorage.getItem("gb-admin-token") || "");
 
-  function adminFetch(url, options = {}) {
+  function adminFetch(url, options = {}, token = adminToken) {
     return fetch(url, {
       ...options,
       headers: {
         ...(options.headers || {}),
-        ...(adminToken ? { "x-admin-token": adminToken } : {}),
+        ...(token ? { "x-admin-token": token } : {}),
       },
     });
   }
 
   useEffect(() => {
-    loadAdminData();
+    if (adminToken) authenticateAdmin(adminToken);
   }, []);
 
   useEffect(() => {
@@ -1598,19 +1641,52 @@ function AdminPanel({ status, onClose, onRefreshStatus }) {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [onClose]);
 
-  async function loadAdminData() {
+  async function loadAdminData(token = adminToken) {
     try {
-      const [logsResponse, settingsResponse] = await Promise.all([adminFetch("/api/admin/logs"), adminFetch("/api/admin/settings")]);
-      if (logsResponse.status === 401 || settingsResponse.status === 401) throw new Error("Admin token required for logs and refresh controls.");
-      if (!logsResponse.ok || !settingsResponse.ok) throw new Error("Admin data could not be loaded.");
+      const [logsResponse, settingsResponse, statusResponse] = await Promise.all([
+        adminFetch("/api/admin/logs", {}, token),
+        adminFetch("/api/admin/settings", {}, token),
+        adminFetch("/api/admin/status", {}, token),
+      ]);
+      if ([logsResponse, settingsResponse, statusResponse].some((response) => [401, 403].includes(response.status))) {
+        throw new Error("Incorrect admin password.");
+      }
+      if (!logsResponse.ok || !settingsResponse.ok || !statusResponse.ok) throw new Error("Admin data could not be loaded.");
       const data = await logsResponse.json();
       setLogs(data.logs || []);
       setChats(data.chats || []);
       setSettings(await settingsResponse.json());
+      setDashboardStatus(await statusResponse.json());
       setAdminError("");
+      return true;
     } catch (error) {
       setAdminError(error.message || "Admin data could not be loaded.");
+      return false;
     }
+  }
+
+  async function authenticateAdmin(token = adminToken) {
+    if (!token.trim()) {
+      setAdminError("Enter the admin password.");
+      return;
+    }
+    setIsAuthenticating(true);
+    const authenticated = await loadAdminData(token.trim());
+    setIsAuthenticated(authenticated);
+    if (authenticated) sessionStorage.setItem("gb-admin-token", token.trim());
+    else sessionStorage.removeItem("gb-admin-token");
+    setIsAuthenticating(false);
+  }
+
+  function logoutAdmin() {
+    sessionStorage.removeItem("gb-admin-token");
+    setAdminToken("");
+    setIsAuthenticated(false);
+    setLogs([]);
+    setChats([]);
+    setSettings(null);
+    setDashboardStatus(null);
+    setAdminError("");
   }
 
   async function refreshKnowledge() {
@@ -1644,18 +1720,59 @@ function AdminPanel({ status, onClose, onRefreshStatus }) {
           </button>
         </header>
 
+        {!isAuthenticated ? (
+          <form
+            className="admin-login-card"
+            onSubmit={(event) => {
+              event.preventDefault();
+              authenticateAdmin();
+            }}
+          >
+            <div className="admin-login-icon"><LockKeyhole size={22} /></div>
+            <div className="admin-login-copy">
+              <h3>Admin login</h3>
+              <p>Indexing health, activity logs, and crawler controls are restricted.</p>
+            </div>
+            <label htmlFor="admin-password">Admin password</label>
+            <div className="admin-login-row">
+              <input
+                id="admin-password"
+                type="password"
+                value={adminToken}
+                placeholder="Enter password"
+                autoComplete="current-password"
+                autoFocus
+                onChange={(event) => {
+                  setAdminToken(event.target.value);
+                  setAdminError("");
+                }}
+              />
+              <button className="primary-action" type="submit" disabled={isAuthenticating || !adminToken.trim()}>
+                {isAuthenticating ? <Loader2 className="spin" size={17} /> : <LogIn size={17} />}
+                <span>{isAuthenticating ? "Checking" : "Login"}</span>
+              </button>
+            </div>
+            {adminError && <p className="admin-inline-error" role="alert">{adminError}</p>}
+          </form>
+        ) : (
+          <>
+            <div className="admin-session-bar">
+              <span><ShieldCheck size={15} /> Authenticated admin</span>
+              <button type="button" onClick={logoutAdmin}>Log out</button>
+            </div>
+
         <div className="admin-grid">
-          <Metric label="Official pages" value={status?.pageCount ?? "-"} />
-          <Metric label="People records" value={status?.peopleCount ?? "-"} />
-          <Metric label="Documents" value={status?.documentCount ?? "-"} />
-          <Metric label="Programs" value={status?.programCount ?? "-"} />
-          <Metric label="Notices" value={status?.noticeCount ?? "-"} />
-          <Metric label="Office contacts" value={status?.contactCount ?? "-"} />
+          <Metric label="Official pages" value={dashboardStatus?.pageCount ?? "-"} />
+          <Metric label="People records" value={dashboardStatus?.peopleCount ?? "-"} />
+          <Metric label="Documents" value={dashboardStatus?.documentCount ?? "-"} />
+          <Metric label="Programs" value={dashboardStatus?.programCount ?? "-"} />
+          <Metric label="Notices" value={dashboardStatus?.noticeCount ?? "-"} />
+          <Metric label="Office contacts" value={dashboardStatus?.contactCount ?? "-"} />
         </div>
 
-        {status?.warnings?.length > 0 && (
+        {dashboardStatus?.warnings?.length > 0 && (
           <div className="admin-warning-list">
-            {status.warnings.map((warning) => (
+            {dashboardStatus.warnings.map((warning) => (
               <p key={warning}>{warning}</p>
             ))}
           </div>
@@ -1663,35 +1780,10 @@ function AdminPanel({ status, onClose, onRefreshStatus }) {
 
         {adminError && <p className="admin-inline-error" role="alert">{adminError}</p>}
 
-        <div className="admin-auth">
-          <label htmlFor="admin-token">Admin token</label>
-          <div>
-            <input
-              id="admin-token"
-              type="password"
-              value={adminToken}
-              placeholder="Only needed when ADMIN_TOKEN is configured"
-              autoComplete="off"
-              onChange={(event) => setAdminToken(event.target.value)}
-            />
-            <button
-              className="secondary-action"
-              type="button"
-              onClick={() => {
-                sessionStorage.setItem("gb-admin-token", adminToken);
-                loadAdminData();
-              }}
-            >
-              <Check size={17} />
-              <span>Apply</span>
-            </button>
-          </div>
-        </div>
-
         <div className="admin-actions">
-          <button className="primary-action" type="button" onClick={refreshKnowledge} disabled={isRefreshing || status?.rebuild?.running}>
-            {isRefreshing || status?.rebuild?.running ? <Loader2 className="spin" size={18} /> : <RotateCcw size={18} />}
-            <span>{status?.rebuild?.running ? "Rebuilding..." : "Re-crawl website"}</span>
+          <button className="primary-action" type="button" onClick={refreshKnowledge} disabled={isRefreshing || dashboardStatus?.rebuild?.running}>
+            {isRefreshing || dashboardStatus?.rebuild?.running ? <Loader2 className="spin" size={18} /> : <RotateCcw size={18} />}
+            <span>{dashboardStatus?.rebuild?.running ? "Rebuilding..." : "Re-crawl website"}</span>
           </button>
           <button className="secondary-action" type="button" onClick={loadAdminData}>
             <DatabaseZap size={18} />
@@ -1704,7 +1796,7 @@ function AdminPanel({ status, onClose, onRefreshStatus }) {
             <h3>Knowledge Source</h3>
             <p>{settings.officialSiteUrl}</p>
             <small>
-              Answer mode: {status?.geminiConfigured ? "Gemini AI" : status?.openAiConfigured ? status?.openAiProviderName || "OpenAI-compatible AI" : status?.ollamaAvailable ? "Ollama" : "official knowledge + general academic fallback"}.
+              Answer mode: {dashboardStatus?.geminiConfigured ? "Gemini AI" : dashboardStatus?.openAiConfigured ? dashboardStatus?.openAiProviderName || "OpenAI-compatible AI" : dashboardStatus?.ollamaAvailable ? "Ollama" : "official knowledge + general academic fallback"}.
             </small>
             <small>Server AI options: Groq, Gemini, OpenRouter, or local Ollama. Visitors never need a separate AI login.</small>
             <small>Set `OFFICIAL_SITE_URL` or save admin settings before rebuilding for another university.</small>
@@ -1723,6 +1815,9 @@ function AdminPanel({ status, onClose, onRefreshStatus }) {
             {!logs.length && !chats.length && <p>No activity recorded yet.</p>}
           </div>
         </div>
+          </>
+        )}
+        <p className="admin-developer-credit">Developed by <strong>Ayon</strong></p>
       </section>
     </aside>
   );
@@ -1746,6 +1841,17 @@ function sanitizeCodeForExecution(rawCode) {
     text = text.replace(/\n?```$/, "");
   }
   return text.trim();
+}
+
+function extractCompleteCode(text) {
+  const blocks = [];
+  const pattern = /```[^\r\n]*\r?\n([\s\S]*?)```/g;
+  let match;
+  while ((match = pattern.exec(String(text || ""))) !== null) {
+    const code = sanitizeCodeForExecution(match[1]);
+    if (code) blocks.push(code);
+  }
+  return blocks.join("\n\n");
 }
 
 function CodeBlock({ code, lang = "" }) {
@@ -1986,8 +2092,22 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
   const [interimTranscript, setInterimTranscript] = useState("");
   const [assistantReply, setAssistantReply] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [fallbackRecording, setFallbackRecording] = useState(false);
+  const [fallbackTranscribing, setFallbackTranscribing] = useState(false);
+  const [isBargingIn, setIsBargingIn] = useState(false);
   const recognitionRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const fallbackStreamRef = useRef(null);
+  const fallbackChunksRef = useRef([]);
+  const bargeInActiveRef = useRef(false);
   const isComponentMounted = useRef(true);
+  const recognitionSupported = typeof window !== "undefined" && Boolean(window.SpeechRecognition || window.webkitSpeechRecognition);
+  const microphoneSupported = typeof navigator !== "undefined" && Boolean(navigator.mediaDevices?.getUserMedia);
+  const voiceInputSupported = recognitionSupported && microphoneSupported;
+
+  const unsupportedVoiceMessage = voiceLang === "bn-BD"
+    ? "এই in-app browser-এ microphone speech recognition নেই। লিংকটি Chrome বা Edge-এ খুলে Voice Mode ব্যবহার করুন।"
+    : "This in-app browser does not provide microphone speech recognition. Open this link in Chrome or Edge to use Voice Mode.";
 
   useEffect(() => {
     isComponentMounted.current = true;
@@ -1995,52 +2115,6 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
       isComponentMounted.current = false;
     };
   }, []);
-
-  // Monitor microphone volume via Web Audio API for reactive Orb glow/scale
-  useEffect(() => {
-    if (!isOpen) return;
-    let stream = null;
-    let audioCtx = null;
-    let analyser = null;
-    let animId = null;
-
-    async function initAudio() {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const source = audioCtx.createMediaStreamSource(stream);
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64;
-        analyser.smoothingTimeConstant = 0.4;
-        source.connect(analyser);
-
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-        const checkAudio = () => {
-          if (!analyser) return;
-          analyser.getByteFrequencyData(dataArray);
-          let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) {
-            sum += dataArray[i];
-          }
-          const avg = sum / dataArray.length;
-          const level = Math.min(1, Math.max(0, (avg - 10) / 55));
-          setAudioLevel(level);
-          animId = requestAnimationFrame(checkAudio);
-        };
-        checkAudio();
-      } catch {
-        // Fallback gracefully if mic stream visualization cannot be accessed
-      }
-    }
-
-    initAudio();
-
-    return () => {
-      if (animId) cancelAnimationFrame(animId);
-      if (audioCtx) audioCtx.close().catch(() => {});
-      if (stream) stream.getTracks().forEach((track) => track.stop());
-    };
-  }, [isOpen]);
 
   // Main SpeechRecognition handling loop
   useEffect(() => {
@@ -2052,17 +2126,25 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
       : null;
 
     if (!SpeechRecognition) {
-      setErrorMessage("ভয়েস রিকগনিশন এই ব্রাউজারে সাপোর্টেড নয়। সেরা অভিজ্ঞতার জন্য Chrome, Edge বা Safari ব্যবহার করুন।");
+      setErrorMessage(unsupportedVoiceMessage);
+      setVoiceStatus("idle");
       return;
     }
 
-    if (voiceStatus !== "listening" || isMuted) {
+    if (!microphoneSupported) {
+      setErrorMessage(unsupportedVoiceMessage);
+      setVoiceStatus("idle");
+      return;
+    }
+
+    if ((voiceStatus !== "listening" && voiceStatus !== "speaking") || isMuted) {
       recognitionRef.current?.abort();
       return;
     }
 
     let recognition = null;
     let silenceTimer = null;
+    let restartTimer = null;
     const clearSilenceTimer = () => { if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; } };
 
     try {
@@ -2071,10 +2153,11 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
       recognition.lang = voiceLang;
       recognition.interimResults = true;
       recognition.continuous = true;
-      recognition.maxAlternatives = 1;
+      recognition.maxAlternatives = 3;
 
       let finalCaptured = "";
       let latestInterim = "";
+      let recognitionFailed = false;
 
       const startSilenceTimer = () => {
         clearSilenceTimer();
@@ -2082,11 +2165,13 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
           if (finalCaptured.trim() || latestInterim.trim()) {
             try { recognition.stop(); } catch {}
           }
-        }, 2000);
+        }, voiceLang === "en-US" ? 2800 : 2200);
       };
 
       recognition.onstart = () => {
+        recognitionFailed = false;
         setErrorMessage("");
+        setAudioLevel(0.28);
         startSilenceTimer();
       };
 
@@ -2095,12 +2180,20 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const res = event.results[i];
           if (res.isFinal) {
-            finalCaptured = `${finalCaptured} ${res[0].transcript}`.trim();
+            finalCaptured = `${finalCaptured} ${bestRecognitionTranscript(res, voiceLang)}`.trim();
           } else {
-            currentInterim = `${currentInterim} ${res[0].transcript}`.trim();
+            currentInterim = `${currentInterim} ${bestRecognitionTranscript(res, voiceLang)}`.trim();
           }
         }
         latestInterim = currentInterim;
+        const heardText = (finalCaptured || currentInterim).trim();
+        if (voiceStatus === "speaking" && heardText.length >= 2 && !bargeInActiveRef.current) {
+          bargeInActiveRef.current = true;
+          setIsBargingIn(true);
+          window.speechSynthesis?.cancel();
+        }
+        const confidence = event.results[event.results.length - 1]?.[0]?.confidence || 0.45;
+        setAudioLevel(Math.min(0.9, Math.max(0.32, confidence)));
         setInterimTranscript(currentInterim);
         if (finalCaptured) {
           setUserTranscript(finalCaptured.trim());
@@ -2113,6 +2206,7 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
           // Normal during pauses — continuous mode handles this automatically
           return;
         } else if (e.error === "not-allowed") {
+          recognitionFailed = true;
           clearSilenceTimer();
           setErrorMessage(
             voiceLang === "bn-BD"
@@ -2120,7 +2214,17 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
               : "Microphone access was not allowed. Please enable microphone access in your browser settings.",
           );
           setVoiceStatus("idle");
+        } else if (e.error === "network" || e.error === "service-not-allowed" || e.error === "audio-capture") {
+          recognitionFailed = true;
+          clearSilenceTimer();
+          setErrorMessage(
+            voiceLang === "bn-BD"
+              ? "Browser speech service কাজ করছে না। নিচের Record বাটন দিয়ে fallback voice input ব্যবহার করুন।"
+              : "The browser speech service is unavailable. Use the Record button below for fallback voice input.",
+          );
+          setVoiceStatus("idle");
         } else {
+          recognitionFailed = true;
           clearSilenceTimer();
           setErrorMessage(
             voiceLang === "bn-BD"
@@ -2133,15 +2237,27 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
 
       recognition.onend = () => {
         clearSilenceTimer();
+        setAudioLevel(0);
         setInterimTranscript("");
+        if (recognitionFailed) return;
         const query = (finalCaptured || latestInterim).trim();
-        if (query && voiceStatus === "listening") {
+        if (query && (voiceStatus === "listening" || bargeInActiveRef.current)) {
           handleUserVoiceQuery(query);
-        } else if (voiceStatus === "listening" && !isMuted && isComponentMounted.current) {
+        } else if ((voiceStatus === "listening" || voiceStatus === "speaking") && !isMuted && isComponentMounted.current) {
           finalCaptured = "";
-          try {
-            recognition.start();
-          } catch {}
+          restartTimer = setTimeout(() => {
+            if (!isComponentMounted.current) return;
+            try {
+              recognition.start();
+            } catch {
+              setErrorMessage(
+                voiceLang === "bn-BD"
+                  ? "মাইক্রোফোন চালু করা যায়নি। Microphone permission Allow করে আবার চেষ্টা করুন।"
+                  : "The microphone could not start. Allow microphone permission and try again.",
+              );
+              setVoiceStatus("idle");
+            }
+          }, 180);
         }
       };
 
@@ -2152,12 +2268,16 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
 
     return () => {
       clearSilenceTimer();
+      if (restartTimer) clearTimeout(restartTimer);
+      setAudioLevel(0);
       recognition?.abort();
     };
-  }, [isOpen, voiceStatus, voiceLang, isMuted]);
+  }, [isOpen, voiceStatus, voiceLang, isMuted, microphoneSupported]);
 
   async function handleUserVoiceQuery(text) {
     if (!text) return;
+    bargeInActiveRef.current = false;
+    setIsBargingIn(false);
     setVoiceStatus("thinking");
     setInterimTranscript("");
     setUserTranscript(text);
@@ -2168,15 +2288,15 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
         setAssistantReply(result.text);
         setVoiceStatus("speaking");
         speakUtterance(result.text, {
-          lang: voiceLang,
+          lang: detectSpeechLanguage(result.text),
           isVoiceMode: true,
           onEnd: () => {
-            if (isComponentMounted.current) {
+            if (isComponentMounted.current && !bargeInActiveRef.current) {
               setVoiceStatus("listening");
             }
           },
           onError: () => {
-            if (isComponentMounted.current) {
+            if (isComponentMounted.current && !bargeInActiveRef.current) {
               setVoiceStatus("listening");
             }
           },
@@ -2189,13 +2309,74 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
     }
   }
 
+  async function startFallbackRecording() {
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+      setErrorMessage(unsupportedVoiceMessage);
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      fallbackStreamRef.current = stream;
+      fallbackChunksRef.current = [];
+      const recorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+      recorder.ondataavailable = (event) => {
+        if (event.data?.size) fallbackChunksRef.current.push(event.data);
+      };
+      recorder.onstop = async () => {
+        const blob = new Blob(fallbackChunksRef.current, { type: recorder.mimeType || "audio/webm" });
+        fallbackStreamRef.current?.getTracks().forEach((track) => track.stop());
+        fallbackStreamRef.current = null;
+        setFallbackRecording(false);
+        if (!blob.size) return;
+        setFallbackTranscribing(true);
+        setErrorMessage(voiceLang === "bn-BD" ? "কথা থেকে লেখা তৈরি হচ্ছে..." : "Transcribing your speech...");
+        try {
+          const dataUrl = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+          const response = await fetch("/api/transcribe", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ audio: dataUrl, mimeType: blob.type, language: voiceLang }),
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(data.error || "Voice transcription failed");
+          setErrorMessage("");
+          await handleUserVoiceQuery(data.text);
+        } catch (error) {
+          setErrorMessage(error.message || "Voice transcription failed. Please try again.");
+          setVoiceStatus("idle");
+        } finally {
+          setFallbackTranscribing(false);
+        }
+      };
+      recorder.start();
+      setFallbackRecording(true);
+      setErrorMessage(voiceLang === "bn-BD" ? "রেকর্ড হচ্ছে... কথা বলা শেষে Stop চাপুন।" : "Recording... press Stop when you finish speaking.");
+    } catch {
+      setErrorMessage(voiceLang === "bn-BD" ? "Microphone permission Allow করুন।" : "Allow microphone permission to record your voice.");
+    }
+  }
+
+  function stopFallbackRecording() {
+    if (mediaRecorderRef.current?.state === "recording") mediaRecorderRef.current.stop();
+  }
+
   function handleInterrupt() {
+    bargeInActiveRef.current = true;
+    setIsBargingIn(true);
     window.speechSynthesis?.cancel();
     setVoiceStatus("listening");
     setAssistantReply("");
   }
 
   function toggleLanguage() {
+    bargeInActiveRef.current = false;
+    setIsBargingIn(false);
     window.speechSynthesis?.cancel();
     setVoiceLang((prev) => {
       const next = prev === "bn-BD" ? "en-US" : "bn-BD";
@@ -2211,8 +2392,11 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
 
   function handleClose() {
     isComponentMounted.current = false;
+    bargeInActiveRef.current = false;
     window.speechSynthesis?.cancel();
     recognitionRef.current?.abort();
+    if (mediaRecorderRef.current?.state === "recording") mediaRecorderRef.current.stop();
+    fallbackStreamRef.current?.getTracks().forEach((track) => track.stop());
     onClose();
   }
 
@@ -2231,6 +2415,7 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
   }, [voiceStatus]);
 
   if (!isOpen) return null;
+  const visibleVoiceStatus = isBargingIn ? "listening" : voiceStatus;
 
   return (
     <div className="voice-mode-overlay" role="dialog" aria-modal="true" aria-label="ChatGPT Voice Mode">
@@ -2239,14 +2424,14 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
           <img src={GB_LOGO_URL} alt="Gono Bishwabidyalay logo" className="voice-mode-logo" />
           <div className="voice-mode-title-wrap">
             <span className="voice-mode-title">GB Voice Mode</span>
-            <span className={`voice-mode-status-badge ${voiceStatus}`}>
+            <span className={`voice-mode-status-badge ${visibleVoiceStatus}`}>
               <span className="voice-status-dot" />
               <span>
-                {voiceStatus === "listening"
+                {visibleVoiceStatus === "listening"
                   ? voiceLang === "bn-BD" ? "শুনছি... বলুন" : "Listening..."
-                  : voiceStatus === "thinking"
+                  : visibleVoiceStatus === "thinking"
                   ? voiceLang === "bn-BD" ? "ভাবছি..." : "Thinking..."
-                  : voiceStatus === "speaking"
+                  : visibleVoiceStatus === "speaking"
                   ? voiceLang === "bn-BD" ? "বলছি..." : "Speaking..."
                   : voiceLang === "bn-BD" ? "প্রস্তুত" : "Ready"}
               </span>
@@ -2279,9 +2464,9 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
       {/* Main visualizer and ChatGPT Glowing Orb */}
       <main className="voice-mode-main">
         <div
-          className={`voice-orb-container ${voiceStatus}`}
-          onClick={voiceStatus === "speaking" ? handleInterrupt : undefined}
-          title={voiceStatus === "speaking" ? "Click to interrupt and speak" : ""}
+          className={`voice-orb-container ${visibleVoiceStatus}`}
+          onClick={visibleVoiceStatus === "speaking" ? handleInterrupt : undefined}
+          title={visibleVoiceStatus === "speaking" ? "Click to interrupt and speak" : ""}
         >
           {/* Outer diffuse ambient glow */}
           <div
@@ -2293,7 +2478,7 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
           />
 
           {/* Soundwave expanding rings */}
-          {(voiceStatus === "listening" || voiceStatus === "speaking") && (
+          {(visibleVoiceStatus === "listening" || visibleVoiceStatus === "speaking") && (
             <>
               <div className="voice-orb-wave wave-1" />
               <div className="voice-orb-wave wave-2" />
@@ -2302,9 +2487,9 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
 
           {/* The Central Glowing Orb */}
           <div
-            className={`voice-orb ${voiceStatus}`}
+            className={`voice-orb ${visibleVoiceStatus}`}
             style={{
-              transform: `scale(${1 + audioLevel * (voiceStatus === "listening" ? 0.35 : 0.15)})`,
+              transform: `scale(${1 + audioLevel * (visibleVoiceStatus === "listening" ? 0.35 : 0.15)})`,
             }}
           >
             <div className="voice-orb-inner" />
@@ -2316,7 +2501,7 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
         <div className="voice-transcript-card">
           {errorMessage ? (
             <p className="voice-error-text">{errorMessage}</p>
-          ) : voiceStatus === "speaking" && assistantReply ? (
+          ) : voiceStatus === "speaking" && !isBargingIn && assistantReply ? (
             <div className="voice-reply-box">
               <span className="voice-role-tag">GB Assistant</span>
               <p className="voice-reply-text">{assistantReply}</p>
@@ -2352,7 +2537,22 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
             {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
           </button>
 
-          {voiceStatus === "speaking" ? (
+          {fallbackRecording ? (
+            <button type="button" className="voice-dock-btn interrupt-btn" onClick={stopFallbackRecording} aria-label="Stop recording">
+              <Square size={18} />
+              <span>Stop recording</span>
+            </button>
+          ) : fallbackTranscribing ? (
+            <button type="button" className="voice-dock-btn disabled-btn" disabled aria-label="Transcribing">
+              <Loader2 className="spin" size={20} />
+              <span>Transcribing</span>
+            </button>
+          ) : errorMessage && voiceStatus === "idle" && microphoneSupported ? (
+            <button type="button" className="voice-dock-btn listening-pill" onClick={startFallbackRecording} aria-label="Record with fallback microphone">
+              <Mic size={18} />
+              <span>{voiceLang === "bn-BD" ? "Record করুন" : "Record"}</span>
+            </button>
+          ) : voiceStatus === "speaking" && !isBargingIn ? (
             <button
               type="button"
               className="voice-dock-btn interrupt-btn"
@@ -2376,15 +2576,20 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
           ) : (
             <button
               type="button"
-              className="voice-dock-btn listening-pill"
+              className={`voice-dock-btn ${voiceInputSupported ? "listening-pill" : "disabled-btn"}`}
               onClick={() => {
-                if (voiceStatus === "idle") setVoiceStatus("listening");
+                if (voiceInputSupported && voiceStatus === "idle") setVoiceStatus("listening");
               }}
-              title="Listening to your voice"
-              aria-label="Listening"
+              disabled={!voiceInputSupported}
+              title={voiceInputSupported ? "Listening to your voice" : "Voice input requires Chrome or Edge"}
+              aria-label={voiceInputSupported ? "Listening" : "Voice input unavailable"}
             >
-              <span className="voice-pulsing-circle" />
-              <span>{voiceLang === "bn-BD" ? "কথা শুনছি..." : "Listening..."}</span>
+              {voiceInputSupported ? <span className="voice-pulsing-circle" /> : <MicOff size={18} />}
+              <span>
+                {voiceInputSupported
+                  ? voiceLang === "bn-BD" ? "কথা শুনছি..." : "Listening..."
+                  : voiceLang === "bn-BD" ? "এই ব্রাউজারে নেই" : "Unsupported browser"}
+              </span>
             </button>
           )}
 

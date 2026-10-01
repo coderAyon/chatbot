@@ -8176,6 +8176,42 @@ async function handleChat(req, res) {
   return json(res, 200, result);
 }
 
+async function handleTranscription(req, res) {
+  if (!rateLimitOk(req, `transcribe:${clientIp(req)}`)) return json(res, 429, { error: "Too many transcription requests" });
+  const body = await parseJsonBody(req);
+  const audio = attachmentBuffer({ data: body.audio });
+  if (!audio) return json(res, 400, { error: "A valid audio recording is required" });
+  const apiKey = envSecret("OPENAI_API_KEY");
+  if (!apiKey) return json(res, 503, { error: "Voice transcription is not configured" });
+
+  const mimeType = /^audio\/[a-z0-9.+-]+$/i.test(String(body.mimeType || "")) ? String(body.mimeType) : "audio/webm";
+  const extension = mimeType.includes("ogg") ? "ogg" : mimeType.includes("mp4") ? "m4a" : "webm";
+  const form = new FormData();
+  form.append("file", new Blob([audio], { type: mimeType }), `voice.${extension}`);
+  form.append("model", process.env.STT_MODEL || (openAiBaseUrl.includes("groq.com") ? "whisper-large-v3-turbo" : "whisper-1"));
+  if (body.language === "en-US") form.append("language", "en");
+  if (body.language === "bn-BD") form.append("language", "bn");
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 45_000);
+  try {
+    const response = await fetch(`${openAiBaseUrl}/audio/transcriptions`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${apiKey}` },
+      body: form,
+      signal: controller.signal,
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) return json(res, response.status, { error: data.error?.message || "Voice transcription failed" });
+    const text = String(data.text || "").trim();
+    return text ? json(res, 200, { text }) : json(res, 422, { error: "No speech was detected" });
+  } catch (error) {
+    return json(res, 502, { error: error.name === "AbortError" ? "Voice transcription timed out" : "Voice transcription failed" });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 function requireAdmin(req, res) {
   const configuredToken = envSecret("ADMIN_TOKEN");
   if (!configuredToken) {
@@ -8347,9 +8383,10 @@ async function route(req, res) {
   }
   if (url.pathname === "/api/chat" && req.method !== "POST") return json(res, 405, { error: "Method not allowed" });
   if (req.method === "POST" && url.pathname === "/api/chat") return handleChat(req, res);
+  if (req.method === "POST" && url.pathname === "/api/transcribe") return handleTranscription(req, res);
   if (url.pathname.startsWith("/api/generated-images/")) return serveGeneratedImage(req, res, url.pathname);
-  if (req.method === "GET" && url.pathname === "/api/admin/status") return adminStatus(req, res);
   if (url.pathname.startsWith("/api/admin") && !requireAdmin(req, res)) return;
+  if (req.method === "GET" && url.pathname === "/api/admin/status") return adminStatus(req, res);
   if (req.method === "GET" && url.pathname === "/api/admin/logs") return adminLogs(req, res);
   if ((req.method === "GET" || req.method === "POST") && url.pathname === "/api/admin/settings") return adminSettings(req, res);
   if (req.method === "POST" && url.pathname === "/api/admin/refresh") {

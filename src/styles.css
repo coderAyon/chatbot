@@ -1444,6 +1444,114 @@ body,
   outline-offset: 2px;
 }
 
+.admin-login-card {
+  width: min(100%, 390px);
+  margin: 28px auto 0;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-solid);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+}
+
+.admin-login-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 16px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.14);
+  color: #34d399;
+}
+
+.admin-login-copy h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.admin-login-copy p {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.admin-login-card > label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.admin-login-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.admin-login-row input {
+  min-width: 0;
+  height: 44px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--panel);
+  color: var(--ink);
+  outline: none;
+}
+
+.admin-login-row input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+}
+
+.admin-session-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 9px 12px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 7px;
+  background: rgba(16, 185, 129, 0.08);
+  color: #34d399;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-session-bar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.admin-session-bar button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+@media (max-width: 520px) {
+  .admin-login-card {
+    margin-top: 18px;
+    padding: 18px;
+  }
+
+  .admin-login-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-login-row .primary-action {
+    width: 100%;
+  }
+}
+
 .response-meta .model-chip {
   max-width: min(260px, 100%);
   text-transform: none;
@@ -2416,6 +2524,18 @@ textarea::placeholder {
   border-left-color: rgba(223, 229, 238, 0.9);
   background: #ffffff;
   color: #202124;
+}
+
+.admin-developer-credit {
+  margin: 18px 0 2px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.admin-developer-credit strong {
+  color: inherit;
+  font-weight: 600;
 }
 
 .admin-header {
