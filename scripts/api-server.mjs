@@ -5,6 +5,7 @@ import { existsSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as cheerio from "cheerio";
+import { isInformationalMessage } from "../src/medium-router.js";
 
 const DIST_DIR = new URL("../dist/", import.meta.url);
 const DATA_DIR = new URL("../data/", import.meta.url);
@@ -15,7 +16,7 @@ const SETTINGS_FILE = new URL("../data/settings.json", import.meta.url);
 const CACHE_FILE = new URL("../data/response-cache.json", import.meta.url);
 const CONVERSATION_FILE = new URL("../data/conversation-memory.json", import.meta.url);
 const NOT_VERIFIED = "I couldn't find verified information from the official university data.";
-const ANSWER_ENGINE_VERSION = "2026-09-27-gbcdc-integration-v51";
+const ANSWER_ENGINE_VERSION = "2026-10-09-image-followup-v52";
 
 async function loadLocalEnv() {
   try {
@@ -48,8 +49,8 @@ function positiveIntegerEnv(name, fallback, maximum = Number.MAX_SAFE_INTEGER) {
   return Number.isSafeInteger(value) && value > 0 ? Math.min(value, maximum) : fallback;
 }
 
-const maxRequestBytes = positiveIntegerEnv("MAX_REQUEST_BYTES", 36 * 1024 * 1024, 100 * 1024 * 1024);
-const maxAttachmentBytes = positiveIntegerEnv("MAX_ATTACHMENT_BYTES", 8 * 1024 * 1024, 25 * 1024 * 1024);
+const maxRequestBytes = positiveIntegerEnv("MAX_REQUEST_BYTES", 400 * 1024 * 1024, 450 * 1024 * 1024);
+const maxAttachmentBytes = positiveIntegerEnv("MAX_ATTACHMENT_BYTES", 20 * 1024 * 1024, 25 * 1024 * 1024);
 const rateWindowMs = positiveIntegerEnv("RATE_WINDOW_MS", 60_000, 24 * 60 * 60 * 1000);
 const rateLimit = positiveIntegerEnv("RATE_LIMIT", 60, 10_000);
 const responseCache = new Map();
@@ -656,7 +657,16 @@ async function extractAttachmentText(attachment) {
 }
 
 async function extractAttachments(attachments = []) {
-  return Promise.all(attachments.map((attachment) => extractAttachmentText(attachment)));
+  const output = new Array(attachments.length);
+  let next = 0;
+  const worker = async () => {
+    while (next < attachments.length) {
+      const index = next++;
+      output[index] = await extractAttachmentText(attachments[index]);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(3, attachments.length) }, worker));
+  return output;
 }
 
 function pruneAttachmentSessions() {
@@ -3218,6 +3228,9 @@ function detectFollowupFormatType(text) {
     return null;
   }
 
+  // Convert the previous answer into continuous prose without losing its facts.
+  if (/(one\s+paragraph|single\s+paragraph|as\s+paragraph|in\s+paragraph|paragraph\s+akare|paragraph\s+kore|ekta\s+paragraph|অনুচ্ছেদ\s+আকারে|এক\s+অনুচ্ছেদে)/i.test(t)) return "paragraph";
+
   // Ordinal recall queries (first, second, third topic) are handled by ordinal topic recall
   if (typeof ordinalTopicIndex === "function" && ordinalTopicIndex(t) !== null) {
     return null;
@@ -3257,6 +3270,13 @@ function detectFollowupFormatType(text) {
 
 function isFollowupFormatInstruction(text) {
   return Boolean(detectFollowupFormatType(text));
+}
+
+function requestedExamMarks(text) {
+  const normalized = String(text || "").replace(/[০-৯]/g, (digit) => String("০১২৩৪৫৬৭৮৯".indexOf(digit)));
+  const match = normalized.match(/(?:\(\s*(\d{1,3})\s*marks?\s*\)|\b(\d{1,3})\s*marks?\b|(\d{1,3})\s*(?:নম্বর|মার্ক))/i);
+  const value = Number(match?.[1] || match?.[2] || match?.[3] || 0);
+  return value > 0 && value <= 100 ? value : 0;
 }
 
 function getLastAssistantTurn(history = []) {
@@ -3379,6 +3399,8 @@ async function callAiReformat({ cleanText, originalQuestion, instruction, format
     formatDirective = "Expand the response into a thorough, comprehensive explanation with detailed context, background, and structured sections, while keeping all specific facts, numbers, and fees accurate.";
   } else if (formatType === "simplify") {
     formatDirective = "Explain the information in very simple, easy-to-understand terms with an intuitive real-world explanation.";
+  } else if (formatType === "paragraph") {
+    formatDirective = "Rewrite the previous answer as exactly one coherent paragraph. Do not use bullets, numbered lists, headings, or line breaks. Preserve the original answer's key facts and meaning.";
   }
 
   const hasCode = /```[a-z]*\r?\n[\s\S]*?```/i.test(cleanText);
@@ -3477,6 +3499,16 @@ function reformatTextDeterministically(cleanText, formatType, instruction = "", 
   const isBanglish = !isBn && (prefersBanglish(instruction) || prefersBanglish(originalQuestion || "") || prefersBanglish(cleanText));
   
   const rawLines = cleanText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+
+  if (formatType === "paragraph") {
+    const prose = rawLines
+      .filter((line) => !/^#{1,3}\s/.test(line))
+      .map((line) => line.replace(/^(?:[-*•]\s+|\d+[.)]\s+)/, "").trim())
+      .filter(Boolean)
+      .join(" ")
+      .replace(/\s+/g, " ");
+    return prose || cleanText.replace(/\s+/g, " ").trim();
+  }
 
   if (formatType === "points") {
     const banner = isBn
@@ -6990,6 +7022,10 @@ function isImageRefinementOrFollowup(message, history = []) {
   const t = String(message || "").trim();
   if (!t) return null;
 
+  // Answer questions about images, styles, or a new topic as text. Mentioning
+  // a visual word alone does not authorize another generation.
+  if (isInformationalMessage(t)) return null;
+
   // If user explicitly asks to write a text prompt, let the text engine answer rather than generating an image
   if (isExplicitPromptWritingRequest(t)) {
     return null;
@@ -7459,9 +7495,17 @@ async function performWebSearch(query, { maxResults = 5 } = {}) {
   const results = [];
   const seenUrls = new Set();
 
+  // Public social posts are often indexed only when the platform is included
+  // explicitly in the search query. Search the three requested platforms
+  // separately so one network's results cannot crowd out the others.
+  const socialTargets = /\b(social\s+media|facebook|instagram|linkedin|social\s+post|social\s+update)\b|সোশ্যাল|ফেসবুক|ইনস্টাগ্রাম|লিংকডইন/i.test(cleanQuery);
+  const queries = socialTargets
+    ? ["facebook.com", "instagram.com", "linkedin.com"].map((domain) => `${cleanQuery} site:${domain}`)
+    : [cleanQuery];
+
   // 1. DuckDuckGo HTML search
-  try {
-    const ddgUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(cleanQuery)}`;
+  for (const searchQuery of queries) try {
+    const ddgUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(searchQuery)}`;
     const resp = await fetch(ddgUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
@@ -7476,7 +7520,7 @@ async function performWebSearch(query, { maxResults = 5 } = {}) {
       const $ = cheerio.load(html);
 
       $(".result__body").each((_, el) => {
-        if (results.length >= maxResults) return false;
+        if (results.length >= maxResults * (socialTargets ? 3 : 1)) return false;
         const title = $(el).find(".result__title a").text().trim();
         let rawUrl = $(el).find(".result__title a").attr("href") || "";
         if (rawUrl.includes("uddg=")) {
@@ -7495,7 +7539,7 @@ async function performWebSearch(query, { maxResults = 5 } = {}) {
   } catch {}
 
   // 2. Wikipedia search API fallback or enrichment
-  if (results.length < 3) {
+  if (!socialTargets && results.length < 3) {
     try {
       const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQuery)}&utf8=&format=json`;
       const wikiResp = await fetch(wikiUrl, {
@@ -7695,6 +7739,10 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
   }
 
   const isWebSearchActive = webResults.length > 0;
+  const requestedMarks = requestedExamMarks(message);
+  const marksGuidance = requestedMarks
+    ? `The question explicitly carries ${requestedMarks} marks. Calibrate the answer to that mark value: include approximately ${requestedMarks} distinct, relevant scoring points (fewer for very small mark values), with enough explanation to earn those marks. Do not give a one-line answer or an unnecessarily long essay. State the answer in an exam-ready format.\n`
+    : "";
   let systemInstruction = "";
 
   if (isWebSearchActive) {
@@ -7717,6 +7765,7 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
       `- Solving exam questions, assignments, and problem sets from uploaded screenshots or text\n` +
       `- Gono Bishwabidyalay university details (if relevant)\n\n` +
       `Instructions:\n` +
+      marksGuidance +
       `1. Provide direct, step-by-step solutions with clear reasoning.\n` +
       `2. For Math/Science: State given values, the formula/principle used, step-by-step arithmetic/algebra, and underline or box the final answer.\n` +
       `3. For Code & Programming:\n` +
@@ -7909,8 +7958,8 @@ async function handleChat(req, res) {
   if (body.attachments !== undefined && !Array.isArray(body.attachments)) {
     return json(res, 400, { error: "Attachments must be an array" });
   }
-  if (body.attachments?.length > 3) {
-    return json(res, 400, { error: "A maximum of 3 attachments is allowed per message" });
+  if (body.attachments?.length > 15) {
+    return json(res, 400, { error: "A maximum of 15 attachments is allowed per message" });
   }
   const hasAttachments = Array.isArray(body.attachments) && body.attachments.length > 0;
   const message = String(body.message || (hasAttachments ? "Read this attachment and answer from it." : "")).trim();
@@ -8514,6 +8563,7 @@ export {
   isWebSearchIntent,
   isUniversityInquiry,
   detectFollowupFormatType,
+  requestedExamMarks,
   isFollowupFormatInstruction,
   handleFollowupFormatRequest,
   reformatTextDeterministically,

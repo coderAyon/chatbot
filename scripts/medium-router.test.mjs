@@ -51,3 +51,14 @@ test("a clear university question exits prior GB AI context", () => {
   ];
   assert.equal(inferMessageMedium("Gono University admission fee koto?", [], history), "chatbot");
 });
+
+test("informational follow-ups exit image generation context", () => {
+  const history = [
+    { role: "user", text: "generate an image" },
+    { role: "assistant", medium: "gb-ai", image: { prompt: "A library" }, text: "Here is your image" },
+  ];
+  for (const question of ["eta ki", "eita keno hoy", "abar bolo rain keno hoy", "same image er style ki", "ছবিটা এমন কেন"]) {
+    assert.equal(inferMessageMedium(question, [], history), "chatbot", question);
+  }
+  assert.equal(inferMessageMedium("make it blue", [], history), "gb-ai");
+});

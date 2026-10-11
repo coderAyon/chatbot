@@ -50,8 +50,8 @@ const GB_LOGO_URL = "/gb-logo.png";
 const CHAT_HISTORY_KEY = "university-chat-history-v3";
 const ACTIVE_CHAT_KEY = "university-active-chat-v3";
 const LEGACY_CHAT_HISTORY_KEYS = ["university-chat-history", "university-chat-history-v2"];
-const MAX_ATTACHMENTS = 3;
-const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024;
+const MAX_ATTACHMENTS = 15;
+const MAX_ATTACHMENT_BYTES = 20 * 1024 * 1024;
 
 function safeExternalUrl(value) {
   try {
@@ -609,7 +609,7 @@ function App() {
     setAttachments((current) => [...current, ...prepared].slice(0, MAX_ATTACHMENTS));
     setAttachmentError(
       rejectedCount > 0
-        ? "Only PDF, image, or text files up to 8 MB are supported. Maximum 3 files per message."
+        ? "Only PDF, image, or text files up to 20 MB are supported. Maximum 15 files per message."
         : "",
     );
     event.target.value = "";
@@ -1965,7 +1965,7 @@ function CodeBlock({ code, lang = "" }) {
 }
 
 function renderMessageText(text) {
-  const lines = String(text || "").split("\n");
+  const lines = String(text || "").replace(/<br\s*\/?>/gi, "\n").split("\n");
   const output = [];
   let index = 0;
 
@@ -2055,7 +2055,13 @@ function renderMessageText(text) {
       const items = [];
       const pattern = isOrdered ? /^\d+[.)]\s+(.+)$/ : /^[-*]\s+(.+)$/;
       while (index < lines.length) {
-        const match = lines[index].trim().match(pattern);
+        let match = lines[index].trim().match(pattern);
+        if (!match && isOrdered && !lines[index].trim()) {
+          let nextIndex = index;
+          while (nextIndex < lines.length && !lines[nextIndex].trim()) nextIndex += 1;
+          match = lines[nextIndex]?.trim().match(pattern);
+          if (match) index = nextIndex;
+        }
         if (!match) break;
         items.push(<li key={`item-${index}`}>{renderInlineText(match[1], `item-${index}`)}</li>);
         index += 1;

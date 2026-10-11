@@ -40,7 +40,7 @@ before(async () => {
       HOST: "127.0.0.1",
       PORT: String(port),
       ADMIN_TOKEN: "integration-test-token",
-      MAX_REQUEST_BYTES: "512",
+      MAX_REQUEST_BYTES: String(20 * 1024 * 1024),
       RATE_LIMIT: "1000",
     },
     stdio: ["ignore", "pipe", "pipe"],
@@ -98,9 +98,16 @@ test("chat endpoint returns bounded validation errors", async () => {
   const tooManyAttachments = await fetch(`${baseUrl}/api/chat`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ message: "read", attachments: [{}, {}, {}, {}] }),
+    body: JSON.stringify({ message: "read", attachments: Array.from({ length: 16 }, () => ({})) }),
   });
   assert.equal(tooManyAttachments.status, 400);
+
+  const fifteenAttachments = await fetch(`${baseUrl}/api/chat`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ message: "read", attachments: Array.from({ length: 15 }, () => ({})) }),
+  });
+  assert.equal(fifteenAttachments.status, 200);
 
   const badSession = await fetch(`${baseUrl}/api/chat`, {
     method: "POST",

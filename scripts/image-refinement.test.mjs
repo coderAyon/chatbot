@@ -183,6 +183,22 @@ test("isImageRefinementOrFollowup detects scene modifications following an image
   assert.equal(isImageRefinementOrFollowup("একটি সম্পূর্ণ নতুন রোবটের ছবি আঁকো", historyWithImage), null);
 });
 
+test("ordinary questions after image generation remain text inquiries", () => {
+  const history = [
+    { role: "user", text: "generate an image of a library" },
+    { role: "assistant", mode: "image", image: { prompt: "A library" }, text: "Here is your image" },
+  ];
+  for (const message of [
+    "rain keno hoy", "raat e akash kalo keno", "cartoon ki", "anime somporke bolo",
+    "ei image er style ki", "What is the image background?", "ছবিটার রং এমন কেন",
+    "রাতে বৃষ্টি কেন হয়", "eta ki", "abar bolo rain keno hoy",
+  ]) {
+    assert.equal(isImageRefinementOrFollowup(message, history), null, message);
+  }
+  assert.ok(isImageRefinementOrFollowup("make it blue", history));
+  assert.ok(isImageRefinementOrFollowup("background change kore pahar dau", history));
+});
+
 test("isExplicitPromptWritingRequest detects explicit prompt requests and rejects visual scene edits", () => {
   assert.equal(isExplicitPromptWritingRequest("prompt likhe dao"), true);
   assert.equal(isExplicitPromptWritingRequest("write a prompt for midjourney"), true);

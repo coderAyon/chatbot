@@ -6,6 +6,7 @@ import {
   reformatTextDeterministically,
   directAnswer,
   handleFollowupFormatRequest,
+  requestedExamMarks,
 } from "./api-server.mjs";
 
 const sampleFixture = {
@@ -95,6 +96,20 @@ test("detectFollowupFormatType rejects non-followups and ordinal topic recalls",
   assert.equal(detectFollowupFormatType("CSE te admission fee koto?"), null);
   assert.equal(detectFollowupFormatType("prothom topic ta abar details bolo"), null);
   assert.equal(detectFollowupFormatType("second topic one niye bolo"), null);
+});
+
+test("one-paragraph follow-up is detected and deterministically reformatted", () => {
+  assert.equal(detectFollowupFormatType("need description as one paragraph"), "paragraph");
+  assert.equal(detectFollowupFormatType("paragraph akare bolo"), "paragraph");
+  const result = reformatTextDeterministically("# Main points\n\n1. First reason.\n\n1. Second reason.", "paragraph");
+  assert.equal(result, "First reason. Second reason.");
+});
+
+test("exam mark values are parsed from common English and Bangla forms", () => {
+  assert.equal(requestedExamMarks("why use AI in today's world (5 marks)"), 5);
+  assert.equal(requestedExamMarks("explain this for 10 marks"), 10);
+  assert.equal(requestedExamMarks("৫ নম্বরের উত্তর দাও"), 5);
+  assert.equal(requestedExamMarks("What is AI?"), 0);
 });
 
 test("reformatTextDeterministically produces high-quality short, points, and expanded text", () => {

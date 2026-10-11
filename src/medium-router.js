@@ -1,3 +1,13 @@
+export function isInformationalMessage(text) {
+  const value = String(text || "").trim();
+  // A request to edit can be phrased as a question. Keep that explicit action.
+  if (/^(?:can|could|would|will)\s+you\s+(?:please\s+)?(?:add|remove|change|edit|modify|make|draw|generate|create|replace)\b/i.test(value)) return false;
+  return /\b(?:what|who|why|how|when|where|which|whose|whom|explain|define|meaning|tell\s+me|kivabe|keno|kobe|kothay|kokhon|koto|somproke|somporke|bujhiye)\b/i.test(value) ||
+    /\b(?:ki|ke)\s*[?!.]*$/i.test(value) ||
+    /(?:কী|কি|কেন|কিভাবে|কীভাবে|কোথায়|কোথায়|কখন|কত|ব্যাখ্যা|সম্পর্কে)/u.test(value) ||
+    /[?？]/u.test(value);
+}
+
 export function inferMessageMedium(text, attachments = [], history = [], webSearchEnabled = false) {
   const value = String(text || "").trim();
   const normalized = value.toLowerCase();
@@ -24,7 +34,7 @@ export function inferMessageMedium(text, attachments = [], history = [], webSear
 
   const lastAssistant = [...history].reverse().find((message) => message?.role === "assistant");
   const lastUser = [...history].reverse().find((message) => message?.role === "user");
-  const aiFollowup =
+  const aiFollowup = !isInformationalMessage(value) &&
     /\b(again|another|change|edit|modify|improve|regenerate|make\s+it|add|remove|same|version|variant|aro|abar|eta|eita)\b|(?:আবার|আরও|এটা|এইটা|পরিবর্তন|যোগ|বাদ|ভালো\s*কর)/iu.test(normalized) &&
     (lastAssistant?.medium === "gb-ai" || lastAssistant?.image || inferMessageMedium(lastUser?.text || "", [], [], false) === "gb-ai");
 
