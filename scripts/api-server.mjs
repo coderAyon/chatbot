@@ -8238,6 +8238,10 @@ async function handleTranscription(req, res) {
   const form = new FormData();
   form.append("file", new Blob([audio], { type: mimeType }), `voice.${extension}`);
   form.append("model", process.env.STT_MODEL || (openAiBaseUrl.includes("groq.com") ? "whisper-large-v3-turbo" : "whisper-1"));
+  form.append(
+    "prompt",
+    "Gono Bishwabidyalay (Gono University), গণ বিশ্ববিদ্যালয়, admission, tuition fee, department, faculty, CSE, Pharmacy, EEE, BBA, LLB, credits, semester, syllabus, teacher, notice, library, campus. Preserve the speaker's words and language; do not translate.",
+  );
   if (body.language === "en-US") form.append("language", "en");
   if (body.language === "bn-BD") form.append("language", "bn");
 

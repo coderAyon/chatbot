@@ -186,6 +186,25 @@ function preferredSynthesisVoice(voices, lang) {
   );
 }
 
+function splitSpeechIntoChunks(text, maxLength = 260) {
+  const chunks = [];
+  let current = "";
+  const sentences = String(text || "").split(/(?<=[.!?।])\s+/).filter(Boolean);
+  for (const sentence of sentences) {
+    for (const word of sentence.split(/\s+/)) {
+      const next = current ? current + " " + word : word;
+      if (next.length > maxLength && current) {
+        chunks.push(current);
+        current = word;
+      } else {
+        current = next;
+      }
+    }
+  }
+  if (current) chunks.push(current);
+  return chunks;
+}
+
 function speakUtterance(text, { lang, onStart, onEnd, onError, isVoiceMode = false } = {}) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     onError?.(new Error("Speech synthesis not supported in this browser"));
@@ -200,37 +219,23 @@ function speakUtterance(text, { lang, onStart, onEnd, onError, isVoiceMode = fal
     return () => {};
   }
 
-  let spokenText = rawCleaned;
-  if (isVoiceMode && rawCleaned.length > 360) {
-    const sentences = rawCleaned.split(/(?<=[.!?।])\s+/);
-    let gathered = "";
-    for (const s of sentences) {
-      if ((gathered + " " + s).trim().length > 340) break;
-      gathered = (gathered + " " + s).trim();
-    }
-    spokenText = gathered || rawCleaned.slice(0, 340);
-  }
-
-  const utterance = new SpeechSynthesisUtterance(spokenText);
-  utterance.lang = determinedLang;
-  utterance.rate = 1.0;
-  utterance.pitch = 1.0;
-
   const voices = window.speechSynthesis.getVoices?.() || [];
   const voice = preferredSynthesisVoice(voices, determinedLang);
-  if (voice) utterance.voice = voice;
-
-  utterance.onstart = () => onStart?.();
-  utterance.onend = () => onEnd?.();
-  utterance.onerror = (e) => {
-    if (e.error !== "canceled" && e.error !== "interrupted") {
-      onError?.(e);
-    } else {
-      onEnd?.();
-    }
-  };
-
-  window.speechSynthesis.speak(utterance);
+  const chunks = isVoiceMode ? splitSpeechIntoChunks(rawCleaned) : [rawCleaned];
+  chunks.forEach((chunk, index) => {
+    const utterance = new SpeechSynthesisUtterance(chunk);
+    utterance.lang = determinedLang;
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    if (voice) utterance.voice = voice;
+    utterance.onstart = () => { if (index === 0) onStart?.(); };
+    utterance.onend = () => { if (index === chunks.length - 1) onEnd?.(); };
+    utterance.onerror = (e) => {
+      if (e.error !== "canceled" && e.error !== "interrupted") onError?.(e);
+      else if (index === chunks.length - 1) onEnd?.();
+    };
+    window.speechSynthesis.speak(utterance);
+  });
 
   return () => {
     window.speechSynthesis.cancel();
@@ -2362,7 +2367,10 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
       };
       recorder.start();
       setFallbackRecording(true);
-      setErrorMessage(voiceLang === "bn-BD" ? "রেকর্ড হচ্ছে... কথা বলা শেষে Stop চাপুন।" : "Recording... press Stop when you finish speaking.");
+      setVoiceStatus("idle");
+      setErrorMessage(voiceLang === "bn-BD"
+        ? "স্পষ্টভাবে রেকর্ড হচ্ছে... কথা বলা শেষে Stop চাপুন; transcript তৈরি হলে প্রশ্ন পাঠানো হবে।"
+        : "Recording clearly... press Stop when finished; the transcript will be sent for an answer.");
     } catch {
       setErrorMessage(voiceLang === "bn-BD" ? "Microphone permission Allow করুন।" : "Allow microphone permission to record your voice.");
     }
@@ -2596,6 +2604,19 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
                   ? voiceLang === "bn-BD" ? "কথা শুনছি..." : "Listening..."
                   : voiceLang === "bn-BD" ? "এই ব্রাউজারে নেই" : "Unsupported browser"}
               </span>
+            </button>
+          )}
+
+          {!fallbackRecording && !fallbackTranscribing && microphoneSupported && voiceStatus !== "thinking" && voiceStatus !== "speaking" && (
+            <button
+              type="button"
+              className="voice-dock-btn listening-pill"
+              onClick={startFallbackRecording}
+              title={voiceLang === "bn-BD" ? "Whisper দিয়ে স্পষ্ট transcription" : "Use Whisper for clearer transcription"}
+              aria-label={voiceLang === "bn-BD" ? "স্পষ্টভাবে রেকর্ড করুন" : "Record for clearer transcription"}
+            >
+              <Headphones size={18} />
+              <span>{voiceLang === "bn-BD" ? "স্পষ্ট রেকর্ড" : "Clearer input"}</span>
             </button>
           )}
 
