@@ -2569,5 +2569,27 @@
         "Show related official info"
       ]
     }
+  },
+  {
+    "key": "2026-10-09-image-followup-v52:2026-09-24T17:02:58.321Z::cse r rekha mam ke chino?",
+    "value": {
+      "text": "অফিসিয়াল তথ্য অনুযায়ী গণ বিশ্ববিদ্যালয়ের **Department of Computer Science and Engineering (CSE)** বিভাগে মোট **8 জন শিক্ষিকা (ম্যাডাম)** কর্মরত আছেন।\n\n(উল্লেখ্য, এই বিভাগে সর্বমোট শিক্ষক সংখ্যা: **13 জন** — 5 জন স্যার ও 8 জন ম্যাডাম; বিভাগীয় প্রধান: **Tania Akter**)।\n\n**ম্যাডামদের তালিকা:**\n1. **Tania Akter** (Associate Professor & Head)\n2. **Farzana Tasnim** (Assistant Professor)\n3. **Shatabdee Bala** (Assistant Professor)\n4. **Umme Farhana** (Assistant Professor)\n5. **Adila Nuzhat** (Lecturer)\n6. **Tania Sultana** (Lecturer)\n7. **Bipasa Sharmin Satu** (Lecturer)\n8. **Shanta Islam** (Lecturer)",
+      "sources": [
+        {
+          "title": "Department of Computer Science and Engineering (CSE) Faculty Members",
+          "url": "https://gonouniversity.edu.bd/cse/faculty-members/"
+        }
+      ],
+      "mode": "structured",
+      "profile": {
+        "label": "Verified record",
+        "confidence": "High"
+      },
+      "suggestions": [
+        "CSE course overview dao",
+        "Programming roadmap dao",
+        "CSE faculty list dekhao"
+      ]
+    }
   }
 ]

@@ -6244,5 +6244,266 @@
     "mode": "structured",
     "sourceCount": 1,
     "latencyMs": 223
+  },
+  {
+    "at": "2026-10-16T06:40:13.826Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 109
+  },
+  {
+    "at": "2026-10-16T06:41:16.603Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 108
+  },
+  {
+    "at": "2026-10-16T06:41:54.870Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 96
+  },
+  {
+    "at": "2026-10-16T06:49:38.099Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 98
+  },
+  {
+    "at": "2026-10-16T06:54:25.981Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 96
+  },
+  {
+    "at": "2026-10-16T06:58:36.064Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "ekhon rastropoti ke?",
+    "answer": "Ei proshner nishchit tothyo ekhon amar kache nei. Aro ektu context dile ami bhalo vabe uttor dite ba thik source khujte parbo.",
+    "mode": "not_found",
+    "sourceCount": 0,
+    "latencyMs": 330
+  },
+  {
+    "at": "2026-10-16T07:05:58.779Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 111
+  },
+  {
+    "at": "2026-10-16T07:06:57.763Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 96
+  },
+  {
+    "at": "2026-10-16T07:07:34.600Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 95
+  },
+  {
+    "at": "2026-10-16T07:15:14.522Z",
+    "sessionId": "chat_1792134903776_le1vu5",
+    "question": "cse r rekha mam ke chino?",
+    "answer": "অফিসিয়াল তথ্য অনুযায়ী গণ বিশ্ববিদ্যালয়ের **Department of Computer Science and Engineering (CSE)** বিভাগে মোট **8 জন শিক্ষিকা (ম্যাডাম)** কর্মরত আছেন।\n\n(উল্লেখ্য, এই বিভাগে সর্বমোট শিক্ষক সংখ্যা: **13 জন** — 5 জন স্যার ও 8 জন ম্যাডাম; বিভাগীয় প্রধান: **Tania Akter**)।\n\n**ম্যাডামদের তালিকা:**\n1. **Tania Akter** (Associate Professor & Head)\n2. **Farzana Tasnim** (Assistant Professor)\n3. **Shatabdee Bala** (Assistant Professor)\n4. **Umme Farhana** (Assistant Professor)\n5. **Adila Nuzhat** (Lecturer)\n6. **Tania Sultana** (Lecturer)\n7. **Bipasa Sharmin Satu** (Lecturer)\n8. **Shanta Islam** (Lecturer)",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 78
+  },
+  {
+    "at": "2026-10-16T07:28:42.851Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 101
+  },
+  {
+    "at": "2026-10-16T07:32:42.500Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 99
+  },
+  {
+    "at": "2026-10-16T07:45:55.149Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 119
+  },
+  {
+    "at": "2026-10-16T07:50:45.317Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 117
+  },
+  {
+    "at": "2026-10-16T07:53:29.574Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 121
+  },
+  {
+    "at": "2026-10-16T07:56:49.703Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 121
+  },
+  {
+    "at": "2026-10-16T08:19:06.563Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 149
+  },
+  {
+    "at": "2026-10-16T08:20:14.000Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 130
+  },
+  {
+    "at": "2026-10-16T08:37:35.418Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 139
+  },
+  {
+    "at": "2026-10-16T08:38:16.816Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 138
+  },
+  {
+    "at": "2026-10-16T08:39:21.218Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 130
+  },
+  {
+    "at": "2026-10-16T08:39:56.987Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "gbiems ki?",
+    "answer": "আমি দুঃখিত, তবে সরবরাহ করা অফিসিয়াল তথ্যের মধ্যে “GBIEMS” সম্পর্কে কোনো উল্লেখ নেই, তাই এর সঠিক অর্থ বা সংজ্ঞা নিশ্চিত করতে পারছি না।\n\nআপনি কি একটু বিস্তারিত বলতে পারবেন, “GBIEMS” কোন প্রসঙ্গে ব্যবহার করছেন (যেমন কোনো বিভাগ, প্রোগ্রাম, সেবা ইত্যাদি)? এতে আমি আরও সঠিক তথ্য দিতে পারব।",
+    "mode": "groq",
+    "sourceCount": 1,
+    "latencyMs": 1910
+  },
+  {
+    "at": "2026-10-16T08:41:05.901Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "gbiems ki?",
+    "answer": "**GBIEMS (Gono Bishwabidyalay Integrated Education Management System)** হলো গণ বিশ্ববিদ্যালয়ের কেন্দ্রীয় স্মার্ট অটোমেশন ও স্টুডেন্ট পোর্টাল (পিপীলিকা সফটওয়্যার সহযোগে পরিচালিত)।\n\n**শিক্ষার্থীরা পোর্টালে যেসব সুবিধা পান:**\n১. **কোর্স রেজিস্ট্রেশন:** প্রতি সেমিস্টারে অফারকৃত কোর্সে এক ক্লিকে রেজিস্ট্রেশন।\n২. **এডমিট কার্ড ডাউনলোড:** সেমিস্টার ফাইনাল পরীক্ষার প্রবেশপত্র অনলাইন থেকে সরাসরি প্রিন্ট।\n৩. **অনলাইন ফি পরিশোধ:** bKash, SSLCommerz, Upay-এর মাধ্যমে ঘরে বসেই টিউশন ফি পেমেন্ট।\n৪. **পরীক্ষার ফলাফল:** সেমিস্টার রেজাল্ট, গ্রেডশিট ও সাপ্লিমেন্টারি পরীক্ষার আবেদন।\n৫. **LMS ও ক্লাস হাজিরা:** প্রতিদিনের ক্লাসের হাজিরা (Attendance %), কোর্স মেটেরিয়ালস ও নোটিশ।\n৬. **ডিজিটাল লাইব্রেরি:** বই ব্রাউজিং, ইস্যু/রিটার্ন ট্র্যাকিং ও বকেয়া জরিমানা চেক।\n\n🔗 **GBIEMS লগইন লিংক:** [https://gbiems.pipilikasoft.com/](https://gbiems.pipilikasoft.com/)",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 318
+  },
+  {
+    "at": "2026-10-16T08:41:10.994Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "admit card kivabe download korbo?",
+    "answer": "পরীক্ষার **Admit Card (প্রবেশপত্র)** ডাউনলোডের সম্পূর্ণ নিয়ম:\n\n১. **লগইন করুন:** GBIEMS স্টুডেন্ট পোর্টালে (`https://gbiems.pipilikasoft.com/`) আপনার Student ID ও Password দিয়ে লগইন করুন।\n২. **বকেয়া ক্লিয়ারেন্স:** সেমিস্টার ফি বা বকেয়া থাকলে পোর্টাল থেকেই bKash, SSLCommerz বা Upay দিয়ে তাৎক্ষণিকভাবে পরিশোধ করুন।\n৩. **উপস্থিতি (Attendance):** বিশ্ববিদ্যালয়ের নীতি অনুযায়ী ক্লাসে প্রয়োজনীয় উপস্থিতি থাকতে হবে।\n৪. **ডাউনলোড:** ড্যাশবোর্ডের **'Admit Card'** মেনুতে গিয়ে সিস্টেম-জেনারেটেড ইউনিক সিকিউরিটি কোডসহ এডমিট কার্ড ডাউনলোড ও প্রিন্ট করে নিন।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 352
+  },
+  {
+    "at": "2026-10-16T08:41:11.127Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "dvm course koto bochorer?",
+    "answer": "**Bachelor in Veterinary Science & Animal Husbandry (B.Sc. Vet. Sc & A. H.)**\n**Duration:** 5 years (9 semesters+1 semesters Internship)",
+    "mode": "structured",
+    "sourceCount": 1,
+    "latencyMs": 118
+  },
+  {
+    "at": "2026-10-16T08:41:11.274Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "ki korte paro",
+    "answer": "আমি **গণ বিশ্ববিদ্যালয় হেল্পডেস্ক অ্যাসিস্ট্যান্ট** হিসেবে নিচের বিষয়গুলোতে সহায়তা প্রদান করি:\n\n• **ভর্তি ও যোগ্যতা:** ডিপার্টমেন্টভিত্তিক রিকোয়ারমেন্টস, ন্যূনতম জিপিএ ও অ্যাডমিশন হেল্পলাইন।\n• **বিভাগ ও প্রোগ্রাম:** CSE, Pharmacy, BBA, LLB, English ইত্যাদি বিভাগের ক্রেডিট, সেমিস্টার ও ফি স্ট্রাকচার।\n• **শিক্ষক ও কর্তৃপক্ষ:** ভিসি, রেজিস্ট্রার, প্রক্টর, পরীক্ষা নিয়ন্ত্রক ও ডিপার্টমেন্ট চেয়ারম্যানদের প্রোফাইল।\n• **ক্যাম্পাস সুবিধা:** সেন্ট্রাল লাইব্রেরি, ওয়াইফাই, মেডিকেল সেন্টার, ক্যাফেটেরিয়া, পরিবহন ও হোস্টেল সংক্রান্ত তথ্য।\n• **ক্লাব ও ছাত্র সংসদ:** GBCDC (ক্যারিয়ার ডেভেলপমেন্ট ক্লাব) ও বাকসু (কেন্দ্রীয় ছাত্র সংসদ)-এর কার্যক্রম।\n• **একাডেমিক নিয়মাবলী:** সেমিস্টার পদ্ধতি (Bi-semester), ইউজিসি গ্রেডিং স্কেল ও রেজাল্ট দেখার উপায়।\n\nআপনি যেকোনো নির্দিষ্ট প্রশ্ন করতে পারেন!",
+    "mode": "greeting",
+    "sourceCount": 1,
+    "latencyMs": 135
+  },
+  {
+    "at": "2026-10-16T08:41:11.551Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "gono university te kivabe jabo?",
+    "answer": "গণ বিশ্ববিদ্যালয় (Gono Bishwabidyalay)-এর স্থায়ী ক্যাম্পাস ঢাকার সাভারে অবস্থিত।\n\n**অফিসিয়াল ঠিকানা:**\n**Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344** (নলাম, ডাকঘর: মির্জানগর via সাভার সেনানিবাস, আশুলিয়া, সাভার, ঢাকা-১৩৪৪)।\n\n(ক্যাম্পাসটি ঢাকা-আরিচা মহাসড়কের সন্নিকটে গণস্বাস্থ্য কেন্দ্রের মনোরম সবুজ প্রাকৃতিক পরিবেশে অবস্থিত)।\n\n**যাতায়াত বা পৌঁছানোর উপায়:**\nঢাকা থেকে সাভার বা বাইপাইল/নবীনগর হয়ে বাইপাইল-আশুলিয়া রোডে নলাম/গণস্বাস্থ্য সমাজভিত্তিক মেডিকেল কলেজ মোড়ে নেমে সরাসরি ক্যাম্পাসে পৌঁছানো যায়।",
+    "mode": "structured",
+    "sourceCount": 3,
+    "latencyMs": 269
+  },
+  {
+    "at": "2026-10-16T08:41:11.825Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "gbiems password vule gechi",
+    "answer": "GBIEMS / Student Portal-এর পাসওয়ার্ড ভুলে গেলে বা রিসেট করার নিয়ম:\n\n১. **অনলাইন পাসওয়ার্ড রিকভারি:** GBIEMS লগইন পেজে (`https://gbiems.pipilikasoft.com/`) গিয়ে **'Forgot Password?'** অপশনে ক্লিক করুন। আপনার রেজিস্টার্ড **Student ID** এবং মোবাইল নম্বর/ইমেইল দিলে পাসওয়ার্ড রিসেট লিংক বা ওটিপি চলে আসবে।\n২. **বিভাগীয় কোঅর্ডিনেটর / আইটি সেল:** অনলাইনে রিকভার না হলে আপনার নিজ ডিপার্টমেন্টের **ব্যাচ কোঅর্ডিনেটর** অথবা বিশ্ববিদ্যালয়ের **আইটি সেল / রেজিস্ট্রার অফিসে** যোগাযোগ করলে তাৎক্ষণিকভাবে পাসওয়ার্ড রিসেট করে দেওয়া হয়।",
+    "mode": "structured",
+    "sourceCount": 2,
+    "latencyMs": 271
+  },
+  {
+    "at": "2026-10-16T13:17:15.100Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 215
   }
 ]

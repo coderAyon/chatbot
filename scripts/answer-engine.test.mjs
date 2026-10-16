@@ -1216,3 +1216,201 @@ test("social work interest prioritizes Sociology and Social Work over other depa
   assert.equal(res.mode, "structured");
   assert.match(res.text, /Sociology and Social Work/i);
 });
+
+test("basic questions: department faculty breakdown, campus location, student count and leadership", () => {
+  const cseKnowledge = {
+    ...fixture,
+    faculty: [
+      { name: "Tania Akter", department: "Department of Computer Science and Engineering (CSE)", designation: "Associate Professor & Head", source: root },
+      { name: "Dr. Md. Hanif Ali", department: "Department of Computer Science and Engineering (CSE)", designation: "Professor", source: root },
+      { name: "Farzana Tasnim", department: "Department of Computer Science and Engineering (CSE)", designation: "Assistant Professor", source: root },
+      { name: "Md. Atikur Rahman", department: "Department of Computer Science and Engineering (CSE)", designation: "Assistant Professor", source: root },
+      { name: "Tanvir Rahman Dip", department: "Department of Computer Science and Engineering (CSE)", designation: "Senior Asst. IT Officer", source: root },
+    ],
+  };
+
+  // 1. CSE total kotojon sir ache?
+  const sirAns = directAnswer("cse total kotojon sir ache?", cseKnowledge, []);
+  assert.equal(sirAns.mode, "structured");
+  assert.match(sirAns.text, /2 জন পুরুষ শিক্ষক/);
+  assert.match(sirAns.text, /Dr\. Md\. Hanif Ali/);
+  assert.match(sirAns.text, /Md\. Atikur Rahman/);
+  assert.doesNotMatch(sirAns.text, /Tanvir Rahman Dip/);
+
+  // 2. CSE te koyjon mam ache?
+  const mamAns = directAnswer("cse te koyjon mam ache?", cseKnowledge, []);
+  assert.equal(mamAns.mode, "structured");
+  assert.match(mamAns.text, /2 জন শিক্ষিকা/);
+  assert.match(mamAns.text, /Tania Akter/);
+  assert.match(mamAns.text, /Farzana Tasnim/);
+
+  // 3. CSE te total kotojon teacher ache?
+  const totalAns = directAnswer("cse te total kotojon teacher ache?", cseKnowledge, []);
+  assert.equal(totalAns.mode, "structured");
+  assert.match(totalAns.text, /4 জন অ্যাকাডেমিক শিক্ষক/);
+  assert.doesNotMatch(totalAns.text, /official data-te.*ache\. Head:/); // Not existence response!
+
+  // 4. Campus kothai?
+  const campusAns = directAnswer("campus kothai?", fixture, []);
+  assert.equal(campusAns.mode, "structured");
+  assert.match(campusAns.text, /Savar|সাভার/i);
+  assert.match(campusAns.text, /Mirzanagar|মির্জানগর/i);
+
+  // 5. University te kotojon student ache?
+  const studentAns = directAnswer("university te kotojon student ache?", fixture, []);
+  assert.equal(studentAns.mode, "structured");
+  assert.match(studentAns.text, /৪,২০০\+/);
+
+  // 6. Upacharya ke?
+  const vcAns = directAnswer("upacharya ke?", fixture, []);
+  assert.equal(vcAns.mode, "structured");
+  assert.match(vcAns.text, /Example VC|Abul Hossain/);
+});
+
+test("colloquial phrasing for faculty gender counts ('koi jon mam ache?') never fails or dumps not_found", () => {
+  const multiDeptKnowledge = {
+    ...fixture,
+    faculty: [
+      { name: "Tania Akter", department: "Department of Computer Science and Engineering (CSE)", designation: "Associate Professor & Head", source: root },
+      { name: "Farzana Tasnim", department: "Department of Computer Science and Engineering (CSE)", designation: "Assistant Professor", source: root },
+      { name: "Dr. Md. Hanif Ali", department: "Department of Computer Science and Engineering (CSE)", designation: "Professor", source: root },
+      { name: "Nasrin Sultana", department: "Department of Pharmacy", designation: "Assistant Professor", source: root },
+      { name: "Md. Atikur Rahman", department: "Department of Computer Science and Engineering (CSE)", designation: "Assistant Professor", source: root },
+    ],
+  };
+
+  // 1. Exact user query from screenshot: "koi jon mam ache?" (standalone)
+  const q1 = directAnswer("koi jon mam ache?", multiDeptKnowledge, []);
+  assert.equal(q1.mode, "structured");
+  assert.doesNotMatch(q1.text, /nishchit tothyo ekhon amar kache nei/i);
+  assert.match(q1.text, /শিক্ষিকা \(ম্যাডাম\)/);
+  assert.match(q1.text, /Computer Science and Engineering/);
+
+  // 2. Exact user query with prior department in history: "koi jon mam ache?"
+  const history = [
+    { role: "user", text: "CSE department kemon?" },
+    { role: "assistant", text: "CSE is a great program." },
+  ];
+  const q2 = directAnswer("koi jon mam ache?", multiDeptKnowledge, history);
+  assert.equal(q2.mode, "structured");
+  assert.match(q2.text, /2 জন শিক্ষিকা/);
+  assert.match(q2.text, /Tania Akter/);
+  assert.match(q2.text, /Farzana Tasnim/);
+
+  // 3. "koi jon sir ache?" (standalone)
+  const q3 = directAnswer("koi jon sir ache?", multiDeptKnowledge, []);
+  assert.equal(q3.mode, "structured");
+  assert.match(q3.text, /পুরুষ শিক্ষক \(স্যার\)/);
+
+  // 4. Inverted / colloquial variations: "mam koyjon?"
+  const q4 = directAnswer("mam koyjon?", multiDeptKnowledge, []);
+  assert.equal(q4.mode, "structured");
+  assert.match(q4.text, /শিক্ষিকা \(ম্যাডাম\)/);
+
+  // 5. Bengali script: "কয় জন ম্যাম আছে?"
+  const q5 = directAnswer("কয় জন ম্যাম আছে?", multiDeptKnowledge, []);
+  assert.equal(q5.mode, "structured");
+  assert.match(q5.text, /শিক্ষিকা \(ম্যাডাম\)/);
+});
+
+test("specific faculty alias inquiry ('cse r rekha mam ke chino?') identifies Farzana Tasnim instead of department count", () => {
+  const rekhaKnowledge = {
+    ...fixture,
+    faculty: [
+      {
+        name: "Farzana Tasnim",
+        department: "Department of Computer Science and Engineering (CSE)",
+        designation: "Assistant Professor",
+        email: "Rekha.tasnim@gmail.com",
+        phone: "+8801765524232",
+        qualification: "MSc in Information Technology",
+        source: `${root}cse/faculty-members/farzana-tasnim/`,
+      },
+      {
+        name: "Tania Akter",
+        department: "Department of Computer Science and Engineering (CSE)",
+        designation: "Associate Professor & Head",
+        source: `${root}cse/faculty-members/tania-akter/`,
+      },
+    ],
+  };
+
+  // 1. Identity inquiry with department and alias
+  const r1 = directAnswer("cse r rekha mam ke chino?", rekhaKnowledge, []);
+  assert.equal(r1?.mode, "structured");
+  assert.match(r1.text, /Farzana Tasnim/);
+  assert.match(r1.text, /Rekha Mam/i);
+  assert.match(r1.text, /Assistant Professor/i);
+  assert.doesNotMatch(r1.text, /মোট \d+ জন শিক্ষিকা/);
+
+  // 2. Phone inquiry with alias
+  const r2 = directAnswer("rekha mam er number dao", rekhaKnowledge, []);
+  assert.equal(r2?.mode, "structured");
+  assert.match(r2.text, /\+8801765524232/);
+  assert.match(r2.text, /Farzana Tasnim/);
+
+  // 3. Email inquiry with alias
+  const r3 = directAnswer("rekha mam er email ki", rekhaKnowledge, []);
+  assert.equal(r3?.mode, "structured");
+  assert.match(r3.text, /Rekha\.tasnim@gmail\.com/i);
+
+  // 4. Qualification inquiry with alias
+  const r4 = directAnswer("rekha mam er qualification ki", rekhaKnowledge, []);
+  assert.equal(r4?.mode, "structured");
+  assert.match(r4.text, /MSc in Information Technology/i);
+
+  // 5. Bengali script inquiry
+  const r5 = directAnswer("সিএসই এর রেখা ম্যাম কে চেনেন?", rekhaKnowledge, []);
+  assert.equal(r5?.mode, "structured");
+  assert.match(r5.text, /Farzana Tasnim/);
+});
+
+test("GBIEMS student portal, Banglish queries, admit card, and campus directions resolve reliably", () => {
+  // 1. GBIEMS overview
+  const g1 = directAnswer("gbiems ki?", fixture);
+  assert.equal(g1?.mode, "structured");
+  assert.match(g1.text, /GBIEMS/i);
+  assert.match(g1.text, /pipilikasoft\.com/i);
+
+  // 2. GBIEMS login link
+  const g2 = directAnswer("gbiems login kivabe korbo?", fixture);
+  assert.equal(g2?.mode, "structured");
+  assert.match(g2.text, /https:\/\/gbiems\.pipilikasoft\.com\//);
+
+  // 3. Admit card download
+  const g3 = directAnswer("admit card kivabe download korbo?", fixture);
+  assert.equal(g3?.mode, "structured");
+  assert.match(g3.text, /Admit Card/i);
+  assert.match(g3.text, /পাসওয়ার্ড|লগইন/);
+
+  // 4. Semester registration
+  const g4 = directAnswer("semester registration kivabe kore?", fixture);
+  assert.equal(g4?.mode, "structured");
+  assert.match(g4.text, /Course Registration/i);
+
+  // 5. GBIEMS password reset
+  const g5 = directAnswer("gbiems password vule gechi", fixture);
+  assert.equal(g5?.mode, "structured");
+  assert.match(g5.text, /Forgot Password|পাসওয়ার্ড/i);
+
+  // 6. Online payment (bKash)
+  const g6 = directAnswer("bkash payment kivabe kore?", fixture);
+  assert.equal(g6?.mode, "structured");
+  assert.match(g6.text, /Dues & Payment Details|bKash/i);
+
+  // 7. Bot capability query 'ki korte paro' resolves to greeting and not Partho Sarker
+  const g7 = directAnswer("ki korte paro", fixture);
+  assert.equal(g7?.mode, "greeting");
+  assert.doesNotMatch(g7.text, /Partho Sarker/i);
+
+  // 8. Program duration with Banglish 'bochorer'
+  const g8 = directAnswer("dvm course koto bochorer?", fixture);
+  assert.equal(g8?.mode, "structured");
+  assert.match(g8.text, /5 years/i);
+
+  // 9. Campus travel directions
+  const g9 = directAnswer("gono university te kivabe jabo?", fixture);
+  assert.equal(g9?.mode, "structured");
+  assert.match(g9.text, /সাভার|নলাম|বাইপাইল/);
+});
+

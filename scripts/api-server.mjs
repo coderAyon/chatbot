@@ -136,6 +136,12 @@ const languagePatterns = [
   [/ভিসি|ভাইস[\s-]*চ্যান্সেলর/g, " vice chancellor vc "],
   [/বিভাগ|ডিপার্টমেন্ট/g, " department dept "],
   [/শিক্ষক|শিক্ষিকা|টিচার/g, " teacher faculty "],
+  [/স্যার/g, " sir "],
+  [/ম্যাম|ম্যাডাম/g, " mam madam "],
+  [/কয়\s*জন|কয়\s*জন|কত\s*জন/g, " kojon "],
+  [/কয়\s*টা|কয়\s*টা|কত\s*টা|কয়\s*টি|কয়\s*টি|কত\s*টি/g, " koyta "],
+  [/ক্যাম্পাস/g, " campus "],
+  [/বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়/g, " university "],
   [/ফ্যাকাল্টি/g, " faculty "],
   [/অনুষদ/g, " faculty "],
   [/ডিন/g, " dean "],
@@ -148,6 +154,34 @@ const languagePatterns = [
   [/এটা|এইটা|ওটা|ঐটা/g, " eta eita "],
   [/ফার্মেসি/g, " pharmacy "],
   [/সিএসই/g, " cse "],
+  [/রেখা/g, " rekha "],
+  [/চেনেন|চিনো|চেনো|জানেন|জানো/g, " chino "],
+  [/ইংরেজি|ইংলিশ/g, " english "],
+  [/আইন|(?:^|\s)ল(?:\s|$)/g, " law "],
+  [/বিবিএ|ব্যবসায়\s*প্রশাসন|ব্যবসা\s*প্রশাসন/g, " bba "],
+  [/বাংলা/g, " bangla "],
+  [/সমাজবিজ্ঞান|সমাজ\s*বিজ্ঞান|সমাজকর্ম/g, " sociology "],
+  [/রাজনীতি|রাজনীতিবিজ্ঞান|সরকার\s*ও\s*রাজনীতি/g, " politics "],
+  [/পদার্থ|পদার্থবিজ্ঞান|ফিজিক্স/g, " physics "],
+  [/রসায়ন|কেমিস্ট্রি/g, " chemistry "],
+  [/গণিত|ম্যাথমেটিক্স|ম্যাথ/g, " mathematics math "],
+  [/ইইই/g, " eee "],
+  [/ক্লাব|ক্লাবসমূহ/g, " club "],
+  [/বিভাগীয়\s*প্রধান|বিভাগীয়\s*প্রধান|বিভাগ\s*প্রধান/g, " head chairman "],
+  [/অনুষদ\s*প্রধান|অনুষদের\s*ডিন/g, " dean "],
+  [/উপাচার্য/g, " vice chancellor vc "],
+  [/প্রো[\s-]*উপাচার্য/g, " pro vice chancellor pro vc "],
+  [/পরীক্ষা\s*নিয়ন্ত্রক|পরীক্ষা\s*নিয়ন্ত্রক/g, " controller of examinations "],
+  [/প্রক্টর/g, " proctor "],
+  [/রেজিস্ট্রার/g, " registrar "],
+  [/কোষাধ্যক্ষ/g, " treasurer "],
+  [/শিক্ষকবৃন্দ|শিক্ষকমণ্ডলী|শিক্ষকগণ/g, " teacher faculty "],
+  [/ম্যামের|ম্যাডামের/g, " mam madam "],
+  [/স্যারের/g, " sir "],
+  [/কারা|কে\s*কে/g, " who list "],
+  [/তালিকা|লিস্ট/g, " list "],
+  [/যোগ্যতা|ডিগ্রি|শিক্ষাগত\s*যোগ্যতা/g, " qualification "],
+  [/লাইব্রেরি|গ্রন্থাগার/g, " library "],
 ];
 
 const banglishPatterns = [
@@ -161,8 +195,10 @@ const banglishPatterns = [
   [/\b(nki|naky)\b/g, " naki "],
   [/\b(kmn|kamon)\b/g, " kemon "],
   [/\b(kto|kotoo)\b/g, " koto "],
-  [/\b(koita|koyta|koyti)\b/g, " koyta "],
-  [/\b(koyjn|koijn|koijon|koyjon)\b/g, " kojon "],
+  [/\b(?:koita|koyta|koyti|koi\s*ta|koy\s*ta|koto\s*ta|kota)\b/gi, " koyta "],
+  [/\b(?:koyjn|koijn|koijon|koyjon|koi\s*jon|koy\s*jon|ko\s*jon|koto\s*jon|kotojon)\b/gi, " kojon "],
+  [/\b(?:maam|madam|madams|mem|mame)\b/gi, " mam madam "],
+  [/\b(?:sirs|sar)\b/gi, " sir "],
   [/\b(koy|koto)\s+(?:bosor|bochor|year)\b/g, " koto year "],
   [/\b(hed|headd|hod)\b/g, " head "],
   [/\b(chairmn|chairmanne|chairmaan)\b/g, " chairman "],
@@ -202,6 +238,9 @@ const banglishPatterns = [
   [/\b(saransho|sarangsho|songkhep|summery)\b/g, " summary "],
   [/\b(pharma|farmacy)\b/g, " pharmacy "],
   [/\b(veterenary|vetenary|vetrinary|veterinery)\b/g, " veterinary "],
+  [/\b(?:chenen|cheno|chino|chine|janen|jano|jane)\b/gi, " chino "],
+  [/\b(?:shob|sob)\s+(?:teacher|teachers|shikkhok|shikkhika)\b/gi, " teacher list "],
+  [/\b(?:poran|porae|poray)\b/gi, " teacher faculty "],
 ];
 
 function normalizeQuestion(text) {
@@ -697,6 +736,81 @@ function sessionAttachments(sessionId) {
   return attachmentSessions.get(sessionId)?.items || [];
 }
 
+function bengaliToLatin(text) {
+  if (!text || typeof text !== "string" || !/[\u0980-\u09ff]/.test(text)) return text || "";
+
+  let str = text
+    .normalize("NFC")
+    .replace(/\u09af\u09bc/g, "y")
+    .replace(/\u09a1\u09bc/g, "r")
+    .replace(/\u09a2\u09bc/g, "rh")
+    .replace(/ক্ষ/g, "kkh")
+    .replace(/জ্ঞ/g, "gy")
+    .replace(/ঞ্চ/g, "nch")
+    .replace(/ঞ্ছ/g, "nchh")
+    .replace(/ঞ্জ/g, "nj")
+    .replace(/নজ/g, "nj")
+    .replace(/ষ্ণ/g, "shn")
+    .replace(/ষ্ঠ/g, "shth")
+    .replace(/ষ্ট/g, "st")
+    .replace(/ম্প/g, "mp")
+    .replace(/ম্ব/g, "mb")
+    .replace(/ন্ত/g, "nt")
+    .replace(/ন্দ/g, "nd")
+    .replace(/ন্ধ/g, "ndh")
+    .replace(/ঙ্ক/g, "nk")
+    .replace(/ঙ্গ/g, "ng")
+    .replace(/স্ব/g, "sw")
+    .replace(/স্ম/g, "sm")
+    .replace(/স্থ/g, "sth")
+    .replace(/স্প/g, "sp")
+    .replace(/স্ক্র/g, "skr");
+
+  const vowels = {
+    "অ": "o", "আ": "a", "ই": "i", "ঈ": "i", "উ": "u", "ঊ": "u", "ঋ": "ri", "এ": "e", "ঐ": "oi", "ও": "o", "ঔ": "ou"
+  };
+  const vowelSigns = {
+    "া": "a", "ি": "i", "ী": "i", "ু": "u", "ূ": "u", "ৃ": "ri", "ে": "e", "ৈ": "oi", "ো": "o", "ৌ": "ou"
+  };
+  const consonants = {
+    "ক": "k", "খ": "kh", "গ": "g", "ঘ": "gh", "ঙ": "ng",
+    "চ": "ch", "ছ": "chh", "জ": "j", "ঝ": "jh", "ঞ": "n",
+    "ট": "t", "ঠ": "th", "ড": "d", "ঢ": "dh", "ণ": "n",
+    "ত": "t", "থ": "th", "দ": "d", "ধ": "dh", "ন": "n",
+    "প": "p", "ফ": "f", "ব": "b", "ভ": "bh", "ম": "m",
+    "য": "j", "র": "r", "ল": "l", "শ": "sh", "ষ": "sh", "স": "s", "হ": "h",
+    "ড়": "r", "ঢ়": "rh", "য়": "y", "ৎ": "t", "ং": "ng", "ঃ": "h", "ঁ": ""
+  };
+
+  let raw = "";
+  let inherent = "";
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+    const nextCh = str[i + 1];
+    if (vowels[ch]) {
+      raw += vowels[ch];
+      inherent += vowels[ch];
+    } else if (vowelSigns[ch]) {
+      raw += vowelSigns[ch];
+      inherent += vowelSigns[ch];
+    } else if (consonants[ch]) {
+      raw += consonants[ch];
+      inherent += consonants[ch];
+      if (nextCh && (consonants[nextCh] || vowels[nextCh] || /[a-z]/i.test(nextCh)) && nextCh !== "্") {
+        inherent += "o";
+      }
+    } else if (ch === "্") {
+      continue;
+    } else {
+      raw += ch;
+      inherent += ch;
+    }
+  }
+  const r = raw.toLowerCase().trim();
+  const inh = inherent.toLowerCase().trim();
+  return r === inh ? r : `${r} ${inh}`;
+}
+
 function tokenize(text) {
   return normalizeQuestion(text)
     .normalize("NFKD")
@@ -746,6 +860,14 @@ const searchStopWords = new Set([
   "eita",
   "oita",
   "ta",
+  "koi",
+  "jon",
+  "kojon",
+  "koyjon",
+  "koto",
+  "kotojon",
+  "koyta",
+  "ase",
 ]);
 
 const synonyms = new Map([
@@ -825,14 +947,14 @@ function fuzzyIncludes(tokens, term) {
 }
 
 function phoneticPersonTokenMatch(token, term) {
-  if (token.length < 4 || term.length < 4) return false;
-  const collapse = (value) => value.toLowerCase().replace(/(.)\1+/g, "$1");
+  if (token.length < 3 || term.length < 3) return false;
+  const collapse = (value) => value.toLowerCase().replace(/(.)\1+/g, "$1").replace(/z/g, "j");
   const left = collapse(token);
   const right = collapse(term);
   if (left === right) return true;
   const vowels = /^[aeiou]/;
   if (vowels.test(left) && vowels.test(right) && editDistance(left.slice(1), right.slice(1)) <= 1) return true;
-  return left[0] === right[0] && editDistance(left, right) <= (Math.max(left.length, right.length) >= 7 ? 2 : 1);
+  return left[0] === right[0] && editDistance(left, right) <= (Math.max(left.length, right.length) >= 6 ? 2 : 1);
 }
 
 function vectorize(text) {
@@ -871,7 +993,7 @@ function prefersBanglish(text) {
   return (
     /[\u0980-\u09ff]/.test(raw) ||
     /\b(fe|kto|koyjn|koijon|hed|chairmn|crdt|drtn|phrmcy|vlo|nki|kmn|bl)\b/i.test(raw) ||
-    /\b(ki|ke|kivabe|pabo|lagbe|shuru|hobe|korbo|konta|kontar|porbo|pora|porte|porashona|jai|jabe|jawa|chai|pochondo|valo|kothay|somporke|chino|cheno|chine|jano|bolo|dao|ache|ase|kono|koto|koyjon|kojon|koyta|er|r|ta|te|vorti|hoy|hoi|kina|kemon|keno|kobe|bhalo|shob|sob|naki|ba|tarpor|porle|jani|janan|bolun|dekhun|ami|amar|amake|tahole|parbo|kon|kintu|tobe|niye|diye|hote|korte|uchit|kokhon|khola|shomoy|somoy|koytay|bondho|ekhon|akhon|cholche|chole|choltese|sheba|seba|manush|manusher)\b/i.test(q)
+    /\b(ki|ke|kivabe|pabo|lagbe|shuru|hobe|korbo|konta|kontar|porbo|pora|porte|porashona|jai|jabe|jawa|chai|pochondo|valo|kothay|somporke|chino|cheno|chine|jano|bolo|dao|ache|ase|kono|koto|koyjon|kojon|koyta|er|r|ta|te|vorti|hoy|hoi|kina|kemon|keno|kobe|bhalo|shob|sob|naki|ba|tarpor|porle|jani|janan|bolun|dekhun|ami|amar|amake|tahole|parbo|kon|kintu|tobe|niye|diye|hote|korte|uchit|kokhon|khola|shomoy|somoy|koytay|bondho|ekhon|akhon|cholche|chole|choltese|sheba|seba|manush|manusher|vule|gechi|gese|geche|dibo|dite|dhukbo|tulbo|dekhbo|dekte|korche|kore|korben|korle|parchi|parsi|kichu|kisu|jante|ashbo|unir|onir|unake|onake|dekhao|bolba|janba|janaben)\b/i.test(q)
   );
 }
 
@@ -1075,9 +1197,13 @@ function rankedPrograms(question, programs = []) {
 function directProgramAdmissionAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   const asksRequirement = /\b(admission|apply|eligibility|eligible|required|requirement|qualification|gpa|ssc|hsc|vorti)\b/i.test(q);
-  const asksDuration = /\b(duration|year|years|semester|semesters|koto\s+bochor)\b/i.test(q);
-  const asksPeople = /\b(teacher|teachers|faculty|member|members|head|dean|sir|mam|person|people|staff)\b/i.test(q);
-  const asksSeats = /\b(seat|seats|capacity|intake)\b/i.test(q) || (!asksPeople && /\b(koyjon|kojon)\b/i.test(q));
+  const asksDuration = /\b(duration|year|years|semester|semesters|koto\s+bochor|koy\s+bochor|bochorer?)\b/i.test(q);
+  const asksPeople =
+    /\b(teacher|teachers|faculty|member|members|head|dean|sir|sirs|mam|maam|madam|madams|person|people|staff|shikkhok|shikkhika|shikkha)\b/i.test(q) ||
+    /(শিক্ষক|শিক্ষিকা|স্যার|ম্যাডাম)/.test(question);
+  const asksSeats =
+    /\b(seat|seats|capacity|intake|ashon|ashan)\b/i.test(q) ||
+    (!asksPeople && /\b(koyjon|kojon|kotojon)\b/i.test(q) && /\b(seat|seats|ashon|vorti|student)\b/i.test(q));
   if (!asksRequirement && !asksDuration && !asksSeats) return null;
   if (asksFeeDetail(q) && !/\b(requirement|qualification|eligibility|joggota|criteria)\b/i.test(q)) return null;
   const ranked = rankedPrograms(q, knowledge.programs || []);
@@ -1138,6 +1264,7 @@ function directProgramAdmissionAnswer(question, knowledge) {
 function directOfficeContactAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   if (!asksContactDetail(q)) return null;
+  if (findPeople(q, knowledge.faculty || [], knowledge).length > 0) return null;
   const subjectTerms = expandedTerms(q).filter(
     (term) => !["phone", "mobile", "contact", "number", "cell", "call", "email", "mail", "office", "dao", "dau"].includes(term),
   );
@@ -1194,6 +1321,7 @@ function directOfficeContactAnswer(question, knowledge) {
 function directDepartmentContactAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   if (!asksContactDetail(q) || !/\b(departments?|dept)\b|বিভাগ|ডিপার্টমেন্ট/iu.test(q)) return null;
+  if (findPeople(q, knowledge.faculty || [], knowledge).length > 0) return null;
   const department = matchedDepartmentFromQuestion(q, knowledge);
   if (!department) {
     return {
@@ -1273,12 +1401,12 @@ const roleAliases = [
   { key: "student_union_general_secretary", terms: ["gs", "general secretary"], scope: "student_union" },
   { key: "student_union_joint_general_secretary", terms: ["jgs", "joint general secretary", "assistant general secretary", "ags"], scope: "student_union" },
   { key: "student_union_treasurer", terms: ["treasurer"], scope: "student_union" },
-  { key: "vice_chancellor", terms: ["vc", "v c", "vice chancellor", "vice-chancellor"], scope: "institution" },
-  { key: "pro_vice_chancellor", terms: ["pro vc", "pro-vc", "pro vice chancellor", "pro-vice-chancellor"], scope: "institution" },
-  { key: "registrar", terms: ["registrar"], scope: "institution" },
-  { key: "treasurer", terms: ["treasurer"], scope: "institution" },
-  { key: "proctor", terms: ["proctor"], scope: "institution" },
-  { key: "controller_of_examinations", terms: ["controller of examination", "controller of examinations", "exam controller", "examination controller", "controller"], scope: "institution" },
+  { key: "vice_chancellor", terms: ["vc", "v c", "vice chancellor", "vice-chancellor", "upacharya", "upacharyo", "upachariya", "উপাচার্য"], scope: "institution" },
+  { key: "pro_vice_chancellor", terms: ["pro vc", "pro-vc", "pro vice chancellor", "pro-vice-chancellor", "pro upacharya", "প্রো-উপাচার্য"], scope: "institution" },
+  { key: "registrar", terms: ["registrar", "rejestrar", "রেজিস্ট্রার"], scope: "institution" },
+  { key: "treasurer", terms: ["treasurer", "koshaddhokkho", "koshaddhokho", "ট্রেজারার", "কোষাধ্যক্ষ"], scope: "institution" },
+  { key: "proctor", terms: ["proctor", "proktor", "প্রক্টর"], scope: "institution" },
+  { key: "controller_of_examinations", terms: ["controller of examination", "controller of examinations", "exam controller", "examination controller", "controller", "porikkha niontrok", "porikkha niyontrok", "পরীক্ষা নিয়ন্ত্রক"], scope: "institution" },
   { key: "medical_officer", terms: ["medical officer", "campus doctor", "doctor"], scope: "institution" },
   { key: "trustee_board_chairman", terms: ["trustee board chairman", "bot chairman", "trustee chairman", "chairman of trustee board", "chairman trustee board", "board of trustees chairman", "trustee board er chairman"], scope: "institution" },
 ];
@@ -1359,9 +1487,14 @@ function personIdentityLine(question, person) {
   const designation = person.designation || "member";
   const department = displayDepartmentName(person.department || "Gono University");
   const name = cleanPersonName(person.name);
+  const qTokens = tokenize(question);
+  let nicknameNote = "";
+  if (qTokens.includes("rekha") && /rekha/i.test(person.email || "")) {
+    nicknameNote = prefersBanglish(question) ? " (রেখা ম্যাডাম / Rekha Mam)" : " (Rekha Mam)";
+  }
   return prefersBanglish(question)
-    ? `Haan, **${name}** ${department}-er **${designation}**.`
-    : `Yes, **${name}** is **${designation}** in ${department}.`;
+    ? `Haan, **${name}**${nicknameNote} ${department}-er **${designation}**.`
+    : `Yes, **${name}**${nicknameNote} is **${designation}** in ${department}.`;
 }
 
 function cleanPersonName(name) {
@@ -1423,32 +1556,44 @@ const commonSurnames = new Set([
   "khan", "ahmed", "ahmad", "islam", "rahman", "sarker", "sarkar",
   "ali", "hasan", "hassan", "haque", "kazi", "sheikh", "shaikh",
   "roy", "das", "paul", "debnath", "bhowmik", "mojumder", "majumder",
-  "uddin", "alom", "alam", "akter", "khatun", "begum", "molla"
+  "uddin", "alom", "alam", "akter", "aktar", "khatun", "begum", "molla"
 ]);
 
 function findPeople(question, people = [], knowledge = null) {
   const ignored = new Set([
     ...searchStopWords,
     "sir",
+    "sirs",
+    "sar",
     "mam",
     "maam",
     "madam",
+    "madams",
+    "mem",
     "teacher",
+    "teachers",
     "faculty",
+    "faculties",
     "phone",
     "number",
     "email",
+    "mail",
     "contact",
     "dao",
     "dau",
+    "den",
+    "deyen",
     "ache",
     "ase",
     "name",
+    "nam",
+    "naam",
     "kono",
     "there",
     "any",
     "dept",
     "department",
+    "departments",
     "details",
     "profile",
     "list",
@@ -1464,7 +1609,17 @@ function findPeople(question, people = [], knowledge = null) {
     "leader",
     "leadership",
     "dean",
+    "deans",
     "provost",
+    "professor",
+    "prof",
+    "professors",
+    "lecturer",
+    "lecturers",
+    "assistant",
+    "associate",
+    "officer",
+    "staff",
     "cheno",
     "chino",
     "jano",
@@ -1478,8 +1633,26 @@ function findPeople(question, people = [], knowledge = null) {
     "onake",
     "unake",
     "unir",
+    "cse",
+    "eee",
+    "bba",
+    "llb",
+    "llm",
+    "dvm",
+    "pharmacy",
+    "vet",
+    "veterinary",
+    "example",
+    "paro",
+    "korte",
+    "paren",
+    "gbiems",
+    "portal",
   ]);
-  const words = tokenize(question).filter((word) => word.length >= 4 && !ignored.has(word));
+  const normalizedQ = normalizeQuestion(question);
+  const latinQ = bengaliToLatin(normalizedQ);
+  const combinedQ = `${normalizedQ} ${latinQ}`;
+  const words = tokenize(combinedQ).filter((word) => word.length >= 3 && !ignored.has(word));
   if (!words.length) return [];
   const matchedDepartment = knowledge ? matchedDepartmentFromQuestion(question, knowledge) : null;
   const eligiblePeople = matchedDepartment
@@ -1493,47 +1666,55 @@ function findPeople(question, people = [], knowledge = null) {
     .map((person) => {
       const nameTokens = tokenize(person.name);
       const aliasTokens = tokenize(`${person.email || ""} ${person.profileUrl || ""} ${person.source || ""}`)
-        .filter((token) => token.length >= 4 && !/^(https?|www|edu|com|bd|gmail|employees|faculty|members|gonouniversity|pharmacy|cse)$/.test(token));
+        .filter((token) => token.length >= 3 && !/^(https?|www|edu|com|bd|gmail|employees|faculty|members|gonouniversity|pharmacy|cse)$/.test(token));
 
       const exactHits = words.filter((word) => nameTokens.includes(word)).length;
       const aliasHits = words.filter((word) => aliasTokens.includes(word)).length;
-      const matchedWords = words.filter((word) => nameTokens.includes(word) || aliasTokens.includes(word));
+      const phoneticHits = words.filter((word) => !nameTokens.includes(word) && nameTokens.some((t) => phoneticPersonTokenMatch(t, word))).length;
+      const totalHits = exactHits + aliasHits + phoneticHits;
+      const matchedWords = words.filter((word) =>
+        nameTokens.includes(word) ||
+        aliasTokens.includes(word) ||
+        nameTokens.some((t) => phoneticPersonTokenMatch(t, word)) ||
+        aliasTokens.some((t) => phoneticPersonTokenMatch(t, word))
+      );
 
       // Guard against false positive matches on a single common surname when query provides multiple words
       if (words.length >= 2 && matchedWords.length === 1 && commonSurnames.has(matchedWords[0])) {
         const otherWords = words.filter((w) => w !== matchedWords[0]);
         const hasOtherOverlap = otherWords.some((w) =>
-          nameTokens.some((t) => t.length >= 4 && (t.startsWith(w) || w.startsWith(t))) ||
-          aliasTokens.some((t) => t.length >= 4 && (t.startsWith(w) || w.startsWith(t)))
+          nameTokens.some((t) => t.length >= 3 && (t.startsWith(w) || w.startsWith(t) || phoneticPersonTokenMatch(t, w))) ||
+          aliasTokens.some((t) => t.length >= 3 && (t.startsWith(w) || w.startsWith(t) || phoneticPersonTokenMatch(t, w)))
         );
         if (!hasOtherOverlap) {
-          return { person, score: 0, exactHits: 0, aliasHits: 0 };
+          return { person, score: 0, exactHits: 0, aliasHits: 0, totalHits: 0 };
         }
       }
 
       const score = words.reduce((total, word) => {
         if (nameTokens.includes(word)) return total + 35;
-        if (nameTokens.some((token) => token.length >= 4 && (token.startsWith(word) || word.startsWith(token)))) return total + 22;
+        if (nameTokens.some((token) => token.length >= 3 && (token.startsWith(word) || word.startsWith(token)))) return total + 22;
         if (aliasTokens.includes(word)) return total + 28;
-        if (aliasTokens.some((token) => token.length >= 4 && (token.startsWith(word) || word.startsWith(token)))) return total + 18;
+        if (aliasTokens.some((token) => token.length >= 3 && (token.startsWith(word) || word.startsWith(token)))) return total + 18;
         if (fuzzyIncludes(nameTokens, word)) return total + 16;
-        if (nameTokens.some((token) => phoneticPersonTokenMatch(token, word))) return total + 18;
+        if (nameTokens.some((token) => phoneticPersonTokenMatch(token, word))) return total + 20;
         if (fuzzyIncludes(aliasTokens, word)) return total + 10;
         return total;
       }, 0);
-      return { person, score, exactHits, aliasHits };
+      return { person, score, exactHits, aliasHits, phoneticHits, totalHits };
     })
-    .filter((item) => item.score >= 16 || item.exactHits > 0 || item.aliasHits > 0)
-    .sort((a, b) => b.exactHits - a.exactHits || b.aliasHits - a.aliasHits || b.score - a.score)
+    .filter((item) => item.score >= 16 || item.totalHits > 0)
+    .sort((a, b) => b.totalHits - a.totalHits || (b.exactHits + b.phoneticHits) - (a.exactHits + a.phoneticHits) || b.score - a.score)
     .filter((item, _index, list) => {
       const best = list[0];
-      return item.exactHits === best.exactHits && item.aliasHits === best.aliasHits && item.score >= Math.max(16, best.score - 10);
+      if (best.totalHits >= 2 && item.totalHits < best.totalHits) return false;
+      return item.totalHits >= Math.max(1, best.totalHits - 1) && item.score >= Math.max(16, best.score - 15);
     })
     .slice(0, 5)
     .map((item) => item.person);
 }
 
-function directPeopleAnswer(question, knowledge) {
+function directPeopleAnswer(question, knowledge, history = []) {
   const q = normalizeQuestion(question);
   const asksPhone =
     /\b(phone|mobile|cell|call)\b/i.test(q) ||
@@ -1554,14 +1735,25 @@ function directPeopleAnswer(question, knowledge) {
     }
     return null;
   }
-  if (!(asksPhone || asksEmail || asksGeneralContact || asksProfile || asksQualification)) return null;
+  const isDirectNameLookup =
+    matches.length === 1 &&
+    (!history || !history.length) &&
+    !/\b(explain|example|recursion|quantum|list|all|faculty|dept|department|course|program|fee|fees|admission|credit|credits)\b/i.test(q);
+  if (!(asksPhone || asksEmail || asksGeneralContact || asksProfile || asksQualification || isDirectNameLookup)) return null;
   if (asksPhone || asksEmail || asksGeneralContact) return formatPeopleContact(question, matches);
   if (asksQualification) {
     return {
       text: matches
-        .map((person) => person.qualification
-          ? `**${cleanPersonName(person.name)}**\n**Qualification:** ${person.qualification}`
-          : `The official profile for **${cleanPersonName(person.name)}** does not list a qualification.`)
+        .map((person) => {
+          const qTokens = tokenize(question);
+          let nicknameNote = "";
+          if (qTokens.includes("rekha") && /rekha/i.test(person.email || "")) {
+            nicknameNote = prefersBanglish(question) ? " (রেখা ম্যাডাম / Rekha Mam)" : " (Rekha Mam)";
+          }
+          return person.qualification
+            ? `**${cleanPersonName(person.name)}**${nicknameNote}\n**Qualification:** ${person.qualification}`
+            : `The official profile for **${cleanPersonName(person.name)}**${nicknameNote} does not list a qualification.`;
+        })
         .join("\n\n"),
       sources: matches.map((person) => ({ title: person.name, url: person.profileUrl || person.source })).filter((source) => source.url),
       mode: matches.some((person) => person.qualification) ? "structured" : "not_found",
@@ -1599,7 +1791,7 @@ function asksFeeDetail(question) {
 
 function asksProgramDetail(question) {
   const q = normalizeQuestion(question);
-  return /\b(credit|credits|credit\s+hour|credit\s+hours|syllabus|curriculum|duration|semester|semesters|total\s+course|total\s+courses|course\s+list|subjects?)\b/i.test(q);
+  return /\b(credit|credits|credit\s+hour|credit\s+hours|syllabus|curriculum|duration|semester|semesters|total\s+course|total\s+courses|course\s+list|subjects?|bochor|bochorer|years?)\b/i.test(q);
 }
 
 function asksOfficialInstitutionFact(question) {
@@ -1641,11 +1833,22 @@ function directInstitutionFactAnswer(question, knowledge) {
   const locationSource = { title: "Official location", url: `${officialSiteUrl}about-gb/general-information/location/` };
   const contactSource = { title: "Contact Gono Bishwabidyalay", url: `${officialSiteUrl}contact-us/` };
 
-  const asksPublishedCount = /\b(?:how\s+many|number|count|total|koto|kojon|koyjon)\b/i.test(q);
+  if (asksContactDetail(q) || asksFeeDetail(q)) return null;
+
+  const asksPublishedCount =
+    !/\b(?:phone|mobile|call|cell|contact)\b/i.test(q) &&
+    (/\b(?:how\s+many|count|total|koto|kotojon|kojon|koyjon|koto\s*jon|shongkha|sonkha)\b/i.test(q) ||
+      (/\bnumber\b/i.test(q) && !/\b(?:dao|dau|de|den|phone|mobile)\b/i.test(q)) ||
+      /(কতজন|কয়জন|সংখ্যা|মোট)/.test(question));
   const targetsDepartment = matchedDepartmentFromQuestion(q, knowledge);
-  const wantsStudents = /\bstudents?|undergrads?|postgraduate\s+students?\b/i.test(q);
-  const wantsFacultyMembers = /\b(?:faculty\s+members?|teachers?|teaching\s+staff)\b/i.test(q) || (wantsStudents && /\bfaculty\b/i.test(q));
-  const wantsOfficeStaff = /\b(?:office\s+staff|administrative\s+staff)\b/i.test(q);
+  const wantsStudents =
+    /\b(?:students?|undergrads?|postgraduate\s+students?|chatro|chhatro|shikkharthi|shikkarthi|porashona\s+kore|pore)\b/i.test(q) ||
+    /(ছাত্র|ছাত্রী|শিক্ষার্থী)/.test(question);
+  const wantsFacultyMembers =
+    /\b(?:faculty\s+members?|teachers?|teaching\s+staff|shikkhok|shikkhika|sir|sirs|madam|madams|mam)\b/i.test(q) ||
+    (wantsStudents && /\bfaculty\b/i.test(q)) ||
+    /(শিক্ষক|শিক্ষিকা|স্যার|ম্যাডাম)/.test(question);
+  const wantsOfficeStaff = /\b(?:office\s+staff|administrative\s+staff|kormokorta|staff)\b/i.test(q);
   if (asksPublishedCount && !targetsDepartment && (wantsStudents || wantsFacultyMembers || wantsOfficeStaff)) {
     const values = [];
     if (wantsStudents && institution.statistics?.undergraduateStudents) values.push([institution.statistics.undergraduateStudents, "undergraduate students"]);
@@ -1653,6 +1856,13 @@ function directInstitutionFactAnswer(question, knowledge) {
     if (wantsFacultyMembers && institution.statistics?.facultyMembers) values.push([institution.statistics.facultyMembers, "faculty members"]);
     if (wantsOfficeStaff && institution.statistics?.officeStaff) values.push([institution.statistics.officeStaff, "office staff"]);
     if (!values.length) return null;
+    if (prefersBanglish(question) && wantsStudents && !wantsFacultyMembers && !wantsOfficeStaff) {
+      return {
+        text: `গণ বিশ্ববিদ্যালয়ের অফিসিয়াল তথ্য অনুসারে বর্তমানে ক্যাম্পাসে **৪,২০০+ আন্ডারগ্রাজুয়েট শিক্ষার্থী** এবং **৫০০+ পোস্টগ্রাজুয়েট (মাস্টার্স) শিক্ষার্থী** অধ্যয়ন করছেন (সর্বমোট ৪,৭০০+ শিক্ষার্থী)।`,
+        sources: [homeSource, generalSource],
+        mode: "structured",
+      };
+    }
     if (prefersBanglish(question) && wantsFacultyMembers && !wantsStudents && !wantsOfficeStaff) {
       return {
         text: `গণ বিশ্ববিদ্যালয়ের অফিসিয়াল ওয়েবসাইট অনুসারে ক্যাম্পাসে **১৮০+ ফ্যাকাল্টি মেম্বার (শিক্ষক)** রয়েছেন (তবে বিস্তারিত বিভাগীয় ডিরেক্টরিতে মোট ২৯১ জন অ্যাকাডেমিক শিক্ষক তালিকাভুক্ত আছেন)।`,
@@ -1836,16 +2046,46 @@ function directInstitutionFactAnswer(question, knowledge) {
     };
   }
 
-  if (/\b(?:where|location|located|address|campus\s+kothay|kothay)\b/i.test(q) && /\b(?:gono|bishwabidyalay|university|campus)\b/i.test(q)) {
+  const isLocationQuery =
+    /\b(?:where|location|located|address|kothay|kothai|thikana|place|area|kivabe\s+jabo|how\s+to\s+go|directions?|routes?|jabar\s+upay)\b/i.test(q) ||
+    /(কোথায়|ঠিকানা|অবস্থান|লোকেশন|কিভাবে\s*যাব|যাওয়ার\s*উপায়)/.test(question);
+
+  if (isLocationQuery) {
+    const targetDept = matchedDepartmentFromQuestion(q, knowledge);
     const address =
       institution.address ||
-      officialCorpus.match(/Nolam,?\s*P\.O\.\s*Mirzanagar[^.\n]*Dhaka-1344/i)?.[0];
-    if (!address) return null;
-    return {
-      text: `Gono Bishwabidyalay is located at **${address.replace(/\.$/, "")}, Bangladesh**.`,
-      sources: [locationSource, contactSource],
-      mode: "structured",
-    };
+      officialCorpus.match(/Nolam,?\s*P\.O\.\s*Mirzanagar[^.\n]*Dhaka-1344/i)?.[0] ||
+      "Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344";
+    const banglish = prefersBanglish(question);
+
+    if (targetDept) {
+      const displayDept = displayDepartmentName(targetDept);
+      return {
+        text: banglish
+          ? `গণ বিশ্ববিদ্যালয়ের **${displayDept}** সাভারের প্রধান স্থায়ী ক্যাম্পাসে অবস্থিত (ঠিকানা: **${address}**, নলাম, মির্জানগর, সাভার, ঢাকা-১৩৪৪)। বিভাগীয় ক্লাস, ল্যাব ও অফিস ক্যাম্পাসের একাডেমিক ভবনে রয়েছে।`
+          : `The **${displayDept}** is located at Gono Bishwabidyalay's main campus at **${address}**, Savar, Dhaka-1344.`,
+        sources: [locationSource, campusSource],
+        mode: "structured",
+      };
+    }
+
+    if (
+      /\b(?:gono|bishwabidyalay|university|campus|varsity|varcity|uni|gb|main\s+campus)\b/i.test(q) ||
+      /(গণ\s*বিশ্ববিদ্যালয়|ক্যাম্পাস|ভার্সিটি)/.test(question) ||
+      tokenize(q).length <= 4
+    ) {
+      const asksDirection = /\b(kivabe\s+jabo|how\s+to\s+go|directions?|routes?|jabar\s+upay)\b/i.test(q) || /(কিভাবে\s*যাব|যাওয়ার\s*উপায়)/.test(question);
+      const directionText = banglish
+        ? "\n\n**যাতায়াত বা পৌঁছানোর উপায়:**\nঢাকা থেকে সাভার বা বাইপাইল/নবীনগর হয়ে বাইপাইল-আশুলিয়া রোডে নলাম/গণস্বাস্থ্য সমাজভিত্তিক মেডিকেল কলেজ মোড়ে নেমে সরাসরি ক্যাম্পাসে পৌঁছানো যায়।"
+        : "\n\n**How to reach:** From Dhaka via Savar or Baipail/Nabinagar, alight at the Nolam / Gonoshasthaya Samaj Vittik Medical College stop along the Baipail-Ashulia route.";
+      return {
+        text: banglish
+          ? `গণ বিশ্ববিদ্যালয় (Gono Bishwabidyalay)-এর স্থায়ী ক্যাম্পাস ঢাকার সাভারে অবস্থিত।\n\n**অফিসিয়াল ঠিকানা:**\n**${address}** (নলাম, ডাকঘর: মির্জানগর via সাভার সেনানিবাস, আশুলিয়া, সাভার, ঢাকা-১৩৪৪)।\n\n(ক্যাম্পাসটি ঢাকা-আরিচা মহাসড়কের সন্নিকটে গণস্বাস্থ্য কেন্দ্রের মনোরম সবুজ প্রাকৃতিক পরিবেশে অবস্থিত)।${asksDirection ? directionText : ""}`
+          : `Gono Bishwabidyalay is located at **${address.replace(/\.$/, "")}, Bangladesh** (Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344).${asksDirection ? directionText : ""}`,
+        sources: [locationSource, contactSource, campusSource],
+        mode: "structured",
+      };
+    }
   }
 
   if (/\b(?:how\s+many|number|count|koto|kojon)\b/i.test(q) && /\b(?:undergraduate|graduate|students?|faculty|teachers?|office\s+staff)\b/i.test(q) && /\b(?:gono|bishwabidyalay|university)\b/i.test(q)) {
@@ -2217,6 +2457,136 @@ function directMissionVisionAnswer(question) {
   };
 }
 
+function directGbiemsAndPortalAnswer(question, knowledge) {
+  const q = normalizeQuestion(question);
+  const isBanglish = prefersBanglish(question);
+
+  const portalSource = { title: "GBIEMS Student Portal", url: "https://gbiems.pipilikasoft.com/" };
+  const onlineSource = universitySources.online || { title: "Online Facilities", url: `${officialSiteUrl}admission/online-facilities/` };
+
+  // 1. Password reset / Forgot password
+  if (/\b(?:password|pass)\b.*\b(?:vule|reset|change|recovery|pabo|kivabe|problem|kaj\s*korche\s*na)\b|\b(?:vule\s*gechi|recovery)\b.*\b(?:password|pass)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "GBIEMS / Student Portal-এর পাসওয়ার্ড ভুলে গেলে বা রিসেট করার নিয়ম:\n\n" +
+          "১. **অনলাইন পাসওয়ার্ড রিকভারি:** GBIEMS লগইন পেজে (`https://gbiems.pipilikasoft.com/`) গিয়ে **'Forgot Password?'** অপশনে ক্লিক করুন। আপনার রেজিস্টার্ড **Student ID** এবং মোবাইল নম্বর/ইমেইল দিলে পাসওয়ার্ড রিসেট লিংক বা ওটিপি চলে আসবে।\n" +
+          "২. **বিভাগীয় কোঅর্ডিনেটর / আইটি সেল:** অনলাইনে রিকভার না হলে আপনার নিজ ডিপার্টমেন্টের **ব্যাচ কোঅর্ডিনেটর** অথবা বিশ্ববিদ্যালয়ের **আইটি সেল / রেজিস্ট্রার অফিসে** যোগাযোগ করলে তাৎক্ষণিকভাবে পাসওয়ার্ড রিসেট করে দেওয়া হয়।"
+        : "How to reset or recover your GBIEMS Student Portal password:\n\n" +
+          "1. **Online Password Recovery:** Go to the GBIEMS login page (`https://gbiems.pipilikasoft.com/`) and click on **'Forgot Password?'**. Enter your registered Student ID and phone number/email to receive password reset instructions.\n" +
+          "2. **Department Coordinator / IT Cell:** If you cannot recover it online, contact your department's **Batch Coordinator** or the university **IT Cell / Registrar Office** for immediate credential reset.",
+      sources: [portalSource, onlineSource],
+      mode: "structured",
+    };
+  }
+
+  // 2. Admit card download
+  if (/\b(?:admit\s*card|admit)\b.*\b(?:download|kivabe|pabo|koi|tulbo|print|collection)\b|\b(?:kivabe|koi)\b.*\b(?:admit\s*card|admit)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "পরীক্ষার **Admit Card (প্রবেশপত্র)** ডাউনলোডের সম্পূর্ণ নিয়ম:\n\n" +
+          "১. **লগইন করুন:** GBIEMS স্টুডেন্ট পোর্টালে (`https://gbiems.pipilikasoft.com/`) আপনার Student ID ও Password দিয়ে লগইন করুন।\n" +
+          "২. **বকেয়া ক্লিয়ারেন্স:** সেমিস্টার ফি বা বকেয়া থাকলে পোর্টাল থেকেই bKash, SSLCommerz বা Upay দিয়ে তাৎক্ষণিকভাবে পরিশোধ করুন।\n" +
+          "৩. **উপস্থিতি (Attendance):** বিশ্ববিদ্যালয়ের নীতি অনুযায়ী ক্লাসে প্রয়োজনীয় উপস্থিতি থাকতে হবে।\n" +
+          "৪. **ডাউনলোড:** ড্যাশবোর্ডের **'Admit Card'** মেনুতে গিয়ে সিস্টেম-জেনারেটেড ইউনিক সিকিউরিটি কোডসহ এডমিট কার্ড ডাউনলোড ও প্রিন্ট করে নিন।"
+        : "Step-by-step guide to download Semester Exam Admit Card from GBIEMS:\n\n" +
+          "1. **Log in:** Visit the GBIEMS Student Portal (`https://gbiems.pipilikasoft.com/`) with your Student ID and Password.\n" +
+          "2. **Clear Outstanding Dues:** Clear any semester tuition fees directly through the portal using bKash, SSLCommerz, or Upay.\n" +
+          "3. **Attendance Verification:** Verify you meet the minimum course attendance requirement.\n" +
+          "4. **Download & Print:** Navigate to the **'Admit Card'** section to download and print your official admit card featuring the system-generated verification code.",
+      sources: [portalSource, onlineSource],
+      mode: "structured",
+    };
+  }
+
+  // 3. Semester / Course Registration
+  if (/\b(?:semester|course)\s+registration\b|\b(?:registration|reg)\b.*\b(?:kivabe|korbo|kore|system|process)\b|\b(?:kivabe|kore)\b.*\b(?:registration|reg)\b/i.test(q) && !/\b(admission|vorti)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "সেমিস্টার **কোর্স রেজিস্ট্রেশন (Course Registration)** করার নিয়ম:\n\n" +
+          "১. GBIEMS স্টুডেন্ট পোর্টালে লগইন করুন (`https://gbiems.pipilikasoft.com/`)।\n" +
+          "২. মেনু থেকে **'Course Registration'** অপশনে যান।\n" +
+          "৩. বর্তমান লেভেল ও টার্মের জন্য অফারকৃত সিলেবাসের বিষয়গুলো সিলেক্ট করুন।\n" +
+          "৪. এক ক্লিকে সাবমিট করলে সংশ্লিষ্ট বিভাগীয় প্রধান (Head of Department) বা ব্যাচ কোঅর্ডিনেটরের অনুমোদনের পর রেজিস্ট্রেশন চূড়ান্ত হয়।"
+        : "How to complete semester Course Registration on GBIEMS:\n\n" +
+          "1. Log in to the GBIEMS Student Portal (`https://gbiems.pipilikasoft.com/`).\n" +
+          "2. Open the **'Course Registration'** menu.\n" +
+          "3. Select the courses offered for your level/term from your curriculum.\n" +
+          "4. Submit your selection with one click for approval by your Department Head or Batch Coordinator.",
+      sources: [portalSource, onlineSource],
+      mode: "structured",
+    };
+  }
+
+  // 4. Online Payment / Tuition Fee Payment via Portal
+  if (/\b(?:online\s+payment|fee\s+payment|bkash|sslcommerz|upay)\b.*\b(?:kivabe|korbo|kore|process|system)\b|\b(?:kivabe|korbo)\b.*\b(?:fee\s+payment|tuition\s+fee\s+payment|bkash\s+e\s+fee|online\s+e\s+taka)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "GBIEMS পোর্টালের মাধ্যমে **অনলাইনে ফি পরিশোধের (Online Payment)** নিয়ম:\n\n" +
+          "১. GBIEMS পোর্টালে লগইন করে **'Dues & Payment Details'** সেকশনে যান।\n" +
+          "২. আপনার সেমিস্টার অনুযায়ী বকেয়া ও ফি-এর বিস্তারিত বিবরণ দেখতে পাবেন।\n" +
+          "৩. **bKash, SSLCommerz অথবা Upay** সিলেক্ট করে অনলাইনে তাৎক্ষণিক পেমেন্ট সম্পন্ন করুন।\n" +
+          "৪. এছাড়া ব্যাংকের মাধ্যমে দিতে চাইলে নির্ধারিত ব্যাংকে Student ID দিয়ে টাকা জমা দিলে ব্যাংকের স্লিপ ভার্সিটিতে জমা দেওয়া ছাড়াই স্বয়ংক্রিয়ভাবে পোর্টালে আপডেট হয়ে যায়।"
+        : "How to make tuition fee payments online via GBIEMS:\n\n" +
+          "1. Log in to GBIEMS and go to **'Dues & Payment Details'**.\n" +
+          "2. View your complete semester-wise fee breakdown and outstanding dues.\n" +
+          "3. Pay instantly using integrated Mobile Financial Services (**bKash, SSLCommerz, Upay**).\n" +
+          "4. For over-the-counter (OTC) bank deposits at designated branches, provide your Student ID and payment is instantly reflected online without needing to submit paper bank slips.",
+      sources: [portalSource, onlineSource],
+      mode: "structured",
+    };
+  }
+
+  // 5. GBIEMS Login URL / Portal Link
+  if (/\b(?:gbiems|i-?ems|student\s+portal|portal)\b.*\b(?:login|link|url|website|site|dhukbo|kivabe\s+dhukbo|access)\b|\b(?:login|link|url)\b.*\b(?:gbiems|i-?ems|portal)\b/i.test(q)) {
+    return {
+      text: isBanglish
+        ? "গণ বিশ্ববিদ্যালয়ের **GBIEMS / Student Portal** লগইন লিংক ও তথ্য:\n\n" +
+          "🔗 **সরাসরি লগইন পোর্টাল:** [https://gbiems.pipilikasoft.com/](https://gbiems.pipilikasoft.com/)\n" +
+          "🌐 **মূল ওয়েবসাইট:** [https://gonouniversity.edu.bd/](https://gonouniversity.edu.bd/) (Quick Links > Student Portal)\n\n" +
+          "**কীভাবে লগইন করবেন:**\n" +
+          "• আপনার **Student ID** এবং **Password** দিয়ে 'Login' বাটনে ক্লিক করুন।\n" +
+          "• পোর্টালের মাধ্যমে কোর্স রেজিস্ট্রেশন, পরীক্ষার ফলাফল, এডমিট কার্ড, বকেয়া ফি, লাইব্রেরি ও ক্লাসের হাজিরা দেখা যায়।"
+        : "Gono Bishwabidyalay **GBIEMS / Student Portal** Login Information:\n\n" +
+          "🔗 **Direct Portal Link:** [https://gbiems.pipilikasoft.com/](https://gbiems.pipilikasoft.com/)\n" +
+          "🌐 **Main Website:** [https://gonouniversity.edu.bd/](https://gonouniversity.edu.bd/) (Under Quick Links > Student Portal)\n\n" +
+          "**How to Login:**\n" +
+          "• Use your official **Student ID** and **Password** to log in.\n" +
+          "• Access course registration, exam results, admit cards, online fee payment, digital library, and attendance tracking.",
+      sources: [portalSource, onlineSource],
+      mode: "structured",
+    };
+  }
+
+  // 6. GBIEMS Overview / "gbiems ki?"
+  if (/\b(?:gbiems|i-?ems)\b/i.test(q) || (/\b(?:student\s+portal|portal|erp)\b/i.test(q) && /\b(?:ki|somporke|details|info|about|facility|facilities)\b/i.test(q))) {
+    return {
+      text: isBanglish
+        ? "**GBIEMS (Gono Bishwabidyalay Integrated Education Management System)** হলো গণ বিশ্ববিদ্যালয়ের কেন্দ্রীয় স্মার্ট অটোমেশন ও স্টুডেন্ট পোর্টাল (পিপীলিকা সফটওয়্যার সহযোগে পরিচালিত)।\n\n" +
+          "**শিক্ষার্থীরা পোর্টালে যেসব সুবিধা পান:**\n" +
+          "১. **কোর্স রেজিস্ট্রেশন:** প্রতি সেমিস্টারে অফারকৃত কোর্সে এক ক্লিকে রেজিস্ট্রেশন।\n" +
+          "২. **এডমিট কার্ড ডাউনলোড:** সেমিস্টার ফাইনাল পরীক্ষার প্রবেশপত্র অনলাইন থেকে সরাসরি প্রিন্ট।\n" +
+          "৩. **অনলাইন ফি পরিশোধ:** bKash, SSLCommerz, Upay-এর মাধ্যমে ঘরে বসেই টিউশন ফি পেমেন্ট।\n" +
+          "৪. **পরীক্ষার ফলাফল:** সেমিস্টার রেজাল্ট, গ্রেডশিট ও সাপ্লিমেন্টারি পরীক্ষার আবেদন।\n" +
+          "৫. **LMS ও ক্লাস হাজিরা:** প্রতিদিনের ক্লাসের হাজিরা (Attendance %), কোর্স মেটেরিয়ালস ও নোটিশ।\n" +
+          "৬. **ডিজিটাল লাইব্রেরি:** বই ব্রাউজিং, ইস্যু/রিটার্ন ট্র্যাকিং ও বকেয়া জরিমানা চেক।\n\n" +
+          "🔗 **GBIEMS লগইন লিংক:** [https://gbiems.pipilikasoft.com/](https://gbiems.pipilikasoft.com/)"
+        : "**GBIEMS (Gono Bishwabidyalay Integrated Education Management System)** is the centralized ERP and student online portal for Gono Bishwabidyalay, powered by Pipilika Soft.\n\n" +
+          "**Key Student Services Available:**\n" +
+          "1. **Course Registration:** One-click online registration for departmental courses.\n" +
+          "2. **Admit Card Download:** Download official admit cards with verification security codes.\n" +
+          "3. **Online Fee Payment:** Pay tuition fees from home via bKash, SSLCommerz, and Upay.\n" +
+          "4. **Exam Results:** Check published semester GPA, gradesheets, and re-exam registration.\n" +
+          "5. **LMS & Attendance:** View daily class attendance percentage and download lecture materials.\n" +
+          "6. **Digital Library:** Browse catalog books, track borrowed items, and check library fines.\n\n" +
+          "🔗 **GBIEMS Portal:** [https://gbiems.pipilikasoft.com/](https://gbiems.pipilikasoft.com/)",
+      sources: [portalSource, onlineSource],
+      mode: "structured",
+    };
+  }
+
+  return null;
+}
+
 function directFacilitiesAnswer(question) {
   const q = normalizeQuestion(question);
   if (/\b(?:transport|bus|buses|shuttle|gari|jaoar\s+babostha)\b/i.test(q)) {
@@ -2274,7 +2644,7 @@ function directFacilitiesAnswer(question) {
       mode: "structured",
     };
   }
-  if (/\b(portal|erp|i-?ems|online\s+(?:facility|facilities|payment|class|services?)|attendance|course\s+materials?|digital\s+library)\b/i.test(q)) {
+  if (/\b(portal|erp|gbiems|i-?ems|online\s+(?:facility|facilities|payment|class|services?)|attendance|course\s+materials?|digital\s+library)\b/i.test(q)) {
     return {
       text: prefersBanglish(question)
         ? "GB-r integrated **i-EMS/Student Portal**-e course registration, dues/payment details, online payment, attendance, course materials, class/course notices o online-class link support ache. Official page bKash, SSLCommerz o Upay payment integration ebong digital-library/alumni features-o ullekh kore."
@@ -2415,7 +2785,7 @@ function directClubAnswer(question, knowledge) {
   }
 
   const mentionsGbcdc = /\b(gbcdc|gb\s*cdc|career\s+development\s+club|career\s+club)\b/i.test(q);
-  const mentionsGeneralClub = /\b(clubs?|student\s+organizations?|shongothon|songothon)\b/i.test(q) &&
+  const mentionsGeneralClub = (/\b(clubs?|student\s+organizations?|shongothon|songothon)\b/i.test(q) || /(ক্লাব|সংগঠন)/.test(question)) &&
     !/\b(rotaract|leo|sports\s+club|photographic|debating|cultural\s+club|science\s+club)\b/i.test(q);
 
   if (!mentionsGbcdc && !mentionsGeneralClub) return null;
@@ -3677,8 +4047,7 @@ async function handleFollowupFormatRequest({ message, history, knowledge, sessio
   const cleanText = cleanTextOfPrefix(rawAssistantText);
   const isUniv =
     hadUnivHeader ||
-    Boolean(knowledge && origUser?.text && isUniversityInquiry(origUser.text, knowledge, [])) ||
-    Boolean(knowledge && cleanText && isUniversityInquiry(cleanText, knowledge, []));
+    Boolean(knowledge && origUser?.text && isUniversityInquiry(origUser.text, knowledge, []));
 
   const language = isBn
     ? "Bengali"
@@ -3766,13 +4135,19 @@ function formatPeopleContact(question, people) {
   const asksEmail = /\b(email|mail)\b/i.test(q);
   const asksGeneralContact = /\b(contact)\b/i.test(q) && !asksPhone && !asksEmail;
   const lines = people.map((person) => {
-    if (asksEmail) return `**${person.name}**: ${person.email ? `**${person.email}**` : "email not listed in official data"}`;
-    if (asksPhone) return `**${person.name}**: ${person.phone ? `**${person.phone}**` : "phone number not listed in official data"}`;
+    const qTokens = tokenize(question);
+    let nicknameNote = "";
+    if (qTokens.includes("rekha") && /rekha/i.test(person.email || "")) {
+      nicknameNote = prefersBanglish(question) ? " (রেখা ম্যাডাম / Rekha Mam)" : " (Rekha Mam)";
+    }
+    const displayName = `**${person.name}**${nicknameNote}`;
+    if (asksEmail) return `${displayName}: ${person.email ? `**${person.email}**` : "email not listed in official data"}`;
+    if (asksPhone) return `${displayName}: ${person.phone ? `**${person.phone}**` : "phone number not listed in official data"}`;
     if (asksGeneralContact) {
       const parts = [];
       if (person.phone) parts.push(`Phone: **${person.phone}**`);
       if (person.email) parts.push(`Email: **${person.email}**`);
-      return `**${person.name}**: ${parts.length ? parts.join(", ") : "contact information not listed in official data"}`;
+      return `${displayName}: ${parts.length ? parts.join(", ") : "contact information not listed in official data"}`;
     }
     return personIdentityLine(question, person);
   });
@@ -3888,6 +4263,12 @@ function explicitSubjectFillerWords() {
     "onake",
     "unake",
     "uni",
+    "unir",
+    "onir",
+    "unara",
+    "onara",
+    "tini",
+    "ini",
     "he",
     "him",
     "his",
@@ -3926,6 +4307,11 @@ function directUnknownPersonAnswer(question, knowledge) {
     /\b(chino|cheno|know|who|ke|profile|details|info|about|sir|mam|maam|madam|teacher|faculty)\b/i.test(q) ||
     asksContactDetail(q);
   if (!asksPerson) return null;
+
+  const asksCount =
+    /\b(?:how\s+many|count|total|koto|koyjon|kojon|kotojon|koi\s*jon|koy\s*jon|ko\s*jon|shongkha|sonkha)\b/i.test(q) ||
+    /(কতজন|কয়জন|সংখ্যা|মোট)/.test(question);
+  if (asksCount) return null;
 
   const filler = explicitSubjectFillerWords();
   const terms = tokenize(q).filter((term) => term.length >= 3 && !filler.has(term));
@@ -4564,18 +4950,34 @@ function isTeachingFaculty(person) {
   return !/\b(?:lab|it|administrative|admin|section|support)\s+(?:officer|assistant)|\bofficer\b/i.test(person.designation || "");
 }
 
+const femaleGivenNames = new Set([
+  "adila", "afroza", "amina", "bipasa", "farhana", "farzana", "fatema", "jannat",
+  "mahmuda", "mariam", "mim", "nazia", "nusrat", "sabina", "sadika", "shanta",
+  "sharmin", "shatabdee", "sultana", "sumaiya", "tania", "tasnim", "umme",
+  "rozina", "parul", "mosharrafa", "khatun", "akter", "begum", "monira", "shahana",
+  "shamima", "dilruba", "mst", "most", "mrs", "ms", "miss",
+  "tahmina", "rehana", "nasrin", "salma", "ayesha", "rumana", "sabrina", "sadia",
+  "suraiya", "naznin", "shirin", "zannat", "fahmida", "kaniz", "shampa", "rupa",
+  "rabeya", "rokeya", "nahid", "lubna", "sonia", "munira", "tamanna", "nargis",
+  "dilara", "marufa", "kazi", "ferdousi", "hasina", "khaleda", "shirrin", "sanjida",
+  "ananya", "pritilata", "mousumi", "mowsumi", "asma", "bilkis", "rowshan",
+  "farah", "towhida", "tasnuva", "azmeri", "jasmin", "kumkum", "kamrun", "jarin",
+  "samia", "munni", "mary", "maherun", "zereen", "sathy", "binita",
+]);
+
+function isKnownFemalePerson(person) {
+  const name = normalizeQuestion(cleanPersonName(person?.name || "")).replace(/[^a-z\s]/g, " ");
+  return (
+    /\b(?:mrs|ms|miss|mst\.?|most\.?)\b/i.test(person?.name || "") ||
+    name.split(/\s+/).some((token) => femaleGivenNames.has(token))
+  );
+}
+
 function matchesRequestedHonorific(question, person) {
   const q = normalizeQuestion(question);
-  const name = normalizeQuestion(cleanPersonName(person?.name || ""));
-  const femaleGivenNames = new Set([
-    "adila", "afroza", "amina", "bipasa", "farhana", "farzana", "fatema", "jannat",
-    "mahmuda", "mariam", "mim", "nazia", "nusrat", "sabina", "sadika", "shanta",
-    "sharmin", "shatabdee", "sultana", "sumaiya", "tania", "tasnim", "umme",
-  ]);
-  const isKnownFemale = /\b(?:mrs|ms|miss)\.?\b/i.test(person?.name || "") ||
-    name.split(" ").some((token) => femaleGivenNames.has(token));
-  if (/\b(?:mam|maam|madam)\b/i.test(q)) return isKnownFemale;
-  if (/\bsir\b/i.test(q)) return !isKnownFemale;
+  const isFemale = isKnownFemalePerson(person);
+  if (/\b(?:mam|maam|madam)\b/i.test(q)) return isFemale;
+  if (/\bsir\b/i.test(q)) return !isFemale;
   return true;
 }
 
@@ -4941,7 +5343,7 @@ function directCourseCatalogAnswer(question, knowledge) {
   const explicitCourseTopic =
     !/\b(teacher|teachers|faculty|member|members|head|chairman|fee|fees|cost|tuition|vorti|admission|eligibility)\b/i.test(q) &&
     /\b(data\s+structures?|algorithm|database|network|operating\s+system|artificial\s+intelligence|programming|electronics|circuit|pharmacology)\b/i.test(q);
-  if (!asksCourses && !explicitCourseTopic) return null;
+  if ((!asksCourses && !explicitCourseTopic) || /\b(duration|bochor|bochorer|koto\s+bochor|koy\s+bochor|years?)\b/i.test(q)) return null;
   const { courses, sources } = departmentCourses(knowledge, matchedDepartment);
   if (!courses.length) return null;
 
@@ -4980,6 +5382,7 @@ function directCourseCatalogAnswer(question, knowledge) {
 
 function directDepartmentProfileAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
+  if (findPeople(q, knowledge.faculty || [], knowledge).length > 0) return null;
   const matchedDepartment = matchedDepartmentFromQuestion(q, knowledge);
   const asksOverview = /\b(about|overview|profile|details|somporke|somproke|niye\s+bolo|info|information)\b/i.test(q);
   if (!matchedDepartment || !asksOverview || asksFeeDetail(q) || asksContactDetail(q) || asksProgramDetail(q)) return null;
@@ -5064,6 +5467,7 @@ function directFacultyDesignationCountAnswer(question, knowledge) {
 
   const matchedDept = matchedDepartmentFromQuestion(q, knowledge);
   if (!asksCount && !asksList && !asksAvailable && matchedDept) return null;
+  if (!asksCount && !asksList && findPeople(q, knowledge.faculty || [], knowledge).length > 0) return null;
 
   const banglish = prefersBanglish(question);
   const allFaculty = Array.isArray(knowledge.faculty) ? knowledge.faculty : [];
@@ -5139,6 +5543,187 @@ function directFacultyDesignationCountAnswer(question, knowledge) {
   };
 }
 
+function directDepartmentFacultyCountAnswer(question, knowledge, history = []) {
+  const q = normalizeQuestion(question);
+  if (asksFeeDetail(q) || asksContactDetail(q) || asksProgramDetail(q)) return null;
+
+  // Let combined student/faculty queries and pure student queries be handled by institution stats
+  if (/\b(?:students?|undergrads?|postgraduate\s+students?|chatro|chhatro|shikkharthi|shikkarthi)\b/i.test(q) || /(ছাত্র|ছাত্রী|শিক্ষার্থী)/.test(question)) {
+    return null;
+  }
+
+  if (findPeople(q, knowledge.faculty || [], knowledge).length > 0) return null;
+  if (/\b(?:chino|cheno|chine|jano|about|porichoy|porichito)\b/i.test(q)) return null;
+
+  let matchedDept = matchedDepartmentFromQuestion(q, knowledge);
+  if (!matchedDept && history.length) {
+    matchedDept = activeContextDepartment(history, question, knowledge);
+  }
+
+  const isSpecificSirQuery = /\b(?:sir|sirs)\b/i.test(q) && !/\b(?:madam|mam|maam)\b/i.test(q);
+  const isSpecificMadamQuery = /\b(?:madam|madams|mam|maam)\b/i.test(q) && !/\b(?:sir|sirs)\b/i.test(q);
+  const asksCount =
+    /\b(?:how\s+many|koto|kotojon|kojon|koyjon|koto\s*jon|total|count|shongkha|sonkha)\b/i.test(q) ||
+    /(কতজন|কয়জন|সংখ্যা|মোট)/.test(question);
+  const asksFacultyTopic =
+    /\b(?:sir|sirs|madam|madams|mam|maam|teacher|teachers|faculty\s+members?|shikkhok|shikkhika|shikkha)\b/i.test(q) ||
+    (/\bfaculty\b/i.test(q) && /\b(?:members?|koyjon|kojon|kotojon|koi\s*jon|koy\s*jon|ko\s*jon|who|ke)\b/i.test(q)) ||
+    /(শিক্ষক|শিক্ষিকা|স্যার|ম্যাডাম)/.test(question);
+
+  if (!asksFacultyTopic) return null;
+  if (!asksCount && !isSpecificSirQuery && !isSpecificMadamQuery && !/\b(?:shikkhok|shikkhika|sir|madam|mam|teacher|teachers|faculty|member|members)\b/i.test(q)) {
+    return null;
+  }
+
+  const banglish = prefersBanglish(question);
+
+  // If no department is specified in query or history, provide accurate university-wide faculty / sir / madam statistics
+  if (!matchedDept) {
+    // University-wide answer is only for count inquiries (never personal profile/qualification inquiries)
+    if (!asksCount) return null;
+    if (/\b(?:qualification|joggota|degree|education|profile|contact|phone|email)\b/i.test(q)) return null;
+
+    const allFaculty = Array.isArray(knowledge.faculty) ? knowledge.faculty : [];
+    const teachingFaculty = allFaculty.filter(isTeachingFaculty);
+    if (!teachingFaculty.length) return null;
+
+    const sirs = teachingFaculty.filter((p) => !isKnownFemalePerson(p));
+    const madams = teachingFaculty.filter((p) => isKnownFemalePerson(p));
+
+    if (isSpecificMadamQuery) {
+      const deptMadamCounts = new Map();
+      for (const person of madams) {
+        let rawDept = String(person.department || "Other")
+          .replace(/^Department of\s+/i, "")
+          .replace(/^Faculty of\s+/i, "")
+          .trim();
+        if (/^(?:offices|administration|sports office|gb central)/i.test(rawDept)) continue;
+        deptMadamCounts.set(rawDept, (deptMadamCounts.get(rawDept) || 0) + 1);
+      }
+      const sortedMadamDepts = [...deptMadamCounts.entries()].sort((a, b) => b[1] - a[1]);
+      const madamDeptLines = sortedMadamDepts
+        .slice(0, 8)
+        .map(([dept, count]) => `• **${dept}:** ${count} জন`);
+      const enMadamDeptLines = sortedMadamDepts
+        .slice(0, 8)
+        .map(([dept, count]) => `• **${dept}:** ${count}`);
+
+      const responseText = banglish
+        ? `গণ বিশ্ববিদ্যালয়ের অফিসিয়াল ফ্যাকাল্টি ডিরেক্টরি অনুযায়ী বিভিন্ন অ্যাকাডেমিক বিভাগে সর্বমোট **${madams.length} জন শিক্ষিকা (ম্যাডাম)** কর্মরত আছেন (মোট ${teachingFaculty.length} জন অ্যাকাডেমিক শিক্ষকের মধ্যে ${sirs.length} জন স্যার ও ${madams.length} জন ম্যাডাম)।\n\n**প্রধান বিভাগগুলোতে শিক্ষিকা (ম্যাডাম)-দের সংখ্যা:**\n${madamDeptLines.join("\n")}\n\nআপনি কি নির্দিষ্ট কোনো ডিপার্টমেন্টের (যেমন CSE, Pharmacy, Law, English ইত্যাদি) ম্যাডামদের নাম ও বিস্তারিত তালিকা দেখতে চান? ডিপার্টমেন্টের নাম লিখলেই আমি পূর্ণাঙ্গ তালিকা জানিয়ে দেব।`
+        : `According to official faculty records, Gono Bishwabidyalay has **${madams.length} female faculty members (Madams)** across academic departments (out of **${teachingFaculty.length}** total teaching faculty: ${sirs.length} male, ${madams.length} female).\n\n**Key Department Breakdown for Female Faculty:**\n${enMadamDeptLines.join("\n")}\n\nWould you like the full faculty list or names for a specific department (e.g., CSE, Pharmacy, Law, English)? Mention the department name and I will provide the details.`;
+
+      return {
+        text: responseText,
+        sources: [
+          { title: "Academics & Faculty Directory - Gono Bishwabidyalay", url: `${officialSiteUrl}academics/` },
+        ],
+        mode: "structured",
+      };
+    }
+
+    if (isSpecificSirQuery) {
+      const deptSirCounts = new Map();
+      for (const person of sirs) {
+        let rawDept = String(person.department || "Other")
+          .replace(/^Department of\s+/i, "")
+          .replace(/^Faculty of\s+/i, "")
+          .trim();
+        if (/^(?:offices|administration|sports office|gb central)/i.test(rawDept)) continue;
+        deptSirCounts.set(rawDept, (deptSirCounts.get(rawDept) || 0) + 1);
+      }
+      const sortedSirDepts = [...deptSirCounts.entries()].sort((a, b) => b[1] - a[1]);
+      const sirDeptLines = sortedSirDepts
+        .slice(0, 8)
+        .map(([dept, count]) => `• **${dept}:** ${count} জন`);
+      const enSirDeptLines = sortedSirDepts
+        .slice(0, 8)
+        .map(([dept, count]) => `• **${dept}:** ${count}`);
+
+      const responseText = banglish
+        ? `গণ বিশ্ববিদ্যালয়ের অফিসিয়াল ফ্যাকাল্টি ডিরেক্টরি অনুযায়ী বিভিন্ন অ্যাকাডেমিক বিভাগে সর্বমোট **${sirs.length} জন পুরুষ শিক্ষক (স্যার)** কর্মরত আছেন (মোট ${teachingFaculty.length} জন অ্যাকাডেমিক শিক্ষকের মধ্যে ${sirs.length} জন স্যার ও ${madams.length} জন ম্যাডাম)।\n\n**প্রধান বিভাগগুলোতে শিক্ষকদের (স্যার) সংখ্যা:**\n${sirDeptLines.join("\n")}\n\nআপনি কি নির্দিষ্ট কোনো ডিপার্টমেন্টের (যেমন CSE, Pharmacy, Law, BBA, English ইত্যাদি) স্যারদের পূর্ণাঙ্গ তালিকা ও নাম জানতে চান? বিভাগটির নাম উল্লেখ করলে আমি বিস্তারিত তথ্য প্রদান করব।`
+        : `According to official faculty records, Gono Bishwabidyalay has **${sirs.length} male faculty members (Sirs)** across academic departments (out of **${teachingFaculty.length}** total teaching faculty: ${sirs.length} male, ${madams.length} female).\n\n**Key Department Breakdown for Male Faculty:**\n${enSirDeptLines.join("\n")}\n\nWould you like the full faculty list or names for a specific department (e.g., CSE, Pharmacy, Law, English)? Mention the department and I will provide the full list.`;
+
+      return {
+        text: responseText,
+        sources: [
+          { title: "Academics & Faculty Directory - Gono Bishwabidyalay", url: `${officialSiteUrl}academics/` },
+        ],
+        mode: "structured",
+      };
+    }
+
+    // General university-wide faculty count
+    const responseText = banglish
+      ? `গণ বিশ্ববিদ্যালয়ের অফিসিয়াল ওয়েবসাইট অনুসারে ক্যাম্পাসে **১৮০+ ফ্যাকাল্টি মেম্বার (শিক্ষক)** রয়েছেন (তবে বিস্তারিত বিভাগীয় ডিরেক্টরিতে মোট ${teachingFaculty.length} জন অ্যাকাডেমিক শিক্ষক তালিকাভুক্ত আছেন — যার মধ্যে **${sirs.length} জন স্যার** এবং **${madams.length} জন ম্যাডাম** কর্মরত আছেন)।\n\nআপনি কি নির্দিষ্ট কোনো ডিপার্টমেন্টের (যেমন CSE, Pharmacy, Law, English) শিক্ষকদের বিস্তারিত তালিকা জানতে চান?`
+      : `According to official website records, Gono Bishwabidyalay has **180+ faculty members** on campus (with ${teachingFaculty.length} academic faculty members indexed in the directory: **${sirs.length} Sirs** and **${madams.length} Madams**).\n\nWould you like the faculty details for a specific department (e.g., CSE, Pharmacy, Law, English)?`;
+
+    return {
+      text: responseText,
+      sources: [
+        { title: "Gono Bishwabidyalay", url: officialSiteUrl },
+        { title: "Academics & Faculty Directory - Gono Bishwabidyalay", url: `${officialSiteUrl}academics/` },
+      ],
+      mode: "structured",
+    };
+  }
+
+  const displayDept = displayDepartmentName(matchedDept);
+  const allPeople = departmentPeople(knowledge, matchedDept);
+  const teachingFaculty = allPeople.filter(isTeachingFaculty);
+  const staff = allPeople.filter((p) => !isTeachingFaculty(p));
+  if (!teachingFaculty.length) return null;
+
+  const leaders = departmentLeaderRecords(knowledge, matchedDept, teachingFaculty);
+  const headName = leaders.length ? leaders.map((p) => p.name).join(", ") : "";
+  const sourceUrl =
+    teachingFaculty.find((p) => p.source)?.source ||
+    allPeople.find((p) => p.source)?.source ||
+    `${officialSiteUrl}academics/`;
+
+  const sirs = teachingFaculty.filter((p) => !isKnownFemalePerson(p));
+  const madams = teachingFaculty.filter((p) => isKnownFemalePerson(p));
+
+  const profCount = teachingFaculty.filter(
+    (p) => /\bprofessor\b/i.test(p.designation || "") && !/\b(?:assistant|associate)\b/i.test(p.designation || ""),
+  ).length;
+  const assocProfCount = teachingFaculty.filter((p) => /\bassociate\s+professor\b/i.test(p.designation || "")).length;
+  const asstProfCount = teachingFaculty.filter((p) => /\bassistant\s+professor\b/i.test(p.designation || "")).length;
+  const lecCount = teachingFaculty.filter((p) => /\blecturer\b/i.test(p.designation || "")).length;
+
+  const desigSummaryParts = [];
+  if (profCount) desigSummaryParts.push(`অধ্যাপক ${profCount} জন`);
+  if (assocProfCount) desigSummaryParts.push(`সহযোগী অধ্যাপক ${assocProfCount} জন`);
+  if (asstProfCount) desigSummaryParts.push(`সহকারী অধ্যাপক ${asstProfCount} জন`);
+  if (lecCount) desigSummaryParts.push(`প্রভাষক ${lecCount} জন`);
+  const desigSummaryText = desigSummaryParts.join(", ");
+
+  let responseText = "";
+
+  if (isSpecificSirQuery) {
+    const sirList = sirs.map((p, i) => `${i + 1}. **${p.name}** (${p.designation || "Faculty"})`).join("\n");
+    responseText = banglish
+      ? `অফিসিয়াল তথ্য অনুযায়ী গণ বিশ্ববিদ্যালয়ের **${displayDept}** বিভাগে মোট **${sirs.length} জন পুরুষ শিক্ষক (স্যার)** কর্মরত আছেন।\n\n(উল্লেখ্য, এই বিভাগে সর্বমোট শিক্ষক সংখ্যা: **${teachingFaculty.length} জন** — ${sirs.length} জন স্যার ও ${madams.length} জন ম্যাডাম${headName ? `; বিভাগীয় প্রধান: **${headName}**` : ""})।\n\n**স্যারদের তালিকা:**\n${sirList}`
+      : `According to official faculty records, the **${displayDept}** has **${sirs.length} male faculty members (Sirs)** (out of **${teachingFaculty.length}** total teaching faculty: ${sirs.length} male, ${madams.length} female${headName ? `; Head: **${headName}**` : ""}):\n\n${sirList}`;
+  } else if (isSpecificMadamQuery) {
+    const madamList = madams.map((p, i) => `${i + 1}. **${p.name}** (${p.designation || "Faculty"})`).join("\n");
+    responseText = banglish
+      ? `অফিসিয়াল তথ্য অনুযায়ী গণ বিশ্ববিদ্যালয়ের **${displayDept}** বিভাগে মোট **${madams.length} জন শিক্ষিকা (ম্যাডাম)** কর্মরত আছেন।\n\n(উল্লেখ্য, এই বিভাগে সর্বমোট শিক্ষক সংখ্যা: **${teachingFaculty.length} জন** — ${sirs.length} জন স্যার ও ${madams.length} জন ম্যাডাম${headName ? `; বিভাগীয় প্রধান: **${headName}**` : ""})।\n\n**ম্যাডামদের তালিকা:**\n${madamList}`
+      : `According to official faculty records, the **${displayDept}** has **${madams.length} female faculty members (Madams)** (out of **${teachingFaculty.length}** total teaching faculty: ${sirs.length} male, ${madams.length} female${headName ? `; Head: **${headName}**` : ""}):\n\n${madamList}`;
+  } else {
+    const fullList = teachingFaculty.map((p, i) => `${i + 1}. **${p.name}** (${p.designation || "Faculty"})`).join("\n");
+    const staffNote = staff.length ? `\n(এছাড়াও ল্যাব/আইটি সাপোর্টে ${staff.length} জন কর্মকর্তা রয়েছেন)` : "";
+    responseText = banglish
+      ? `অফিসিয়াল তথ্য অনুযায়ী গণ বিশ্ববিদ্যালয়ের **${displayDept}** বিভাগে সর্বমোট **${teachingFaculty.length} জন অ্যাকাডেমিক শিক্ষক (${teachingFaculty.length} jon record)** কর্মরত আছেন।\n\n• **বিভাগীয় প্রধান (Head):** ${headName || "N/A"}\n• **স্যার (Male):** ${sirs.length} জন | **ম্যাডাম (Female):** ${madams.length} জন\n• **পদবীভিত্তিক পরিসংখ্যান:** ${desigSummaryText || "N/A"}${staffNote}\n\n**শিক্ষকদের পূর্ণাঙ্গ তালিকা:**\n${fullList}`
+      : `Official data lists ${teachingFaculty.length} records for ${displayDept}.\n\n• **Department Head:** ${headName || "N/A"}\n• **Male faculty (Sirs):** ${sirs.length} | **Female faculty (Madams):** ${madams.length}\n• **Designation breakdown:** ${profCount ? `Professors: ${profCount}, ` : ""}${assocProfCount ? `Associate Profs: ${assocProfCount}, ` : ""}${asstProfCount ? `Assistant Profs: ${asstProfCount}, ` : ""}${lecCount ? `Lecturers: ${lecCount}` : ""}\n\n**Faculty Members:**\n${fullList}`;
+  }
+
+  return {
+    text: responseText,
+    sources: [{ title: `${displayDept} Faculty Members`, url: sourceUrl }],
+    mode: "structured",
+  };
+}
+
 function directDepartmentOverviewAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   if (
@@ -5150,6 +5735,8 @@ function directDepartmentOverviewAnswer(question, knowledge) {
   ) {
     return null;
   }
+  if (findPeople(q, knowledge.faculty || [], knowledge).length > 0) return null;
+  if (/\b(?:chino|cheno|chine|jano|about|porichoy|porichito)\b/i.test(q)) return null;
   const matchedDepartment = matchedDepartmentFromQuestion(q, knowledge);
   if (!matchedDepartment) return null;
 
@@ -5172,7 +5759,11 @@ function directDepartmentOverviewAnswer(question, knowledge) {
     .map((person) => person.name)
     .slice(0, 18);
 
-  if (/\b(ache|ase|available|offer|has|have|ki)\b/i.test(q) && !/\b(list|koyjon|kojon|number|email|contact)\b/i.test(q)) {
+  const asksPeopleOrCount =
+    /\b(list|koyjon|kojon|kotojon|koto\s*jon|how\s+many|total|count|shongkha|sonkha|sir|sirs|mam|maam|madam|madams|teacher|teachers|faculty|shikkhok|shikkhika|member|members|number|email|contact|phone)\b/i.test(q) ||
+    /(কতজন|কয়জন|শিক্ষক|শিক্ষিকা|স্যার|ম্যাডাম|তালিকা|সংখ্যা)/.test(question);
+
+  if (/\b(ache|ase|available|offer|has|have|ki)\b/i.test(q) && !asksPeopleOrCount) {
     return {
       text: prefersBanglish(question)
         ? `Yes, official data-te **${displayDepartment}** ache.${leadText}`
@@ -5310,7 +5901,7 @@ function directProgramDetailAnswer(question, knowledge) {
     .map((record) => ({ record, facts: extractProgramPlanFacts(record.text) }))
     .filter((item) => item.facts.credit || item.facts.duration);
   const asksCredit = /\bcredits?\b/i.test(q);
-  const asksDuration = /\b(duration|years?|semesters?)\b/i.test(q);
+  const asksDuration = /\b(duration|years?|semesters?|bochor|bochorer|koto\s+bochor|koy\s+bochor)\b/i.test(q);
   if (!asksCredit && !asksDuration) return null;
   const candidates = records.filter((item) => asksCredit ? item.facts.credit : item.facts.duration);
   const distinctValues = new Set(candidates.map((item) => asksCredit ? item.facts.credit : item.facts.duration));
@@ -5397,7 +5988,7 @@ function isGreetingQuestion(question) {
   const q = normalizeQuestion(question).replace(/[^\p{L}\p{N}\s]/gu, " ").trim();
   const greetingOrSalam = /^(hi|hello|hey|salam|assalamualaikum|assalamu alaikum|kemon acho|kemon achen|how are you|kemon|valo acho|আসসালামু আলাইকুম|হাই|হ্যালো|সালাম|কেমন আছো|কেমন আছেন)(\s+.*)?$/iu.test(q);
   const botIdentity = /\b(who\s+are\s+you|tumi\s+ke|apni\s+ke|tomar\s+nam\s+ki|what\s+is\s+your\s+name|ke\s+tumi|কে\s*তুমি|আপনি\s*কে|তোমার\s*নাম\s*কী|who\s+made\s+you)\b/iu.test(q);
-  const botCapability = /^(?:tumi\s+ki\s+korte\s+paro|what\s+can\s+you\s+do|how\s+can\s+you\s+help|ki\s+ki\s+korte\s+paro|sahajjo\s+chai|help\s+me|help\s+koro|help|কী\s*করতে\s*পারো|কীভাবে\s*সাহায্য\s*করতে\s*পারো)(\s+.*)?$/iu.test(q) && !/\b(?:choose|program|admission|journey|apply)\b/i.test(q);
+  const botCapability = /^(?:(?:tumi\s+|apni\s+)?ki\s+(?:ki\s+)?korte\s+paro|what\s+can\s+you\s+do|how\s+can\s+you\s+help|sahajjo\s+chai|help\s+me|help\s+koro|help|কী\s*করতে\s*পারো|কীভাবে\s*সাহায্য\s*করতে\s*পারো)(\s+.*)?$/iu.test(q) && !/\b(?:choose|program|admission|journey|apply)\b/i.test(q);
   const gratitude = /^(thanks|thank\s+you|dhonnobad|dhornobad|onek\s+dhonnobad|ধন্যবাদ|অনেক\s*ধন্যবাদ)(\s+.*)?$/iu.test(q);
   const farewell = /^(bye|goodbye|good\s+bye|allah\s+hafez|khoda\s+hafez|tata|বিদায়|বিদায়|আল্লাহ\s*হাফেজ)(\s+.*)?$/iu.test(q);
   return greetingOrSalam || botIdentity || botCapability || gratitude || farewell;
@@ -5438,7 +6029,7 @@ function directGreetingAnswer(question) {
     };
   }
 
-  if (/\b(tumi\s+ki\s+korte\s+paro|what\s+can\s+you\s+do|how\s+can\s+you\s+help|ki\s+ki\s+korte\s+paro|sahajjo\s+chai|help\s+me|help\s+koro|কী\s*করতে\s*পারো|কীভাবে\s*সাহায্য\s*করতে\s*পারো)\b/iu.test(q)) {
+  if (/\b((?:tumi\s+|apni\s+)?ki\s+(?:ki\s+)?korte\s+paro|what\s+can\s+you\s+do|how\s+can\s+you\s+help|sahajjo\s+chai|help\s+me|help\s+koro|কী\s*করতে\s*পারো|কীভাবে\s*সাহায্য\s*করতে\s*পারো)\b/iu.test(q)) {
     return {
       text: banglish
         ? "আমি **গণ বিশ্ববিদ্যালয় হেল্পডেস্ক অ্যাসিস্ট্যান্ট** হিসেবে নিচের বিষয়গুলোতে সহায়তা প্রদান করি:\n\n" +
@@ -5539,7 +6130,8 @@ function bareAcademicTopic(question) {
   const q = normalizeQuestion(question).replace(/[^\p{L}\p{N}\s]/gu, " ").trim();
   if (!q || tokenize(q).length > 4) return "";
   const hasSpecificIntent =
-    /\b(what\s+is|ki|kake\s+bole|explain|define|overview|about|details|courses?|subject|syllabus|credits?|duration|seats?|seat|asan|ashon|intake|capacity|qualification|eligibility|requirements?|joggota|lagbe|faculty|teacher|head|fee|fees?|fe|cost|costs?|tuition|tution|taka|tk|khoroch|khroch|kharach|kharoch|charge|charges|expense|expenses|payment|payments|package|admission|vorti|career|learn|study|somporke|somproke|bolo|dao|koto|how|why|list|show|compare|comparison|versus|vs|better|bhalo|naki|difference|phone|mobile|contact|call|cell|email|number)\b/i.test(q);
+    /\b(what\s+is|ki|kake\s+bole|explain|define|overview|about|details|courses?|subject|syllabus|credits?|duration|seats?|seat|asan|ashon|intake|capacity|qualification|eligibility|requirements?|joggota|lagbe|faculty|teacher|teachers|shikkhok|shikkhika|shikkha|sir|sirs|mam|maam|madam|madams|head|fee|fees?|fe|cost|costs?|tuition|tution|taka|tk|khoroch|khroch|kharach|kharoch|charge|charges|expense|expenses|payment|payments|package|admission|vorti|career|learn|study|somporke|somproke|bolo|dao|koto|kotojon|koyjon|kojon|how|why|list|show|compare|comparison|versus|vs|better|bhalo|naki|difference|phone|mobile|contact|call|cell|email|number|kothai|kothay|where|location|address|thikana)\b/i.test(q) ||
+    /(কতজন|কয়জন|শিক্ষক|শিক্ষিকা|স্যার|ম্যাডাম|কোথায়|ঠিকানা)/.test(question);
   if (hasSpecificIntent) return "";
   if (/\b(medical\s+physics|biomedical(?:\s+engineering)?)\b/i.test(q)) return "Medical Physics and Biomedical Engineering";
   if (/\b(cse|computer\s+science)\b/i.test(q)) return "CSE";
@@ -5981,7 +6573,7 @@ function directAnswer(question, knowledge, history = []) {
     }
   }
   const q = normalizeQuestion(question);
-  const departmentFollowup = /\b(chairman|chairperson|head|hod|dean|faculty|teachers?|members?|credits?|duration|seats?|eligibility|requirements?|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|courses?|subjects?|waiver|scholarship|stipend|admission|vorti|apply|qualification|gpa|career|job|future|scope|details?|bistarito)\b/i.test(q);
+  const departmentFollowup = /\b(chairman|chairperson|head|hod|dean|faculty|teachers?|members?|sir|sirs|mam|maam|madam|madams|shikkhok|shikkhika|credits?|duration|seats?|eligibility|requirements?|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|courses?|subjects?|waiver|scholarship|stipend|admission|vorti|apply|qualification|gpa|career|job|future|scope|details?|bistarito)\b/i.test(q);
   const comparativeFollowup = /\b(which|which\s+one|more|less|higher|lower|shorter|longer|better|konta|kontar|beshi|kom)\b/i.test(q);
   if (history.length && departmentFollowup && !comparativeFollowup && !isConversationalIntent(question) && !matchedDepartmentFromQuestion(q, knowledge)) {
     const priorDept = activeContextDepartment(history, question, knowledge);
@@ -6007,7 +6599,7 @@ function directAnswer(question, knowledge, history = []) {
       for (const priorTurn of priorUserTurns) {
         const priorQ = String(priorTurn.text || "").trim();
         const hasPriorAttribute =
-          /\b(chairman|chairperson|head|hod|faculty|teachers?|credits?|duration|years?|semesters?|seats?|asan|ashon|intake|capacity|eligibility|requirements?|qualification|joggota|lagbe|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|courses?|subject|waiver|scholarship|stipend|admission|vorti|apply|career|job|future|scope)\b/i.test(priorQ);
+          /\b(chairman|chairperson|head|hod|faculty|teachers?|sir|sirs|mam|maam|madam|madams|shikkhok|shikkhika|credits?|duration|years?|semesters?|seats?|asan|ashon|intake|capacity|eligibility|requirements?|qualification|joggota|lagbe|fees?|tuition|tution|cost|khoroch|curriculum|syllabus|courses?|subject|waiver|scholarship|stipend|admission|vorti|apply|career|job|future|scope)\b/i.test(priorQ);
         if (hasPriorAttribute) {
           // Strip any old department name from the prior question so they don't collide
           const oldDept = matchedDepartmentFromQuestion(priorQ, knowledge);
@@ -6034,8 +6626,9 @@ function directAnswer(question, knowledge, history = []) {
     directClarificationAnswer(question, history) ||
     directStudentJourneyAnswer(question) ||
     directProgramChoiceAnswer(question, knowledge) ||
-    directInstitutionFactAnswer(question, knowledge) ||
     directFacultyDesignationCountAnswer(question, knowledge) ||
+    directDepartmentFacultyCountAnswer(question, knowledge, history) ||
+    directInstitutionFactAnswer(question, knowledge) ||
     directUniversityOverviewAnswer(question, knowledge) ||
     directDepartmentExistenceAnswer(question, knowledge) ||
     directAcademicUnitsAnswer(question, knowledge) ||
@@ -6045,6 +6638,7 @@ function directAnswer(question, knowledge, history = []) {
     directSemesterSystemAnswer(question) ||
     directGradingSystemAnswer(question) ||
     directResultAnswer(question) ||
+    directGbiemsAndPortalAnswer(question, knowledge) ||
     directFacilitiesAnswer(question) ||
     directAdmissionStatusAnswer(question, knowledge) ||
     directAdmissionOverviewAnswer(question, knowledge) ||
@@ -6067,7 +6661,7 @@ function directAnswer(question, knowledge, history = []) {
     directDeanAnswer(question, knowledge) ||
     directDepartmentLeaderAnswer(question, knowledge) ||
     directDepartmentOverviewAnswer(question, knowledge) ||
-    directPeopleAnswer(question, knowledge) ||
+    directPeopleAnswer(question, knowledge, history) ||
     directFollowupAnswer(question, knowledge, history) ||
     directAllPeopleOverviewAnswer(question, knowledge) ||
     directUnknownPersonAnswer(question, knowledge) ||
@@ -7470,14 +8064,14 @@ function isImageCreationIntent(text) {
     return true;
   }
 
-  // English creation patterns: "create/generate/make/draw an image/picture/photo/wallpaper"
-  if (/\b(create|generate|make|draw|render|paint|design)\s+(?:an?|a\s+new|another|a\s+realistic|a\s+cinematic|a\s+vivid|an\s+hd)?\s*(?:image|picture|photo|illustration|drawing|wallpaper|portrait|artwork)\b/i.test(t)) {
+  // English creation patterns: "create/generate/make/draw an image/picture/photo/wallpaper/render"
+  if (/\b(create|generate|make|draw|render|paint|design)\s+(?:an?|a\s+new|another|a\s+realistic|a\s+cinematic|a\s+vivid|an\s+hd|a\s+3d)?\s*(?:image|picture|photo|illustration|drawing|wallpaper|portrait|artwork|render)\b/i.test(t)) {
     return true;
   }
 
   // Banglish creation patterns:
   // e.g. "chobi banao", "chobi eke dao", "chobi drawing koro", "chobi akba", "photo generate koro", "image banao"
-  const hasVisualNoun = /\b(chobi|chabi|image|photo|picture|pic|wallpaper|drawing)\b/i.test(t);
+  const hasVisualNoun = /\b(chobi|chabi|image|photo|picture|pic|wallpaper|drawing|render)\b/i.test(t);
   const hasVisualVerb = /\b(banao|banau|banay|banaye|banaba|banaben|ako|akba|akben|eke|akao|drawing|create|draw|generate|render)\b/i.test(t);
   if (hasVisualNoun && hasVisualVerb) {
     return true;
@@ -7572,10 +8166,50 @@ async function performWebSearch(query, { maxResults = 5 } = {}) {
 function isWebSearchIntent(text) {
   const t = String(text || "").trim();
   if (!t) return false;
-  return (
-    /\b(web\s*search|search\s+the\s+web|search\s+online|search\s+internet|google\s+koro|khuje\s+dao|khuje\s+dekho|search\s+koro|latest\s+news|recent\s+news|today's\s+news|current\s+affairs|live\s+score)\b/i.test(t) ||
-    /(ওয়েব\s*সার্চ|সার্চ\s*করো|গুগল\s*করো|ইন্টারনেট\s*থেকে|খুঁজে\s*দাও|সাম্প্রতিক\s*খবর|তাজা\s*খবর)/.test(t)
-  );
+
+  // 1. Explicit search commands
+  if (
+    /\b(web\s*search|search\s+(?:the\s+)?web|search\s+online|search\s+(?:the\s+)?internet|google\s+(?:it|this|koro|kore|kori)|look\s+it\s+up|khuje\s+(?:dao|dau|dekho)|search\s+koro|net\s*e\s*khujo)\b/i.test(t) ||
+    /(?:ওয়েব\s*সার্চ|ওয়েব\s*সার্চ|গুগল\s*কর|সার্চ\s*কর|ইন্টারনেট\s*থেকে|খুঁজে\s*দাও|অনুসন্ধান)/u.test(t)
+  ) return true;
+
+  // 2. News, live updates, current affairs
+  if (
+    /\b(latest\s+news|recent\s+news|today'?s\s+news|current\s+news|breaking\s+news|live\s+score|current\s+affairs|ajker\s+(?:news|khobor)|taza\s+khobor|somprotik?\s+khobor)\b/i.test(t) ||
+    /(?:সাম্প্রতিক\s*খবর|তাজা\s*খবর|আজকের\s*খবর|লাইভ\s*স্কোর|সর্বশেষ\s*সংবাদ|ব্রেকিং\s*নিউজ)/u.test(t)
+  ) return true;
+
+  // 3. Current leaders, heads of state, national governance (rastropoti, president, prime minister, etc.)
+  // (Exclude Gono university specific leadership inquiries which belong to university knowledge)
+  if (!/\b(gono|bishwabidyalay|varsity|campus|gbcdc)\b/i.test(t)) {
+    if (
+      /\b(rastropoti|rashtrapati|president|prodhan\s*montri|prime\s*minister|chief\s*advis[oe]r|chief\s*justice)\b/i.test(t) ||
+      /(?:রাষ্ট্রপতি|প্রধানমন্ত্রী|প্রধান\s*উপদেষ্টা|প্রধান\s*বিচারপতি)/u.test(t)
+    ) {
+      if (
+        /\b(ekhon|bortoman|current|present|who|ke|nam\s*ki|kon|kake)\b/i.test(t) ||
+        /(?:এখন|বর্তমান|কে|কারা|নাম\s*কী|নাম\s*কি)/u.test(t) ||
+        /\?$/.test(t)
+      ) {
+        return true;
+      }
+    }
+
+    // 4. Temporal questions: 'ekhon ... ke', 'who is the current ...', 'bortoman ... ke'
+    if (
+      /\b(ekhon|bortoman|current|present|somproti|recent)\b[\s\S]{0,35}\b(ke|who|kader|kar)\b/i.test(t) ||
+      /\b(who\s+is|who\s+are)\b[\s\S]{0,35}\b(now|currently|presently|today)\b/i.test(t) ||
+      /(?:এখন|বর্তমান|সাম্প্রতিক|আজকের)[\s\S]{0,25}(?:কে|কারা|কোনটি|কী|কি)\b/u.test(t)
+    ) return true;
+  }
+
+  // 5. Live real-world metrics (gold price, dollar rate, weather, score)
+  if (
+    /\b(dollar\s*rate|dollar\s*er\s*dam|gold\s*price|shonar\s*dam|weather|temperature|abhawa|live\s*score|cricket\s*score|fifa|world\s*cup)\b/i.test(t) ||
+    /(?:ডলার\s*রেট|টাকার\s*মান|সোনার\s*দাম|স্বর্ণের\s*দাম|আবহাওয়া|তাপমাত্রা)/u.test(t)
+  ) return true;
+
+  return false;
 }
 
 function isUniversityInquiry(message, knowledge, history = []) {
@@ -7632,7 +8266,7 @@ function isUniversityInquiry(message, knowledge, history = []) {
   }
 
   // Explicit university keywords
-  if (/\b(gono|bishwabidyalay|university|varsity|versity|campus|savar|mirzanagar|nolam|gb|gk|gbkc|baksu|gono\s*shasthaya)\b/i.test(t)) {
+  if (/\b(gono|bishwabidyalay|university|varsity|versity|campus|savar|mirzanagar|nolam|gb|gk|gbkc|gbcdc|baksu|gono\s*shasthaya)\b/i.test(t)) {
     return true;
   }
   if (/(গণ\s*বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|ভার্সিটি|ক্যাম্পাস|সাভার|মির্জানগর|নলাম|বাকসু)/.test(t)) {
@@ -7674,10 +8308,18 @@ function isUniversityInquiry(message, knowledge, history = []) {
     if (/\b(gono|bishwabidyalay|university|varsity|versity|campus|savar|faculty|department|dept|teacher|sir|madam|officer|proctor|registrar|controller|vice\s+chancellor|vc|dean|founder|trustee)\b/i.test(t)) {
       return true;
     }
-    if (knowledge && typeof matchPeople === "function") {
+    if (knowledge && Array.isArray(knowledge.faculty)) {
       const allPeople = [...(knowledge.faculty || []), ...(knowledge.officers || [])];
-      const matched = matchPeople(t, allPeople);
+      const matched = findPeople(t, allPeople, knowledge);
       if (matched.length > 0) return true;
+    }
+  }
+
+  // Check if query is directly answerable by official university knowledge engine
+  if (knowledge && typeof directAnswer === "function") {
+    const directRes = directAnswer(t, knowledge, history);
+    if (directRes && directRes.text && directRes.mode !== "not_found") {
+      return true;
     }
   }
 
@@ -7989,8 +8631,11 @@ async function handleChat(req, res) {
     return json(res, 200, lookupResponse);
   }
 
-  // GB AI mode: Image creation if requested or refinement, otherwise University Routing, Web Search or Academic Solver
-  if (body.medium === "gb-ai") {
+  const wantsWebSearch = Boolean(body.webSearch) || (!hasAttachments && isWebSearchIntent(message));
+  const knowledge = await loadKnowledge();
+
+  // GB AI mode or Live Web Search query: Image creation if requested or refinement, otherwise University Routing, Web Search or Academic Solver
+  if (body.medium === "gb-ai" || wantsWebSearch) {
     const isImageRequest = !hasAttachments && (body.mode === "image" || isImageCreationIntent(message) || Boolean(imageRefinement));
     if (isImageRequest) {
       const imageResponse = await handleImageGeneration(message, sessionId, history);
@@ -8001,7 +8646,6 @@ async function handleChat(req, res) {
     }
 
     // Check for follow-up formatting instructions (e.g. boro kore dau, choto kore dau, point akare dau)
-    const knowledge = await loadKnowledge();
     if (!hasAttachments && isFollowupFormatInstruction(message) && previousHistory.length > 0) {
       const formatResult = await handleFollowupFormatRequest({
         message,
@@ -8016,8 +8660,8 @@ async function handleChat(req, res) {
       }
     }
 
-    // Check if question is a university inquiry in GB AI mode
-    const isUniv = !hasAttachments && isUniversityInquiry(message, knowledge, history);
+    // Check if question is a university inquiry in GB AI mode (when not explicitly requesting live web search)
+    const isUniv = !hasAttachments && !wantsWebSearch && isUniversityInquiry(message, knowledge, history);
     if (isUniv) {
       let univResult = directAnswer(message, knowledge, previousHistory);
       if (!univResult) univResult = directActivePersonAnswer(message, knowledge, conversationEntity(sessionId, "person"));
@@ -8059,7 +8703,7 @@ async function handleChat(req, res) {
     }
 
     const aiResponse = await handleGbAiQuestion(message, uploadedAttachments, history, sessionId, {
-      webSearch: Boolean(body.webSearch),
+      webSearch: wantsWebSearch,
     });
     rememberConversationExchange(sessionId, history, message, aiResponse.text);
     return json(res, 200, aiResponse);
@@ -8074,7 +8718,6 @@ async function handleChat(req, res) {
     return json(res, statusCode, imageResponse);
   }
 
-  const knowledge = await loadKnowledge();
   await loadResponseCache();
   const useStoredAttachments =
     !hasAttachments && storedAttachments.length > 0 && attachmentQuestionRelevance(message, storedAttachments) > 0;

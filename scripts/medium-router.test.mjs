@@ -19,6 +19,10 @@ test("routes creation and solving requests to GB AI", () => {
 test("routes typed live-search intent to GB AI", () => {
   assert.equal(inferMessageMedium("search the web for latest admission news"), "gb-ai");
   assert.equal(inferMessageMedium("গুগল করে সর্বশেষ খবর দেখো"), "gb-ai");
+  assert.equal(inferMessageMedium("ekhon rastropoti ke?"), "gb-ai");
+  assert.equal(inferMessageMedium("বর্তমান রাষ্ট্রপতি কে?"), "gb-ai");
+  assert.equal(inferMessageMedium("who is the current president of bangladesh?"), "gb-ai");
+  assert.equal(inferMessageMedium("any question", [], [], false, "gb-ai"), "gb-ai");
 });
 
 test("routes files and an enabled web control to GB AI", () => {

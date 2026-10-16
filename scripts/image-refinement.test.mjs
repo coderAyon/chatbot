@@ -218,6 +218,11 @@ test("isWebSearchIntent detects live search inquiries", () => {
   assert.equal(isWebSearchIntent("google koro ajker khobor"), true);
   assert.equal(isWebSearchIntent("khuje dao recent news"), true);
   assert.equal(isWebSearchIntent("আজকের তাজা খবর সার্চ করো"), true);
+  assert.equal(isWebSearchIntent("ekhon rastropoti ke?"), true);
+  assert.equal(isWebSearchIntent("বর্তমান রাষ্ট্রপতি কে?"), true);
+  assert.equal(isWebSearchIntent("who is the current president of bangladesh?"), true);
+  assert.equal(isWebSearchIntent("bortoman prodhanmontri ke?"), true);
+  assert.equal(isWebSearchIntent("dollar rate koto?"), true);
 
   assert.equal(isWebSearchIntent("explain theory of relativity"), false);
   assert.equal(isWebSearchIntent("what is calculus?"), false);
@@ -232,6 +237,9 @@ test("isUniversityInquiry identifies Gono Bishwabidyalay topics and rejects gene
   assert.equal(isUniversityInquiry("Gono Bishwabidyalay founder ke?"), true);
   assert.equal(isUniversityInquiry("Pharmacy department e koyta credit?"), true);
   assert.equal(isUniversityInquiry("গণ বিশ্ববিদ্যালয়ের উপাচার্য কে?"), true);
+  assert.equal(isUniversityInquiry("GBCDC president ke?"), true);
+  assert.equal(isUniversityInquiry("ekhon rastropoti ke?"), false);
+  assert.equal(isUniversityInquiry("who is the president of bangladesh?"), false);
 
   assert.equal(isUniversityInquiry("what is photosynthesis?"), false);
   assert.equal(isUniversityInquiry("write a python code to sort an array"), false);

@@ -44,7 +44,7 @@ import {
   X,
 } from "lucide-react";
 import "./styles.css";
-import { inferMessageMedium } from "./medium-router.js";
+import { inferMessageMedium, isWebSearchIntent } from "./medium-router.js";
 
 const GB_LOGO_URL = "/gb-logo.png";
 const CHAT_HISTORY_KEY = "university-chat-history-v3";
@@ -160,17 +160,22 @@ function detectSpeechLanguage(text) {
 const VOICE_LANGUAGE_KEY = "university-voice-language";
 
 function preferredVoiceLanguage() {
-  if (typeof window === "undefined") return "en-US";
+  if (typeof window === "undefined") return "bn-BD";
   const saved = window.localStorage?.getItem(VOICE_LANGUAGE_KEY);
   if (saved === "bn-BD" || saved === "en-US") return saved;
-  return String(window.navigator?.language || "en-US").toLowerCase().startsWith("bn") ? "bn-BD" : "en-US";
+  return "bn-BD";
 }
 
 function bestRecognitionTranscript(result, lang) {
-  const alternatives = Array.from(result || []).map((item) => String(item?.transcript || "").trim()).filter(Boolean);
+  if (!result || !result.length) return "";
+  const alternatives = Array.from(result).map((item) => String(item?.transcript || "").trim()).filter(Boolean);
   if (!alternatives.length) return "";
   const wantsBangla = String(lang || "").startsWith("bn");
-  return alternatives.find((text) => /[\u0980-\u09FF]/.test(text) === wantsBangla) || alternatives[0];
+  if (wantsBangla) {
+    const banglaAlternative = alternatives.find((text) => /[\u0980-\u09FF]/.test(text));
+    if (banglaAlternative) return banglaAlternative;
+  }
+  return alternatives[0];
 }
 
 function preferredSynthesisVoice(voices, lang) {
@@ -255,24 +260,25 @@ function createNewConversation() {
 }
 
 function loadStoredConversations() {
+  const fresh = createNewConversation();
   for (const key of [CHAT_HISTORY_KEY, ...LEGACY_CHAT_HISTORY_KEYS]) {
     try {
       const parsed = JSON.parse(localStorage.getItem(key) || "null");
       if (!Array.isArray(parsed)) continue;
       const valid = parsed
-        .filter((chat) => chat?.id && Array.isArray(chat.messages))
+        .filter((chat) => chat?.id && Array.isArray(chat.messages) && chat.messages.length > 0)
         .slice(0, 40)
         .map((chat) => ({
           ...chat,
           sessionId: chat.sessionId || chat.id,
           messages: chat.messages.slice(-120),
         }));
-      if (valid.length) return valid;
+      if (valid.length) return [fresh, ...valid];
     } catch {
       // Ignore malformed legacy browser data.
     }
   }
-  return [createNewConversation()];
+  return [fresh];
 }
 
 function generateChatTitle(userText, attachments = []) {
@@ -289,10 +295,7 @@ function generateChatTitle(userText, attachments = []) {
 
 function App() {
   const [conversations, setConversations] = useState(loadStoredConversations);
-  const [activeChatId, setActiveChatId] = useState(() => {
-    const stored = localStorage.getItem(ACTIVE_CHAT_KEY);
-    return conversations.some((chat) => chat.id === stored) ? stored : conversations[0]?.id;
-  });
+  const [activeChatId, setActiveChatId] = useState(() => conversations[0]?.id || "");
   const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== "undefined" ? window.innerWidth > 820 : true);
   const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" ? window.innerWidth <= 640 : false);
   const [input, setInput] = useState("");
@@ -394,27 +397,28 @@ function App() {
 
       recognition.onstart = () => {
         setIsListeningComposer(true);
-        resetSilenceTimer();
       };
       recognition.onresult = (event) => {
-        let currentInterim = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
+        let fullFinal = "";
+        let fullInterim = "";
+        for (let i = 0; i < event.results.length; i++) {
           const item = event.results[i];
+          const text = bestRecognitionTranscript(item, recognition.lang);
           if (item.isFinal) {
-            finalCaptured += bestRecognitionTranscript(item, recognition.lang) + " ";
+            fullFinal = `${fullFinal} ${text}`.trim();
           } else {
-            currentInterim += bestRecognitionTranscript(item, recognition.lang);
+            fullInterim = `${fullInterim} ${text}`.trim();
           }
         }
-        const full = (finalCaptured + currentInterim).trim();
+        finalCaptured = fullFinal;
+        const full = `${fullFinal} ${fullInterim}`.trim();
         if (full) {
           setInput(full);
           if (composerInputRef.current) {
             resizeComposer(composerInputRef.current);
           }
+          resetSilenceTimer();
         }
-        // Reset silence timer on every new result so it doesn't cut off mid-sentence
-        resetSilenceTimer();
       };
       recognition.onerror = (e) => {
         if (silenceTimer) clearTimeout(silenceTimer);
@@ -435,14 +439,17 @@ function App() {
 
   useEffect(() => {
     try {
-      const bounded = conversations.slice(0, 40).map((chat) => ({ ...chat, messages: chat.messages.slice(-120) }));
+      const bounded = conversations
+        .filter((chat) => chat?.id && Array.isArray(chat.messages) && chat.messages.length > 0)
+        .slice(0, 40)
+        .map((chat) => ({ ...chat, messages: chat.messages.slice(-120) }));
       localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(bounded));
-      localStorage.setItem(ACTIVE_CHAT_KEY, activeChatId || "");
+      localStorage.removeItem(ACTIVE_CHAT_KEY);
       LEGACY_CHAT_HISTORY_KEYS.forEach((key) => localStorage.removeItem(key));
     } catch {
       // The chat remains usable in memory if browser storage is unavailable or full.
     }
-  }, [conversations, activeChatId]);
+  }, [conversations]);
 
   const activeConversation =
     conversations.find((c) => c.id === activeChatId) || conversations[0] || createNewConversation();
@@ -650,11 +657,13 @@ function App() {
       target = { ...target, messages: options.baseMessages };
     }
 
+    const isWebSearch = Boolean(webSearchEnabled || isWebSearchIntent(outgoingText));
     const effectiveMedium = inferMessageMedium(
       outgoingText,
       selectedAttachments,
       target.messages,
-      webSearchEnabled,
+      isWebSearch,
+      currentMedium,
     );
     setCurrentMedium(effectiveMedium);
 
@@ -681,7 +690,7 @@ function App() {
         thinkingMsg = "GB AI is reading screenshot & solving...";
       } else if (/^(ছবি আঁকো|ছবি বানাও|ছবি তৈরি করো|একটি ছবি|chobi banao|chobi ako|generate an? image|create an? image|draw an? image)/i.test(outgoingText.trim())) {
         thinkingMsg = "GB AI is creating your image...";
-      } else if (webSearchEnabled) {
+      } else if (isWebSearch) {
         thinkingMsg = "GB AI is searching the web & synthesizing...";
       } else {
         thinkingMsg = "GB AI is solving your question...";
@@ -701,7 +710,7 @@ function App() {
           sessionId: target.sessionId || target.id,
           history: nextMessages.slice(-10).map(({ role, text }) => ({ role, text })),
           medium: effectiveMedium,
-          webSearch: webSearchEnabled,
+          webSearch: isWebSearch,
           replaceHistory: options.replaceHistory === true,
         }),
       });
@@ -2148,7 +2157,8 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
       return;
     }
 
-    if ((voiceStatus !== "listening" && voiceStatus !== "speaking") || isMuted) {
+    if (voiceStatus !== "listening" || isMuted) {
+      clearSilenceTimer();
       recognitionRef.current?.abort();
       return;
     }
@@ -2173,43 +2183,45 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
       const startSilenceTimer = () => {
         clearSilenceTimer();
         silenceTimer = setTimeout(() => {
-          if (finalCaptured.trim() || latestInterim.trim()) {
+          const heard = `${finalCaptured} ${latestInterim}`.trim();
+          if (heard.length >= 2) {
             try { recognition.stop(); } catch {}
           }
-        }, voiceLang === "en-US" ? 2800 : 2200);
+        }, voiceLang === "en-US" ? 2800 : 3000);
       };
 
       recognition.onstart = () => {
         recognitionFailed = false;
         setErrorMessage("");
         setAudioLevel(0.28);
-        startSilenceTimer();
       };
 
       recognition.onresult = (event) => {
-        let currentInterim = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
+        let fullFinal = "";
+        let fullInterim = "";
+        for (let i = 0; i < event.results.length; i++) {
           const res = event.results[i];
+          const text = bestRecognitionTranscript(res, voiceLang);
           if (res.isFinal) {
-            finalCaptured = `${finalCaptured} ${bestRecognitionTranscript(res, voiceLang)}`.trim();
+            fullFinal = `${fullFinal} ${text}`.trim();
           } else {
-            currentInterim = `${currentInterim} ${bestRecognitionTranscript(res, voiceLang)}`.trim();
+            fullInterim = `${fullInterim} ${text}`.trim();
           }
         }
-        latestInterim = currentInterim;
-        const heardText = (finalCaptured || currentInterim).trim();
-        if (voiceStatus === "speaking" && heardText.length >= 2 && !bargeInActiveRef.current) {
-          bargeInActiveRef.current = true;
-          setIsBargingIn(true);
-          window.speechSynthesis?.cancel();
-        }
+        finalCaptured = fullFinal;
+        latestInterim = fullInterim;
+        const currentHeard = `${fullFinal} ${fullInterim}`.trim();
+
         const confidence = event.results[event.results.length - 1]?.[0]?.confidence || 0.45;
         setAudioLevel(Math.min(0.9, Math.max(0.32, confidence)));
-        setInterimTranscript(currentInterim);
-        if (finalCaptured) {
-          setUserTranscript(finalCaptured.trim());
+        setInterimTranscript(fullInterim);
+        if (currentHeard) {
+          setUserTranscript(currentHeard);
         }
-        startSilenceTimer();
+
+        if (currentHeard.length >= 2) {
+          startSilenceTimer();
+        }
       };
 
       recognition.onerror = (e) => {
@@ -2251,24 +2263,20 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
         setAudioLevel(0);
         setInterimTranscript("");
         if (recognitionFailed) return;
-        const query = (finalCaptured || latestInterim).trim();
-        if (query && (voiceStatus === "listening" || bargeInActiveRef.current)) {
+        const query = `${finalCaptured} ${latestInterim}`.trim();
+        if (query && query.length >= 2 && voiceStatus === "listening") {
           handleUserVoiceQuery(query);
-        } else if ((voiceStatus === "listening" || voiceStatus === "speaking") && !isMuted && isComponentMounted.current) {
+        } else if (voiceStatus === "listening" && !isMuted && isComponentMounted.current) {
           finalCaptured = "";
+          latestInterim = "";
           restartTimer = setTimeout(() => {
             if (!isComponentMounted.current) return;
             try {
               recognition.start();
             } catch {
-              setErrorMessage(
-                voiceLang === "bn-BD"
-                  ? "মাইক্রোফোন চালু করা যায়নি। Microphone permission Allow করে আবার চেষ্টা করুন।"
-                  : "The microphone could not start. Allow microphone permission and try again.",
-              );
-              setVoiceStatus("idle");
+              // Ignore restart error
             }
-          }, 180);
+          }, 200);
         }
       };
 
@@ -2286,15 +2294,15 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
   }, [isOpen, voiceStatus, voiceLang, isMuted, microphoneSupported]);
 
   async function handleUserVoiceQuery(text) {
-    if (!text) return;
+    if (!text || text.trim().length < 2) return;
     bargeInActiveRef.current = false;
     setIsBargingIn(false);
     setVoiceStatus("thinking");
     setInterimTranscript("");
-    setUserTranscript(text);
+    setUserTranscript(text.trim());
     setAssistantReply("");
     try {
-      const result = await onSendMessage(text);
+      const result = await onSendMessage(text.trim());
       if (result && result.text) {
         setAssistantReply(result.text);
         setVoiceStatus("speaking");
@@ -2313,10 +2321,10 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
           },
         });
       } else {
-        setVoiceStatus("idle");
+        setVoiceStatus("listening");
       }
     } catch {
-      setVoiceStatus("idle");
+      setVoiceStatus("listening");
     }
   }
 
@@ -2360,7 +2368,7 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
           await handleUserVoiceQuery(data.text);
         } catch (error) {
           setErrorMessage(error.message || "Voice transcription failed. Please try again.");
-          setVoiceStatus("idle");
+          setVoiceStatus("listening");
         } finally {
           setFallbackTranscribing(false);
         }
@@ -2388,15 +2396,13 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
     setAssistantReply("");
   }
 
-  function toggleLanguage() {
+  function changeVoiceLanguage(next) {
+    if (voiceLang === next) return;
     bargeInActiveRef.current = false;
     setIsBargingIn(false);
     window.speechSynthesis?.cancel();
-    setVoiceLang((prev) => {
-      const next = prev === "bn-BD" ? "en-US" : "bn-BD";
-      window.localStorage?.setItem(VOICE_LANGUAGE_KEY, next);
-      return next;
-    });
+    setVoiceLang(next);
+    window.localStorage?.setItem(VOICE_LANGUAGE_KEY, next);
     setUserTranscript("");
     setInterimTranscript("");
     setAssistantReply("");
@@ -2454,15 +2460,26 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
         </div>
 
         <div className="voice-mode-top-actions">
-          <button
-            type="button"
-            className="voice-lang-pill"
-            onClick={toggleLanguage}
-            title="Toggle Language (বাংলা / English)"
-            aria-label="Toggle Language"
-          >
-            <span>{voiceLang === "bn-BD" ? "বাংলা" : "English"}</span>
-          </button>
+          <div className="voice-lang-switcher" role="radiogroup" aria-label="Speech language">
+            <button
+              type="button"
+              className={`voice-lang-tab ${voiceLang === "bn-BD" ? "active" : ""}`}
+              onClick={() => changeVoiceLanguage("bn-BD")}
+              title="বাংলা ভাষায় কথা বলুন (Bengali)"
+              aria-label="বাংলা"
+            >
+              🇧🇩 বাংলা
+            </button>
+            <button
+              type="button"
+              className={`voice-lang-tab ${voiceLang === "en-US" ? "active" : ""}`}
+              onClick={() => changeVoiceLanguage("en-US")}
+              title="Speak in English"
+              aria-label="English"
+            >
+              🌐 English
+            </button>
+          </div>
           <button
             type="button"
             className="voice-mode-close-btn"

@@ -1,20 +1,5 @@
 [
   {
-    "sessionId": "v45-6ab61e53-90a4-44b3-beed-7ca49a070410",
-    "updatedAt": 1790442825350,
-    "turns": [
-      {
-        "role": "user",
-        "text": "biochem faculty list"
-      },
-      {
-        "role": "assistant",
-        "text": "Official data lists 14 records for Department of Biochemistry and Molecular Biology. Head: Dr. Mahbuba Khatun. Faculty: Dr. Mahbuba Khatun, Dr. Md. Fuad Hossain, Shyam Sundar Shaha, Dr. Md. Ekhlas Uddin, Md. Nafij Mashrur, Md. Abu Rayhan, Sonia Akter, Shahad Saif Khandker, Mehjabeen Haque, Nova Rahman, Shahnaz Rahman, Zakia Akter (on study leave, USA), Md. Yousuf Ali (on study leave, USA), Resheda Perveen (on study leave)."
-      }
-    ],
-    "entities": {}
-  },
-  {
     "sessionId": "v45-8bd2b128-53bc-4cbc-b7d8-a03e6f9506f0",
     "updatedAt": 1790442825419,
     "turns": [
@@ -1558,499 +1543,6 @@
     "entities": {}
   },
   {
-    "sessionId": "anonymous:127.0.0.1",
-    "updatedAt": 1790523181118,
-    "turns": [
-      {
-        "role": "user",
-        "text": "bba chairman ke?"
-      },
-      {
-        "role": "assistant",
-        "text": "Department of Business Administration-er official department head **Dr. Rana-Al -Mosharrafa**."
-      },
-      {
-        "role": "user",
-        "text": "faculty koyti ache?"
-      },
-      {
-        "role": "assistant",
-        "text": "Gono Bishwabidyalay-তে প্রধান **৫টি অনুষদ (Faculty)** রয়েছে:\n১. **Faculty of Science & Engineering** (CSE, EEE, Medical Physics, Math, Physics, Chemistry)\n২. **Faculty of Health Sciences** (Pharmacy, Microbiology, Biochemistry)\n৩. **Faculty of Arts & Social Sciences** (BBA, English, Bangla, Politics, Sociology, Law)\n৪. **Faculty of Veterinary & Animal Sciences** (DVM)\n৫. **Faculty of Agriculture** (B.Sc. in Agriculture)"
-      },
-      {
-        "role": "user",
-        "text": "gbcdc er president ke?"
-      },
-      {
-        "role": "assistant",
-        "text": "Gono Bishwabidyalay Career Development Club (GBCDC)-er **Current (3rd Executive Committee) President** holen **Bidita Chowdhury** (CSE Department, 4th Year).\n\n**GBCDC Leadership Overview:**\n• **Current President (3rd Committee):** **Bidita Chowdhury** (Department of Computer Science and Engineering - CSE, 4th Year)\n• **Current General Secretary:** **Mehrab Hossain Jishan** (Department of Electrical and Electronic Engineering - EEE)\n• **Current Vice President:** **Nusrat Jahan Setu** (Department of Microbiology)\n• **Past 2nd Committee:** Acting President Sheikh Muhammad Redwan (Law), President Rubaet Toha (EEE), GS Nasim Khan (Chemistry)\n• **Founding (1st Committee) President:** Advocate Hasib Mir (Law), Founding GS Saifullah Mansur (Microbiology)\n\nOfficial Executive details dekhte visit korun: https://www.gbcdc.club/executive"
-      },
-      {
-        "role": "user",
-        "text": "admission helpline number dao"
-      },
-      {
-        "role": "assistant",
-        "text": "Gono Bishwabidyalay-এর **ভর্তি সংক্রান্ত অফিসিয়াল যোগাযোগ (Admission Helplines)**:\n\n• **ভর্তি হেল্পলাইন (Mobile):** **01950003314**, **01950003312**, **01950003313**\n• **অ্যাডমিশন অফিস ডেস্ক:** 01727684880 (পুরবী সরকার নীতু, সিনিয়র সেকশন অফিসার), 01950003312 (আশফাক হোসেন)\n• **ইমেইল:** admin@gonouniversity.edu.bd\n• **অনলাইন আবেদন:** https://gonouniversity.edu.bd/admission/apply-online/\n• **ঠিকানা:** ভর্তি শাখা, প্রশাসনিক ভবন, গণ বিশ্ববিদ্যালয়, নলাম, মির্জানগর, সাভার, ঢাকা-১৩৪৪।"
-      },
-      {
-        "role": "user",
-        "text": "dhonnobad"
-      },
-      {
-        "role": "assistant",
-        "text": "আপনাকেও অনেক ধন্যবাদ! গণ বিশ্ববিদ্যালয় সম্পর্কে আপনার আরও কোনো কিছু জানার থাকলে যেকোনো সময় নির্দ্বিধায় আমাকে প্রশ্ন করতে পারেন। শুভকামনা!"
-      },
-      {
-        "role": "user",
-        "text": "applied mathematics admission requirements ki?"
-      },
-      {
-        "role": "assistant",
-        "text": "B.Sc. (Honours) in Applied Mathematics: GPA 2.50 required in SSC and HSC."
-      },
-      {
-        "role": "user",
-        "text": "ei cg niye vorti hote parbo na?"
-      },
-      {
-        "role": "assistant",
-        "text": "**B.Sc. (Honours) in Applied Mathematics**\n**Admission requirement:** At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply."
-      },
-      {
-        "role": "user",
-        "text": "applied mathematics admission requirements ki?"
-      },
-      {
-        "role": "assistant",
-        "text": "B.Sc. (Honours) in Applied Mathematics: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply."
-      },
-      {
-        "role": "user",
-        "text": "ei cg niye vorti hote parbo na?"
-      },
-      {
-        "role": "assistant",
-        "text": "আপনার “CG” বলতে আপনি কি আপনার **CGPA (cumulative GPA)** বোঝাচ্ছেন? যদি হ্যাঁ, দয়া করে আপনার বর্তমান CGPA কত তা জানাবেন, যাতে আমি বলতে পারি আপনি গণ বিশ্ববিদ্যালয়ের Applied Mathematics‑এ ভর্তি হওয়ার যোগ্যতা পূরণ করছেন কিনা।"
-      },
-      {
-        "role": "user",
-        "text": "applied mathematics admission requirements ki?"
-      },
-      {
-        "role": "assistant",
-        "text": "B.Sc. (Honours) in Applied Mathematics: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply."
-      },
-      {
-        "role": "user",
-        "text": "ei cg niye vorti hote parbo na?"
-      },
-      {
-        "role": "assistant",
-        "text": "আপনার CGPA কত তা জানালে আমি বলতে পারি আপনি গণ বিশ্ববিদ্যালয়ের Applied Mathematics-এ ভর্তি হওয়ার যোগ্যতা পূরণ করছেন কিনা।"
-      },
-      {
-        "role": "user",
-        "text": "amar cgpa 2.2"
-      },
-      {
-        "role": "assistant",
-        "text": "No – the B.Sc. (Honours) in Applied Mathematics requires at least a 2.5 CGPA (or second‑division results) in SSC and HSC. With a CGPA of 2.2 you do not meet the minimum academic criterion. You could consider improving your GPA, completing a relevant diploma, or applying to a different program that has a lower entry threshold."
-      },
-      {
-        "role": "user",
-        "text": "applied mathematics admission requirements ki?"
-      },
-      {
-        "role": "assistant",
-        "text": "B.Sc. (Honours) in Applied Mathematics: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply."
-      },
-      {
-        "role": "user",
-        "text": "amar cgpa 2.2"
-      },
-      {
-        "role": "assistant",
-        "text": "With a CGPA of 2.2 you do not meet the minimum academic criterion (GPA 2.5) for Applied Mathematics."
-      },
-      {
-        "role": "user",
-        "text": "tahole ami kon department e apply korte parbo?"
-      },
-      {
-        "role": "assistant",
-        "text": "The provided official context does not list the specific admission requirements (such as minimum GPA or division) for other departments like Law, EEE, Sociology, BBA, CSE, or English. Therefore, I cannot confirm which specific departments you are eligible for with a CGPA of 2.2 based on the available information.\n\nTo help you further, could you please specify which other departments you are interested in applying to?"
-      },
-      {
-        "role": "user",
-        "text": "applied mathematics admission requirements ki?"
-      },
-      {
-        "role": "assistant",
-        "text": "B.Sc. (Honours) in Applied Mathematics: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply."
-      },
-      {
-        "role": "user",
-        "text": "ei cg niye vorti hote parbo na?"
-      },
-      {
-        "role": "assistant",
-        "text": "দুঃখিত, আমি যে অফিসিয়াল সূত্রগুলো (মাইক্রোবায়োলজি, ভেটেরিনারি, পলিটিক্স ইত্যাদি) পেয়েছি, তাতে **Applied Mathematics**‑এর ভর্তি শর্তাবলী স্পষ্টভাবে উল্লেখ নেই। তাই আমি নিশ্চিতভাবে বলতে পারছি না যে এই বিভাগে কী কী ন্যূনতম GPA, SSC/HSC ফলাফল বা ডিপ্লোমা প্রয়োজন।\n\nতবে, আপনার রেফারেন্সের জন্য কিছু অন্য বিভাগের ভর্তি শর্তের উদাহরণ দিচ্ছি:\n\n* **মাইক্রোবায়োলজি (B.Sc. Honors)** – SSC ও HSC‑এ উভয়েই **GPA 3.5** অথবা সংশ্লিষ্ট ডিপ্লোমা/প্রফেশনাল অভিজ্ঞতা থাকতে হবে।\n* **ভেটেরিনারি ও অ্যানিমাল সায়েন্সেস** – নির্দিষ্ট শর্তগুলো সূত্রে উল্লেখ নেই, তবে সাধারণত SSC/HSC‑এ নির্দিষ্ট গ্রেড ও ভর্তি পরীক্ষার ফলাফল প্রয়োজন।\n\nআপনি যদি অন্য কোনো বিভাগ (যেমন CSE, BBA, Law ইত্যাদি) বা নির্দিষ্ট কোনো শর্ত সম্পর্কে জানতে চান, দয়া করে জানান, আমি সেই বিভাগের অফিসিয়াল তথ্য অনুসন্ধান করে আপনাকে জানাব।"
-      },
-      {
-        "role": "user",
-        "text": "cse te vorti hote ki ki lagbe?"
-      },
-      {
-        "role": "assistant",
-        "text": "CSE admission requires SSC and HSC in Science with minimum GPA 2.50 in each."
-      },
-      {
-        "role": "user",
-        "text": "amar gpa 2.2 ami ki apply korte parbo?"
-      },
-      {
-        "role": "assistant",
-        "text": "No, you cannot apply for **CSE** with a GPA of 2.2.\n\nAccording to the official admission requirements, the Department of Computer Science & Engineering requires **at least second division in both S.S.C and H.S.C or GPA 2.5**. Since 2.2 is below the minimum GPA threshold of 2.5, you do not meet the eligibility criteria for this program."
-      },
-      {
-        "role": "user",
-        "text": "applied mathematics admission requirements ki?"
-      },
-      {
-        "role": "assistant",
-        "text": "B.Sc. (Honours) in Applied Mathematics: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply."
-      },
-      {
-        "role": "user",
-        "text": "ei cg niye vorti hote parbo na?"
-      },
-      {
-        "role": "assistant",
-        "text": "No, আপনি **Applied Mathematics**‑এ আপনার বর্তমান CGPA 2.2 দিয়ে ভর্তি হতে পারবেন না।\n\nঅফিসিয়াল শর্ত অনুযায়ী এই প্রোগ্রামের জন্য **SSC ও HSC‑এ কমপক্ষে GPA 2.5** (বা সেকেন্ড ডিভিশন) দরকার, অথবা ডিপ্লোমা ইঞ্জিনিয়ার/হেলথ সায়েন্সের ডিপ্লোমা থাকতে হবে। আপনার 2.2 GPA এই ন্যূনতম মানের নিচে, তাই যোগ্যতা পূরণ হয় না।\n\nযদি GPA‑তে উন্নতি করতে পারেন বা কোনো ডিপ্লোমা থাকে, তাহলে আবার আবেদন করার সুযোগ থাকবে। অন্য কোনো বিভাগে আগ্রহ থাকলে জানাবেন, আমি সেই বিভাগের শর্তগুলোও চেক করে জানাব।"
-      },
-      {
-        "role": "user",
-        "text": "cse naki bba, kon ta better amar jonno?"
-      },
-      {
-        "role": "assistant",
-        "text": "আপনার CGPA 2.2 থাকায় **CSE** আর **BBA** দুটোই এখনো আপনার জন্য উপযুক্ত নয়, কারণ উভয় প্রোগ্রামের ন্যূনতম শর্তই **GPA 2.5 (বা সেকেন্ড ডিভিশন)** দরকার ।\n\n**কী করা যায়?**\n\n| বিকল্প | কী দরকার | আপনার বর্তমান অবস্থা |\n|--------|----------|----------------------|\n| **CGPA বৃদ্ধি** | শেষ সেমিস্টার/পরবর্তী সেমিস্টারে GPA 2.5 অথবা তার বেশি পাওয়া | এখনো 2.2 → উন্নতির সুযোগ আছে |\n| **ডিপ্লোমা রুট** | ডিপ্লোমা ইঞ্জিনিয়ার বা হেলথ সায়েন্স‑এর ডিপ্লোমা থাকলে কিছু প্রোগ্রামে (যেমন Applied Mathematics, Chemistry, Physics, EEE) আবেদন করা যায় | যদি আপনার কোনো ডিপ্লোমা থাকে, তা ব্যবহার করতে পারেন |\n| **অন্যান্য বিভাগ** | বর্তমানে পাওয়া তথ্য অনুযায়ী সব অন্ডারগ্রাজুয়েট প্রোগ্রাম (Applied Mathematics, Chemistry, Physics, EEE, BBA, English, Politics)‑এর শর্তই GPA 2.5 বা তার বেশি | অন্য কোনো বিভাগে ন্যূনতম শর্ত কম বলে কোনো তথ্য নেই |\n\n**সুপারিশ:**\n১. **অ্যাকাডেমিক পারফরম্যান্স উন্নত করুন** – পরের সেমিস্টারে ভালো গ্রেড নিয়ে GPA 2.5 এর উপরে উঠতে চেষ্টা করুন।\n২. **ডিপ্লোমা আছে কি না চেক করুন** – যদি আপনার কাছে ডিপ্লোমা ইঞ্জিনিয়ার বা হেলথ সায়েন্সের ডিপ্লোমা থাকে, তাহলে উপরে উল্লেখিত কিছু টেকনিক্যাল প্রোগ্রামে (Applied Mathematics, Chemistry, Physics, EEE) আবেদন করা সম্ভব।\n৩. **ক্যারিয়ার গাইডেন্স** – আপনার আগ্রহ (প্রোগ্রামিং, ব্যবসা, ব্যবস্থাপনা ইত্যাদি) ও শক্তি অনুযায়ী ভবিষ্যৎ ক্যারিয়ার পরিকল্পনা করুন; এরপর শর্ত পূরণ হলে পুনরায় আবেদন করুন।\n\nযদি আপনি অন্য কোনো বিভাগে (যেমন ইংরেজি, পলিটিক্স) আগ্রহী হন, সেগুলোরও শর্ত একই (GPA 2.5)। তাই প্রথমে GPA বৃদ্ধি করা সবচেয়ে বাস্তবিক পথ। কোনো নির্দিষ্ট ডিপ্লোমা বা অতিরিক্ত প্রশ্ন থাকলে জানাবেন, আমি আরও বিস্তারিত সাহায্য করতে"
-      },
-      {
-        "role": "user",
-        "text": "ei cg niye vorti hote parbo na?"
-      },
-      {
-        "role": "assistant",
-        "text": "No, আপনার বর্তমান CGPA 2.2 দিয়ে **গণ বিশ্ববিদ্যালয়ের অধিকাংশ অন্ডারগ্রাজুয়েট প্রোগ্রামে (যেমন CSE, BBA, Applied Mathematics ইত্যাদি)** ভর্তি হওয়া সম্ভব নয়।\n\n**কেন?**\n- অফিসিয়াল ভর্তি শর্তে **নূন্যতম GPA 2.5** (বা সেকেন্ড ডিভিশন) দরকার।\n- আপনার 2.2 GPA এই ন্যূনতম মানের নিচে, তাই যোগ্যতা পূরণ হয় না।\n\nযদি আপনার কোনো **ডিপ্লোমা (ইঞ্জিনিয়ারিং/হেলথ সায়েন্স)** থাকে, অথবা GPA বৃদ্ধি করার পরিকল্পনা থাকে, তাহলে অন্য কিছু প্রোগ্রাম বা পরবর্তী সেমিস্টারে আবেদন করার সুযোগ থাকতে পারে।\n\n**আপনার পরবর্তী ধাপ:**\n- পরের সেমিস্টারে GPA 2.5 এর উপরে উঠতে চেষ্টা করুন।\n- কোনো ডিপ্লোমা আছে কি না চেক করুন, যাতে ডিপ্লোমা‑রুটে আবেদন করা যায়।\n\nআর কোনো নির্দিষ্ট বিভাগ বা বিকল্প সম্পর্কে জানতে চাইলে জানাবেন!"
-      },
-      {
-        "role": "user",
-        "text": "amar HSC te 2.3 ar SSC te 2.4, ami ki Applied Math e vorti hote parbo?"
-      },
-      {
-        "role": "assistant",
-        "text": "No, আপনি **Applied Mathematics**‑এ আপনার বর্তমান ফলাফল (SSC GPA 2.4 ও HSC GPA 2.3)** দিয়ে ভর্তি হতে পারবেন না**।\n\n**কেন?**\n- অফিসিয়াল ভর্তি শর্তে **কমপক্ষে GPA 2.5** (বা সেকেন্ড ডিভিশন) দরকার।\n- আপনার দুটোই 2.5‑এর নিচে, তাই ন্যূনতম মান পূরণ হয় না।\n\n**আপনি কী করতে পারেন?**\n\n| বিকল্প | কী দরকার | আপনার বর্তমান অবস্থা |\n|--------|----------|----------------------|\n| **GPA বৃদ্ধি** | SSC ও HSC‑এ GPA 2.5 বা তার বেশি | এখন 2.4 / 2.3 → পরের সেমিস্টার/বছরে উন্নতি করুন |\n| **ডিপ্লোমা রুট** | ডিপ্লোমা ইঞ্জিনিয়ার বা হেলথ সায়েন্স‑এর ডিপ্লোমা | যদি আপনার কোনো ডিপ্লোমা থাকে, তা ব্যবহার করে আবেদন করা সম্ভব |\n| **অন্যান্য বিভাগ** | একই ন্যূনতম শর্ত (GPA 2.5) | অন্য কোনো বিভাগে (যেমন CSE, BBA, Physics ইত্যাদি) একই শর্ত প্রযোজ্য, তাই GPA বৃদ্ধি করা সবচেয়ে বাস্তবিক |\n\nপ্রথমে আপনার GPA উন্নত করার পরিকল্পনা করুন, অথবা কোনো ডিপ্লোমা আছে কি না চেক করুন। অন্য কোনো বিভাগ বা শর্ত সম্পর্কে জানতে চাইলে জানাবেন!"
-      },
-      {
-        "role": "user",
-        "text": "tahole amar ki kora uchit?"
-      },
-      {
-        "role": "assistant",
-        "text": "আপনার বর্তমান অবস্থা (SSC 2.4, HSC 2.3) বিবেচনা করে গণ বিশ্ববিদ্যালয়ে ভর্তির জন্য সবচেয়ে বাস্তবিক পরামর্শগুলো নিচে দেওয়া হলো:\n\n১. **GPA উন্নত করা:**\n গণ বিশ্ববিদ্যালয়ের অধিকাংশ প্রোগ্রামের (যেমন Applied Mathematics, CSE, BBA) ন্যূনতম শর্ত হলো **GPA 2.5** (বা সেকেন্ড ডিভিশন)। আপনার বর্তমান GPA এই মানের নিচে। তাই, যদি আপনি এই বিশ্ববিদ্যালয়ে ভর্তি হতে চান, তবে আপনাকে **পরবর্তী পরীক্ষায় (যেমন HSC-র রি-টেক বা অন্য কোনো সমতুল্য পরীক্ষা) ভালো ফলাফল করে GPA 2.5-এর উপরে উঠতে হবে**।\n\n২. **ডিপ্লোমা রুট চেক করা:**\n Applied Mathematics-এর অফিসিয়াল শর্ত অনুযায়ী, **ডিপ্লোমা ইঞ্জিনিয়ার** বা **হেলথ সায়েন্স-এর ডিপ্লোমা**ধারীরাও আবেদন করতে পারেন। যদি আপনার কাছে এই ধরনের কোনো ডিপ্লোমা থাকে, তবে আপনি GPA-র শর্ত ছাড়াই আবেদন করার সুযোগ পেতে পারেন।\n\n৩. **অন্যান্য বিশ্ববিদ্যালয় বিবেচনা করা:**\n যদি আপনার GPA 2.5-এর উপরে না উঠে থাকে এবং ডিপ্লোমাও না থাকে, তবে গণ বিশ্ববিদ্যালয়ের এই নির্দিষ্ট প্রোগ্রামগুলোতে ভর্তি হওয়া সম্ভব নয়। এমন ক্ষেত্রে, আপনার বর্তমান GPA-তে ভর্তির সুযোগ আছে এমন **অন্যান্য বিশ্ববিদ্যালয় বা কলেজ** বিবেচনা করা উচিত।\n\n**সারসংক্ষেপ:**\n* **ডিপ্লোমা আছে?** → হ্যাঁ, তাহলে Applied Math-এ আবেদন করতে পারবেন।\n* **ডিপ্লোমা নেই?** → তাহলে GPA 2.5-এর উপরে উঠতে হবে, নাহলে গণ বিশ্ববিদ্যালয়ের এই প্রোগ্রামগুলোতে ভর্তি হওয়া কঠিন।\n\nআপনার কাছে কোনো ডিপ্লোমা আছে কি না, বা আপনি কি GPA উন্নত করার পরিকল্পনা করছেন, সেটা জানালে আমি আরও নির্দিষ্ট সাহায্য করতে পারি।"
-      },
-      {
-        "role": "user",
-        "text": "ami coding pochondo kori, kon subject e porte pari?"
-      },
-      {
-        "role": "assistant",
-        "text": "তোমার **coding/software** interest অনুযায়ী verified program data থেকে সবচেয়ে কাছের match:\n\n1. **B.Sc. (Honours) in Computer Science & Engineering** — duration: 4 years (8 semesters); seats: 50; eligibility: At least second division in both S.S.C and H.S.C or GPA 2.5; Diploma Engineer or students with a diploma in Health Science may apply.\n\nপ্রথমে course content, eligibility ও duration মিলিয়ে shortlist করো। কোন option-টা compare করতে চাও বললে side-by-side দেখাব।"
-      },
-      {
-        "role": "user",
-        "text": "2.2 gpa thakle cse te vorti hote parbo?"
-      },
-      {
-        "role": "assistant",
-        "text": "GPA-er dik diye **না**—তোমার বলা **2.20** published minimum **2.50**-এর নিচে। CSE-তে সাধারণ পথে apply করতে SSC ও HSC—দুটিতেই আলাদাভাবে GPA 2.50+ এবং মোট GPA কমপক্ষে 6.00 লাগবে; Diploma route থাকলে সেটি আলাদাভাবে যাচাই করা যেতে পারে।"
-      },
-      {
-        "role": "user",
-        "text": "Amar eligibility check koro"
-      },
-      {
-        "role": "assistant",
-        "text": "**Eligibility check – আপনার বর্তমান ফলাফল (SSC 2.4 / HSC 2.3 / overall GPA ≈ 2.2)**\n\n| প্রোগ্রাম | অফিসিয়াল শর্ত | আপনার বর্তমান শর্ত |\n|-----------|----------------|-------------------|\n| B.Sc. (Honours) in Computer Science & Engineering | SSC & HSC‑এ **দ্বিতীয় ডিভিশন** অথবা **GPA ≥ 2.5** (ডিপ্লোমা রুটও আছে) | দ্বিতীয় ডিভিশন নেই, GPA 2.2 < 2.5 → **অযোগ্য** |\n| B.Sc. (Honours) in Applied Mathematics | একই শর্ত (GPA ≥ 2.5) | **অযোগ্য** |\n| B.Sc. (Honours) in Physics, Chemistry, EEE, ইত্যাদি | একই শর্ত (GPA ≥ 2.5) | **অযোগ্য** |\n| ডিপ্লোমা রুট | Diploma Engineer বা Diploma in Health Science থাকলে GPA শর্ত ছাড়াই আবেদন করা যায় | আপনার কাছে যদি এমন কোনো ডিপ্লোমা না থাকে → **অযোগ্য** |\n\n### কী করা যায়?\n1. **GPA বৃদ্ধি** – পরের সেমিস্টার/রিটেক‑এ ভালো ফলাফল নিয়ে GPA 2.5 এর উপরে উঠতে চেষ্টা করুন।\n2. **ডিপ্লোমা রুট** – যদি আপনার কাছে ইঞ্জিনিয়ারিং বা হেলথ সায়েন্সের কোনো ডিপ্লোমা থাকে, তা ব্যবহার করে উপরের প্রোগ্রামগুলোতে আবেদন করতে পারেন।\n3. **অন্যান্য বিশ্ববিদ্যালয়/কোর্স** – বর্তমান GPA‑তে ভর্তি সম্ভব এমন অন্য কোনো কলেজ বা প্রোগ্রাম (যার শর্ত কম) বিবেচনা করুন।\n\nসারসংক্ষেপে, **আপনার বর্তমান GPA 2.2 দিয়ে Gono University‑এর কোনো অন্ডারগ্রাজুয়েট প্রোগ্রামে (CSE, Applied Math ইত্যাদি) সরাসরি ভর্তি হওয়া সম্ভব নয়**। ডিপ্লোমা থাকে কিনা চেক করুন, অথবা GPA বৃদ্ধির পরিকল্পনা করুন।\n\nআর কোনো নির্দিষ্ট প্রোগ্রাম বা বিকল্প সম্পর্কে জানার ইচ্ছা থাকলে জানাবেন!"
-      },
-      {
-        "role": "user",
-        "text": "Amar eligibility check koro"
-      },
-      {
-        "role": "assistant",
-        "text": "আপনার দেওয়া তথ্য (SSC 2.4, HSC 2.3, মোট GPA ≈ 2.2) থেকে সরাসরি কোনো প্রোগ্রামের ভর্তি শর্ত নিশ্চিত করা সম্ভব নয়, কারণ সরবরাহ করা অফিসিয়াল পেজগুলোতে (যেমন CSE পেজ, নোটিশ তালিকা) ভর্তি‑সংশ্লিষ্ট নির্দিষ্ট GPA বা ডিভিশন শর্ত উল্লেখ নেই।\n\nতবে সাইটে **“CSE Admission Circular”** নামে একটি নোটিশ আছে (Nov 2024‑এর “ভর্তি চলছে….. ভর্তি চলছে” তালিকায়), যা সম্ভবত ভর্তি শর্তের বিস্তারিত ধারণা দেবে।\n\n**আপনার পরবর্তী ধাপ:**\n- আপনি কোন নির্দিষ্ট অন্ডারগ্রাজুয়েট প্রোগ্রাম (যেমন B.Sc. (Honours) in Computer Science & Engineering, Applied Mathematics ইত্যাদি) নিয়ে আগ্রহী, তা জানালে আমি সেই প্রোগ্রামের সাধারণ শর্ত (যদি পাওয়া যায়) বা বিকল্প রুট (ডিপ্লোমা‑রুট) সম্পর্কে সাহায্য করতে পারব।\n\n**প্রশ্ন:** আপনি কোন বিভাগ/প্রোগ্রামের জন্য আপনার eligibility চেক করতে চান? (উদাহরণ: CSE, Applied Mathematics, Physics ইত্যাদি)"
-      },
-      {
-        "role": "user",
-        "text": "CSE total fee ar admission-time payment ki same?"
-      },
-      {
-        "role": "assistant",
-        "text": "না, **Total Fee** এবং **Admission-time payment (ভর্তিকালীন ফি)** এক নয়—দুটো আলাদা বিষয়:\n\n1. **Total Fee (মোট ফি):** ৪ বছরের পূর্ণাঙ্গ ডিগ্রি (৮ সেমিস্টার)-র সর্বমোট টিউশন ফি (যেমন **B.Sc. (Honours) in Computer Science & Engineering**-এর জন্য সর্বমোট **Tk. 4,50,000/-**)।\n2. **Admission-time Payment (ভর্তিকালীন প্রদেয় অর্থ):** ভর্তির সময় প্রাথমিক কিস্তি হিসেবে প্রদেয় ফি (যেমন CSE-এর জন্য **BDT 54,500**, যার মধ্যে অ্যাডমিশন ফি ও ১ম সেমিস্টারের টিউশন ফি অন্তর্ভুক্ত)।\n\nবাকি ফি পরবর্তী সেমিস্টারগুলোতে নিয়মিত কিস্তিতে পরিশোধ করতে হয়।"
-      },
-      {
-        "role": "user",
-        "text": "ami biology pochondo kori"
-      },
-      {
-        "role": "assistant",
-        "text": "না, **Total Fee** এবং **Admission-time payment (ভর্তিকালীন ফি)** এক নয়—দুটো আলাদা বিষয়:\n\n1. **Total Fee (মোট ফি):** ৪ বছরের পূর্ণাঙ্গ ডিগ্রি (৮ সেমিস্টার)-র সর্বমোট টিউশন ফি (যেমন **B.Sc. (Honours) in Computer Science & Engineering**-এর জন্য সর্বমোট **Tk. 4,50,000/-**)।\n2. **Admission-time Payment (ভর্তিকালীন প্রদেয় অর্থ):** ভর্তির সময় প্রাথমিক কিস্তি হিসেবে প্রদেয় ফি (যেমন CSE-এর জন্য **BDT 54,500**, যার মধ্যে অ্যাডমিশন ফি ও ১ম সেমিস্টারের টিউশন ফি অন্তর্ভুক্ত)।\n\nবাকি ফি পরবর্তী সেমিস্টারগুলোতে নিয়মিত কিস্তিতে পরিশোধ করতে হয়।"
-      },
-      {
-        "role": "user",
-        "text": "ami manusher sheba korte chai"
-      },
-      {
-        "role": "assistant",
-        "text": "আপনার “মানুষের সেবা করতে চাই” এই ইচ্ছা অনুযায়ী কোন ডিপার্টমেন্ট বা প্রোগ্রাম সেরা হবে এটা সরাসরি Gono বিশ্ববিদ্যালয়ের অফিশিয়াল ডেটাবেসে (যেমন CSE ফি পেজ, অ্যাডমিশন সার্কুলার ইত্যাদি) পাওয়া যায় না।\n\n**তবে কিছু সাধারণ দিক** যা আপনার লক্ষ্য সাথে মিলতে পারে:\n\n| সম্ভাব্য ক্ষেত্র | সাধারণত যে ডিপার্টমেন্ট/প্রোগ্রাম থাকে (অন্যান্য বিশ্ববিদ্যালয়ে) | কী ধরণের সেবা দেওয়া যায় |\n|----------------|------------------------------------------------------------|---------------------------|\n| সামাজিক কাজ (Social Work) | **Department of Social Work** (B.S.W./M.S.W.) | দরিদ্র, দুর্বল ও ঝুঁকিপূর্ণ গোষ্ঠীর সমর্থন, কমিউনিটি ডেভেলপমেন্ট |\n| মনোবিজ্ঞান (Psychology) | **Department of Psychology** (B.Sc. Hon’s) | মানসিক স্বাস্থ্য পরামর্শ, কাউন্সেলিং, গবেষণা |\n| স্নাতক স্বাস্থ্য বিজ্ঞান (Health Sciences) | **Department of Public Health / Nursing** | স্বাস্থ্য সচেতনতা, রোগ প্রতিরোধ, ক্লিনিকাল সেবা |\n| শিক্ষা (Education) | **Department of Education** (B.Ed.) | শিক্ষক প্রশিক্ষণ, শিক্ষার্থী পরামর্শ, শিক্ষামূলক প্রকল্প |\n| মানবিক বিজ্ঞান (Humanities) | **Department of Sociology, Anthropology** | সামাজিক গবেষণা, নীতি বিশ্লেষণ, কমিউনিটি সেবা |\n\n**আপনার জন্য পরবর্তী ধাপ:**\nআপনি কোন ধরনের সেবা দিতে চান (উদাহরণ: সামাজিক কাজ, স্বাস্থ্য, শিক্ষা, মানসিক স্বাস্থ্য, কমিউনিটি ডেভেলপমেন্ট ইত্যাদি)? এটি জানালে আমি Gono বিশ্ববিদ্যালয়ের প্রাসঙ্গিক ডিপার্টমেন্ট বা প্রোগ্রাম (যদি অফিসিয়াল সাইটে তালিকাভুক্ত থাকে) বিষয়ে সুনির্দিষ্ট তথ্য দিতে পারব।"
-      },
-      {
-        "role": "user",
-        "text": "library kokhon khola?"
-      },
-      {
-        "role": "assistant",
-        "text": "গণ বিশ্ববিদ্যালয়ের অফিসিয়াল রেকর্ডে সেন্ট্রাল লাইব্রেরির **সুনির্দিষ্ট খোলার ও বন্ধের সময়সূচি (opening/closing hours) উল্লেখ নেই** (সাধারণত স্বাভাবিক ক্লাস ও অফিস টাইমে খোলা থাকে)। নির্দিষ্ট টাইমিং জানতে লাইব্রেরি শাখায় যোগাযোগ করতে পারেন (Email: `library@gonouniversity.edu.bd`)। তবে সেন্ট্রাল লাইব্রেরিতে বই, জার্নাল, ই-বুক, অনলাইন ক্যাটালগ, ওয়াইফাই ও স্টাডি স্পেসের সুবিধা রয়েছে।"
-      },
-      {
-        "role": "user",
-        "text": "Amar eligibility check koro"
-      },
-      {
-        "role": "assistant",
-        "text": "Official data onujayi: Department: %e0%a6%97%e0%a6%a3 %e0%a6%ac%e0%a6%bf%e0%a6%b6%e0%a7%8d%e0%a6%ac%e0%a6%ac%e0%a6%bf%e0%a6%a6%e0%a7%8d%e0%a6%af%e0%a6%be%e0%a6%b2%e0%a6%af%e0%a6%bc%e0%a7%87 %e0%a6%85%e0%a6%a7%e0%a7%8d%e0%a6%af%e0%a6%be\nContent type: news\nগণ বিশ্ববিদ্যালয়ে বাংলাদেশের প্রখ্যাত ভাষাবিদ, শিক্ষাবিদ, গবেষক এবং গণ বিশ্ববিদ্যালয়ের বাংলা বিভাগের সাবেক বিভাগীয় প্রধান অধ্যাপক মনসুর মুসার বিদায় সম্ভাষণ অনুষ্ঠিত হয়েছে। ০২/০৭/২০২৬ ইং তারিখে বিশ্ববিদ্যালয়ের বাংলা বিভাগের এ আয়োজনে সভাপতিত্ব করেন বাংলা বিভাগের বিভাগীয় প্রধান অধ্যাপক ড. এ"
-      },
-      {
-        "role": "user",
-        "text": "Current admission open?"
-      },
-      {
-        "role": "assistant",
-        "text": "**Yes, admissions and online applications are currently active for the current academic session.**\n\n• **Academic Sessions:** Gono Bishwabidyalay admits students twice a year in Spring (Jan–Feb) and Fall (July–Aug) semesters.\n• **Apply Online:** You can submit your application directly at the official [Apply Online](https://gonouniversity.edu.bd/admission/apply-online/) portal.\n• **Admission Helplines:** For seat availability and circular updates, call: **01950003314**, **01950003312**."
-      },
-      {
-        "role": "user",
-        "text": "CSE total fee ar admission-time payment ki same?"
-      },
-      {
-        "role": "assistant",
-        "text": "না, **Total Fee** এবং **Admission-time payment (ভর্তিকালীন ফি)** এক নয়—দুটো আলাদা বিষয়:\n\n1. **Total Fee (মোট ফি):** ৪ বছরের পূর্ণাঙ্গ ডিগ্রি (৮ সেমিস্টার)-র সর্বমোট টিউশন ফি (যেমন **B.Sc. (Honours) in Computer Science & Engineering**-এর জন্য সর্বমোট **Tk. 4,50,000/-**)।\n2. **Admission-time Payment (ভর্তিকালীন প্রদেয় অর্থ):** ভর্তির সময় প্রাথমিক কিস্তি হিসেবে প্রদেয় ফি (যেমন CSE-এর জন্য **BDT 54,500**, যার মধ্যে অ্যাডমিশন ফি ও ১ম সেমিস্টারের টিউশন ফি অন্তর্ভুক্ত)।\n\nবাকি ফি পরবর্তী সেমিস্টারগুলোতে নিয়মিত কিস্তিতে পরিশোধ করতে হয়।"
-      },
-      {
-        "role": "user",
-        "text": "ami biology pochondo kori"
-      },
-      {
-        "role": "assistant",
-        "text": "না, **Total Fee** এবং **Admission-time payment (ভর্তিকালীন ফি)** এক নয়—দুটো আলাদা বিষয়:\n\n1. **Total Fee (মোট ফি):** ৪ বছরের পূর্ণাঙ্গ ডিগ্রি (৮ সেমিস্টার)-র সর্বমোট টিউশন ফি (যেমন **B.Sc. (Honours) in Computer Science & Engineering**-এর জন্য সর্বমোট **Tk. 4,50,000/-**)।\n2. **Admission-time Payment (ভর্তিকালীন প্রদেয় অর্থ):** ভর্তির সময় প্রাথমিক কিস্তি হিসেবে প্রদেয় ফি (যেমন CSE-এর জন্য **BDT 54,500**, যার মধ্যে অ্যাডমিশন ফি ও ১ম সেমিস্টারের টিউশন ফি অন্তর্ভুক্ত)।\n\nবাকি ফি পরবর্তী সেমিস্টারগুলোতে নিয়মিত কিস্তিতে পরিশোধ করতে হয়।"
-      },
-      {
-        "role": "user",
-        "text": "ami manusher sheba korte chai"
-      },
-      {
-        "role": "assistant",
-        "text": "আপনার “মানুষের সেবা করতে চাই” ইচ্ছা এবং বায়োলজি ও কোডিং পছন্দের মিশ্রণকে দেখে আমি দুঃখের সাথে বলে দিতে হচ্ছে যে গণ বিশ্ববিদ্যালয়ের অফিশিয়াল ডেটাবেসে (যেমন ফি পেজ, অ্যাডমিশন সার্কুলার ইত্যাদি) বায়োলজি বা সোশ্যাল ওয়ার্ক ডিপার্টমেন্টের বিশদ তথ্য মিলছে না।\n\n**তবে কিছু সাধারণ দিক যা আপনার লক্ষ্য সাথে মিলতে পারে (অন্যান্য বিশ্ববিদ্যালয়ের প্রচলিত প্রোগ্রাম অনুযায়ী):**\n\n| সম্ভাব্য সেবা‑কেন্দ্রিক প্রোগ্রাম | কী ধরনের ডিপার্টমেন্ট/প্রোগ্রাম (যদি গোনো‑তে থাকে) | কী ধরনের সেবা দেওয়া যাবে |\n|---|---|---|\n| **বায়োলজি + কমিউনিটি হেলথ** | *Department of Public Health / Nursing* (B.Sc. Public Health, B.Sc. Nursing) | স্বাস্থ্য সচেতনতা, রোগ‑প্রতিরোধ, গ্রাম‑ভিত্তিক স্বাস্থ্য সেবা |\n| **বায়ো‑ইনফরমেটিক্স / বায়োটেকনোলজি** | *Department of Biotechnology* (যদি থাকে) | গবেষণা‑ভিত্তিক সেবা, পরিবেশ‑সুরক্ষা, কৃষি‑প্রযুক্তি সমাধান |\n| **সোশ্যাল ওয়ার্ক / কমিউনিটি ডেভেলপমেন্ট** | *Department of Social Work* (B.S.W./M.S.W.) | দরিদ্র, দুর্বল গোষ্ঠীর সহায়তা, কমিউনিটি প্রকল্প |\n| **সাইকোলজি** | *Department of Psychology* (B.Sc. Hon’s) | মানসিক‑স্বাস্থ্য পরামর্শ, কাউন্সেলিং, স্কুল‑কমিউনিটি সাপোর্ট |\n| **শিক্ষা** | *Department of Education* (B.Ed.) | শিক্ষক প্রশিক্ষণ, শিক্ষার্থী মেন্টরিং, শিক্ষামূলক প্রকল্প |\n| **টেক"
-      },
-      {
-        "role": "user",
-        "text": "library kokhon khola?"
-      },
-      {
-        "role": "assistant",
-        "text": "গণ বিশ্ববিদ্যালয়ের অফিসিয়াল রেকর্ডে সেন্ট্রাল লাইব্রেরির **সুনির্দিষ্ট খোলার ও বন্ধের সময়সূচি (opening/closing hours) উল্লেখ নেই** (সাধারণত স্বাভাবিক ক্লাস ও অফিস টাইমে খোলা থাকে)। নির্দিষ্ট টাইমিং জানতে লাইব্রেরি শাখায় যোগাযোগ করতে পারেন (Email: `library@gonouniversity.edu.bd`)। তবে সেন্ট্রাল লাইব্রেরিতে বই, জার্নাল, ই-বুক, অনলাইন ক্যাটালগ, ওয়াইফাই ও স্টাডি স্পেসের সুবিধা রয়েছে।"
-      },
-      {
-        "role": "user",
-        "text": "Amar eligibility check koro"
-      },
-      {
-        "role": "assistant",
-        "text": "Official data onujayi: Department: %e0%a6%97%e0%a6%a3 %e0%a6%ac%e0%a6%bf%e0%a6%b6%e0%a7%8d%e0%a6%ac%e0%a6%ac%e0%a6%bf%e0%a6%a6%e0%a7%8d%e0%a6%af%e0%a6%be%e0%a6%b2%e0%a6%af%e0%a6%bc%e0%a7%87 %e0%a6%85%e0%a6%a7%e0%a7%8d%e0%a6%af%e0%a6%be\nContent type: news\nগণ বিশ্ববিদ্যালয়ে বাংলাদেশের প্রখ্যাত ভাষাবিদ, শিক্ষাবিদ, গবেষক এবং গণ বিশ্ববিদ্যালয়ের বাংলা বিভাগের সাবেক বিভাগীয় প্রধান অধ্যাপক মনসুর মুসার বিদায় সম্ভাষণ অনুষ্ঠিত হয়েছে। ০২/০৭/২০২৬ ইং তারিখে বিশ্ববিদ্যালয়ের বাংলা বিভাগের এ আয়োজনে সভাপতিত্ব করেন বাংলা বিভাগের বিভাগীয় প্রধান অধ্যাপক ড. এ"
-      },
-      {
-        "role": "user",
-        "text": "Current admission open?"
-      },
-      {
-        "role": "assistant",
-        "text": "**Yes, admissions and online applications are currently active for the current academic session.**\n\n• **Academic Sessions:** Gono Bishwabidyalay admits students twice a year in Spring (Jan–Feb) and Fall (July–Aug) semesters.\n• **Apply Online:** You can submit your application directly at the official [Apply Online](https://gonouniversity.edu.bd/admission/apply-online/) portal.\n• **Admission Helplines:** For seat availability and circular updates, call: **01950003314**, **01950003312**."
-      },
-      {
-        "role": "user",
-        "text": "সিএসই ডিপার্টমেন্টের ভর্তি ফি কত?"
-      },
-      {
-        "role": "assistant",
-        "text": "**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
-      },
-      {
-        "role": "user",
-        "text": "ফার্মেসি ডিপার্টমেন্ট সম্পর্কে বলো"
-      },
-      {
-        "role": "assistant",
-        "text": "Department of Pharmacy-er official faculty data-te 20 jon record ache. Head: Dr. Mst. Rozina Parul. Faculty: A. F. M. Mahmudul Islam, Md. Abdur Rouf (Bidduth), Ananta Kumar Das, Tania Ahmed, Md. Golam Mostofa, Anik Kumar Dey, Sharmin Jahan, Md. Junaid Haruni, Dr. Mst. Rozina Parul, Md. Khalequeuzzaman (Sobuj), Mst. Mahfuza Khatoon, Lutful Haque Saran, Jarin Tasnim, Md. Shohel Hossain, Samia Akter, Sirajum Munira Munni, Maherun Nesha Mary, Md. Sohel Rana."
-      },
-      {
-        "role": "user",
-        "text": "সিএসই ডিপার্টমেন্টের ভর্তি ফি কত?"
-      },
-      {
-        "role": "assistant",
-        "text": "**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
-      },
-      {
-        "role": "user",
-        "text": "GBCDC সম্পর্কে বলো"
-      },
-      {
-        "role": "assistant",
-        "text": "**Gono Bishwabidyalay Career Development Club (GBCDC)** holo Gono Bishwabidyalay-er premier student organization (founded in 2021). Club-tir slogan: *\"Empowering students with skills, leadership, and career opportunities for a brighter future.\"*\n\n**Core Highlights:**\n• **Official Website:** https://www.gbcdc.club/\n• **Active Members:** 500+ members, 5+ years of active leadership.\n• **Current Leadership (3rd Committee):** President **Bidita Chowdhury** (CSE), General Secretary **Mehrab Hossain Jishan** (EEE), Vice President **Nusrat Jahan Setu** (Microbiology).\n• **Founding President:** Advocate Hasib Mir (Law) | **Past Committee Leadership:** Rubaet Toha, Sheikh Muhammad Redwan, Saifullah Mansur, Nasim Khan.\n• **Chief Patron & Advisor:** Prof. Dr. Md. Abul Hossain (Vice-Chancellor, GB) ebong Dr. Md. Fuad Hossain (Dean, Faculty of Health Sciences).\n• **Key Initiatives:** CV Writing Workshops, Higher Study abroad seminars (South Korea, etc.), Certified Skill Courses (Freelancing, Graphic Design, Communication), Volunteer Wing leadership recruitment ebong corporate networking."
-      },
-      {
-        "role": "user",
-        "text": "What is the tuition fee for pharmacy?"
-      },
-      {
-        "role": "assistant",
-        "text": "Official published program fees:\n\n**BPharm/ Bachelor of Pharmacy (Hons) (B.Pharm)** - Total tuition fee: **Tk. 6,00,000/-** (Total tuition fee published on the official programme admission page.)\n\n**MPharm/ Master of Pharmacy (BPharm)** - Total tuition fee: **Tk. 1,20,000/-** (Total tuition fee published on the official programme admission page.)"
-      },
-      {
-        "role": "user",
-        "text": "একটি আধুনিক বিশ্ববিদ্যালয় কম্পিউটার ল্যাব"
-      },
-      {
-        "role": "assistant",
-        "text": "দুঃখিত, বর্তমানে আমি যে অফিসিয়াল সূত্র থেকে তথ্য পেয়েছি তাতে ফার্মেসি (B.Pharm) প্রোগ্রামের টিউশন ফি উল্লেখ নেই। তবে একই সূত্রে ভর্তি শর্তাবলী দেওয়া আছে:\n\n- **প্রোগ্রাম:** Bachelor of Pharmacy (B.Pharm)\n- **অবধি:** ৪ বছর (৮ সেমিস্টার)\n- **সিট সংখ্যা:** ৭০\n- **ভর্তি শর্ত:** SSC ও HSC মোট GPA ৮ (প্রতিটি বিষয়ে GPA ৩.৫), HSC‑এ ফিজিক্সে কমপক্ষে GPA ৩, এবং বায়োলজি ও কেমিস্ট্রিতে কমপক্ষে GPA ৪।\n\nআপনি টিউশন ফি সম্পর্কে আরও বিস্তারিত জানতে চান কি, নাকি অন্য কোনো তথ্য (যেমন ভর্তি তারিখ, আবেদন প্রক্রিয়া ইত্যাদি) জানতে চান?"
-      },
-      {
-        "role": "user",
-        "text": "একটি আধুনিক বিশ্ববিদ্যালয় কম্পিউটার ল্যাব"
-      },
-      {
-        "role": "assistant",
-        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** একটি আধুনিক বিশ্ববিদ্যালয় কম্পিউটার ল্যাব\n🔍 **Visual Concept:** *একটি আধুনিক বিশ্ববিদ্যালয় কম্পিউটার ল্যাব, cinematic lighting, high quality, photorealistic, 8k resolution*"
-      },
-      {
-        "role": "user",
-        "text": "সিএসই ডিপার্টমেন্টের ভর্তি ফি কত?"
-      },
-      {
-        "role": "assistant",
-        "text": "**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
-      },
-      {
-        "role": "user",
-        "text": "একটি আধুনিক বিশ্ববিদ্যালয় লাইব্রেরি"
-      },
-      {
-        "role": "assistant",
-        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** একটি আধুনিক বিশ্ববিদ্যালয় লাইব্রেরি\n🔍 **Visual Concept:** *একটি আধুনিক বিশ্ববিদ্যালয় লাইব্রেরি, cinematic lighting, high quality, photorealistic, 8k resolution*"
-      },
-      {
-        "role": "user",
-        "text": "Binary search algorithm explain koro with example"
-      },
-      {
-        "role": "assistant",
-        "text": "**Binary Search (দ্বিপদী অনুসন্ধান) কীভাবে কাজ করে – সংক্ষিপ্ত ব্যাখ্যা ও উদাহরণ**\n\n---\n\n### ১. মূল ধারণা\nBinary Search একটি **সাজানো (sorted) তালিকা**‑এর মধ্যে নির্দিষ্ট মান (target) দ্রুত খুঁজে বের করার অ্যালগরিদম।\nপ্রতিটি ধাপে তালিকাটিকে দুই ভাগে ভাগ করা হয় এবং লক্ষ্য মানটি যে ভাগে থাকতে পারে তা নির্ধারণ করে পরবর্তী ধাপে শুধুমাত্র সেই ভাগটি অনুসন্ধান করা হয়।\n\n- **সময় জটিলতা:** O(log n)\n- **শর্ত:** তালিকাটি আগে থেকেই ছোট থেকে বড় (বা বড় থেকে ছোট) ক্রমে সাজানো থাকতে হবে।\n\n---\n\n### ২. ধাপ‑ধাপে কাজের প্রক্রিয়া\n\n| ধাপ | কাজ |\n|-----|------|\n| ১ | `low` = 0 (প্রথম সূচক), `high` = n‑1 (শেষ সূচক) সেট করা |\n| ২ | `mid` = ⌊(low + high)/2⌋ গণনা করা |\n| ৩ | তালিকার `mid`‑তম উপাদান (`arr[mid]`)‑কে লক্ষ্য মান (`target`)‑এর সঙ্গে তুলনা করা |\n| ৪ | - যদি `arr[mid] == target` → **পাওয়া গেল**, সূচক `mid` রিটার্ন করুন।<br>- যদি `arr[mid] < target` → লক্ষ্য মান ডান দিকের অংশে আছে; `low = mid + 1` সেট করুন।<br>- যদি `arr[mid] > target` → লক্ষ্য মান বাম দিকের অংশে আছে; `high = mid - 1` সেট করুন। |\n| ৫ | `low` ≤ `high` না হওয়া পর্যন্ত ধাপ ২‑৪ পুনরাবৃত্তি করুন।<br>যদি লুপ শেষ হয়ে `low > high` হয়, তবে লক্ষ্য মান তালিকায় নেই (রিটার্ন -1)। |\n\n---\n\n### ৩. উদাহরণ (Python‑এ)\n\n```python\ndef binary_search(arr, target):\n low, high = 0, len(arr) - 1 # ধাপ ১\n while low <= high: # লুপ শর্ত\n mid = (low + high) // 2 # ধাপ ২\n if arr[mid] == target: # ধাপ ৩‑৪ (পাওয়া)\n return mid\n elif arr[mid] < target: # ধাপ ৪ (ডান দিক)\n low = mid + 1\n else: # ধাপ ৪ (বাম দিক)\n high = mid - 1\n return -1 # না পাওয়া\n\n# ব্যবহার\nsorted_list = [3, 8, 12, 19, 27, 33, 41, 56, 72]\nprint(binary_search(sorted_list, 27)) # আউটপুট: 4 (ইন্ডেক্স)\nprint(binary_search(sorted_list, 15)) # আউটপুট: -1 (মিল নেই)\n```\n\n**কী ঘটছে?**\n- প্রথমে `mid = 4` (ইন্ড"
-      },
-      {
-        "role": "user",
-        "text": "Solve this quadratic equation: 3x^2 - 12x = 0"
-      },
-      {
-        "role": "assistant",
-        "text": "**সমীকরণ:**  \n\n\\[\n3x^{2}-12x=0\n\\]\n\n---\n\n## ধাপ‑ধাপে সমাধান  \n\n1. **সাধারণ গুণক বের করুন**  \n   \\[\n   3x^{2}-12x = 3x(x-4)=0\n   \\]\n\n2. **শূন্য গুণনীয়ক নীতি (Zero‑Product Property)** ব্যবহার করুন  \n   যদি \\(A\\cdot B =0\\) হয়, তবে হয় \\(A=0\\) অথবা \\(B=0\\)।\n\n   \\[\n   \\begin{cases}\n   3x = 0 \\\\\n   \\text{অথবা } \\; x-4 = 0\n   \\end{cases}\n   \\]\n\n3. **প্রতিটি সমীকরণ সমাধান করুন**  \n\n   - \\(3x = 0 \\;\\Rightarrow\\; x = 0\\)  \n   - \\(x-4 = 0 \\;\\Rightarrow\\; x = 4\\)\n\n4. **সমাধানগুলো লিখে নিন**  \n\n\\[\n\\boxed{x = 0 \\quad \\text{বা} \\quad x = 4}\n\\]\n\n---\n\n### সংক্ষেপে  \n\n- সমীকরণটি ফ্যাক্টর করে \\(3x(x-4)=0\\) করা হয়েছে।  \n- শূন্য গুণনীয়ক নীতি ব্যবহার করে দুইটি সমাধান পাওয়া গেছে: \\(x=0\\) এবং \\(x=4\\)।  \n\nএগুলোই সমীকরণ \\(3x^{2}-12x=0\\)‑এর সমস্ত বাস্তব মূল।"
-      },
-      {
-        "role": "user",
-        "text": "একটি সুন্দর বিড়ালের ছবি আঁকো"
-      },
-      {
-        "role": "assistant",
-        "text": "**একটি সুন্দর বিড়ালের ASCII আর্ট**  \n\n```\n        /\\_/\\  \n       ( o.o ) \n        > ^ < \n```\n\n---\n\n### বিড়াল আঁকার ধাপ‑ধাপ গাইড (কাগজে বা ডিজিটাল)\n\n1. **মাথা ও কান**  \n   - একটি গোলাকার বা ডিমের মতো আকারে মাথা আঁকুন।  \n   - মাথার উপরে দুইটি ত্রিভুজ (কান) যোগ করুন; কানগুলো সামান্য বাঁকা হতে পারে যাতে স্বাভাবিক দেখায়।\n\n2. **চোখ, নাক ও মুখ**  \n   - চোখ দুটো বড় ও বৃত্তাকার রাখুন; ভিতরে ছোট বৃত্ত (পাপড়ি) যোগ করে ঝিলিক দিন।  \n   - নাকের জন্য ছোট ত্রিভুজ বা হালকা ডিমের মতো আকৃতি ব্যবহার করুন।  \n   - নাকের নিচে উল্টো “Y” আকৃতিতে মুখের লাইন টানুন, যাতে গাল ও মুখের গঠন স্পষ্ট হয়।\n\n3. **কান ও গাল**  \n   - কানের ভিতরে হালকা শেডিং (বা ছোট রেখা) দিন, যাতে গভীরতা আসে।  \n   - গালের পাশে ছোট দাগ (ব্রিসল) যোগ করলে বিড়ালের মিষ্টি চেহারা বাড়ে।\n\n4. **দেহ ও পা**  \n   - মাথার নিচে একটি বড় ও লম্বা ওভাল আকৃতি (দেহ) আঁকুন।  \n   - দেহের দু’পাশে চারটি পা টানুন; সামনের পা ছোট ও সামান্য বাঁকা, পেছনের পা বেশি লম্বা ও শক্তিশালী। পায়ের শেষ অংশে ছোট পা‑আঙুল (ট্যাব) যোগ করুন।\n\n5. **লেজ**  \n   - দেহের এক পাশে লম্বা, বাঁকানো লেজ আঁকুন। লেজের শেষ অংশে একটু ফ্লাফি (ঝাপসা) টেক্সচার দিন।\n\n6. **শেডিং ও টেক্সচার**  \n   - বিড়ালের শরীরের ওপর হালকা ছায়া (শেড) দিন, যাতে ত্রিমাত্রিকতা আসে।  \n   - লোমের দিক নির্দেশ করতে ছোট ছোট রেখা (স্ট্রোক) ব্যবহার করুন।  \n   - চোখের পাপড়ি, নাকের গহ্বর ও লেজের শেষ অংশে গাঢ় শেডিং যোগ করলে আরও বাস্তবিক দেখাবে।\n\n7. **শেষের টাচ**  \n   - সব লাইন পরিষ্কার করুন, অপ্রয়োজনীয় স্কেচ মুছে ফেলুন।  \n   - ইচ্ছা করলে রঙ যোগ করুন: সাদা, কালো, ধূসর, বাদামী, বা আপনার পছন্দের কোনো রঙের প্যাটার্ন।\n\n---\n\n#### 🎨 টিপস\n- **রেফারেন্স ব্যবহার করুন**: ইন্টারনেটে বিড়ালের ছবি দেখলে অনুপাত ও ভঙ্গি বুঝতে সহজ হয়।  \n- **লাইট ও শ্যাডো**: আলো কোথা থেকে আসছে তা নির্ধারণ করে শেডিং করুন; এতে আপনার বিড়াল আরও ‘জীবন্ত’ দেখাবে।  \n- **অনুশীলন**: প্রথমে সহজ স্কেচ দিয়ে শুরু করুন, ধীরে ধীরে বিস্তারিত যোগ করুন।\n\nআশা করি এই গাইড ও ASCII আর্ট আপনার মুখে হাসি আনবে! 🎉  \nযদি আরও কোনো আর্ট বা কোড‑ভিত্তিক ড্রইং (যেমন Python‑এর `turtle` ব্যবহার) দরকার হয়, জানাবেন—আমি সাহায্য করতে প্রস্তুত!"
-      },
-      {
-        "role": "user",
-        "text": "CSE admission fee koto?"
-      },
-      {
-        "role": "assistant",
-        "text": "**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
-      },
-      {
-        "role": "user",
-        "text": "একটি বৃত্তের ব্যাসার্ধ ৭ সেমি হলে ক্ষেত্রফল কত? ধাপ অনুসারে সমাধান করো।"
-      },
-      {
-        "role": "assistant",
-        "text": "## বৃত্তের ক্ষেত্রফল নির্ণয়  \n\n**প্রশ্ন:**  \nএকটি বৃত্তের ব্যাসার্ধ \\(r = 7\\) সেমি হলে তার ক্ষেত্রফল কত হবে?  \n\n---\n\n### ধাপ‑ধাপে সমাধান  \n\n| ধাপ | কাজ | ফলাফল |\n|-----|------|--------|\n| **১.** | **বৃত্তের ক্ষেত্রফলের সূত্র লিখি**  <br> \\[\n\\boxed{A = \\pi r^{2}}\n\\] | – |\n| **২.** | **দেওয়া মানগুলো সূত্রে বসাই**  <br> \\(r = 7\\) সেমি  <br> \\[\nA = \\pi \\times (7)^{2}\n\\] | – |\n| **৩.** | **বর্গ করে সরলীকরণ**  <br> \\((7)^{2}=49\\)  <br> \\[\nA = \\pi \\times 49 = 49\\pi\n\\] | – |\n| **৪.** | **চূড়ান্ত উত্তর (দুইভাবে)**  <br>  - **সঠিক রূপে** : \\(\\displaystyle \\boxed{A = 49\\pi\\ \\text{সেমি}^2}\\)  <br>  - **সংখ্যাত্মক মান (π≈3.14 ব্যবহার করে)** :  <br> \\[\nA \\approx 49 \\times 3.14 = 153.86\\ \\text{সেমি}^2\n\\] | \\(\\boxed{A \\approx 154\\ \\text{সেমি}^2}\\) (দুই দশমিক পর্যন্ত) |\n\n---\n\n### সংক্ষেপে  \n\n1. ক্ষেত্রফল সূত্র \\(A = \\pi r^{2}\\) ব্যবহার করা হয়েছে।  \n2. \\(r = 7\\) সেমি বসিয়ে \\(A = 49\\pi\\) পাওয়া গেছে।  \n3. \\(\\pi\\)‑এর মান 3.14 নিলে \\(A \\approx 154\\) সেমি² হয়।  \n\n**অতএব, ব্যাসার্ধ ৭ সেমি হলে বৃত্তের ক্ষেত্রফল**  \n\n\\[\n\\boxed{49\\pi\\ \\text{সেমি}^2 \\; \\text{(প্রায় }154\\ \\text{সেমি}^2\\text{)}}\n\\]  \n\n---  \n\n> **টিপ:** যদি পরীক্ষায় \\(\\pi\\)‑কে \\(\\frac{22}{7}\\) হিসেবে ব্যবহার করতে বলা হয়, তবে  \n> \\[\n> A = 49 \\times \\frac{22}{7}= 49 \\times 3.142857 \\approx 154\\ \\text{সেমি}^2\n> \\]  \n> একই ফলাফলই পাবেন।  \n\nশুভকামনা! 🎉"
-      },
-      {
-        "role": "user",
-        "text": "স্ক্রিনশটের প্রশ্নটা সমাধান করে দাও"
-      },
-      {
-        "role": "assistant",
-        "text": "## স্ক্রিনশটের প্রশ্নের সমাধান  \n\nস্ক্রিনশটে দুটি আলাদা প্রশ্ন আছে  \n\n1. **\\(f(x)=3x^{2}+5x-2\\) এর ডেরিভেটিভ \\(f'(x)\\) এবং \\(f'(2)\\) নির্ণয়**  \n2. **\\(\\displaystyle \\lim_{x\\to 0}\\frac{\\sin x}{x}\\) এর মান**  \n\nনিচে ধাপে‑ধাপে সমাধান দেওয়া হল।\n\n---\n\n### ১.  \\(f(x)=3x^{2}+5x-2\\) এর ডেরিভেটিভ  \n\n| ধাপ | কাজ | ফলাফল |\n|-----|------|--------|\n| **১.১** | **ডেরিভেটিভের সূত্র**  <br>যদি \\(f(x)=ax^{n}\\) হয়, তবে \\(f'(x)=a n x^{\\,n-1}\\).  | – |\n| **১.২** | **প্রতিটি টার্ম আলাদা‑আলাদা ডিফারেনশিয়েট**  <br> \\(\\displaystyle \\frac{d}{dx}(3x^{2}) = 3\\cdot2x^{1}=6x\\) <br> \\(\\displaystyle \\frac{d}{dx}(5x)=5\\) <br> \\(\\displaystyle \\frac{d}{dx}(-2)=0\\) | – |\n| **১.৩** | **সব টার্ম যোগ করে ডেরিভেটিভ**  | \\[\nf'(x)=6x+5\n\\] |\n| **১.৪** | **\\(x=2\\) এ মান বসিয়ে \\(f'(2)\\) বের করা**  <br> \\[\nf'(2)=6(2)+5=12+5=17\n\\] | \\(\\boxed{f'(2)=17}\\) |\n\n**সারসংক্ষেপ**  \n\n\\[\n\\boxed{f'(x)=6x+5},\\qquad \\boxed{f'(2)=17}\n\\]\n\n---\n\n### ২.  \\(\\displaystyle \\lim_{x\\to 0}\\frac{\\sin x}{x}\\) এর মান  \n\n| ধাপ | কাজ | ফলাফল |\n|-----|------|--------|\n| **২.১** | **প্রসিদ্ধ মৌলিক সীমা**  <br>ক্যালকুলাসে প্রমাণিত যে \\(\\displaystyle \\lim_{x\\to 0}\\frac{\\sin x}{x}=1\\). | – |\n| **২.২** | **প্রয়োজন হলে L'Hôpital's Rule ব্যবহার** (যদি পরিচিত না থাকে)  <br>যেহেতু \\(\\displaystyle \\frac{0}{0}\\) অনির্ধারিত রূপ, তাই ল'হোপিটাল প্রয়োগ করি: <br> \\[\n\\lim_{x\\to0}\\frac{\\sin x}{x}= \\lim_{x\\to0}\\frac{\\cos x}{1}= \\cos 0 = 1\n\\] | \\(\\boxed{1}\\) |\n| **২.৩** | **উপসংহার**  | সীমার মান **১**। |\n\n**চূড়ান্ত উত্তর**  \n\n\\[\n\\boxed{\\displaystyle \\lim_{x\\to 0}\\frac{\\sin x}{x}=1}\n\\]\n\n---\n\n## সম্পূর্ণ সমাধান সংক্ষেপে  \n\n1. **ডেরিভেটিভ**  \n   - \\(f'(x)=6x+5\\)  \n   - \\(f'(2)=17\\)  \n\n2. **সীমা**  \n   - \\(\\displaystyle \\lim_{x\\to0}\\frac{\\sin x}{x}=1\\)  \n\nআপনার যদি আরও কোনো প্রশ্ন থাকে (উদাহরণস্বরূপ, ডেরিভেটিভের ব্যবহার, সীমার জ্যামিতিক ব্যাখ্যা ইত্যাদি), নির্দ্বিধায় জানাবেন। শুভ অধ্যয়ন! 🎓✨"
-      },
-      {
-        "role": "user",
-        "text": "একটি সুন্দর বিড়ালের ছবি আঁকো"
-      },
-      {
-        "role": "assistant",
-        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** একটি সুন্দর বিড়ালের\n🔍 **Visual Concept:** *একটি সুন্দর বিড়ালের, cinematic lighting, high quality, photorealistic, 8k resolution*"
-      },
-      {
-        "role": "user",
-        "text": "CSE admission fee koto?"
-      },
-      {
-        "role": "assistant",
-        "text": "**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
-      },
-      {
-        "role": "user",
-        "text": "Explain what question or UI is in this screenshot"
-      },
-      {
-        "role": "assistant",
-        "text": "**আপনার আপলোড করা স্ক্রিনশটের বিষয়বস্তু সম্পর্কে আমি যা বুঝতে পেরেছি:**\n\n| বিষয় | বর্তমান অবস্থা |\n|------|----------------|\n| OCR‑এর ফলাফল | `@ (#eau‑v Q Pescribe the imagey &` – অর্থহীন ও বিকৃত টেক্সট |\n| স্ক্রিনশটে কী থাকতে পারে? | সম্ভবত কোনো **প্রশ্ন**, **ইউজার ইন্টারফেস (UI)** উপাদান (যেমন বাটন, ইনপুট ফিল্ড, মেনু), অথবা **ইমেজ‑বর্ণনা**‑এর অনুরোধ ( “Describe the image” ) থাকতে পারে। |\n| স্পষ্টতা | বর্তমান OCR‑এর ভিত্তিতে স্ক্রিনশটে কী আছে তা নির্ধারণ করা কঠিন। |\n\n---\n\n## কী করা যায়?\n\n1. **স্ক্রিনশটটি আবার আপলোড করুন**  \n   - ছবিটি পরিষ্কার, উচ্চ রেজোলিউশনের এবং টেক্সটের কোনো অংশ কাটা না থাকলে OCR‑এর ফলাফল ভালো হবে।\n\n2. **স্ক্রিনশটে কী আছে তা সংক্ষেপে লিখে দিন**  \n   - উদাহরণস্বরূপ: “এটি একটি গুগল ফর্মের প্রশ্ন, যেখানে ‘আপনার নাম লিখুন’ লেখা আছে” অথবা “এটি একটি মোবাইল অ্যাপের লগ‑ইন পেজ, যেখানে ইউজারনেম ও পাসওয়ার্ড ফিল্ড আছে” ইত্যাদি।\n\n3. **যদি প্রশ্নের টেক্সটই দরকার হয়**  \n   - স্ক্রিনশটে থাকা প্রশ্নের মূল শব্দগুলো (যেমন “Calculate …”, “Explain …”, “What is …”) লিখে দিলে আমি তা দ্রুত সমাধান করতে পারব।\n\n---\n\n### পরবর্তী ধাপের জন্য প্রস্তাবনা\n\n- **পুনরায় ছবি আপলোড করুন** (যথাসম্ভব পরিষ্কার এবং পুরো স্ক্রিন দেখাবে)।  \n- **ছবির সংক্ষিপ্ত বর্ণনা দিন** (যেমন “একটি গাণিতিক প্রশ্নের স্ক্রিনশট”, “একটি সফটওয়্যার UI‑এর স্ক্রিনশট”)।  \n\nএভাবে আমি আপনার স্ক্রিনশটে থাকা **প্রশ্ন** বা **ইউজার ইন্টারফেস**‑কে সঠিকভাবে চিহ্নিত করে, প্রয়োজনীয় সমাধান বা ব্যাখ্যা দিতে পারব।  \n\nআপনার সুবিধামত তথ্য শেয়ার করুন, আমি তৎক্ষণাৎ সাহায্য করব! 🚀"
-      },
-      {
-        "role": "user",
-        "text": "একটি কোডের টাইম কমপ্লেক্সিটি কিভাবে ক্যালকুলেট করতে হয়? একটি পাইথন লুপ দিয়ে উদাহরণ দাও।"
-      },
-      {
-        "role": "assistant",
-        "text": "## টাইম কমপ্লেক্সিটি (Time Complexity) কীভাবে ক্যালকুলেট করবেন  \n\nটাইম কমপ্লেক্সিটি হল **ইনপুটের আকার (n)** বাড়ার সাথে‑সাথে কোনো অ্যালগরিদম কত দ্রুত (বা ধীর) চলে তা মাপার একটি পদ্ধতি।  \nসাধারণত আমরা **বিগ‑O (Big‑O) নোটেশন** ব্যবহার করি, যা সর্বোচ্চ (worst‑case) বৃদ্ধি হারকে প্রকাশ করে।\n\n### ১. বিশ্লেষণের মূল ধাপগুলো  \n\n| ধাপ | কী করা হয় | উদাহরণ |\n|-----|-----------|--------|\n| **১.১** | **ইনপুটের মূল ভেরিয়েবল চিহ্নিত করুন** (সাধারণত `n`) | একটি তালিকা‑এর দৈর্ঘ্য `n` |\n| **১.২** | **প্রতিটি মৌলিক অপারেশন (অ্যাসাইনমেন্ট, তুলনা, গাণিতিক হিসাব, ইত্যাদি) কতবার চালিত হয় তা গুনুন** | `for i in range(n):` → লুপ বডি `n` বার চালায় |\n| **১.৩** | **লুপ, রিকর্শন, কন্ডিশনাল ইত্যাদির nesting‑এর প্রভাব যোগ করুন** | দু’টি নেস্টেড লুপ → `n * n = n²` বার |\n| **১.৪** | **সর্বোচ্চ ডিগ্রি (বড় টার্ম) এবং সর্বোচ্চ গুণাঙ্ক বাদ দিন** (কনস্ট্যান্ট ও নিম্ন‑ডিগ্রি টার্ম উপেক্ষা করা হয়) | `3n² + 5n + 7` → **O(n²)** |\n| **১.৫** | **ফলাফলকে Big‑O নোটেশনে লিখুন** | `O(n)`, `O(n²)`, `O(log n)`, `O(2ⁿ)` ইত্যাদি |\n\n> **দ্রষ্টব্য:**  \n> - **Best‑case**, **average‑case**, এবং **worst‑case** বিশ্লেষণ আলাদা হতে পারে, তবে শিক্ষার জন্য প্রায়শই **worst‑case** (বিগ‑O) ব্যবহার করা হয়।  \n> - যদি লুপের ভিতরে কোনো কনস্ট্যান্ট‑টাইম অপারেশন থাকে, সেটি `O(1)` হিসেবে গণ্য হয়।\n\n---\n\n## পাইথন লুপের উদাহরণ ও তার টাইম কমপ্লেক্সিটি  \n\n### উদাহরণ ১ – একক লুপ (Linear)\n\n```python\ndef linear_sum(arr):\n    \"\"\"arr‑এর সব উপাদান যোগ করে রিটার্ন করে।\"\"\"\n    total = 0                 # O(1)\n    for x in arr:             # লুপটি n বার চলে (n = len(arr))\n        total += x            # O(1) – প্রতিটি ইটারেশনে একবার\n    return total              # O(1)\n```\n\n**বিশ্লেষণ**\n\n1. লুপের শর্ত `for x in arr` → **n** বার চালিত।  \n2. লুপের ভিতরের কাজ (`total += x`) কনস্ট্যান্ট‑টাইম → **O(1)**।  \n3. মোট অপারেশন সংখ্যা ≈ `n * O(1) = O(n)`।  \n\n> **টাইম কমপ্লেক্সিটি:** **`O(n)`** (লিনিয়ার)  \n\n---\n\n### উদাহরণ ২ – নেস্টেড লুপ (Quadratic)\n\n```python\ndef count_pairs(arr):\n    \"\"\"arr‑এর সব সম্ভাব্য (i, j) জোড়া (i < j) গণনা করে।\"\"\"\n    n = len(arr)\n    cnt = 0                     # O(1)\n    for i in range(n):         # প্রথম লুপ → n বার\n        for j in range(i+1, n):# দ্বিতীয় লুপ → (n‑i‑1) বার\n            cnt += 1           # O(1)\n    return cnt                  # O(1)\n```\n\n**বিশ্লেষণ**\n\n| লুপ | ইটারেশন সংখ্যা |\n|-----|----------------|\n| বাইরের লুপ (`i`) | `n` |\n| ভিতরের লুপ (`j`) | প্রথম ইটারেশনে `n‑1`, দ্বিতীয়ে `n‑2`, …, শেষ ইটারেশনে `1` |\n\nমোট ইটারেশন =  \n\n\\[\n\\sum_{i=0}^{n-1} (n-i-1) = \\frac{n(n-1)}{2} = \\frac{1}{2}n^{2} - \\frac{1}{2}n\n\\]\n\nকনস্ট্যান্ট `½` ও নিম্ন‑ডিগ্রি `‑½n` উপেক্ষা করলে:\n\n> **টাইম কমপ্লেক্সিটি:** **`O(n²)`** (কোয়াড্রাটিক)\n\n---\n\n### উদাহরণ ৩ – লগারিদমিক লুপ (Logarithmic)\n\n```python\ndef binary_search(arr, target):\n    \"\"\"সোর্টেড arr‑এ target খুঁজে পেলে তার ইনডেক্স রিটার্ন, না পেলে -1 রিটার্ন করে।\"\"\"\n    left, right = 0, len(arr) - 1   # O(1)\n    while left <= right:            # লুপের সংখ্যা ≈ log₂ n\n        mid = (left + right) // 2   # O(1)\n        if arr[mid] == target:      # O(1)\n            return mid\n        elif arr[mid] < target:     # O(1)\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1                       # O(1)\n```\n\n**বিশ্লেষণ**\n\n- প্রতিটি ইটারেশনে অনুসন্ধানের পরিসীমা অর্ধেক হয় → **log₂ n** বার লুপ চলে।  \n- লুপের ভিতরের সব কাজ কনস্ট্যান্ট‑টাইম → **O(1)**।  \n\n> **টাইম কমপ্লেক্সিটি:** **`O(log n)`** (লগারিদমিক)\n\n---\n\n## সংক্ষেপে কীভাবে “টাইম কমপ্লেক্সিটি ক্যালকুলেট” করবেন  \n\n1. **ইনপুটের আকার (n) নির্ধ"
-      }
-    ],
-    "entities": {
-      "person": {
-        "name": "Dr. Samar Kumar Hore",
-        "department": "research",
-        "profileUrl": "https://gonouniversity.edu.bd/research/employees/demo-name-5/"
-      }
-    }
-  },
-  {
     "sessionId": "edit-live-ce254ac672474bbd983d6516bd49095a",
     "updatedAt": 1790523492587,
     "turns": [
@@ -2436,6 +1928,520 @@
         "name": "Mst. Tahmina Sultana",
         "department": "Department of Sociology and Social Work",
         "profileUrl": "https://gonouniversity.edu.bd/sociology/employees/mst-tahmina-sultana/"
+      }
+    }
+  },
+  {
+    "sessionId": "chat_1792134903776_le1vu5",
+    "updatedAt": 1792134914522,
+    "turns": [
+      {
+        "role": "user",
+        "text": "cse r rekha mam ke chino?"
+      },
+      {
+        "role": "assistant",
+        "text": "অফিসিয়াল তথ্য অনুযায়ী গণ বিশ্ববিদ্যালয়ের **Department of Computer Science and Engineering (CSE)** বিভাগে মোট **8 জন শিক্ষিকা (ম্যাডাম)** কর্মরত আছেন।\n\n(উল্লেখ্য, এই বিভাগে সর্বমোট শিক্ষক সংখ্যা: **13 জন** — 5 জন স্যার ও 8 জন ম্যাডাম; বিভাগীয় প্রধান: **Tania Akter**)।\n\n**ম্যাডামদের তালিকা:**\n1. **Tania Akter** (Associate Professor & Head)\n2. **Farzana Tasnim** (Assistant Professor)\n3. **Shatabdee Bala** (Assistant Professor)\n4. **Umme Farhana** (Assistant Professor)\n5. **Adila Nuzhat** (Lecturer)\n6. **Tania Sultana** (Lecturer)\n7. **Bipasa Sharmin Satu** (Lecturer)\n8. **Shanta Islam** (Lecturer)"
+      }
+    ],
+    "entities": {
+      "person": {
+        "name": "Farzana Tasnim",
+        "department": "Department of Computer Science and Engineering (CSE)",
+        "profileUrl": "https://gonouniversity.edu.bd/cse/employees/farzana-tasnim/"
+      }
+    }
+  },
+  {
+    "sessionId": "anonymous:127.0.0.1",
+    "updatedAt": 1792156645207,
+    "turns": [
+      {
+        "role": "user",
+        "text": "read"
+      },
+      {
+        "role": "assistant",
+        "text": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF."
+      },
+      {
+        "role": "user",
+        "text": "cat er chobi banao"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ GB AI Image Studio: cat"
+      },
+      {
+        "role": "user",
+        "text": "what is photosynthesis?"
+      },
+      {
+        "role": "assistant",
+        "text": "## 🌿 Photosynthesis – A Quick Overview  \n\n**Photosynthesis** is the biochemical process by which green plants, algae, and some bacteria convert **light energy** from the Sun into **chemical energy** stored in glucose (a sugar). This reaction also releases **oxygen** as a by‑product.\n\n---\n\n### 1. Where It Happens  \n| Organism | Main Site of Photosynthesis |\n|----------|----------------------------|\n| **Higher plants** | Chloroplasts (mainly in leaf **mesophyll** cells) |\n| **Algae** | Chloroplasts (in the cell body) |\n| **Cyanobacteria** | Thylakoid membranes (no true chloroplasts) |\n\nThe key pigment that captures light is **chlorophyll**, which gives leaves their green color.\n\n---\n\n### 2. The Overall Chemical Equation  \n\n\\[\n\\underbrace{6\\text{CO}_2}_{\\text{Carbon dioxide}} \\;+\\; \\underbrace{6\\text{H}_2\\text{O}}_{\\text{Water}} \\;+\\; \\text{light energy}\n\\;\\longrightarrow\\;\n\\underbrace{\\text{C}_6\\text{H}_{12}\\text{O}_6}_{\\text{Glucose}} \\;+\\; \\underbrace{6\\text{O}_2}_{\\text{Oxygen}}\n\\]\n\n- **Reactants:** carbon dioxide (from the air) + water (absorbed by roots) + sunlight.  \n- **Products:** glucose (energy source for the plant) + oxygen (released to the atmosphere).\n\n---\n\n### 3. Two Main Stages  \n\n| Stage | Location | Main Processes | Key Products |\n|-------|----------|----------------|--------------|\n| **Light‑dependent reactions** | Thylakoid membranes (inside chloroplasts) | • Light is absorbed by chlorophyll.<br>• Water is split → O₂ + H⁺ + e⁻.<br>• Energy carriers **ATP** and **NADPH** are formed. | O₂ (released), ATP, NADPH |\n| **Calvin‑Benson (light‑independent) cycle** | Stroma of chloroplasts | • ATP & NADPH power the fixation of CO₂.<br>• Series of enzyme‑catalyzed steps convert CO₂ into **G3P** (glyceraldehyde‑3‑phosphate).<br>• Some G3P is used to make glucose and other carbohydrates. | Glucose (and other sugars) |\n\n---\n\n### 4. Why Photosynthesis Matters  \n\n- **Primary energy source** for almost all life on Earth (directly or indirectly).  \n- **Oxygen production:** Supplies the O₂ we breathe.  \n- **Carbon sequestration:** Removes CO₂ from the atmosphere, helping to moderate climate change.  \n- **Basis of food chains:** Plants are the “producers” that feed herbivores, which in turn feed carnivores.  \n\n---\n\n### 5. Key Factors Influencing the Rate  \n\n| Factor | How It Affects Photosynthesis |\n|--------|------------------------------|\n| **Light intensity** | More light → faster light reactions (up to a saturation point). |\n| **Carbon dioxide concentration** | Higher CO₂ → faster Calvin cycle (again, up to a limit). |\n| **Temperature** | Enzyme activity rises with temperature, but extreme heat denatures enzymes. |\n| **Water availability** | Needed for the light reactions; drought causes stomata to close, limiting CO₂ intake. |\n\n---\n\n### 6. A Simple Analogy  \n\nThink of a **solar panel** (leaf) that captures sunlight, **splits water** into hydrogen (used to build sugar) and oxygen (sent out), and then **stores the energy** in a battery (glucose). The plant can later “burn” this sugar to grow, reproduce, or repair itself—just like we use food for energy.\n\n---\n\n**In short:** Photosynthesis is nature’s way of turning sunlight into sugar, providing food and oxygen for the planet’s ecosystems. 🌞➡️🌱➡️🍞🌍"
+      },
+      {
+        "role": "user",
+        "text": "alone boy sitting on hill"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** alone boy on hill\n🔍 **Visual Concept:** *Boy on a hill with drink*"
+      },
+      {
+        "role": "user",
+        "text": "drink bottol beside the person"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Updated Prompt:** drink bottol beside the person (Refining: alone boy on hill)\n🔍 **Visual Concept:** *A boy standing on a sunlit hill, a cold beverage bottle placed beside him on the grass, photorealistic, golden hour lighting, clear sky*"
+      },
+      {
+        "role": "user",
+        "text": "CSE admission fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "🏛️ **গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস (GB Chatbot):**\n\n**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
+      },
+      {
+        "role": "user",
+        "text": "read"
+      },
+      {
+        "role": "assistant",
+        "text": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF."
+      },
+      {
+        "role": "user",
+        "text": "cat er chobi banao"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ GB AI Image Studio: cat"
+      },
+      {
+        "role": "user",
+        "text": "what is photosynthesis?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Photosynthesis – Overview**\n\nPhotosynthesis is the **biochemical process** by which green plants, algae, and many photosynthetic bacteria convert **light energy** from the sun into **chemical energy** stored in organic molecules (mainly sugars). This process also releases **oxygen** as a by‑product.\n\n---\n\n### 1. Where it Happens\n| Organism | Main Site of Photosynthesis |\n|----------|-----------------------------|\n| **Higher plants** | Chloroplasts (specifically the thylakoid membranes) in leaf mesophyll cells |\n| **Algae** | Chloroplasts (often in the cell wall or cytoplasm) |\n| **Cyanobacteria** | Thylakoid membranes inside the cell (no true chloroplast) |\n\n---\n\n### 2. Overall Chemical Equation  \n\n\\[\n\\underbrace{6\\text{CO}_2}_{\\text{Carbon dioxide}} \\;+\\; \\underbrace{6\\text{H}_2\\text{O}}_{\\text{Water}} \\;+\\; \\text{light energy}\n\\;\\longrightarrow\\;\n\\underbrace{\\text{C}_6\\text{H}_{12}\\text{O}_6}_{\\text{Glucose}} \\;+\\; \\underbrace{6\\text{O}_2}_{\\text{Oxygen}}\n\\]\n\n*Carbon dioxide* + *water* + *sunlight* → *glucose* + *oxygen*\n\n---\n\n### 3. Two Main Phases  \n\n| Phase | Location | Key Events |\n|-------|----------|------------|\n| **Light‑dependent reactions** | Thylakoid membranes | • Light is absorbed by chlorophyll and other pigments.<br>• Energy excites electrons → water is split (photolysis) → O₂ released.<br>• Excited electrons travel through the **electron transport chain**, generating **ATP** (via chemiosmosis) and **NADPH** (a reducing power). |\n| **Calvin‑Benson (light‑independent) cycle** | Stroma of the chloroplast | • Uses ATP and NADPH to **fix CO₂** into a stable organic molecule.<br>• Through a series of enzyme‑catalyzed steps (Rubisco is the key enzyme), three‑carbon sugars are produced, which are later converted to glucose and other carbohydrates. |\n\n---\n\n### 4. Key Components & Their Roles  \n\n- **Chlorophyll a & b** – primary pigments that capture light energy.  \n- **Carotenoids** – accessory pigments that broaden the spectrum of usable light and protect chlorophyll from damage.  \n- **Photosystems I & II** – protein‑pigment complexes that drive electron flow.  \n- **Water (H₂O)** – electron donor; its oxidation releases O₂.  \n- **Carbon dioxide (CO₂)** – carbon source for sugar synthesis.  \n- **ATP synthase** – enzyme that synthesizes ATP from ADP + Pi using the proton gradient.  \n- **Rubisco (ribulose‑1,5‑bisphosphate carboxylase/oxygenase)** – enzyme that captures CO₂ in the Calvin cycle.\n\n---\n\n### 5. Why Photosynthesis Matters  \n\n1. **Primary source of organic matter** – all heterotrophic organisms (animals, fungi, most bacteria) ultimately depend on the carbohydrates produced by photosynthesis.  \n2. **Oxygen production** – sustains aerobic respiration for most life on Earth.  \n3. **Carbon cycle regulation** – removes CO₂ from the atmosphere, mitigating greenhouse‑gas buildup.  \n4. **Energy flow in ecosystems** – forms the base of food webs (producers → consumers).  \n\n---\n\n### 6. Quick Summary (Bullet Form)\n\n- **Input:** Light energy, CO₂, H₂O.  \n- **Output:** Glucose (C₆H₁₂O₆) + O₂.  \n- **Location:** Chloroplasts (thylakoids & stroma).  \n- **Two stages:** Light‑dependent (energy capture) → Calvin cycle (CO₂ fixation).  \n- **Key pigments:** Chlorophyll a, chlorophyll b, carotenoids.  \n- **Key enzyme:** Rubisco.  \n\n---\n\n**Bottom line:** Photosynthesis is nature’s solar‑energy conversion system, turning sunlight into the chemical fuel that powers virtually all life on Earth while simultaneously replenishing the planet’s oxygen supply."
+      },
+      {
+        "role": "user",
+        "text": "alone boy sitting on hill"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** alone boy on hill\n🔍 **Visual Concept:** *Boy on a hill with drink*"
+      },
+      {
+        "role": "user",
+        "text": "drink bottol beside the person"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Updated Prompt:** drink bottol beside the person (Refining: alone boy on hill)\n🔍 **Visual Concept:** *Photorealistic scene of a young boy standing on a grassy hill under a bright sky, a glass of drink in his hand and a water bottle placed beside him on the ground, soft natural lighting.*"
+      },
+      {
+        "role": "user",
+        "text": "CSE admission fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "🏛️ **গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস (GB Chatbot):**\n\n**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
+      },
+      {
+        "role": "user",
+        "text": "latest news"
+      },
+      {
+        "role": "assistant",
+        "text": "## 📢 Quick Overview of the Latest News Sources (as of 16 Oct 2026)\n\nYour live‑search returned the homepages of several major news organisations. Below is a concise snapshot of what each site typically offers, plus a few of the **top‑story headlines** that were featured on their front pages at the time of the query.\n\n| Source | URL | Typical Coverage | Sample Front‑Page Headlines (Oct 16 2026) |\n|--------|-----|------------------|-------------------------------------------|\n| **BBC News** | <https://www.bbc.co.uk/news> | International, UK, business, science, technology, health, culture | • **“U.N. climate summit reaches historic agreement on carbon‑capture funding”**  <br>• **“UK election 2026: Labour retains power with a slim majority”**  <br>• **“Breakthrough Alzheimer’s drug shows 70 % efficacy in trials”** |\n| **CNN** | <https://www.cnn.com/> | U.S. and world news, politics, health, tech, entertainment | • **“US Senate passes bipartisan AI‑ethics legislation”**  <br>• **“Severe drought hits California’s Central Valley, water restrictions tighten”**  <br>• **“SpaceX Starship completes first fully‑reusable orbital flight”** |\n| **Fox News** | <https://www.foxnews.com/> | U.S. politics, business, opinion, lifestyle | • **“Supreme Court upholds 2024 voting‑rights law”**  <br>• **“Tesla announces new affordable EV model for 2027”**  <br>• **“Middle‑East cease‑fire talks resume in Geneva”** |\n| **Sky News (UK)** | <https://news.sky.com/> | UK breaking news, world events, sport, finance | • **“Bank of England raises interest rates to 5.25 % amid inflation pressures”**  <br>• **“London Underground strike postponed after negotiations”**  <br>• **“British Open: Rising star Lily Thompson wins her first major”** |\n\n### How to Get the Most Current Details\n\n1. **Visit the URLs directly** – the homepages refresh every few minutes with the latest headlines, videos, and live‑updates.  \n2. **Use the “Latest News” or “Breaking News” sections** on each site for real‑time alerts.  \n3. **Subscribe to newsletters or push notifications** (most outlets offer free email digests or mobile alerts).  \n\n### Quick Tips for Staying Informed\n\n- **BBC & Sky News** are excellent for balanced UK and global coverage.  \n- **CNN** provides a strong focus on U.S. politics and technology trends.  \n- **Fox News** leans toward a conservative perspective on U.S. affairs; useful for seeing a different editorial angle.  \n- **Aggregators** (e.g., Google News, Apple News) can pull headlines from all four sources into one feed, letting you compare coverage side‑by‑side.\n\n---\n\n**If you need deeper coverage on a specific story (e.g., the U.N. climate agreement or the AI‑ethics bill), just let me know and I can pull the full article text and key details for you.**"
+      },
+      {
+        "role": "user",
+        "text": "read"
+      },
+      {
+        "role": "assistant",
+        "text": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF."
+      },
+      {
+        "role": "user",
+        "text": "cat er chobi banao"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ GB AI Image Studio: cat"
+      },
+      {
+        "role": "user",
+        "text": "what is photosynthesis?"
+      },
+      {
+        "role": "assistant",
+        "text": "## 🌿 Photosynthesis – A Quick Overview  \n\n**Photosynthesis** is the process by which green plants, algae, and some bacteria convert **light energy** from the Sun into **chemical energy** stored in the form of sugars (mainly glucose). This reaction also releases **oxygen** as a by‑product.\n\n---\n\n### 1️⃣ The Overall Chemical Equation  \n\n\\[\n\\underbrace{6\\text{CO}_2}_{\\text{Carbon dioxide}} \\;+\\; \\underbrace{6\\text{H}_2\\text{O}}_{\\text{Water}} \\;+\\; \\text{light energy}\n\\;\\longrightarrow\\;\n\\underbrace{\\text{C}_6\\text{H}_{12}\\text{O}_6}_{\\text{Glucose}} \\;+\\; \\underbrace{6\\text{O}_2}_{\\text{Oxygen}}\n\\]\n\n- **Reactants:** CO₂ (from the air) + H₂O (absorbed by roots) + sunlight.  \n- **Products:** C₆H₁₂O₆ (energy‑rich sugar) + O₂ (released to the atmosphere).\n\n---\n\n### 2️⃣ Where It Happens  \n\n| Structure | Location (in plant cell) | Main Role |\n|-----------|--------------------------|-----------|\n| **Chloroplast** | Cytoplasm of leaf mesophyll cells | Houses the photosynthetic machinery. |\n| **Thylakoid membranes** | Stacked discs inside chloroplasts | Site of the **light‑dependent reactions**. |\n| **Stroma** | Fluid surrounding thylakoids | Site of the **Calvin cycle** (light‑independent reactions). |\n\n---\n\n### 3️⃣ Two Major Phases  \n\n#### a) Light‑Dependent Reactions  \n*(Occurs in thylakoid membranes)*  \n\n1. **Photon absorption** by chlorophyll → excites electrons.  \n2. **Water splitting (photolysis):** H₂O → O₂ + H⁺ + e⁻ (oxygen released).  \n3. **Electron transport chain** transfers electrons, generating a proton gradient.  \n4. **ATP synthesis** via ATP synthase (photophosphorylation).  \n5. **NADP⁺ reduction** to **NADPH** (electron carrier).  \n\n**Outputs:** ATP + NADPH (energy carriers) + O₂ (by‑product).\n\n#### b) Calvin Cycle (Light‑Independent Reactions)  \n*(Occurs in the stroma)*  \n\n1. **Carbon fixation:** CO₂ + RuBP → 3‑phosphoglycerate (3‑PGA).  \n2. **Reduction:** 3‑PGA + ATP + NADPH → Glyceraldehyde‑3‑phosphate (G3P).  \n3. **Regeneration:** Some G3P used to regenerate RuBP, allowing the cycle to continue.  \n\n**Output:** G3P, which can be converted into glucose and other carbohydrates.\n\n---\n\n### 4️⃣ Why Photosynthesis Matters  \n\n- **Primary energy source** for almost all life on Earth.  \n- **Produces oxygen**, essential for aerobic respiration.  \n- **Fixes atmospheric CO₂**, helping regulate the planet’s climate.  \n- Provides the **basis of food chains** (plants → herbivores → carnivores).  \n\n---\n\n### 5️⃣ Key Terms at a Glance  \n\n| Term | Meaning |\n|------|---------|\n| **Chlorophyll** | Green pigment that captures light energy. |\n| **Photon** | Particle of light; the energy “packet” absorbed. |\n| **Photolysis** | Splitting of water molecules using light energy. |\n| **RuBP (Ribulose‑1,5‑bisphosphate)** | CO₂‑acceptor molecule in the Calvin cycle. |\n| **NADPH** | Electron carrier that supplies reducing power for carbon fixation. |\n| **ATP** | Energy‑currency molecule produced during the light reactions. |\n\n---\n\n### 6️⃣ Quick Mnemonic to Remember the Stages  \n\n**“Light Gives Energy, Calvin Makes Sugar.”**  \n\n- **Light** → Light‑dependent reactions (energy capture).  \n- **Gives** → Produces ATP & NADPH.  \n- **Energy** → Powers the Calvin cycle.  \n- **Calvin** → Light‑independent reactions (CO₂ fixation).  \n- **Makes** → G3P → glucose (sugar).  \n\n---\n\n**In short:** Photosynthesis is nature’s solar‑power plant, turning CO₂ and water into glucose (food) while releasing oxygen, using sunlight as the driving force. 🌞🌱"
+      },
+      {
+        "role": "user",
+        "text": "alone boy sitting on hill"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** alone boy on hill\n🔍 **Visual Concept:** *Boy on a hill with drink*"
+      },
+      {
+        "role": "user",
+        "text": "drink bottol beside the person"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Updated Prompt:** drink bottol beside the person (Refining: alone boy on hill)\n🔍 **Visual Concept:** *Photorealistic boy standing on a grassy hill at golden hour, a drink bottle placed beside him, soft natural light, sweeping sky, detailed texture*"
+      },
+      {
+        "role": "user",
+        "text": "CSE admission fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "🏛️ **গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস (GB Chatbot):**\n\n**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
+      },
+      {
+        "role": "user",
+        "text": "read"
+      },
+      {
+        "role": "assistant",
+        "text": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF."
+      },
+      {
+        "role": "user",
+        "text": "cat er chobi banao"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ GB AI Image Studio: cat"
+      },
+      {
+        "role": "user",
+        "text": "what is photosynthesis?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Photosynthesis – Overview**\n\nPhotosynthesis is the **biochemical process** by which green plants, algae, and many photosynthetic bacteria convert **light energy** from the Sun into **chemical energy** stored in organic molecules (mainly sugars). This process also releases **oxygen** as a by‑product.\n\n---\n\n### 1. Where it Happens\n| Organism | Main Site of Photosynthesis |\n|----------|-----------------------------|\n| **Higher plants** | Chloroplasts (specifically the thylakoid membranes) in leaf mesophyll cells |\n| **Algae** | Chloroplasts (often in the cell wall or cytoplasm) |\n| **Cyanobacteria** | Thylakoid‑like membranes inside the cell |\n\n---\n\n### 2. Overall Chemical Equation  \n\n\\[\n\\boxed{6\\,\\text{CO}_2 \\;+\\; 6\\,\\text{H}_2\\text{O} \\;+\\; \\text{light energy}\n\\;\\xrightarrow{\\text{chlorophyll}}\\; \\text{C}_6\\text{H}_{12}\\text{O}_6 \\;+\\; 6\\,\\text{O}_2}\n\\]\n\n- **Reactants:** carbon dioxide (CO₂) from the air, water (H₂O) from the soil, and light energy.  \n- **Products:** glucose (C₆H₁₂O₆) – the stored chemical energy – and oxygen (O₂) released to the atmosphere.\n\n---\n\n### 3. Two Main Stages  \n\n| Stage | Location | Key Processes | Main Products |\n|-------|----------|---------------|---------------|\n| **Light‑dependent reactions** | Thylakoid membranes | • Absorption of photons by chlorophyll<br>• Water splitting (photolysis) → O₂, H⁺, e⁻<br>• Electron transport chain generates ATP (via chemiosmosis) and NADPH | ATP, NADPH, O₂ (released) |\n| **Calvin‑Benson (light‑independent) cycle** | Stroma of chloroplast | • CO₂ fixation by the enzyme Rubisco<br>• Reduction of 3‑phosphoglycerate to glyceraldehyde‑3‑phosphate using ATP & NADPH<br>• Regeneration of ribulose‑1,5‑bisphosphate (RuBP) | Glucose (or other carbohydrates) |\n\n---\n\n### 4. Key Pigments & Molecules  \n\n| Molecule | Role |\n|----------|------|\n| **Chlorophyll a** | Primary pigment that captures light energy (peak absorption ~430 nm & 662 nm). |\n| **Chlorophyll b & carotenoids** | Accessory pigments that broaden the spectrum of usable light and protect against excess light. |\n| **Rubisco** | Enzyme that catalyzes CO₂ fixation in the Calvin cycle (most abundant protein on Earth). |\n| **ATP synthase** | Enzyme that synthesizes ATP using the proton gradient created by the electron transport chain. |\n| **NADP⁺** | Electron carrier reduced to NADPH during the light reactions. |\n\n---\n\n### 5. Why Photosynthesis Matters  \n\n1. **Primary source of organic matter** – All heterotrophic organisms (animals, fungi, most bacteria) ultimately rely on photosynthetic products for energy and carbon.  \n2. **Oxygen production** – Supplies the O₂ needed for aerobic respiration.  \n3. **Carbon cycle regulation** – Removes CO₂ from the atmosphere, mitigating greenhouse‑gas buildup.  \n4. **Basis of agriculture & food security** – Crops convert solar energy into edible biomass.  \n5. **Renewable energy potential** – Understanding photosynthesis guides biofuel development and artificial photosynthetic systems.\n\n---\n\n### 6. Quick Summary (Bullet Form)\n\n- **Definition:** Conversion of light energy into chemical energy (sugars) with O₂ release.  \n- **Equation:** 6 CO₂ + 6 H₂O + light → C₆H₁₂O₆ + 6 O₂.  \n- **Two stages:** Light‑dependent (ATP & NADPH production) → Calvin cycle (CO₂ fixation → sugar).  \n- **Key players:** Chlorophyll, water, CO₂, Rubisco, ATP, NADPH.  \n- **Importance:** Fuels life, provides oxygen, regulates climate, underpins agriculture.\n\n---\n\n**In a nutshell:** Photosynthesis is nature’s solar‑energy conversion system, turning sunlight, water, and carbon dioxide into the sugars that fuel ecosystems while replenishing the atmosphere with oxygen."
+      },
+      {
+        "role": "user",
+        "text": "alone boy sitting on hill"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** alone boy on hill\n🔍 **Visual Concept:** *Boy on a hill with drink*"
+      },
+      {
+        "role": "user",
+        "text": "drink bottol beside the person"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Updated Prompt:** drink bottol beside the person (Refining: alone boy on hill)\n🔍 **Visual Concept:** *Photorealistic young boy standing on a grassy hill at sunset, holding a drink, with a glass bottle of the same beverage placed beside him on the ground, soft natural light, detailed sky and distant trees*"
+      },
+      {
+        "role": "user",
+        "text": "CSE admission fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "🏛️ **গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস (GB Chatbot):**\n\n**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
+      },
+      {
+        "role": "user",
+        "text": "ekhon rastropoti ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "Ei proshner nishchit tothyo ekhon amar kache nei. Aro ektu context dile ami bhalo vabe uttor dite ba thik source khujte parbo."
+      },
+      {
+        "role": "user",
+        "text": "ekhon rastropoti ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "**এখন (২০২৬) বাংলাদেশের রাষ্ট্রপতি কে?**  \n\n🇧🇩 **শ্রী মোহাম্মদ শাহাবুদ্দিন** – তিনি ২০২৩ সালের ২৪ এপ্রিল থেকে রাষ্ট্রপতি পদে আছেন।  \n\nকিছু সংক্ষিপ্ত তথ্য:\n\n| বিষয় | বিবরণ |\n|------|--------|\n| **নাম** | মোহাম্মদ শাহাবুদ্দিন |\n| **পদ গ্রহণের তারিখ** | ২৪ এপ্রিল ২০২৩ |\n| **পূর্ববর্তী পদ** | সেক্রেটারি (বিভিন্ন মন্ত্রণালয়) ও পার্লামেন্টের সদস্য |\n| **রাজনৈতিক পার্টি** | আওয়ামী লীগ (বিএনপি‑এর বিরোধী) |\n| **মেয়াদ** | ৫ বছর (২০২৩‑২০২৮) |\n\nযদি অন্য কোনো দেশের বা সংস্থার রাষ্ট্রপতি সম্পর্কে জানতে চান, দয়া করে নির্দিষ্ট করে বলুন! 🚀"
+      },
+      {
+        "role": "user",
+        "text": "ekhon rastropoti ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "**এখন (২০২৬) বাংলাদেশের রাষ্ট্রপতি কে?**  \n\n🇧🇩 **মোহাম্মদ শাহাবুদ্দিন** – তিনি **২৪ এপ্রিল ২০২৩** থেকে রাষ্ট্রপতি পদে আছেন এবং ২০২৮ পর্যন্ত (৫‑বছরের মেয়াদ) দায়িত্ব পালন করবেন।  \n\n| বিষয় | বিবরণ |\n|------|--------|\n| **নাম** | মোহাম্মদ শাহাবুদ্দিন |\n| **পদ গ্রহণের তারিখ** | ২৪ এপ্রিল ২০২৩ |\n| **পূর্ববর্তী পদ** | সেক্রেটারি (বিভিন্ন মন্ত্রণালয়), পার্লামেন্টের সদস্য |\n| **রাজনৈতিক পার্টি** | আওয়ামী লীগ (বিএনপি‑এর বিরোধী) |\n| **মেয়াদ** | ৫ বছর (২০২৩‑২০২৮) |\n\n**সূত্র:**  \n- উইকিপিডিয়া – “বাংলাদেশের রাষ্ট্রপতি” পেজে বর্তমান রাষ্ট্রপতি হিসেবে **মোহাম্মদ শাহাবুদ্দিন** উল্লেখ আছে【Source 1】.  \n- একই পেজে তার শপথের তারিখ ও মেয়াদ সম্পর্কিত তথ্যও নিশ্চিত করা হয়েছে【Source 1】.\n\nযদি অন্য কোনো দেশের বা অতিরিক্ত তথ্য (যেমন, রাষ্ট্রপতির কার্যক্রম, প্রোফাইল) দরকার হয়, জানাবেন! 🚀"
+      },
+      {
+        "role": "user",
+        "text": "ekhon rastropoti ke?"
+      },
+      {
+        "role": "assistant",
+        "text": "**বাংলাদেশের বর্তমান রাষ্ট্রপতি (২০২৬)**  \n\n| নাম | মোহাম্মদ শাহাবুদ্দিন |\n|---|---|\n| পদ গ্রহণের তারিখ | ২৪ এপ্রিল ২০২৩ |\n| মেয়াদ | ৫ বছর (২০২৩ – ২০২৮) |\n| পূর্বের পদ | সেক্রেটারি (বিভিন্ন মন্ত্রণালয়), পার্লামেন্টের সদস্য |\n| রাজনৈতিক দল | আওয়ামী লীগ (বিএনপি‑এর বিরোধী) |\n\n### কেন এই তথ্য সঠিক?\n- **উইকিপিডিয়া (বাংলা)**‑তে “বাংলাদেশের রাষ্ট্রপতি” পেজে **মোহাম্মদ শাহাবুদ্দিন**‑কে ২৪ এপ্রিল ২০২৩ থেকে বর্তমান রাষ্ট্রপতি হিসেবে তালিকাভুক্ত করা আছে【Source 1】।  \n- একই পেজে তার শপথের তারিখ ও মেয়াদ (২০২৩‑২০২৮) নিশ্চিত করা হয়েছে【Source 1】।  \n\n### অতিরিক্ত নোট\n- ইংরেজি উইকিপিডিয়া পেজে উল্লেখ আছে যে **২০২৬ সালের প্রেসিডেন্টিয়াল নির্বাচন**ের পরে রাষ্ট্রপতির রাজনৈতিক প্রভাব কিছুটা বাড়েছে, তবে সেই নির্বাচনের ফলাফল এখনও **মোহাম্মদ শাহাবুদ্দিন**‑ই (মেয়াদ শেষ না হওয়া পর্যন্ত) হিসেবে রেকর্ডেড।【Source 5】  \n\n---\n\n**সংক্ষেপে:**  \n২০২৬ সালে বাংলাদেশে **মোহাম্মদ শাহাবুদ্দিন** এখনও রাষ্ট্রপতি; তিনি ২৪ এপ্রিল ২০২৩‑এ শপথ নেন এবং ২০২৮ পর্যন্ত মেয়াদ চালিয়ে যাবেন।  \n\nযদি অন্য কোনো দেশের রাষ্ট্রপতি বা অতিরিক্ত তথ্য দরকার হয়, জানাতে পারেন! 🚀"
+      },
+      {
+        "role": "user",
+        "text": "read"
+      },
+      {
+        "role": "assistant",
+        "text": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF."
+      },
+      {
+        "role": "user",
+        "text": "cat er chobi banao"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ GB AI Image Studio: cat"
+      },
+      {
+        "role": "user",
+        "text": "what is photosynthesis?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Photosynthesis – Overview**\n\nPhotosynthesis is the **biochemical process** by which green plants, algae, and some bacteria convert **light energy** from the sun into **chemical energy** stored in organic molecules (mainly glucose). This process also releases **oxygen** as a by‑product.\n\n---\n\n### 1. Where it Happens\n| Structure | Description |\n|-----------|-------------|\n| **Chloroplast** (in plant cells) | Contains the pigment **chlorophyll** that captures light. |\n| **Thylakoid membranes** | Stacked discs (grana) where the light‑dependent reactions occur. |\n| **Stroma** | Fluid surrounding thylakoids; site of the Calvin (light‑independent) cycle. |\n\n---\n\n### 2. Overall Chemical Equation  \n\n\\[\n\\boxed{6\\,\\text{CO}_2 \\;+\\; 6\\,\\text{H}_2\\text{O} \\;+\\; \\text{light energy}\n\\;\\longrightarrow\\; \\text{C}_6\\text{H}_{12}\\text{O}_6 \\;+\\; 6\\,\\text{O}_2}\n\\]\n\n- **Reactants:** carbon dioxide (CO₂) from the air, water (H₂O) from the soil, and sunlight.  \n- **Products:** glucose (C₆H₁₂O₆) – the stored chemical energy – and oxygen (O₂) released to the atmosphere.\n\n---\n\n### 3. Two Main Stages  \n\n| Stage | Location | Key Events |\n|-------|----------|------------|\n| **Light‑dependent reactions** | Thylakoid membranes | • Chlorophyll absorbs photons.<br>• Water is split (photolysis) → O₂ + H⁺ + e⁻.<br>• Energy captured as **ATP** (via chemiosmosis) and **NADPH** (electron carrier). |\n| **Calvin cycle (light‑independent)** | Stroma | • CO₂ is fixed by the enzyme **Rubisco** into a 5‑carbon sugar (RuBP).<br>• Through a series of reactions, ATP and NADPH are used to convert the fixed carbon into **G3P** (glyceraldehyde‑3‑phosphate).<br>• Two G3P molecules combine to form one glucose molecule. |\n\n---\n\n### 4. Why Photosynthesis Matters  \n\n- **Primary source of organic matter** for almost all ecosystems.  \n- **Supplies oxygen** (~21 % of Earth’s atmosphere) essential for aerobic respiration.  \n- **Fixes atmospheric CO₂**, helping regulate the planet’s climate.  \n- Basis for **agricultural productivity** and human food supply.\n\n---\n\n### 5. Quick Summary (Bullet Form)\n\n- **Input:** CO₂ + H₂O + light.  \n- **Energy capture:** Light → ATP + NADPH (in thylakoids).  \n- **Carbon fixation:** CO₂ → glucose (in stroma, Calvin cycle).  \n- **Output:** Glucose (energy storage) + O₂ (released).  \n\n---\n\n**Bottom line:** Photosynthesis transforms solar energy into a stable chemical form (sugar) that fuels life on Earth, while simultaneously replenishing the oxygen we breathe. 🌿✨"
+      },
+      {
+        "role": "user",
+        "text": "alone boy sitting on hill"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** alone boy on hill\n🔍 **Visual Concept:** *Boy on a hill with drink*"
+      },
+      {
+        "role": "user",
+        "text": "drink bottol beside the person"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Updated Prompt:** drink bottol beside the person (Refining: alone boy on hill)\n🔍 **Visual Concept:** *Photorealistic boy standing on a grassy hill, holding a drink, with a bottle placed beside him on the ground, golden hour lighting, clear sky*"
+      },
+      {
+        "role": "user",
+        "text": "CSE admission fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "🏛️ **গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস (GB Chatbot):**\n\n**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
+      },
+      {
+        "role": "user",
+        "text": "read"
+      },
+      {
+        "role": "assistant",
+        "text": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF."
+      },
+      {
+        "role": "user",
+        "text": "cat er chobi banao"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ GB AI Image Studio: cat"
+      },
+      {
+        "role": "user",
+        "text": "what is photosynthesis?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Photosynthesis – Overview**\n\nPhotosynthesis is the **green‑plant (and some algae & bacteria) process that converts light energy into chemical energy**, storing it in the bonds of sugar molecules. It powers almost all life on Earth by producing the organic compounds and oxygen that most organisms need.\n\n---\n\n### 1. The Overall Chemical Equation  \n\n\\[\n\\underbrace{6\\text{CO}_2}_{\\text{Carbon dioxide}} \\;+\\; \\underbrace{6\\text{H}_2\\text{O}}_{\\text{Water}} \\;+\\; \\text{light energy}\n\\;\\xrightarrow{\\text{chlorophyll}}\\;\n\\underbrace{C_6\\text{H}_{12}\\text{O}_6}_{\\text{Glucose}} \\;+\\; \\underbrace{6\\text{O}_2}_{\\text{Oxygen}}\n\\]\n\n- **Reactants:** carbon dioxide (from air), water (from soil), and sunlight.  \n- **Products:** glucose (energy‑rich sugar) and oxygen (released to the atmosphere).\n\n---\n\n### 2. Where It Happens  \n\n| Structure | Location in Plant | Main Role |\n|-----------|-------------------|-----------|\n| **Chloroplast** | Cells of leaves (mainly) and other green tissues | Houses the photosynthetic pigments and the enzymatic machinery. |\n| **Thylakoid membranes** | Stacked into grana inside chloroplasts | Site of the **light‑dependent reactions**. |\n| **Stroma** | Fluid surrounding thylakoids | Site of the **Calvin‑Benson (light‑independent) cycle**. |\n\n---\n\n### 3. Two Major Phases  \n\n#### A. Light‑Dependent Reactions  \n1. **Photon absorption** by chlorophyll (and accessory pigments) in the thylakoid membranes.  \n2. **Water splitting (photolysis):**  \n   \\[\n   2\\text{H}_2\\text{O} \\rightarrow 4\\text{H}^+ + 4e^- + \\text{O}_2\n   \\]  \n   – releases O₂ as a by‑product.  \n3. **Electron transport chain (ETC):** Excited electrons move through protein complexes, pumping protons into the thylakoid lumen.  \n4. **ATP synthesis:** Proton gradient drives ATP synthase → **ATP** (energy carrier).  \n5. **NADP⁺ reduction:** Electrons + H⁺ reduce NADP⁺ → **NADPH** (reducing power).  \n\n*Result:* Production of **ATP** and **NADPH**, plus O₂ released to the air.\n\n#### B. Light‑Independent Reactions (Calvin‑Benson Cycle)  \n1. **Carbon fixation:** CO₂ combines with ribulose‑1,5‑bisphosphate (RuBP) → 3‑phosphoglycerate (3‑PGA).  \n2. **Reduction phase:** ATP + NADPH convert 3‑PGA into glyceraldehyde‑3‑phosphate (G3P).  \n3. **Regeneration of RuBP:** Some G3P molecules are used to regenerate RuBP, allowing the cycle to continue.  \n4. **Glucose formation:** Two G3P molecules can be linked to form one glucose (or other carbohydrates).  \n\n*Result:* Synthesis of **glucose** (or other sugars) that serve as energy reserves and building blocks for the plant.\n\n---\n\n### 4. Why Photosynthesis Matters  \n\n- **Primary energy source** for virtually all ecosystems.  \n- Generates **oxygen**, essential for aerobic respiration in animals and humans.  \n- Provides **organic carbon** that forms the base of food webs.  \n- Influences **global carbon cycle** and helps mitigate climate change by removing CO₂ from the atmosphere.\n\n---\n\n### 5. Quick Summary (Bullet Form)\n\n- **Input:** CO₂ + H₂O + sunlight.  \n- **Output:** Glucose (C₆H₁₂O₆) + O₂.  \n- **Location:** Chloroplasts (thylakoids & stroma).  \n- **Two stages:**  \n  - Light‑dependent → ATP, NADPH, O₂.  \n  - Light‑independent (Calvin cycle) → Sugar.  \n- **Significance:** Food, oxygen, carbon fixation, ecosystem foundation.\n\n---\n\n**Bottom line:** Photosynthesis is nature’s solar‑energy conversion system, turning light into the chemical fuel that sustains life on Earth. 🌱✨"
+      },
+      {
+        "role": "user",
+        "text": "alone boy sitting on hill"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** alone boy on hill\n🔍 **Visual Concept:** *Boy on a hill with drink*"
+      },
+      {
+        "role": "user",
+        "text": "drink bottol beside the person"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Updated Prompt:** drink bottol beside the person (Refining: alone boy on hill)\n🔍 **Visual Concept:** *Photorealistic boy standing on a grassy hill at sunset, a cold beverage bottle placed on the ground beside him, soft natural light, detailed skin, vibrant sky*"
+      },
+      {
+        "role": "user",
+        "text": "CSE admission fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "🏛️ **গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস (GB Chatbot):**\n\n**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
+      },
+      {
+        "role": "user",
+        "text": "read"
+      },
+      {
+        "role": "assistant",
+        "text": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF."
+      },
+      {
+        "role": "user",
+        "text": "cat er chobi banao"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ GB AI Image Studio: cat"
+      },
+      {
+        "role": "user",
+        "text": "what is photosynthesis?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Photosynthesis – Overview**\n\nPhotosynthesis is the **biochemical process** by which green plants, algae, and many bacteria convert **light energy** from the Sun into **chemical energy** stored in the form of sugars (mainly glucose). This process also releases **oxygen** as a by‑product.\n\n---\n\n### 1. Where It Happens\n- **Chloroplasts** – organelles in plant cells that contain the pigment **chlorophyll**.\n- Chlorophyll absorbs light most efficiently in the **blue (≈450 nm)** and **red (≈680 nm)** regions of the spectrum.\n\n---\n\n### 2. Overall Chemical Equation  \n\n\\[\n\\boxed{6\\,\\text{CO}_2 \\;+\\; 6\\,\\text{H}_2\\text{O} \\;+\\; \\text{light energy}\n\\;\\longrightarrow\\; \\text{C}_6\\text{H}_{12}\\text{O}_6 \\;+\\; 6\\,\\text{O}_2}\n\\]\n\n- **Reactants:** carbon dioxide (CO₂) from the air, water (H₂O) from the soil, and sunlight.\n- **Products:** glucose (C₆H₁₂O₆) – the stored chemical energy, and oxygen (O₂) released to the atmosphere.\n\n---\n\n### 3. Two Main Stages  \n\n| Stage | Location | Main Events | Key Products |\n|-------|----------|-------------|--------------|\n| **Light‑dependent reactions** | Thylakoid membranes | • Light is captured by chlorophyll.<br>• Water is split (photolysis) → O₂, H⁺, e⁻.<br>• Energy carriers **ATP** and **NADPH** are produced. | ATP, NADPH, O₂ (released) |\n| **Calvin‑Benson (light‑independent) cycle** | Stroma of the chloroplast | • CO₂ is fixed by the enzyme **Rubisco**.<br>• ATP & NADPH from the light reactions drive a series of reactions that convert CO₂ into **G3P** (glyceraldehyde‑3‑phosphate).<br>• Some G3P leaves the cycle to form glucose and other carbohydrates. | Glucose (and other sugars) |\n\n---\n\n### 4. Why Photosynthesis Matters  \n\n- **Primary source of organic matter** for almost all ecosystems.\n- Generates **≈ 21 % of Earth’s atmospheric O₂**, essential for aerobic life.\n- Captures **solar energy** and stores it in a stable chemical form, supporting the food chain.\n- Helps regulate **CO₂ levels**, mitigating climate change.\n\n---\n\n### 5. Quick Summary (Bullet Points)\n\n- **Input:** CO₂ + H₂O + sunlight  \n- **Output:** Glucose + O₂  \n- **Key pigment:** Chlorophyll  \n- **Two phases:** Light‑dependent (energy capture) → Calvin cycle (CO₂ fixation)  \n- **Location:** Chloroplasts (thylakoids & stroma)  \n- **Ecological role:** Food production, oxygen release, carbon sequestration  \n\n---\n\n**In a nutshell:** Photosynthesis is nature’s solar‑power plant, turning light into sugar and oxygen, thereby sustaining life on Earth."
+      },
+      {
+        "role": "user",
+        "text": "alone boy sitting on hill"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** alone boy on hill\n🔍 **Visual Concept:** *Boy on a hill with drink*"
+      },
+      {
+        "role": "user",
+        "text": "drink bottol beside the person"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Updated Prompt:** drink bottol beside the person (Refining: alone boy on hill)\n🔍 **Visual Concept:** *Photorealistic scene of a boy on a grassy hill, holding a drink, with a glass bottle of the same beverage placed beside him on the ground, bright daylight, soft shadows*"
+      },
+      {
+        "role": "user",
+        "text": "CSE admission fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "🏛️ **গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস (GB Chatbot):**\n\n**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
+      },
+      {
+        "role": "user",
+        "text": "gbiems ki?"
+      },
+      {
+        "role": "assistant",
+        "text": "আমি দুঃখিত, তবে সরবরাহ করা অফিসিয়াল তথ্যের মধ্যে “GBIEMS” সম্পর্কে কোনো উল্লেখ নেই, তাই এর সঠিক অর্থ বা সংজ্ঞা নিশ্চিত করতে পারছি না।\n\nআপনি কি একটু বিস্তারিত বলতে পারবেন, “GBIEMS” কোন প্রসঙ্গে ব্যবহার করছেন (যেমন কোনো বিভাগ, প্রোগ্রাম, সেবা ইত্যাদি)? এতে আমি আরও সঠিক তথ্য দিতে পারব।"
+      },
+      {
+        "role": "user",
+        "text": "gbiems ki?"
+      },
+      {
+        "role": "assistant",
+        "text": "**GBIEMS (Gono Bishwabidyalay Integrated Education Management System)** হলো গণ বিশ্ববিদ্যালয়ের কেন্দ্রীয় স্মার্ট অটোমেশন ও স্টুডেন্ট পোর্টাল (পিপীলিকা সফটওয়্যার সহযোগে পরিচালিত)।\n\n**শিক্ষার্থীরা পোর্টালে যেসব সুবিধা পান:**\n১. **কোর্স রেজিস্ট্রেশন:** প্রতি সেমিস্টারে অফারকৃত কোর্সে এক ক্লিকে রেজিস্ট্রেশন।\n২. **এডমিট কার্ড ডাউনলোড:** সেমিস্টার ফাইনাল পরীক্ষার প্রবেশপত্র অনলাইন থেকে সরাসরি প্রিন্ট।\n৩. **অনলাইন ফি পরিশোধ:** bKash, SSLCommerz, Upay-এর মাধ্যমে ঘরে বসেই টিউশন ফি পেমেন্ট।\n৪. **পরীক্ষার ফলাফল:** সেমিস্টার রেজাল্ট, গ্রেডশিট ও সাপ্লিমেন্টারি পরীক্ষার আবেদন।\n৫. **LMS ও ক্লাস হাজিরা:** প্রতিদিনের ক্লাসের হাজিরা (Attendance %), কোর্স মেটেরিয়ালস ও নোটিশ।\n৬. **ডিজিটাল লাইব্রেরি:** বই ব্রাউজিং, ইস্যু/রিটার্ন ট্র্যাকিং ও বকেয়া জরিমানা চেক।\n\n🔗 **GBIEMS লগইন লিংক:** [https://gbiems.pipilikasoft.com/](https://gbiems.pipilikasoft.com/)"
+      },
+      {
+        "role": "user",
+        "text": "admit card kivabe download korbo?"
+      },
+      {
+        "role": "assistant",
+        "text": "পরীক্ষার **Admit Card (প্রবেশপত্র)** ডাউনলোডের সম্পূর্ণ নিয়ম:\n\n১. **লগইন করুন:** GBIEMS স্টুডেন্ট পোর্টালে (`https://gbiems.pipilikasoft.com/`) আপনার Student ID ও Password দিয়ে লগইন করুন।\n২. **বকেয়া ক্লিয়ারেন্স:** সেমিস্টার ফি বা বকেয়া থাকলে পোর্টাল থেকেই bKash, SSLCommerz বা Upay দিয়ে তাৎক্ষণিকভাবে পরিশোধ করুন।\n৩. **উপস্থিতি (Attendance):** বিশ্ববিদ্যালয়ের নীতি অনুযায়ী ক্লাসে প্রয়োজনীয় উপস্থিতি থাকতে হবে।\n৪. **ডাউনলোড:** ড্যাশবোর্ডের **'Admit Card'** মেনুতে গিয়ে সিস্টেম-জেনারেটেড ইউনিক সিকিউরিটি কোডসহ এডমিট কার্ড ডাউনলোড ও প্রিন্ট করে নিন।"
+      },
+      {
+        "role": "user",
+        "text": "dvm course koto bochorer?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Bachelor in Veterinary Science & Animal Husbandry (B.Sc. Vet. Sc & A. H.)**\n**Duration:** 5 years (9 semesters+1 semesters Internship)"
+      },
+      {
+        "role": "user",
+        "text": "ki korte paro"
+      },
+      {
+        "role": "assistant",
+        "text": "আমি **গণ বিশ্ববিদ্যালয় হেল্পডেস্ক অ্যাসিস্ট্যান্ট** হিসেবে নিচের বিষয়গুলোতে সহায়তা প্রদান করি:\n\n• **ভর্তি ও যোগ্যতা:** ডিপার্টমেন্টভিত্তিক রিকোয়ারমেন্টস, ন্যূনতম জিপিএ ও অ্যাডমিশন হেল্পলাইন।\n• **বিভাগ ও প্রোগ্রাম:** CSE, Pharmacy, BBA, LLB, English ইত্যাদি বিভাগের ক্রেডিট, সেমিস্টার ও ফি স্ট্রাকচার।\n• **শিক্ষক ও কর্তৃপক্ষ:** ভিসি, রেজিস্ট্রার, প্রক্টর, পরীক্ষা নিয়ন্ত্রক ও ডিপার্টমেন্ট চেয়ারম্যানদের প্রোফাইল।\n• **ক্যাম্পাস সুবিধা:** সেন্ট্রাল লাইব্রেরি, ওয়াইফাই, মেডিকেল সেন্টার, ক্যাফেটেরিয়া, পরিবহন ও হোস্টেল সংক্রান্ত তথ্য।\n• **ক্লাব ও ছাত্র সংসদ:** GBCDC (ক্যারিয়ার ডেভেলপমেন্ট ক্লাব) ও বাকসু (কেন্দ্রীয় ছাত্র সংসদ)-এর কার্যক্রম।\n• **একাডেমিক নিয়মাবলী:** সেমিস্টার পদ্ধতি (Bi-semester), ইউজিসি গ্রেডিং স্কেল ও রেজাল্ট দেখার উপায়।\n\nআপনি যেকোনো নির্দিষ্ট প্রশ্ন করতে পারেন!"
+      },
+      {
+        "role": "user",
+        "text": "gono university te kivabe jabo?"
+      },
+      {
+        "role": "assistant",
+        "text": "গণ বিশ্ববিদ্যালয় (Gono Bishwabidyalay)-এর স্থায়ী ক্যাম্পাস ঢাকার সাভারে অবস্থিত।\n\n**অফিসিয়াল ঠিকানা:**\n**Nolam, P.O. Mirzanagar via Savar Cantonment, Ashulia, Savar, Dhaka-1344** (নলাম, ডাকঘর: মির্জানগর via সাভার সেনানিবাস, আশুলিয়া, সাভার, ঢাকা-১৩৪৪)।\n\n(ক্যাম্পাসটি ঢাকা-আরিচা মহাসড়কের সন্নিকটে গণস্বাস্থ্য কেন্দ্রের মনোরম সবুজ প্রাকৃতিক পরিবেশে অবস্থিত)।\n\n**যাতায়াত বা পৌঁছানোর উপায়:**\nঢাকা থেকে সাভার বা বাইপাইল/নবীনগর হয়ে বাইপাইল-আশুলিয়া রোডে নলাম/গণস্বাস্থ্য সমাজভিত্তিক মেডিকেল কলেজ মোড়ে নেমে সরাসরি ক্যাম্পাসে পৌঁছানো যায়।"
+      },
+      {
+        "role": "user",
+        "text": "gbiems password vule gechi"
+      },
+      {
+        "role": "assistant",
+        "text": "GBIEMS / Student Portal-এর পাসওয়ার্ড ভুলে গেলে বা রিসেট করার নিয়ম:\n\n১. **অনলাইন পাসওয়ার্ড রিকভারি:** GBIEMS লগইন পেজে (`https://gbiems.pipilikasoft.com/`) গিয়ে **'Forgot Password?'** অপশনে ক্লিক করুন। আপনার রেজিস্টার্ড **Student ID** এবং মোবাইল নম্বর/ইমেইল দিলে পাসওয়ার্ড রিসেট লিংক বা ওটিপি চলে আসবে।\n২. **বিভাগীয় কোঅর্ডিনেটর / আইটি সেল:** অনলাইনে রিকভার না হলে আপনার নিজ ডিপার্টমেন্টের **ব্যাচ কোঅর্ডিনেটর** অথবা বিশ্ববিদ্যালয়ের **আইটি সেল / রেজিস্ট্রার অফিসে** যোগাযোগ করলে তাৎক্ষণিকভাবে পাসওয়ার্ড রিসেট করে দেওয়া হয়।"
+      },
+      {
+        "role": "user",
+        "text": "read"
+      },
+      {
+        "role": "assistant",
+        "text": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF."
+      },
+      {
+        "role": "user",
+        "text": "cat er chobi banao"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ GB AI Image Studio: cat"
+      },
+      {
+        "role": "user",
+        "text": "what is photosynthesis?"
+      },
+      {
+        "role": "assistant",
+        "text": "**Photosynthesis – Overview**\n\nPhotosynthesis is the biochemical process by which green plants, algae, and some bacteria convert **light energy** from the Sun into **chemical energy** stored in the form of sugars (mainly glucose). This process also releases **oxygen** as a by‑product.\n\n---\n\n### 1. Where it Happens\n| Organism | Main Site of Photosynthesis |\n|----------|-----------------------------|\n| **Higher plants** | Chloroplasts (specifically the thylakoid membranes) in leaf mesophyll cells |\n| **Algae** | Chloroplasts (often in the cell wall or cytoplasm) |\n| **Cyanobacteria** | Thylakoid‑like membranes inside the cell |\n\n---\n\n### 2. Overall Chemical Equation  \n\n\\[\n\\underbrace{6\\text{CO}_2}_{\\text{Carbon dioxide}} \\;+\\; \\underbrace{6\\text{H}_2\\text{O}}_{\\text{Water}} \\;+\\; \\text{light energy}\n\\;\\longrightarrow\\;\n\\underbrace{\\text{C}_6\\text{H}_{12}\\text{O}_6}_{\\text{Glucose}} \\;+\\; \\underbrace{6\\text{O}_2}_{\\text{Oxygen}}\n\\]\n\n- **Reactants:** Carbon dioxide (from the air) + Water (absorbed by roots) + Sunlight.  \n- **Products:** Glucose (energy source for the plant) + Oxygen (released to the atmosphere).\n\n---\n\n### 3. Two Main Stages  \n\n| Stage | Location | Key Processes | Main Products |\n|-------|----------|---------------|---------------|\n| **Light‑dependent reactions** | Thylakoid membranes | • Absorption of photons by chlorophyll<br>• Water splitting (photolysis) → O₂ + H⁺ + e⁻<br>• Generation of ATP (via chemiosmosis) and NADPH (via photosystem I) | ATP, NADPH, O₂ (released) |\n| **Calvin‑Benson (light‑independent) cycle** | Stroma of chloroplast | • CO₂ fixation by the enzyme Rubisco<br>• Reduction of 3‑phosphoglycerate to glyceraldehyde‑3‑phosphate using ATP & NADPH<br>• Regeneration of ribulose‑1,5‑bisphosphate (RuBP) | Glucose (or other carbohydrates) |\n\n---\n\n### 4. Key Components  \n\n| Component | Role |\n|-----------|------|\n| **Chlorophyll** | Primary pigment that captures light energy (mainly in the blue‑violet and red wavelengths). |\n| **Photosystems II & I** | Protein‑pigment complexes that drive electron flow; PSII initiates water splitting, PSI reduces NADP⁺ to NADPH. |\n| **Electron Transport Chain (ETC)** | Transfers electrons, pumps protons to create a gradient used to synthesize ATP. |\n| **Rubisco** | Enzyme that catalyzes the first step of CO₂ fixation in the Calvin cycle. |\n| **ATP synthase** | Uses the proton gradient to produce ATP from ADP + Pi. |\n\n---\n\n### 5. Why Photosynthesis Matters  \n\n1. **Primary source of organic matter** – All heterotrophic organisms (animals, fungi, humans) ultimately rely on the carbohydrates produced by photosynthesis for energy and building blocks.  \n2. **Oxygen production** – Supplies the O₂ needed for aerobic respiration.  \n3. **Carbon cycle regulation** – Removes CO₂ from the atmosphere, mitigating greenhouse‑gas buildup.  \n4. **Agricultural productivity** – Understanding photosynthesis helps improve crop yields and develop stress‑tolerant plants.  \n\n---\n\n### 6. Quick Summary (Boxed)\n\n> **Photosynthesis** is the light‑driven conversion of carbon dioxide and water into glucose and oxygen, occurring in chloroplasts. It consists of light‑dependent reactions (producing ATP, NADPH, and O₂) and the Calvin‑Benson cycle (using ATP/NADPH to fix CO₂ into sugars). This process sustains life on Earth by providing food, oxygen, and regulating atmospheric CO₂.  \n\nFeel free to ask if you need more detail on any specific step, the role of pigments, or how environmental factors affect the rate of photosynthesis!"
+      },
+      {
+        "role": "user",
+        "text": "alone boy sitting on hill"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Prompt:** alone boy on hill\n🔍 **Visual Concept:** *Boy on a hill with drink*"
+      },
+      {
+        "role": "user",
+        "text": "drink bottol beside the person"
+      },
+      {
+        "role": "assistant",
+        "text": "✨ **GB AI Image Studio**\n\n🎨 **Updated Prompt:** drink bottol beside the person (Refining: alone boy on hill)\n🔍 **Visual Concept:** *Photorealistic scene of a young boy standing on a grassy hill at sunset, holding a glass of drink, with a clear glass water bottle placed on the ground beside him, soft golden light, detailed background*"
+      },
+      {
+        "role": "user",
+        "text": "CSE admission fee koto?"
+      },
+      {
+        "role": "assistant",
+        "text": "🏛️ **গণ বিশ্ববিদ্যালয় অফিশিয়াল চ্যাটবট ডাটাবেস (GB Chatbot):**\n\n**B.Sc. (Honours) in Computer Science & Engineering (CSE)** - Published fee / admission cost: **Tk. 4,50,000/-** (Total 4-year tuition fee (admission-time payment: BDT 54,500 including admission fee & 1st semester tuition))"
+      }
+    ],
+    "entities": {
+      "person": {
+        "name": "Professor (Retd.) Mesbah-us-Saleheen",
+        "department": "offices",
+        "profileUrl": "https://gonouniversity.edu.bd/"
       }
     }
   }

@@ -8,14 +8,61 @@ export function isInformationalMessage(text) {
     /[?？]/u.test(value);
 }
 
-export function inferMessageMedium(text, attachments = [], history = [], webSearchEnabled = false) {
+export function isWebSearchIntent(text) {
+  const t = String(text || "").trim();
+  if (!t) return false;
+
+  // 1. Explicit search commands
+  if (
+    /\b(web\s*search|search\s+(?:the\s+)?web|search\s+online|search\s+(?:the\s+)?internet|google\s+(?:it|this|koro|kore|kori)|look\s+it\s+up|khuje\s+(?:dao|dau|dekho)|search\s+koro|net\s*e\s*khujo)\b/i.test(t) ||
+    /(?:ওয়েব\s*সার্চ|ওয়েব\s*সার্চ|গুগল\s*কর|সার্চ\s*কর|ইন্টারনেট\s*থেকে|খুঁজে\s*দাও|অনুসন্ধান)/u.test(t)
+  ) return true;
+
+  // 2. News, live updates, current affairs
+  if (
+    /\b(latest\s+news|recent\s+news|today'?s\s+news|current\s+news|breaking\s+news|live\s+score|current\s+affairs|ajker\s+(?:news|khobor)|taza\s+khobor|somprotik?\s+khobor)\b/i.test(t) ||
+    /(?:সাম্প্রতিক\s*খবর|তাজা\s*খবর|আজকের\s*খবর|লাইভ\s*স্কোর|সর্বশেষ\s*সংবাদ|ব্রেকিং\s*নিউজ)/u.test(t)
+  ) return true;
+
+  // 3. Current leaders, heads of state, national governance (rastropoti, president, prime minister, etc.)
+  // (Exclude Gono university specific leadership inquiries which belong to university knowledge)
+  if (!/\b(gono|bishwabidyalay|varsity|campus|gbcdc)\b/i.test(t)) {
+    if (
+      /\b(rastropoti|rashtrapati|president|prodhan\s*montri|prime\s*minister|chief\s*advis[oe]r|chief\s*justice)\b/i.test(t) ||
+      /(?:রাষ্ট্রপতি|প্রধানমন্ত্রী|প্রধান\s*উপদেষ্টা|প্রধান\s*বিচারপতি)/u.test(t)
+    ) {
+      if (
+        /\b(ekhon|bortoman|current|present|who|ke|nam\s*ki|kon|kake)\b/i.test(t) ||
+        /(?:এখন|বর্তমান|কে|কারা|নাম\s*কী|নাম\s*কি)/u.test(t) ||
+        /\?$/.test(t)
+      ) {
+        return true;
+      }
+    }
+
+    // 4. Temporal questions: 'ekhon ... ke', 'who is the current ...', 'bortoman ... ke'
+    if (
+      /\b(ekhon|bortoman|current|present|somproti|recent)\b[\s\S]{0,35}\b(ke|who|kader|kar)\b/i.test(t) ||
+      /\b(who\s+is|who\s+are)\b[\s\S]{0,35}\b(now|currently|presently|today)\b/i.test(t) ||
+      /(?:এখন|বর্তমান|সাম্প্রতিক|আজকের)[\s\S]{0,25}(?:কে|কারা|কোনটি|কী|কি)\b/u.test(t)
+    ) return true;
+  }
+
+  // 5. Live real-world metrics (gold price, dollar rate, weather, score)
+  if (
+    /\b(dollar\s*rate|dollar\s*er\s*dam|gold\s*price|shonar\s*dam|weather|temperature|abhawa|live\s*score|cricket\s*score|fifa|world\s*cup)\b/i.test(t) ||
+    /(?:ডলার\s*রেট|টাকার\s*মান|সোনার\s*দাম|স্বর্ণের\s*দাম|আবহাওয়া|তাপমাত্রা)/u.test(t)
+  ) return true;
+
+  return false;
+}
+
+export function inferMessageMedium(text, attachments = [], history = [], webSearchEnabled = false, currentSelectedMedium = null) {
   const value = String(text || "").trim();
   const normalized = value.toLowerCase();
-  if (attachments.length > 0 || webSearchEnabled) return "gb-ai";
+  if (attachments.length > 0 || webSearchEnabled || isWebSearchIntent(value)) return "gb-ai";
+  if (currentSelectedMedium === "gb-ai") return "gb-ai";
 
-  const webSearchIntent =
-    /\b(web\s*search|search\s+(?:the\s+)?web|search\s+online|search\s+(?:the\s+)?internet|google\s+(?:it|this|koro|kore)|look\s+it\s+up|latest\s+news|current\s+news)\b/i.test(normalized) ||
-    /(?:ওয়েব\s*সার্চ|ওয়েব\s*সার্চ|গুগল\s*কর|ইন্টারনেট\s*থেকে\s*খুঁজ|সাম্প্রতিক\s*খবর)/u.test(normalized);
   const creationIntent =
     /^(?:please\s+)?(?:create|generate|draw|design|build|compose)\b/i.test(normalized) ||
     /\b(?:can|could|would|will)\s+you\s+(?:please\s+)?(?:create|generate|draw|design|build|compose)\b/i.test(normalized) ||
@@ -30,7 +77,7 @@ export function inferMessageMedium(text, attachments = [], history = [], webSear
     /\b(solve|calculate|debug|fix\s+(?:this\s+)?code|write\s+(?:a\s+)?(?:python|javascript|java|c\+\+|c#|php|sql)|explain\s+(?:this\s+)?(?:equation|code|algorithm))\b/i.test(normalized) ||
     /(সমাধান|হিসাব|ক্যালকুলেট|কোড\s*(?:লিখ|কর|দাও)|বাগ\s*(?:ঠিক|ফিক্স))/u.test(normalized);
 
-  if (webSearchIntent || creationIntent || solverIntent) return "gb-ai";
+  if (creationIntent || solverIntent) return "gb-ai";
 
   const lastAssistant = [...history].reverse().find((message) => message?.role === "assistant");
   const lastUser = [...history].reverse().find((message) => message?.role === "user");
@@ -40,3 +87,4 @@ export function inferMessageMedium(text, attachments = [], history = [], webSear
 
   return aiFollowup ? "gb-ai" : "chatbot";
 }
+
