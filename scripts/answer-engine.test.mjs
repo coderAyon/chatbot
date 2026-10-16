@@ -1363,6 +1363,28 @@ test("specific faculty alias inquiry ('cse r rekha mam ke chino?') identifies Fa
   const r5 = directAnswer("সিএসই এর রেখা ম্যাম কে চেনেন?", rekhaKnowledge, []);
   assert.equal(r5?.mode, "structured");
   assert.match(r5.text, /Farzana Tasnim/);
+
+  // 6. Standalone alias inquiry
+  const r6 = directAnswer("rekha mam", rekhaKnowledge, []);
+  assert.equal(r6?.mode, "structured");
+  assert.match(r6.text, /Farzana Tasnim/);
+  assert.doesNotMatch(r6.text, /Reshma Khatun/);
+
+  // 7. Confusion follow-up ('??') after faculty alias inquiry
+  const history = [
+    { role: "user", text: "cse r rekha mam ke chino?" },
+    { role: "assistant", text: r1.text },
+  ];
+  const r7 = directAnswer("??", rekhaKnowledge, history);
+  assert.equal(r7?.mode, "structured");
+  assert.match(r7.text, /Farzana Tasnim/);
+  assert.match(r7.text, /Rekha\.tasnim@gmail\.com/i);
+  assert.match(r7.text, /\+8801765524232/);
+
+  // 8. Single question mark follow-up ('?')
+  const r8 = directAnswer("?", rekhaKnowledge, history);
+  assert.equal(r8?.mode, "structured");
+  assert.match(r8.text, /Farzana Tasnim/);
 });
 
 test("GBIEMS student portal, Banglish queries, admit card, and campus directions resolve reliably", () => {

@@ -750,7 +750,12 @@
       "qualification": "B.Sc. (Hons) (J.U.), M.Sc. (J.U.), PhD (Running)",
       "department": "Department of Computer Science and Engineering (CSE)",
       "source": "https://gonouniversity.edu.bd/cse/faculty-members/",
-      "profileUrl": "https://gonouniversity.edu.bd/cse/employees/tania-akter/"
+      "profileUrl": "https://gonouniversity.edu.bd/cse/employees/tania-akter/",
+      "aliases": [
+        "Shilpy Mam",
+        "Shilpi Mam",
+        "শিল্পী ম্যাম"
+      ]
     },
     {
       "name": "Dr. Md. Hanif Ali",
@@ -789,6 +794,13 @@
       "email": "Rekha.tasnim@gmail.com",
       "qualification": "MSc in Information Technology",
       "department": "Department of Computer Science and Engineering (CSE)",
+      "aliases": [
+        "Rekha Mam",
+        "Rekha Madam",
+        "Rekha Tasnim",
+        "রেখা ম্যাম",
+        "রেখা ম্যাডাম"
+      ],
       "source": "https://gonouniversity.edu.bd/cse/faculty-members/",
       "profileUrl": "https://gonouniversity.edu.bd/cse/employees/farzana-tasnim/"
     },
@@ -810,7 +822,11 @@
       "qualification": "MSc in Computer Science and Engineering",
       "department": "Department of Computer Science and Engineering (CSE)",
       "source": "https://gonouniversity.edu.bd/cse/faculty-members/",
-      "profileUrl": "https://gonouniversity.edu.bd/cse/employees/umme-farhana/"
+      "profileUrl": "https://gonouniversity.edu.bd/cse/employees/umme-farhana/",
+      "aliases": [
+        "Nadia Mam",
+        "নদিয়া ম্যাম"
+      ]
     },
     {
       "name": "Shahriar Hassan",
@@ -1960,7 +1976,11 @@
       "qualification": "M.Sc. in CSE",
       "department": "Department of Computer Science and Engineering (CSE)",
       "source": "https://gonouniversity.edu.bd/cse/faculty-members/",
-      "profileUrl": "https://gonouniversity.edu.bd/cse/employees/sharif-ahamed/"
+      "profileUrl": "https://gonouniversity.edu.bd/cse/employees/sharif-ahamed/",
+      "aliases": [
+        "Dipto Sir",
+        "দীপ্ত স্যার"
+      ]
     },
     {
       "name": "Adila Nuzhat",
@@ -1970,7 +1990,11 @@
       "qualification": "M.Sc. in CSE",
       "department": "Department of Computer Science and Engineering (CSE)",
       "source": "https://gonouniversity.edu.bd/cse/faculty-members/",
-      "profileUrl": "https://gonouniversity.edu.bd/cse/employees/adila-nuzhat/"
+      "profileUrl": "https://gonouniversity.edu.bd/cse/employees/adila-nuzhat/",
+      "aliases": [
+        "Tithi Mam",
+        "তিথি ম্যাম"
+      ]
     },
     {
       "name": "Tania Sultana",

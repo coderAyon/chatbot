@@ -6505,5 +6505,23 @@
     "mode": "attachment",
     "sourceCount": 0,
     "latencyMs": 215
+  },
+  {
+    "at": "2026-10-16T13:57:22.885Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 161
+  },
+  {
+    "at": "2026-10-16T14:03:24.492Z",
+    "sessionId": "anonymous:127.0.0.1",
+    "question": "read",
+    "answer": "I received the attachment, but could not read or identify enough content from it. Try a clearer image/PDF.",
+    "mode": "attachment",
+    "sourceCount": 0,
+    "latencyMs": 208
   }
 ]

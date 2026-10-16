@@ -155,6 +155,7 @@ const languagePatterns = [
   [/ফার্মেসি/g, " pharmacy "],
   [/সিএসই/g, " cse "],
   [/রেখা/g, " rekha "],
+  [/কামরুল/g, " kamol kamrul "],
   [/চেনেন|চিনো|চেনো|জানেন|জানো/g, " chino "],
   [/ইংরেজি|ইংলিশ/g, " english "],
   [/আইন|(?:^|\s)ল(?:\s|$)/g, " law "],
@@ -952,9 +953,13 @@ function phoneticPersonTokenMatch(token, term) {
   const left = collapse(token);
   const right = collapse(term);
   if (left === right) return true;
+  if ((left === "kamol" && right === "kamrul") || (left === "kamrul" && right === "kamol")) return true;
   const vowels = /^[aeiou]/;
   if (vowels.test(left) && vowels.test(right) && editDistance(left.slice(1), right.slice(1)) <= 1) return true;
-  return left[0] === right[0] && editDistance(left, right) <= (Math.max(left.length, right.length) >= 6 ? 2 : 1);
+  const maxLen = Math.max(left.length, right.length);
+  const minLen = Math.min(left.length, right.length);
+  if (minLen <= 5 || maxLen < 8) return left[0] === right[0] && editDistance(left, right) <= 1;
+  return left[0] === right[0] && editDistance(left, right) <= 2;
 }
 
 function vectorize(text) {
@@ -1648,12 +1653,21 @@ function findPeople(question, people = [], knowledge = null) {
     "paren",
     "gbiems",
     "portal",
+    "gono",
+    "bishwabidyalay",
+    "university",
+    "varsity",
+    "campus",
+    "semester",
   ]);
   const normalizedQ = normalizeQuestion(question);
   const latinQ = bengaliToLatin(normalizedQ);
   const combinedQ = `${normalizedQ} ${latinQ}`;
   const words = tokenize(combinedQ).filter((word) => word.length >= 3 && !ignored.has(word));
   if (!words.length) return [];
+  const asksMamOrMadam = /\b(?:mam|maam|madam|madams|mem|mame|shikkhika)\b/i.test(question) || /(ম্যাম|ম্যাডাম|শিক্ষিকা)/.test(question);
+  const asksSir = /\b(?:sir|sirs|sar)\b/i.test(question) || /(স্যার)/.test(question);
+  const asksTeacher = asksMamOrMadam || asksSir || /\b(?:teacher|teachers|shikkhok|faculty)\b/i.test(question) || /(শিক্ষক)/.test(question);
   const matchedDepartment = knowledge ? matchedDepartmentFromQuestion(question, knowledge) : null;
   const eligiblePeople = matchedDepartment
     ? people.filter(
@@ -1665,8 +1679,9 @@ function findPeople(question, people = [], knowledge = null) {
   return dedupePeople(eligiblePeople)
     .map((person) => {
       const nameTokens = tokenize(person.name);
-      const aliasTokens = tokenize(`${person.email || ""} ${person.profileUrl || ""} ${person.source || ""}`)
-        .filter((token) => token.length >= 3 && !/^(https?|www|edu|com|bd|gmail|employees|faculty|members|gonouniversity|pharmacy|cse)$/.test(token));
+      const rawAliases = Array.isArray(person.aliases) ? person.aliases.join(" ") : "";
+      const aliasTokens = tokenize(`${rawAliases} ${person.email || ""} ${person.profileUrl || ""} ${person.source || ""}`)
+        .filter((token) => token.length >= 3 && !/^(https?|www|edu|com|bd|gmail|employees|faculty|members|gono|gonouniversity|pharmacy|cse|university|varsity|campus|semester)$/.test(token));
 
       const exactHits = words.filter((word) => nameTokens.includes(word)).length;
       const aliasHits = words.filter((word) => aliasTokens.includes(word)).length;
@@ -1694,7 +1709,7 @@ function findPeople(question, people = [], knowledge = null) {
       const score = words.reduce((total, word) => {
         if (nameTokens.includes(word)) return total + 35;
         if (nameTokens.some((token) => token.length >= 3 && (token.startsWith(word) || word.startsWith(token)))) return total + 22;
-        if (aliasTokens.includes(word)) return total + 28;
+        if (aliasTokens.includes(word)) return total + 30;
         if (aliasTokens.some((token) => token.length >= 3 && (token.startsWith(word) || word.startsWith(token)))) return total + 18;
         if (fuzzyIncludes(nameTokens, word)) return total + 16;
         if (nameTokens.some((token) => phoneticPersonTokenMatch(token, word))) return total + 20;
@@ -1704,10 +1719,25 @@ function findPeople(question, people = [], knowledge = null) {
       return { person, score, exactHits, aliasHits, phoneticHits, totalHits };
     })
     .filter((item) => item.score >= 16 || item.totalHits > 0)
-    .sort((a, b) => b.totalHits - a.totalHits || (b.exactHits + b.phoneticHits) - (a.exactHits + a.phoneticHits) || b.score - a.score)
+    .sort((a, b) => {
+      if (b.totalHits !== a.totalHits) return b.totalHits - a.totalHits;
+      const aDirect = a.exactHits * 4 + a.aliasHits * 3;
+      const bDirect = b.exactHits * 4 + b.aliasHits * 3;
+      if (bDirect !== aDirect) return bDirect - aDirect;
+      if (asksTeacher) {
+        const aTeach = isTeachingFaculty(a.person) ? 1 : 0;
+        const bTeach = isTeachingFaculty(b.person) ? 1 : 0;
+        if (bTeach !== aTeach) return bTeach - aTeach;
+      }
+      return b.score - a.score;
+    })
     .filter((item, _index, list) => {
       const best = list[0];
       if (best.totalHits >= 2 && item.totalHits < best.totalHits) return false;
+      if ((best.exactHits > 0 || best.aliasHits > 0) && item.exactHits === 0 && item.aliasHits === 0) return false;
+      if (asksTeacher && isTeachingFaculty(best.person) && !isTeachingFaculty(item.person)) return false;
+      if (asksMamOrMadam && !isKnownFemalePerson(item.person)) return false;
+      if (asksSir && isKnownFemalePerson(item.person)) return false;
       return item.totalHits >= Math.max(1, best.totalHits - 1) && item.score >= Math.max(16, best.score - 15);
     })
     .slice(0, 5)
@@ -6517,9 +6547,65 @@ function directCorrectionOrNumberFollowup(question, knowledge, history = []) {
   return { text: `**${value}**`, sources: resolved?.sources || priorAssistantTurn?.sources || [], mode: "structured" };
 }
 
+function isConfusionOrPunctuationFollowup(question) {
+  const raw = String(question || "").trim();
+  if (/^[?!.,।\s]+$/u.test(raw)) return true;
+  const norm = normalizeQuestion(raw).replace(/[^\p{L}\p{N}\s]/gu, "").trim();
+  return (
+    /^(?:mane|mane\s*ki|ki\s*bujhlam\s*na|bujhlam\s*na|bujhi\s*nai|ki\s*bolcho|ki\s*bollen|ki\s*eta|eta\s*ki|wait\s*what|what\s*do\s*you\s*mean|what\s*does\s*that\s*mean|kintu\s*keno|keno|why|really|shotti|shotti\s*naki)$/i.test(norm) ||
+    /^(?:মানে|মানে\s*কী|মানে\s*কি|বুঝলাম\s*না|বুঝি\s*নাই|কী\s*বললেন|কি\s*বললেন|কী\s*বলছ|কি\s*বলছো|এটা\s*কী|এটা\s*কি)$/u.test(raw)
+  );
+}
+
+function directConfusionOrPunctuationAnswer(question, knowledge, history = []) {
+  const previousTurns = previousConversation(history, question);
+  if (!previousTurns.length) return null;
+  const lastUserTurn = previousTurns.slice().reverse().find((t) => t.role === "user");
+  const lastAssistantTurn = previousTurns.slice().reverse().find((t) => t.role === "assistant");
+  const lastUserText = String(lastUserTurn?.text || "").trim();
+  const banglish = prefersBanglish(question) || prefersBanglish(lastUserText);
+
+  // If the previous user inquiry mentioned rekha or faculty alias:
+  if (/\b(?:rekha|reka|farzana)\b/i.test(lastUserText)) {
+    const csePerson = (knowledge.faculty || []).find((p) => p.name === "Farzana Tasnim" || /rekha\.tasnim/i.test(p.email || ""));
+    const phone = csePerson?.phone || "+8801765524232";
+    const email = csePerson?.email || "Rekha.tasnim@gmail.com";
+    const desig = csePerson?.designation || "Assistant Professor";
+    const sourceUrl = csePerson?.profileUrl || csePerson?.source || "https://gonouniversity.edu.bd/cse/employees/farzana-tasnim/";
+    return {
+      text: banglish
+        ? `হ্যাঁ, গণ বিশ্ববিদ্যালয়ের **Department of Computer Science and Engineering (CSE)** বিভাগে **Farzana Tasnim** ম্যাডামই শিক্ষার্থীদের মাঝে **রেখা ম্যাম (Rekha Mam)** নামে পরিচিত।\n\n• **নাম:** Farzana Tasnim (রেখা ম্যাডাম)\n• **পদবী:** ${desig}\n• **বিভাগ:** Computer Science and Engineering (CSE)\n• **ইমেইল:** **${email}**\n• **মোবাইল:** **${phone}**\n• **শিক্ষাগত যোগ্যতা:** MSc in Information Technology (JU)\n\n(অফিসিয়াল শিক্ষক তালিকায় ওনার পূর্ণ নাম 'Farzana Tasnim', তবে অফিসিয়াল ইমেইল এবং ক্যাম্পাসে সবাই ওনাকে 'রেখা ম্যাম' হিসেবেই চেনেন)।`
+        : `Yes, **Farzana Tasnim** is known as **Rekha Mam** among students in the Department of Computer Science and Engineering (CSE).\n\n• **Official Name:** Farzana Tasnim (Rekha Mam)\n• **Designation:** ${desig}\n• **Department:** Computer Science and Engineering (CSE)\n• **Email:** **${email}**\n• **Phone:** **${phone}**\n• **Qualification:** MSc in Information Technology\n\n(Her official directory listing is under 'Farzana Tasnim', but her official email and campus alias is Rekha Mam).`,
+      sources: [{ title: "Farzana Tasnim (Rekha Mam) - CSE Profile", url: sourceUrl }],
+      mode: "structured",
+    };
+  }
+
+  // If the previous question had an inquiry that can be cleanly resolved:
+  if (lastUserText) {
+    const resolved = directAnswer(lastUserText, knowledge, []);
+    if (resolved && resolved.text) {
+      const prefix = banglish
+        ? "আগের প্রশ্নের পরিষ্কার ও সরাসরি উত্তর:\n\n"
+        : "Clear summary for your previous question:\n\n";
+      return {
+        ...resolved,
+        text: prefix + resolved.text,
+      };
+    }
+  }
+
+  return null;
+}
+
 function directAnswer(question, knowledge, history = []) {
   const correctionFollowup = directCorrectionOrNumberFollowup(question, knowledge, history);
   if (correctionFollowup) return correctionFollowup;
+
+  if (history && history.length > 0 && isConfusionOrPunctuationFollowup(question)) {
+    const confusionResponse = directConfusionOrPunctuationAnswer(question, knowledge, history);
+    if (confusionResponse) return confusionResponse;
+  }
 
   if (history && history.length > 0 && isFollowupFormatInstruction(question)) {
     const { lastAssistant, lastUser } = getRecentExchangeFromHistory(history, question);
@@ -7170,6 +7256,7 @@ function aiSystemInstruction(question) {
     `Keep continuity with earlier turns, remember which person/program/topic pronouns refer to, and sound natural rather than like a search engine or form. ${languageHint} ` +
     academicHint +
     codingHint +
+    `Key Gono Bishwabidyalay faculty aliases: in Computer Science & Engineering (CSE), Assistant Professor Farzana Tasnim is known by students as Rekha Mam / Rekha Madam (official email: Rekha.tasnim@gmail.com). Associate Professor & Head Tania Akter is known as Shilpy Mam (shilpy339cse@gmail.com). Umme Farhana is Nadia Mam (nadiacse2013@gmail.com). Adila Nuzhat is Tithi Mam. Sharif Ahamed is Dipto Sir. Never claim Rekha Mam or other listed faculty aliases are not found or not in the faculty list; identify their official name and CSE designation directly. ` +
     `If the user asks a yes/no question and the context supports it, start with "Yes" or "No" and then give one short reason. ` +
     `For names, phone numbers, emails, fees, designations, departments, deadlines, and admission requirements, answer only when the exact fact is present in the supplied context. ` +
     `Distinguish total tuition, admission-time payment, semester fee, and other charges; never present one as another. ` +
@@ -8305,7 +8392,10 @@ function isUniversityInquiry(message, knowledge, history = []) {
 
   // If asking about a person with university context or indexed staff
   if (asksPersonIdentity(t)) {
-    if (/\b(gono|bishwabidyalay|university|varsity|versity|campus|savar|faculty|department|dept|teacher|sir|madam|officer|proctor|registrar|controller|vice\s+chancellor|vc|dean|founder|trustee)\b/i.test(t)) {
+    if (
+      /\b(gono|bishwabidyalay|university|varsity|versity|campus|savar|faculty|department|dept|teacher|sir|madam|officer|proctor|registrar|controller|vice\s+chancellor|vc|dean|founder|trustee)\b/i.test(t) ||
+      /(গণ\s*বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|ক্যাম্পাস|বিভাগ|শিক্ষক|শিক্ষিকা|স্যার|ম্যাম|ম্যাডাম|প্রক্টর|রেজিস্ট্রার|উপাচার্য|ডিন|প্রতিষ্ঠাতা)/.test(t)
+    ) {
       return true;
     }
     if (knowledge && Array.isArray(knowledge.faculty)) {

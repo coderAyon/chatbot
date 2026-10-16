@@ -33,7 +33,7 @@ test("DIE HARD GB AI: 100% of University Faculty queries route to Official Unive
     { q: "ফুয়াদ স্যার কে?", match: /Fuad Hossain/i },
     { q: "তাজুল ইসলাম স্যার কে?", match: /Monjurul Islam|Tanzil/i },
     { q: "আসিফ চৌধুরী কে?", match: /Mohammad Asif Chowdhury/i },
-    { q: "রেখা ম্যাম কে?", match: /Reshma Khatun/i },
+    { q: "রেখা ম্যাম কে?", match: /Farzana Tasnim/i },
     { q: "কামরুল স্যার কে?", match: /Kamol Karmakar/i },
     { q: "মনজুর স্যার কে?", match: /Md. Monjurul Islam/i },
     // Banglish & English Phrasing
