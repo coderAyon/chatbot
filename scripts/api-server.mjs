@@ -998,7 +998,7 @@ function prefersBanglish(text) {
   return (
     /[\u0980-\u09ff]/.test(raw) ||
     /\b(fe|kto|koyjn|koijon|hed|chairmn|crdt|drtn|phrmcy|vlo|nki|kmn|bl)\b/i.test(raw) ||
-    /\b(ki|ke|kivabe|pabo|lagbe|shuru|hobe|korbo|konta|kontar|porbo|pora|porte|porashona|jai|jabe|jawa|chai|pochondo|valo|kothay|somporke|chino|cheno|chine|jano|bolo|dao|ache|ase|kono|koto|koyjon|kojon|koyta|er|r|ta|te|vorti|hoy|hoi|kina|kemon|keno|kobe|bhalo|shob|sob|naki|ba|tarpor|porle|jani|janan|bolun|dekhun|ami|amar|amake|tahole|parbo|kon|kintu|tobe|niye|diye|hote|korte|uchit|kokhon|khola|shomoy|somoy|koytay|bondho|ekhon|akhon|cholche|chole|choltese|sheba|seba|manush|manusher|vule|gechi|gese|geche|dibo|dite|dhukbo|tulbo|dekhbo|dekte|korche|kore|korben|korle|parchi|parsi|kichu|kisu|jante|ashbo|unir|onir|unake|onake|dekhao|bolba|janba|janaben)\b/i.test(q)
+    /\b(ki|ke|kivabe|pabo|lagbe|shuru|hobe|korbo|konta|kontar|porbo|pora|porte|porashona|jai|jabe|jawa|chai|pochondo|valo|kothay|somporke|chino|cheno|chine|jano|bolo|dao|ache|ase|kono|koto|kotojon|koyjon|kojon|koyta|koita|koyti|koiti|er|r|ra|ta|te|vorti|hoy|hoi|kina|kemon|keno|kobe|bhalo|shob|sob|naki|ba|tarpor|porle|jani|janan|bolun|dekhun|ami|amar|amake|tahole|parbo|parbe|parben|nite|kon|kintu|tobe|niye|diye|hote|korte|uchit|kokhon|khola|shomoy|somoy|koytay|bondho|ekhon|akhon|cholche|chole|choltese|sheba|seba|manush|manusher|vule|gechi|gese|geche|dibo|dite|dhukbo|tulbo|dekhbo|dekte|korche|kore|korben|korle|kora|korano|hocche|thake|thakbe|parchi|parsi|kichu|kisu|jante|ashbo|asche|ashche|achen|unir|onir|unake|onake|dekhao|bolba|janba|janaben|paowa|pawa)\b/i.test(q)
   );
 }
 
@@ -1361,7 +1361,7 @@ function directNoticeAnswer(question, knowledge) {
   const q = normalizeQuestion(question);
   if (!/\b(notice|notices|routine|result|schedule)\b/i.test(q) && !/নোটিশ|বিজ্ঞপ্তি/u.test(question)) return null;
   const asksList =
-    /\b(latest|recent|new|newest|current|today|notice\s+list|notices|show\s+notice|ki\s+notice|notice\s+ki)\b/i.test(q) ||
+    /\b(latest|recent|new|notun|natun|newest|current|today|notice\s+list|notices|show\s+notice|ki\s+notice|notice\s+ki|kono\s+notice|ache\s+notice|asche\s+notice|notice\s+ache|notice\s+asche)\b/i.test(q) ||
     /সর্বশেষ|নতুন|নোটিশ|বিজ্ঞপ্তি/u.test(question);
   if (!asksList) return null;
   const categoryPattern = /\b(exam|admission|job|tender|result|routine|schedule)\b/i;
@@ -1382,10 +1382,18 @@ function directNoticeAnswer(question, knowledge) {
   }
   matching.sort((a, b) => Date.parse(b.publishedAt || 0) - Date.parse(a.publishedAt || 0));
   const selected = matching.slice(0, 5);
+  const isYesNoNoticeQuery =
+    (/\b(asche|ashche|ache|ase|kono|any)\b/i.test(q) || /(আসছে|আছে|কোনো)/u.test(question)) &&
+    !/\b(ki\s+notice|notice\s+ki)\b/i.test(q);
+
   if (!selected.length) return {
     text: prefersBanglish(question)
-      ? "Indexed official data-te matching dated notice paini. University-r notice page check koro; ekhane latest notice confirm korte parchi na."
-      : "I could not find a matching dated notice in the indexed data. Check the official notice page for the latest update.",
+      ? (isYesNoNoticeQuery
+        ? "**না**, অফিসিয়াল ডাটাবেসে এই বিষয়ে নতুন কোনো নোটিশ পাওয়া যায়নি। বিশ্ববিদ্যালয়ের সর্বশেষ বিজ্ঞপ্তির জন্য অফিসিয়াল নোটিশ বোর্ড (gonouniversity.edu.bd) দেখার পরামর্শ দেওয়া হচ্ছে।"
+        : "Indexed official data-te matching dated notice paini. University-r notice page check koro; ekhane latest notice confirm korte parchi na.")
+      : (isYesNoNoticeQuery
+        ? "**No**, no matching new notices were found in the official data. Please check the university notice board for live updates."
+        : "I could not find a matching dated notice in the indexed data. Check the official notice page for the latest update."),
     sources: [{ title: "Official notices", url: `${officialSiteUrl}category/notice/` }],
     mode: "not_found",
   };
@@ -1394,8 +1402,11 @@ function directNoticeAnswer(question, knowledge) {
     const date = Number.isNaN(parsed) ? "Date not listed" : new Date(parsed).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
     return `- **${date}:** ${notice.title}`;
   });
+  const prefix = isYesNoNoticeQuery
+    ? (prefersBanglish(question) ? "**হ্যাঁ**, গণ বিশ্ববিদ্যালয়ের অফিসিয়াল ওয়েবসাইটে সম্প্রতি প্রকাশিত নোটিশসমূহ:\n" : "**Yes**, here are the most recent official notices:\n")
+    : (prefersBanglish(question) ? "Indexed official sources-er shobcheye recent matching notices:\n" : "Most recent matching notices in the indexed official sources:\n");
   return {
-    text: prefersBanglish(question) ? `Indexed official sources-er shobcheye recent matching notices:\n${lines.join("\n")}` : `Most recent matching notices in the indexed official sources:\n${lines.join("\n")}`,
+    text: `${prefix}${lines.join("\n")}`,
     sources: selected.map((notice) => ({ title: notice.title, url: notice.source })),
     mode: "structured",
   };
@@ -1821,7 +1832,12 @@ function asksFeeDetail(question) {
 
 function asksProgramDetail(question) {
   const q = normalizeQuestion(question);
-  return /\b(credit|credits|credit\s+hour|credit\s+hours|syllabus|curriculum|duration|semester|semesters|total\s+course|total\s+courses|course\s+list|subjects?|bochor|bochorer|years?)\b/i.test(q);
+  return (
+    /\b(credit|credits|credit\s+hour|credit\s+hours|syllabus|curriculum|duration|semester|semesters|semister|total\s+course|total\s+courses|course\s+list|subjects?|bochor|bochorer|years?)\b/i.test(q) ||
+    /\b(koyta|koita|koyti|koiti)\s+(?:semester|semister|term|course|subject)\b/i.test(q) ||
+    /(?:কয়টা|কয়টা|কয়টি|কয়টি)\s*(?:সেমিস্টার|কোর্স|বিষয়|বিষয়)/.test(question) ||
+    /(সেমিস্টার|ক্রেডিট|মেয়াদ|সিলেবাস|কোর্স|বছর)/.test(question)
+  );
 }
 
 function asksOfficialInstitutionFact(question) {
@@ -2419,9 +2435,9 @@ function directDepartmentExistenceAnswer(question, knowledge) {
     asksFeeDetail(q) ||
     asksProgramDetail(q) ||
     asksContactDetail(q) ||
-    /\b(how\s+many|count|koto|kojon|koyjon|koyta|shongkha|sonkha)\b/i.test(q) ||
+    /\b(how\s+many|count|koto|kojon|koyjon|koyta|koita|koyti|koiti|shongkha|sonkha)\b/i.test(q) ||
     /\b(faculty|teacher|teachers|professor|lecturer|sir|mam|head|dean|member|members|list)\b/i.test(q) ||
-    /(কতজন|সংখ্যা|কয়জন|তালিকা)/.test(question)
+    /(কতজন|সংখ্যা|কয়জন|কয়জন|কয়টা|কয়টা|কতটি|কয়টি|কয়টি|তালিকা)/.test(question)
   ) {
     return null;
   }
@@ -2446,6 +2462,15 @@ function directDepartmentExistenceAnswer(question, knowledge) {
     [/\b(journalism|mass\s+communication|সাংবাদিকতা)\b/i, "Journalism & Mass Communication", "কলা ও সামাজিক বিজ্ঞান অনুষদে English, Bangla, Politics & Governance, Sociology and Social Work ও BBA"],
     [/\b(psychology|মনোবিজ্ঞান)\b/i, "Psychology", "কলা ও সামাজিক বিজ্ঞান অনুষদে Sociology and Social Work ও Politics & Governance"],
     [/\b(economics|অর্থনীতি)\b/i, "Economics", "ব্যবসা প্রশাসন অনুষদে BBA এবং সামাজিক বিজ্ঞান অনুষদে Politics & Governance"],
+    [/\b(robotics|রোবোটিক্স)\b/i, "Robotics Engineering", "বিজ্ঞান ও প্রকৌশল অনুষদে Computer Science & Engineering (CSE) এবং Electrical & Electronic Engineering (EEE)"],
+    [/\b(data\s*science|ডাটা\s*সাইন্স|উপাত্ত\s*বিজ্ঞান)\b/i, "Data Science", "বিজ্ঞান ও প্রকৌশল অনুষদে Computer Science & Engineering (CSE)"],
+    [/\b(artificial\s*intelligence|\bai\b|এআই|কৃত্রিম\s*বুদ্ধিমত্তা)\b/i, "Artificial Intelligence (AI)", "বিজ্ঞান ও প্রকৌশল অনুষদে Computer Science & Engineering (CSE)"],
+    [/\b(software\s*engineering|সফটওয়্যার\s*ইঞ্জিনিয়ারিং)\b/i, "Software Engineering", "বিজ্ঞান ও প্রকৌশল অনুষদে Computer Science & Engineering (CSE)"],
+    [/\b(biotechnology|বায়োটেকনোলজি|জৈবপ্রযুক্তি)\b/i, "Biotechnology", "স্বাস্থ্য ও জীবন বিজ্ঞান অনুষদে Microbiology, Biochemistry & Molecular Biology এবং Pharmacy"],
+    [/\b(genetic\s*engineering|জেনেটিক\s*ইঞ্জিনিয়ারিং)\b/i, "Genetic Engineering", "স্বাস্থ্য ও জীবন বিজ্ঞান অনুষদে Biochemistry & Molecular Biology এবং Microbiology"],
+    [/\b(fashion(?:\s*design)?|apparel|গার্মেন্টস|ফ্যাশন)\b/i, "Fashion Design", "ব্যবসা প্রশাসন অনুষদে BBA এবং বিজ্ঞান অনুষদে CSE/EEE"],
+    [/\b(tourism|hospitality|ট্যুরিজম)\b/i, "Tourism & Hospitality Management", "ব্যবসা প্রশাসন অনুষদে BBA"],
+    [/\b(mbbs|মেডিকেল|এমবিবিএস)\b/i, "MBBS", "গণস্বাস্থ্য সমাজ ভিত্তিক মেডিকেল কলেজ (সংশ্লিষ্ট প্রতিষ্ঠান), তবে গণ বিশ্ববিদ্যালয়ের অধীনে রয়েছে Pharmacy, Physiotherapy (BPT), Microbiology ও Biochemistry"],
   ];
   for (const [pattern, subjectName, alternativePrograms] of unsupportedSubjects) {
     if (pattern.test(q)) {
@@ -2460,7 +2485,22 @@ function directDepartmentExistenceAnswer(question, knowledge) {
   }
 
   const department = matchedDepartmentFromQuestion(q, knowledge);
-  if (!department) return null;
+  if (!department) {
+    const asksDeptSubject =
+      /\b(department|dept|program|subject|course|বিভাগ|প্রোগ্রাম|বিষয়|বিষয়)\b/i.test(q) ||
+      /\b(pora|porte|porano|porashona|study)\b/i.test(q);
+    if (asksDeptSubject && asksExistence) {
+      const activeDepts = "Computer Science & Engineering (CSE), EEE, Pharmacy, Microbiology, Biochemistry, BBA, English, Law, Bangla, Politics & Governance, Sociology, Veterinary (DVM), Agriculture, Medical Physics";
+      return {
+        text: banglish
+          ? `না, Gono Bishwabidyalay-তে এই নামে কোনো অনুমোদিত বিভাগ বা প্রোগ্রাম চালুর তথ্য অফিশিয়াল রেকর্ডে নেই। গণ বিশ্ববিদ্যালয়ের প্রধান অনুমোদিত বিভাগসমূহ: ${activeDepts}।`
+          : `No, Gono Bishwabidyalay does not offer an accredited department or program under that name in official records. Available major accredited departments include: ${activeDepts}.`,
+        sources: [universitySources.academics],
+        mode: "structured",
+      };
+    }
+    return null;
+  }
   const program = programForDepartment(knowledge, department);
   const label = displayDepartmentName(department);
   return {
@@ -3206,8 +3246,9 @@ function directAdmissionOverviewAnswer(question, knowledge) {
   };
 }
 
-function directSemesterSystemAnswer(question) {
+function directSemesterSystemAnswer(question, knowledge = null) {
   const q = normalizeQuestion(question);
+  if (knowledge && matchedDepartmentFromQuestion(q, knowledge)) return null;
   if (!/\b(?:semesters?|semester\s+system|semester\s+koyta|koyta\s+semester|bochhore\s+koyta|koyti\s+semester)\b/i.test(q)) return null;
   if (!/\b(koyta|koyti|how\s+many|system|cycle|pattern|structure|bochhore|year|annual|tri-?semester|bi-?semester)\b/i.test(q)) return null;
 
@@ -4356,8 +4397,11 @@ function directUnknownPersonAnswer(question, knowledge) {
   const unknownPersonTerms = terms.filter((term) => !knownTokens.has(term) && !knownDepartmentTokens.has(term));
   if (!unknownPersonTerms.length) return null;
 
+  const banglish = prefersBanglish(question);
   return {
-    text: notVerifiedText(question),
+    text: banglish
+      ? "**না**, গণ বিশ্ববিদ্যালয়ের অফিসিয়াল ডাটাবেসে এই নামের কোনো শিক্ষক বা কর্মকর্তার তথ্য পাওয়া যায়নি। সম্পূর্ণ নাম বা সংশ্লিষ্ট বিভাগ উল্লেখ করলে চেক করে জানাতে পারব।"
+      : "**No**, I could not find a verified faculty member or official under that name in the university records. Please provide their full name or department so I can check.",
     sources: [],
     mode: "not_found",
   };
@@ -5573,9 +5617,349 @@ function directFacultyDesignationCountAnswer(question, knowledge) {
   };
 }
 
+function isNewFacultyInquiry(q, question) {
+  const normQ = normalizeQuestion(q);
+  const mentionsNew =
+    /\b(notun|natun|new|recent|recently|samprotik|latest)\b/i.test(normQ) ||
+    /(নতুন|সাম্প্রতিক|লেটেস্ট)/u.test(question);
+  const mentionsFaculty =
+    /\b(sir|sirs|madam|madams|mam|maam|teacher|teachers|faculty|member|members|shikkhok|shikkhika)\b/i.test(normQ) ||
+    /(শিক্ষক|শিক্ষিকা|স্যার|ম্যাডাম)/u.test(question);
+  const mentionsArrivalOrJoin =
+    /\b(asche|ashche|asen|asbe|asben|join|joined|recruited|niyog|niyok|ache|ase|kono|keu|ke|kara)\b/i.test(normQ) ||
+    /(আসছে|আসছেন|আছেন|যোগদান|নিয়োগ|নিয়োগ|কেউ|কারা|কে)/u.test(question);
+  return mentionsNew && mentionsFaculty && mentionsArrivalOrJoin;
+}
+
+function directNewFacultyAnswer(question, knowledge, history = []) {
+  const q = normalizeQuestion(question);
+  if (!isNewFacultyInquiry(q, question)) return null;
+
+  const banglish = prefersBanglish(question);
+  let matchedDept = matchedDepartmentFromQuestion(q, knowledge);
+  if (!matchedDept && history.length) {
+    matchedDept = activeContextDepartment(history, question, knowledge);
+  }
+
+  const isSpecificSir = /\b(?:sir|sirs)\b/i.test(q) && !/\b(?:madam|mam|maam)\b/i.test(q);
+  const isSpecificMadam = /\b(?:madam|madams|mam|maam)\b/i.test(q) && !/\b(?:sir|sirs)\b/i.test(q);
+  const honorificBn = isSpecificSir ? "স্যার" : isSpecificMadam ? "ম্যাডাম" : "স্যার/ম্যাডাম";
+  const honorificEn = isSpecificSir ? "male faculty / Sir" : isSpecificMadam ? "female faculty / Madam" : "faculty member";
+
+  if (matchedDept) {
+    const displayDept = displayDepartmentName(matchedDept);
+    const allPeople = departmentPeople(knowledge, matchedDept);
+    const teachingFaculty = allPeople.filter(isTeachingFaculty);
+    const leaders = departmentLeaderRecords(knowledge, matchedDept, teachingFaculty);
+    const headName = leaders.length ? leaders.map((p) => p.name).join(", ") : "";
+    const sirs = teachingFaculty.filter((p) => !isKnownFemalePerson(p));
+    const madams = teachingFaculty.filter((p) => isKnownFemalePerson(p));
+    const sourceUrl =
+      teachingFaculty.find((p) => p.source)?.source ||
+      allPeople.find((p) => p.source)?.source ||
+      `${officialSiteUrl}academics/`;
+
+    const text = banglish
+      ? `**না**, গণ বিশ্ববিদ্যালয়ের **${displayDept}** বিভাগে সম্প্রতি নতুন কোনো শিক্ষক (${honorificBn}) যোগদানের অফিসিয়াল কোনো তথ্য বা নোটিশ নেই।\n\nবর্তমান অফিসিয়াল তালিকা অনুযায়ী এই বিভাগে সর্বমোট **${teachingFaculty.length} জন অ্যাকাডেমিক শিক্ষক** দায়িত্ব পালন করছেন (${sirs.length} জন স্যার ও ${madams.length} জন ম্যাডাম${headName ? `; বিভাগীয় প্রধান: **${headName}**` : ""})।\n\nআপনি কি বর্তমান কর্মরত শিক্ষকদের পূর্ণাঙ্গ তালিকা বা কারো যোগাযোগের তথ্য দেখতে চান?`
+      : `**No**, there is no official record or notice of any new ${honorificEn} joining the **${displayDept}** recently.\n\nAccording to official records, the department currently has **${teachingFaculty.length} teaching faculty members** (${sirs.length} male, ${madams.length} female${headName ? `; Head: **${headName}**` : ""}).\n\nWould you like to see the current faculty list or specific contact details?`;
+
+    return {
+      text,
+      sources: [{ title: `${displayDept} Faculty Members`, url: sourceUrl }],
+      mode: "structured",
+    };
+  }
+
+  // University-wide answer
+  const allFaculty = Array.isArray(knowledge.faculty) ? knowledge.faculty : [];
+  const teachingFaculty = allFaculty.filter(isTeachingFaculty);
+  const sirs = teachingFaculty.filter((p) => !isKnownFemalePerson(p));
+  const madams = teachingFaculty.filter((p) => isKnownFemalePerson(p));
+
+  const text = banglish
+    ? `**না**, গণ বিশ্ববিদ্যালয়ের অফিসিয়াল ডাটাবেস বা নোটিশ বোর্ডে সম্প্রতি নতুন কোনো শিক্ষক (${honorificBn}) যোগদানের তথ্য বা বিজ্ঞপ্তি প্রকাশিত হয়নি।\n\nবর্তমান অফিসিয়াল ডিরেক্টরি অনুযায়ী বিশ্ববিদ্যালয়ের অ্যাকাডেমিক বিভাগসমূহে নিয়মিত শিক্ষকগণ দায়িত্ব পালন করছেন (মোট ${teachingFaculty.length} জন তালিকাভুক্ত শিক্ষক: ${sirs.length} জন স্যার ও ${madams.length} জন ম্যাডাম)।\n\nআপনি কি নির্দিষ্ট কোনো ডিপার্টমেন্টের (যেমন CSE, Pharmacy, Law, English) শিক্ষকদের বিস্তারিত তালিকা জানতে চান?`
+    : `**No**, there is no official record or circular indicating newly appointed ${honorificEn}s at Gono Bishwabidyalay recently.\n\nRegular faculty members are currently serving across academic departments (${teachingFaculty.length} faculty listed in the directory: ${sirs.length} male, ${madams.length} female).\n\nWould you like the faculty details for a specific department (e.g., CSE, Pharmacy, Law)?`;
+
+  return {
+    text,
+    sources: [
+      { title: "Academics & Faculty Directory - Gono Bishwabidyalay", url: `${officialSiteUrl}academics/` },
+    ],
+    mode: "structured",
+  };
+}
+
+function isFacultyLivePresenceInquiry(q, question) {
+  const normQ = normalizeQuestion(q);
+  const mentionsTeacher =
+    /\b(sir|sirs|madam|madams|mam|maam|teacher|teachers|shikkhok|shikkhika)\b/i.test(normQ) ||
+    /(শিক্ষক|শিক্ষিকা|স্যার|ম্যাডাম)/u.test(question);
+  const mentionsPresenceContext =
+    /\b(ajke|aajke|today|kal|kalke|tomorrow|now|currently|present|uposthit|campus\s*e|campuse|class\s*nibe|class\s*nite|class\s*hobe|room\s*e\s*ache|cabin\s*e\s*ache|office\s*e\s*ache|pabo|dekha\s*kora|dekha\s*hobe)\b/i.test(normQ) ||
+    /(আজকে|আজ|কাল|কালকে|উপস্থিত|ক্যাম্পাসে|ক্লাস\s*নেবেন|ক্লাস\s*নিবে|দেখা\s*করা|পাব)/u.test(question);
+  const asksStatus =
+    /\b(asche|ashche|asen|asbe|asben|ache|ase|nibe|hobe|ki|kobe|kokhon)\b/i.test(normQ) ||
+    /(আসছে|আসছেন|আছেন|আসবেন|নেবেন|হবে|কি)/u.test(question);
+  return mentionsTeacher && mentionsPresenceContext && asksStatus && !isNewFacultyInquiry(q, question);
+}
+
+function directFacultyLivePresenceAnswer(question, knowledge, history = []) {
+  const q = normalizeQuestion(question);
+  if (!isFacultyLivePresenceInquiry(q, question)) return null;
+
+  const banglish = prefersBanglish(question);
+  const matches = findPeople(q, knowledge.faculty || [], knowledge);
+
+  if (matches.length > 0) {
+    const person = matches[0];
+    const cleanName = cleanPersonName(person.name);
+    const sourceUrl = person.profileUrl || person.source || `${officialSiteUrl}academics/`;
+    const contactLines = [];
+    if (person.phone) contactLines.push(`• **মোবাইল:** ${person.phone}`);
+    if (person.email) contactLines.push(`• **ইমেইল:** ${person.email}`);
+
+    const text = banglish
+      ? `অফিসিয়াল চ্যাটবটে শিক্ষকদের **দৈনিক লাইভ উপস্থিতি বা আজকের ক্লাসের উপস্থিতি ট্র্যাক করার সুযোগ নেই (আমি রিয়েল-টাইম উপস্থিতি জানি না)**।\n\nতবে **${cleanName}** গণ বিশ্ববিদ্যালয়ের ${person.department || "সংশ্লিষ্ট বিভাগ"}-এ **${person.designation || "শিক্ষক"}** হিসেবে নিয়মিত দায়িত্ব পালন করছেন। ওনার আজকের উপস্থিতি বা ক্লাসের সময়সূচি নিশ্চিত হতে সরাসরি যোগাযোগ করার অনুরোধ রইল:\n${contactLines.length ? contactLines.join("\n") + "\n" : ""}• অথবা আপনার ব্যাচের সিআর (CR) বা বিভাগীয় অফিসে খোঁজ নিতে পারেন।`
+      : `The official chatbot database **does not track teachers' daily live presence or today's real-time class schedule (real-time attendance unknown)**.\n\nHowever, **${cleanName}** is actively serving as **${person.designation || "Faculty"}** in the ${person.department || "respective department"}. To confirm their attendance or class schedule today, please contact them directly:\n${contactLines.length ? contactLines.join("\n") + "\n" : ""}• Or consult your batch CR / Department Office.`;
+
+    return {
+      text,
+      sources: [{ title: person.name, url: sourceUrl }],
+      mode: "structured",
+    };
+  }
+
+  const text = banglish
+    ? `অফিসিয়াল চ্যাটবট ডাটাবেসে শিক্ষকদের **দৈনিক উপস্থিতি বা রিয়েল-টাইম ক্লাস নেওয়ার শিডিউল সংরক্ষিত থাকে না (আমি এই রিয়েল-টাইম তথ্য জানি না)**।\n\nকোনো শিক্ষক আজ ক্যাম্পাসে আছেন কিনা বা ক্লাস নেবেন কিনা তা জানতে:\n১. সংশ্লিষ্ট শিক্ষকের সাথে সরাসরি ফোনে বা ইমেইলে যোগাযোগ করতে পারেন।\n২. আপনার ব্যাচের সিআর (Class Representative) অথবা ডিপার্টমেন্ট অফিসে যোগাযোগ করে নিশ্চিত হতে পারেন।\n\n(আপনি কি নির্দিষ্ট কোনো শিক্ষকের অফিসিয়াল ফোন নম্বর বা ইমেইল ঠিকানা জানতে চান? ওনার নাম লিখলেই আমি বিস্তারিত তথ্য জানিয়ে দেব)।`
+    : `The official chatbot database **does not track teachers' daily live presence or real-time class schedules (real-time status unavailable)**.\n\nTo confirm if a faculty member is on campus or taking classes today:\n1. Contact the teacher directly via their official email or phone.\n2. Check with your batch Class Representative (CR) or department office.\n\n(If you need the official contact details for a specific faculty member, please provide their name).`;
+
+  return {
+    text,
+    sources: [{ title: "Academics & Faculty Directory - Gono Bishwabidyalay", url: `${officialSiteUrl}academics/` }],
+    mode: "structured",
+  };
+}
+
+function isCampusLiveOpenClosedInquiry(q, question) {
+  const normQ = normalizeQuestion(q);
+  const mentionsCampus =
+    /\b(campus|varsity|versity|university|bissobidyaloy|department|dept|office|class|classes)\b/i.test(normQ) ||
+    /(ক্যাম্পাস|ভার্সিটি|বিশ্ববিদ্যালয়|ক্লাস|অফিস)/u.test(question);
+  const mentionsLiveStatus =
+    /\b(ajke|aajke|today|kal|kalke|tomorrow|khola|bondho|hobe|chalu|open|close|closed)\b/i.test(normQ) ||
+    /(আজকে|আজ|কাল|কালকে|খোলা|বন্ধ|হবে)/u.test(question);
+  const asksStatus =
+    /\b(ki|kobe|thakbe|hobe|ache|ase)\b/i.test(normQ) ||
+    /(কি|হবে|থাকবে|আছে)/u.test(question);
+  return (
+    mentionsCampus &&
+    mentionsLiveStatus &&
+    asksStatus &&
+    !asksFeeDetail(normQ) &&
+    !/\b(admission|vorti|eligibility|joggota)\b/i.test(normQ) &&
+    !isFacultyLivePresenceInquiry(q, question)
+  );
+}
+
+function directCampusLiveOpenClosedAnswer(question, knowledge) {
+  const q = normalizeQuestion(question);
+  if (!isCampusLiveOpenClosedInquiry(q, question)) return null;
+
+  const banglish = prefersBanglish(question);
+  const text = banglish
+    ? `অফিসিয়াল ছুটির নোটিশ বা ঘোষণা ছাড়া আজকের বা আগামীকালের **তাৎক্ষণিক ক্যাম্পাস খোলা বা বন্ধের স্ট্যাটাস চ্যাটবটে নিশ্চিত করা সম্ভব নয় (আমি রিয়েল-টাইম নোটিশ ছাড়া জানি না)**।\n\n**গণ বিশ্ববিদ্যালয়ের সাধারণ কর্মদিবস ও সময়সূচি:**\n• **সাপ্তাহিক ছুটি:** প্রতি **শুক্রবার ও শনিবার** বিশ্ববিদ্যালয় সম্পূর্ণ বন্ধ থাকে।\n• **ক্লাস ও অফিস:** **রবিবার থেকে বৃহস্পতিবার** সকাল ৯:০০ টা থেকে বিকেল ৪:৩০ টা পর্যন্ত স্বাভাবিক অ্যাকাডেমিক ক্লাস ও প্রশাসনিক কার্যক্রম চালু থাকে।\n• সরকারি ছুটি বা বিশেষ পরিস্থিতিতে অফিসিয়াল নোটিশের মাধ্যমে বন্ধ ঘোষণা করা হয়।\n\nআজকের জরুরি নোটিশ বা ক্লাসের খবরের জন্য বিশ্ববিদ্যালয়ের অফিসিয়াল নোটিশ বোর্ড অথবা আপনার ডিপার্টমেন্টের নোটিশ গ্রুপে লক্ষ্য রাখার পরামর্শ দেওয়া হচ্ছে।`
+    : `Without a specific official circular, the chatbot **cannot confirm real-time campus operational status for today or tomorrow (live status not tracked)**.\n\n**General University Schedule:**\n• **Weekly Holiday:** The university remains closed on **Friday and Saturday**.\n• **Regular Classes & Office:** Open **Sunday through Thursday**, from 9:00 AM to 4:30 PM.\n• Administrative closures or emergency holidays are announced via official circulars.\n\nFor emergency closure announcements, please check the official university notice board or your departmental communication channels.`;
+
+  return {
+    text,
+    sources: [
+      { title: "General Information - Gono Bishwabidyalay", url: `${officialSiteUrl}about-gb/general-information/` },
+      { title: "Official notices", url: `${officialSiteUrl}category/notice/` },
+    ],
+    mode: "structured",
+  };
+}
+
+function directAcademicProgramFeaturesAnswer(question, knowledge, history = []) {
+  const q = normalizeQuestion(question);
+  const banglish = prefersBanglish(question);
+  let matchedDept = matchedDepartmentFromQuestion(q, knowledge);
+  if (!matchedDept && history.length) {
+    matchedDept = activeContextDepartment(history, question, knowledge);
+  }
+  const displayDept = matchedDept ? displayDepartmentName(matchedDept) : "";
+
+  // 1. Evening / Weekend Batch inquiries
+  const asksEveningOrWeekend =
+    (/\b(evening|shondhakalin|shondha|night|weekend)\b/i.test(q) &&
+    /\b(batch|program|course|shift|class|classes|vorti|admission|ache|ase|hobe|hoy|available)\b/i.test(q)) ||
+    /(সান্ধ্যকালীন|ইভনিং|উইকেন্ড).*(ব্যাচ|প্রোগ্রাম|কোর্স|ক্লাস|ভর্তি|আছে)/u.test(question);
+
+  if (asksEveningOrWeekend) {
+    const deptNote = displayDept ? `**${displayDept}** বিভাগে` : "গণ বিশ্ববিদ্যালয়ের আন্ডারগ্র্যাজুয়েট (স্নাতক) প্রোগ্রামগুলোতে";
+    const deptNoteEn = displayDept ? `in **${displayDept}**` : "in undergraduate programs at Gono Bishwabidyalay";
+    return {
+      text: banglish
+        ? `**না**, গণ বিশ্ববিদ্যালয়ে ${deptNote} কোনো সান্ধ্যকালীন (Evening) বা উইকেন্ড (Weekend) ব্যাচ নেই। এটি সম্পূর্ণ নিয়মিত ডে (Day / Regular) প্রোগ্রাম হিসেবে পরিচালিত হয় (সপ্তাহে রবি থেকে বৃহস্পতিবার ক্লাস অনুষ্ঠিত হয়)।`
+        : `**No**, there is no Evening or Weekend batch ${deptNoteEn}. All undergraduate degree programs are conducted strictly as regular Day programs (classes held Sunday through Thursday).`,
+      sources: matchedDept ? [{ title: `${displayDept} Overview`, url: `${officialSiteUrl}academics/` }] : [{ title: "Academics", url: `${officialSiteUrl}academics/` }],
+      mode: "structured",
+    };
+  }
+
+  // 2. Diploma Holders Admission (e.g. into B.Sc. in CSE / EEE)
+  const asksDiploma =
+    (/\b(diploma|diplomadhari|diplomadharider|polytechnic|bteb)\b/i.test(q) &&
+    /\b(vorti|admission|apply|chance|parbe|pora|porte|eligible|joggota|lagbe)\b/i.test(q)) ||
+    /(ডিপ্লোমা|পলিটেকনিক).*(ভর্তি|আবেদন|যোগ্যতা|পারবে)/u.test(question);
+
+  if (asksDiploma) {
+    return {
+      text: banglish
+        ? `**হ্যাঁ**, কারিগরি শিক্ষা বোর্ড (BTEB) বা সমমানের ৩/৪ বছর মেয়াদী ডিপ্লোমা ইন ইঞ্জিনিয়ারিং সম্পন্নকারী শিক্ষার্থীরা গণ বিশ্ববিদ্যালয়ের **B.Sc. in Computer Science and Engineering (CSE)** ও **EEE** প্রোগ্রামে সরাসরি ভর্তি হতে পারবেন।\n\n• **ন্যূনতম যোগ্যতা:** ডিপ্লোমাতে ন্যূনতম CGPA ২.৫০ থাকতে হবে।\n• **ক্রেডিট ছাড় (Credit Waiver):** ডিপ্লোমাধারীদের জন্য সংশ্লিষ্ট সম্পন্নকৃত বিষয়ের ওপর ক্রেডিট ওয়েভার সুবিধা রয়েছে (যার ফলে কম সেমিস্টার ও কম খরচে ডিগ্রি সম্পন্ন করা যায়)।\n• **ভর্তি হেল্পলাইন:** 01950003314, 01950003312।`
+        : `**Yes**, holders of a 3- or 4-year Diploma in Engineering from BTEB or equivalent can directly enroll in the **B.Sc. in CSE** or **EEE** programs at Gono Bishwabidyalay.\n\n• **Minimum Requirement:** Minimum CGPA 2.50 in Diploma.\n• **Credit Waiver:** Diploma graduates receive course credit waivers for relevant completed coursework.\n• **Admission Helplines:** 01950003314, 01950003312.`,
+      sources: [
+        { title: "Admission Requirements - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/admission/admission-requirements/" },
+      ],
+      mode: "structured",
+    };
+  }
+
+  // 3. Weekly Schedule / Friday Open inquiry
+  const asksFridaySchedule =
+    (/\b(friday|shukrobar|sukrobar|shukrobare)\b/i.test(q) &&
+    /\b(khola|open|bondho|close|closed|class|classes|office|thake|hoy|hobe)\b/i.test(q)) ||
+    /(শুক্রবার|শুক্রবারে).*(খোলা|বন্ধ|ক্লাস|অফিস)/u.test(question);
+
+  if (asksFridaySchedule) {
+    return {
+      text: banglish
+        ? `**না**, গণ বিশ্ববিদ্যালয়ে প্রতি **শুক্রবার ও শনিবার** সাপ্তাহিক ছুটি থাকে (ক্যাম্পাস ও অ্যাকাডেমিক অফিস সম্পূর্ণ বন্ধ থাকে)। সপ্তাহের রবিবার থেকে বৃহস্পতিবার সকাল ৯:০০ টা থেকে বিকেল ৪:৩০ টা পর্যন্ত নিয়মিত ক্লাস ও অফিস কার্যক্রম পরিচালিত হয়।`
+        : `**No**, Gono Bishwabidyalay observes a weekly holiday on **Friday and Saturday** (campus and administrative offices remain closed). Regular academic classes and offices operate Sunday through Thursday from 9:00 AM to 4:30 PM.`,
+      sources: [{ title: "General Information - Gono Bishwabidyalay", url: `${officialSiteUrl}about-gb/general-information/` }],
+      mode: "structured",
+    };
+  }
+
+  // 4. Permanent Campus inquiry
+  const asksPermanentCampus =
+    /\b(permanent\s+campus|nijer\s+campus|sthayi\s+campus|nijoshsho\s+campus)\b/i.test(q) ||
+    (/\b(permanent|sthayi|nijer|nijoshsho)\b/i.test(q) && /\b(campus|building|bhaban)\b/i.test(q) && /\b(ache|ase|has|have|ki)\b/i.test(q)) ||
+    /(স্থায়ী\s*ক্যাম্পাস|স্থায়ী\s*ক্যাম্পাস|নিজস্ব\s*ক্যাম্পাস|নিজের\s*ক্যাম্পাস)/u.test(question);
+
+  if (asksPermanentCampus) {
+    return {
+      text: banglish
+        ? `**হ্যাঁ**, গণ বিশ্ববিদ্যালয়ের নিজস্ব **স্থায়ী ক্যাম্পাস** রয়েছে। এটি ঢাকার অদূরে সাভারের নলাম, মির্জানগরে অবস্থিত (৩২ একরের মনোরম সবুজ প্রাকৃতিক ক্যাম্পাসে নিজস্ব অ্যাকাডেমিক ও প্রশাসনিক ভবন রয়েছে)।\n\n**ক্যাম্পাসের অফিসিয়াল ঠিকানা:**\nনলাম, ডাকঘর: মির্জানগর via সাভার সেনানিবাস, আশুলিয়া, সাভার, ঢাকা-১৩৪৪।`
+        : `**Yes**, Gono Bishwabidyalay operates on its own **permanent campus** spanning 32 acres of lush green environment at Nolam, Mirzanagar, Savar, Dhaka-1344.`,
+      sources: [
+        { title: "General Information - Gono Bishwabidyalay", url: `${officialSiteUrl}about-gb/general-information/` },
+        { title: "Campus Life - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/campus-life/" },
+      ],
+      mode: "structured",
+    };
+  }
+
+  // 5. Credit Transfer inquiry
+  const asksCreditTransfer =
+    /\b(credit\s+transfer|transfer\s+kora|transfer\s+hoy|transfer\s+neya)\b/i.test(q) ||
+    /(ক্রেডিট\s*ট্রান্সফার)/u.test(question);
+
+  if (asksCreditTransfer) {
+    return {
+      text: banglish
+        ? `**হ্যাঁ**, ইউজিসি অনুমোদিত যে কোনো বিশ্ববিদ্যালয় থেকে সমমানের সম্পন্নকৃত কোর্সের ক্ষেত্রে গণ বিশ্ববিদ্যালয়ে **ক্রেডিট ট্রান্সফার (Credit Transfer)** নেওয়ার নিয়ম রয়েছে। পূর্ববর্তী বিশ্ববিদ্যালয়ের অফিসিয়াল ট্রান্সক্রিপ্ট ও সিলেবাস সহ সংশ্লিষ্ট বিভাগীয় প্রধান ও ভর্তি শাখায় আবেদন করতে হয়।`
+        : `**Yes**, Gono Bishwabidyalay accepts **Credit Transfers** from other UGC-approved universities for equivalent completed courses, subject to departmental transcript evaluation and credit transfer policies.`,
+      sources: [{ title: "Admission Office - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/offices/admission-office/" }],
+      mode: "structured",
+    };
+  }
+
+  // 6. Mandatory Internship / Project inquiry
+  const asksInternship =
+    (/\b(internship|industrial\s+training|project|thesis)\b/i.test(q) &&
+    /\b(ache|ase|kora\s+lage|mandatory|lagbe|hoy|korte\s+hoy)\b/i.test(q)) ||
+    /(ইন্টার্নশিপ|প্রজেক্ট|থিসিস).*(আছে|বাধ্যতামূলক|লাগে|হয়)/u.test(question);
+
+  if (asksInternship) {
+    return {
+      text: banglish
+        ? `**হ্যাঁ**, গণ বিশ্ববিদ্যালয়ের B.Sc. in CSE ও অন্যান্য প্রফেশনাল ডিগ্রি প্রোগ্রামে শিক্ষার্থীদের জন্য শেষ বর্ষে/সেমিস্টারে বাধ্যতামূলক **প্রজেক্ট / থিসিস এবং ইন্ডাস্ট্রিয়াল ইন্টার্নশিপ (Industrial Training / Internship)** সম্পন্ন করতে হয়।`
+        : `**Yes**, professional degree programs such as B.Sc. in CSE at Gono Bishwabidyalay mandate a final-year **Project / Thesis and Industrial Internship** to provide hands-on practical industry exposure.`,
+      sources: [{ title: "Academics - Gono Bishwabidyalay", url: `${officialSiteUrl}academics/` }],
+      mode: "structured",
+    };
+  }
+
+  // 7. Boys / Male Hostel inquiry
+  const asksBoysHostel =
+    /\b(boys?\s+hostel|male\s+hostel|cheleder\s+hostel|chatroder\s+hostel|cheleder\s+hall)\b/i.test(q) ||
+    /(ছেলেদের\s*হোস্টেল|ছাত্রদের\s*হোস্টেল|ছেলেদের\s*হল)/u.test(question);
+
+  if (asksBoysHostel) {
+    return {
+      text: banglish
+        ? `**না**, গণ বিশ্ববিদ্যালয়ে ছাত্রদের (ছেলেদের) জন্য ক্যাম্পাসের ভেতরে নিজস্ব কোনো আবাসিক হল বা হোস্টেল সুবিধা নেই। তবে ছাত্রীদের জন্য নির্ধারিত হোস্টেল সুবিধা রয়েছে। ছাত্ররা সাধারণত ক্যাম্পাসের সন্নিকটে নলাম, বাইপাইল বা সাভারের বিভিন্ন বেসরকারি ছাত্রাবাস/মেসে অবস্থান করেন।`
+        : `**No**, Gono Bishwabidyalay does not have on-campus residential hostels for male students. Female students have access to designated hostel accommodations. Male students typically reside in private hostels and messes nearby in Nolam, Baipail, or Savar.`,
+      sources: [{ title: "Campus Life - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/campus-life/" }],
+      mode: "structured",
+    };
+  }
+
+  // 8. Girls / Female Hostel inquiry
+  const asksGirlsHostel =
+    /\b(girls?\s+hostel|female\s+hostel|meyeder\s+hostel|chatrider\s+hostel|meyeder\s+hall|mohilader\s+hostel)\b/i.test(q) ||
+    /(মেয়েদের\s*হোস্টেল|ছাত্রীদের\s*হোস্টেল|মহিলা\s*হোস্টেল|মেয়েদের\s*হল)/u.test(question);
+
+  if (asksGirlsHostel) {
+    return {
+      text: banglish
+        ? `**হ্যাঁ**, গণ বিশ্ববিদ্যালয়ে দূরবর্তী অঞ্চল থেকে আগত ছাত্রী (মহিলা শিক্ষার্থীদের) জন্য নিজস্ব নিরাপদ আবাসিক হোস্টেল সুবিধা রয়েছে। হোস্টেল আসন বরাদ্দ ও তথ্যের জন্য সরাসরি অ্যাডমিশন অফিস বা হোস্টেল সুপারিনটেনডেন্টের সাথে যোগাযোগ করতে পারেন।`
+        : `**Yes**, Gono Bishwabidyalay provides designated residential hostel accommodations for female students coming from outside Dhaka. Contact the Admission Office or Hostel Superintendent for details on room allocation.`,
+      sources: [{ title: "Campus Life - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/campus-life/" }],
+      mode: "structured",
+    };
+  }
+
+  // 9. Physiotherapy (BPT) course duration
+  const asksBptDuration =
+    (/\b(bpt|physiotherapy|ফিজিওথেরাপি)\b/i.test(q) &&
+    /\b(duration|year|years|semester|semesters|koto\s+bochor|koy\s+bochor|bochorer?)\b/i.test(q)) ||
+    /(ফিজিওথেরাপি|বিপিটি).*(মেয়াদ|কয়\s*বছর|কত\s*বছর|সেমিস্টার)/u.test(question);
+
+  if (asksBptDuration) {
+    return {
+      text: banglish
+        ? `গণ বিশ্ববিদ্যালয়ের **Bachelor of Physiotherapy (BPT)** কোর্সের মোট মেয়াদ **5 years (৫ বছর)** (৪ বছর প্রাতিষ্ঠানিক অ্যাকাডেমিক পড়াশোনা + ১ বছর বাধ্যতামূলক ঘূর্ণায়মান ইন্টার্নশিপ)। এটি স্বাস্থ্য বিজ্ঞান অনুষদের অধীনে পরিচালিত হয়।`
+        : `At Gono Bishwabidyalay, the **Bachelor of Physiotherapy (BPT)** degree has a total duration of **5 years** (4 academic years + 1 year compulsory rotatory internship) under the Faculty of Health Sciences.`,
+      sources: [{ title: "Faculty of Health Sciences - Gono Bishwabidyalay", url: `${officialSiteUrl}academics/` }],
+      mode: "structured",
+    };
+  }
+
+  // 10. Veterinary (DVM) course duration
+  const asksDvmDuration =
+    (/\b(dvm|veterinary|animal\s+husbandry)\b/i.test(q) &&
+    /\b(duration|year|years|semester|semesters|koto\s+bochor|koy\s+bochor|bochorer?)\b/i.test(q)) ||
+    /(ডিভিএম|ভেটেরিনারি).*(মেয়াদ|কয়\s*বছর|কত\s*বছর|সেমিস্টার)/u.test(question);
+
+  if (asksDvmDuration) {
+    return {
+      text: banglish
+        ? `গণ বিশ্ববিদ্যালয়ের **Doctor of Veterinary Medicine (DVM / B.Sc. Vet. Sc & A.H.)** কোর্সের মোট মেয়াদ **5 years (৫ বছর)** (৯টি সেমিস্টার অ্যাকাডেমিক পড়াশোনা + ১টি সেমিস্টার ইন্টার্নশিপ)। এটি ভেটেরিনারি ও অ্যানিমেল সায়েন্সেস অনুষদের অধীনে পরিচালিত হয়।`
+        : `At Gono Bishwabidyalay, the **Doctor of Veterinary Medicine (DVM)** degree has a total duration of **5 years** (9 academic semesters + 1 semester internship) under the Faculty of Veterinary & Animal Sciences.`,
+      sources: [{ title: "Faculty of Veterinary & Animal Sciences - Gono Bishwabidyalay", url: `${officialSiteUrl}academics/` }],
+      mode: "structured",
+    };
+  }
+
+  return null;
+}
+
 function directDepartmentFacultyCountAnswer(question, knowledge, history = []) {
   const q = normalizeQuestion(question);
   if (asksFeeDetail(q) || asksContactDetail(q) || asksProgramDetail(q)) return null;
+  if (isNewFacultyInquiry(q, question) || isFacultyLivePresenceInquiry(q, question)) return null;
 
   // Let combined student/faculty queries and pure student queries be handled by institution stats
   if (/\b(?:students?|undergrads?|postgraduate\s+students?|chatro|chhatro|shikkharthi|shikkarthi)\b/i.test(q) || /(ছাত্র|ছাত্রী|শিক্ষার্থী)/.test(question)) {
@@ -5590,18 +5974,28 @@ function directDepartmentFacultyCountAnswer(question, knowledge, history = []) {
     matchedDept = activeContextDepartment(history, question, knowledge);
   }
 
-  const isSpecificSirQuery = /\b(?:sir|sirs)\b/i.test(q) && !/\b(?:madam|mam|maam)\b/i.test(q);
-  const isSpecificMadamQuery = /\b(?:madam|madams|mam|maam)\b/i.test(q) && !/\b(?:sir|sirs)\b/i.test(q);
   const asksCount =
     /\b(?:how\s+many|koto|kotojon|kojon|koyjon|koto\s*jon|total|count|shongkha|sonkha)\b/i.test(q) ||
     /(কতজন|কয়জন|সংখ্যা|মোট)/.test(question);
+  const asksListOrNames =
+    /\b(?:list|names?|nam|talika|sob|shob|all|details|kara|ra)\b/i.test(q) ||
+    /(তালিকা|নাম|কারা)/.test(question);
+  const isSpecificSirQuery =
+    !/\b(?:madam|mam|maam)\b/i.test(q) &&
+    (/\b(?:sirder|sirs|male\s+teachers?)\b/i.test(q) ||
+      (/\b(?:sir)\b/i.test(q) && (asksCount || asksListOrNames)));
+  const isSpecificMadamQuery =
+    !/\b(?:sir|sirs)\b/i.test(q) &&
+    (/\b(?:madamder|madams|female\s+teachers?)\b/i.test(q) ||
+      (/\b(?:madam|mam|maam)\b/i.test(q) && (asksCount || asksListOrNames)));
   const asksFacultyTopic =
-    /\b(?:sir|sirs|madam|madams|mam|maam|teacher|teachers|faculty\s+members?|shikkhok|shikkhika|shikkha)\b/i.test(q) ||
+    /\b(?:sirder|madamder|teachers?|faculty\s+members?|shikkhok|shikkhika|shikkha)\b/i.test(q) ||
     (/\bfaculty\b/i.test(q) && /\b(?:members?|koyjon|kojon|kotojon|koi\s*jon|koy\s*jon|ko\s*jon|who|ke)\b/i.test(q)) ||
-    /(শিক্ষক|শিক্ষিকা|স্যার|ম্যাডাম)/.test(question);
+    ((isSpecificSirQuery || isSpecificMadamQuery) && (asksCount || asksListOrNames)) ||
+    (/(শিক্ষক|শিক্ষিকা)/.test(question) && (asksCount || asksListOrNames));
 
   if (!asksFacultyTopic) return null;
-  if (!asksCount && !isSpecificSirQuery && !isSpecificMadamQuery && !/\b(?:shikkhok|shikkhika|sir|madam|mam|teacher|teachers|faculty|member|members)\b/i.test(q)) {
+  if (!asksCount && !isSpecificSirQuery && !isSpecificMadamQuery && !asksListOrNames) {
     return null;
   }
 
@@ -5761,7 +6155,8 @@ function directDepartmentOverviewAnswer(question, knowledge) {
     asksContactDetail(q) ||
     asksProgramDetail(q) ||
     /\b(fee|fees|cost|tuition|tution|waiver|scholarship|stipend|eligibility|qualification|vorti|admission|deadline|routine|notice|career|job|future|campus|transport|hostel|library|bujhlam|sahaj|summary)\b/i.test(q) ||
-    /\b(course|syllabus|subject|topic|study|learn|pore|porano|porashona|somporke|somproke|data\s+structure|biomedical|bio\s*medical)\b/i.test(q)
+    /\b(course|syllabus|subject|topic|study|learn|pore|porano|porashona|somporke|somproke|data\s+structure|biomedical|bio\s*medical)\b/i.test(q) ||
+    /\b(evening|weekend|diploma|transfer|internship|project|notun|natun|asche|ashche|ajke|aajke|today|kal|kalke|bondho|khola)\b/i.test(q)
   ) {
     return null;
   }
@@ -6160,8 +6555,8 @@ function bareAcademicTopic(question) {
   const q = normalizeQuestion(question).replace(/[^\p{L}\p{N}\s]/gu, " ").trim();
   if (!q || tokenize(q).length > 4) return "";
   const hasSpecificIntent =
-    /\b(what\s+is|ki|kake\s+bole|explain|define|overview|about|details|courses?|subject|syllabus|credits?|duration|seats?|seat|asan|ashon|intake|capacity|qualification|eligibility|requirements?|joggota|lagbe|faculty|teacher|teachers|shikkhok|shikkhika|shikkha|sir|sirs|mam|maam|madam|madams|head|fee|fees?|fe|cost|costs?|tuition|tution|taka|tk|khoroch|khroch|kharach|kharoch|charge|charges|expense|expenses|payment|payments|package|admission|vorti|career|learn|study|somporke|somproke|bolo|dao|koto|kotojon|koyjon|kojon|how|why|list|show|compare|comparison|versus|vs|better|bhalo|naki|difference|phone|mobile|contact|call|cell|email|number|kothai|kothay|where|location|address|thikana)\b/i.test(q) ||
-    /(কতজন|কয়জন|শিক্ষক|শিক্ষিকা|স্যার|ম্যাডাম|কোথায়|ঠিকানা)/.test(question);
+    /\b(ache|ase|exists?|available|offer|offers|offered|department|departments?|dept|what\s+is|ki|kake\s+bole|explain|define|overview|about|details|courses?|subject|syllabus|credits?|duration|seats?|seat|asan|ashon|intake|capacity|qualification|eligibility|requirements?|joggota|lagbe|faculty|teacher|teachers|shikkhok|shikkhika|shikkha|sir|sirs|mam|maam|madam|madams|head|fee|fees?|fe|cost|costs?|tuition|tution|taka|tk|khoroch|khroch|kharach|kharoch|charge|charges|expense|expenses|payment|payments|package|admission|vorti|career|learn|study|somporke|somproke|bolo|dao|koto|kotojon|koyjon|kojon|how|why|list|show|compare|comparison|versus|vs|better|bhalo|naki|difference|phone|mobile|contact|call|cell|email|number|kothai|kothay|where|location|address|thikana|koyta|koita|koyti|koiti|semester|semesters|semister|term|bochor|bochorer|years?)\b/i.test(q) ||
+    /(আছে|আসে|বিভাগ|ডিপার্টমেন্ট|কতজন|কয়জন|কয়জন|কয়টি|কয়টি|কয়টা|কয়টা|সেমিস্টার|বছর|মেয়াদ|শিক্ষক|শিক্ষিকা|স্যার|ম্যাডাম|কোথায়|ঠিকানা)/.test(question);
   if (hasSpecificIntent) return "";
   if (/\b(medical\s+physics|biomedical(?:\s+engineering)?)\b/i.test(q)) return "Medical Physics and Biomedical Engineering";
   if (/\b(cse|computer\s+science)\b/i.test(q)) return "CSE";
@@ -6171,7 +6566,8 @@ function bareAcademicTopic(question) {
 }
 
 function directClarificationAnswer(question, history = []) {
-  if (asksFeeDetail(question) || asksContactDetail(question)) return null;
+  if (asksFeeDetail(question) || asksContactDetail(question) || asksProgramDetail(question)) return null;
+  if (isStatedAdmissionEligibilityQuestion(question)) return null;
   if (history && history.length > 0) return null;
   const topic = bareAcademicTopic(question);
   if (!isUnclearQuestion(question) && !topic) return null;
@@ -6230,7 +6626,7 @@ function statedAdmissionGpa(question) {
 function isStatedAdmissionEligibilityQuestion(question) {
   return (
     statedAdmissionGpa(question) !== null &&
-    /\b(vorti|admission|apply|parbo|eligible|chance)\b|ভর্তি|আবেদন|পারব|যোগ্য/iu.test(normalizeQuestion(question))
+    /\b(vorti|admission|apply|parbo|eligible|chance|hobe|pabo|paoya|jabe)\b|ভর্তি|আবেদন|পারব|যোগ্য|হবে|পাব|যাবে/iu.test(normalizeQuestion(question))
   );
 }
 
@@ -6239,7 +6635,7 @@ function directAdmissionEligibilityAnswer(question, knowledge, history = []) {
   const statedGpa = statedAdmissionGpa(question);
   const asksEligibility =
     /\b(qualification|eligibility|requirements?|joggota|lagbe|hsc|ssc|apply\s+korte\s+ki\s+lagbe|admission\s+requirement|vortir\s+joggota)\b/i.test(q) ||
-    (statedGpa !== null && /\b(vorti|admission|apply|parbo|eligible|chance)\b|ভর্তি|আবেদন|পারব|যোগ্য/iu.test(q));
+    isStatedAdmissionEligibilityQuestion(question);
   if (!asksEligibility) return null;
   if (!/\b(admission|vorti)\b/i.test(q)) {
     const matchedPeople = findPeople(q, knowledge.faculty || [], knowledge);
@@ -6275,10 +6671,39 @@ function directAdmissionEligibilityAnswer(question, knowledge, history = []) {
   }
 
   if (activeDept && /\bpharmacy\b/i.test(activeDept)) {
+    if (statedGpa !== null) {
+      const meetsPharmacyMinimum = statedGpa >= 3.0;
+      return {
+        text: banglish
+          ? meetsPharmacyMinimum
+            ? `GPA-er dik diye **হ্যাঁ**—তোমার বলা **${statedGpa.toFixed(2)}** Pharmacy (B.Pharm)-এর ন্যূনতম GPA **3.00**-এর উপরে। তবে চূড়ান্ত আবেদনের জন্য SSC ও HSC উভয়টিতেই আলাদাভাবে ন্যূনতম GPA 3.00 (মোট GPA কমপক্ষে 6.50), বিজ্ঞান বিভাগ এবং Biology ও Chemistry-তে আলাদাভাবে ন্যূনতম GPA 3.00 থাকতে হবে।`
+            : `GPA-er dik diye **না**—তোমার বলা **${statedGpa.toFixed(2)}** Pharmacy (B.Pharm)-এর ন্যূনতম GPA **3.00**-এর নিচে। Pharmacy-তে ভর্তির জন্য SSC ও HSC উভয়টিতেই ন্যূনতম GPA 3.00 এবং মোট GPA কমপক্ষে 6.50 থাকতে হয়।`
+          : meetsPharmacyMinimum
+            ? `For the GPA component, **yes**—the stated **${statedGpa.toFixed(2)}** is above the minimum required **3.00** for Pharmacy (B.Pharm). Final eligibility requires at least 3.00 in both SSC and HSC separately (aggregate 6.50+), a Science background, and at least 3.00 in Biology and Chemistry.`
+            : `For the GPA component, **no**—the stated **${statedGpa.toFixed(2)}** is below the minimum required **3.00** for Pharmacy (B.Pharm). Applicants must have at least 3.00 in both SSC and HSC separately with an aggregate of 6.50+.`,
+        sources: [{ title: "Academic Programs - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/academic/academic-programs/" }],
+        mode: "structured",
+      };
+    }
     return {
       text: banglish
         ? `**Pharmacy (B.Pharm) ভর্তির যোগ্যতা:** এসএসসি ও এইচএসসি বিজ্ঞান বিভাগ থেকে আলাদাভাবে ন্যূনতম **GPA 3.00** (মোট জিপিএ ৬.৫০) এবং জীববিজ্ঞান ও রসায়নে ন্যূনতম জিপিএ ৩.০০ থাকতে হবে।`
         : `**Pharmacy (B.Pharm) Requirements:** SSC and HSC in Science with minimum **GPA 3.00** in each (aggregate 6.50+), with mandatory pass in Chemistry and Biology (GPA 3.00+).`,
+      sources: [{ title: "Academic Programs - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/academic/academic-programs/" }],
+      mode: "structured",
+    };
+  }
+
+  if (statedGpa !== null) {
+    const meetsGeneralMinimum = statedGpa >= 2.5;
+    return {
+      text: banglish
+        ? meetsGeneralMinimum
+          ? `GPA-er dik diye **হ্যাঁ**—তোমার বলা **${statedGpa.toFixed(2)}** সাধারণ স্নাতক ভর্তির ন্যূনতম GPA **2.50**-এর উপরে। তবে চূড়ান্ত ভর্তির জন্য SSC ও HSC উভয় পরীক্ষায় আলাদাভাবে ন্যূনতম GPA 2.50 এবং মোট GPA কমপক্ষে 6.00 থাকতে হবে (বিজ্ঞান/ইঞ্জিনিয়ারিং ও স্বাস্থ্য বিজ্ঞানের জন্য বিজ্ঞান বিভাগ আবশ্যক)।`
+          : `GPA-er dik diye **না**—তোমার বলা **${statedGpa.toFixed(2)}** সাধারণ স্নাতক ভর্তির ন্যূনতম GPA **2.50**-এর নিচে। গণ বিশ্ববিদ্যালয়ে ভর্তির জন্য SSC ও HSC উভয় পরীক্ষায় আলাদাভাবে ন্যূনতম GPA 2.50 এবং মোট GPA কমপক্ষে 6.00 থাকতে হয়।`
+        : meetsGeneralMinimum
+          ? `For the GPA component, **yes**—the stated **${statedGpa.toFixed(2)}** is above the general undergraduate minimum of **2.50**. Full eligibility requires at least 2.50 in both SSC and HSC separately with an aggregate of 6.00+.`
+          : `For the GPA component, **no**—the stated **${statedGpa.toFixed(2)}** is below the general undergraduate minimum of **2.50**. Admission requires at least 2.50 in both SSC and HSC separately with an aggregate of 6.00+.`,
       sources: [{ title: "Academic Programs - Gono Bishwabidyalay", url: "https://gonouniversity.edu.bd/academic/academic-programs/" }],
       mode: "structured",
     };
@@ -6712,6 +7137,10 @@ function directAnswer(question, knowledge, history = []) {
     directClarificationAnswer(question, history) ||
     directStudentJourneyAnswer(question) ||
     directProgramChoiceAnswer(question, knowledge) ||
+    directNewFacultyAnswer(question, knowledge, history) ||
+    directFacultyLivePresenceAnswer(question, knowledge, history) ||
+    directAcademicProgramFeaturesAnswer(question, knowledge, history) ||
+    directCampusLiveOpenClosedAnswer(question, knowledge) ||
     directFacultyDesignationCountAnswer(question, knowledge) ||
     directDepartmentFacultyCountAnswer(question, knowledge, history) ||
     directInstitutionFactAnswer(question, knowledge) ||
@@ -6721,11 +7150,12 @@ function directAnswer(question, knowledge, history = []) {
     directMissionVisionAnswer(question) ||
     directResearchAndCampusLifeAnswer(question) ||
     directClubAnswer(question, knowledge) ||
-    directSemesterSystemAnswer(question) ||
+    directSemesterSystemAnswer(question, knowledge) ||
     directGradingSystemAnswer(question) ||
     directResultAnswer(question) ||
     directGbiemsAndPortalAnswer(question, knowledge) ||
     directFacilitiesAnswer(question) ||
+    directCampusFacilitiesAnswer(question, knowledge, history) ||
     directAdmissionStatusAnswer(question, knowledge) ||
     directAdmissionOverviewAnswer(question, knowledge) ||
     directAdmissionProcedureAnswer(question, knowledge, history) ||
@@ -7257,7 +7687,7 @@ function aiSystemInstruction(question) {
     academicHint +
     codingHint +
     `Key Gono Bishwabidyalay faculty aliases: in Computer Science & Engineering (CSE), Assistant Professor Farzana Tasnim is known by students as Rekha Mam / Rekha Madam (official email: Rekha.tasnim@gmail.com). Associate Professor & Head Tania Akter is known as Shilpy Mam (shilpy339cse@gmail.com). Umme Farhana is Nadia Mam (nadiacse2013@gmail.com). Adila Nuzhat is Tithi Mam. Sharif Ahamed is Dipto Sir. Never claim Rekha Mam or other listed faculty aliases are not found or not in the faculty list; identify their official name and CSE designation directly. ` +
-    `If the user asks a yes/no question and the context supports it, start with "Yes" or "No" and then give one short reason. ` +
+    `If the user asks a yes/no question (such as whether a new teacher joined, whether a specific program/batch exists, or whether campus/class is open), start directly with "Yes" or "No" (or in Bengali "হ্যাঁ" / "না") followed by a clear, direct reason. If a fact is not recorded or unavailable in official records, or asks about real-time daily operational status/attendance, explicitly state that you cannot confirm this real-time fact / it is not in official records ("আমি এই তথ্যটি নিশ্চিত নই / অফিসিয়াল রেকর্ডে এমন কোনো তথ্য নেই") instead of dumping an unrelated list or topic overview. ` +
     `For names, phone numbers, emails, fees, designations, departments, deadlines, and admission requirements, answer only when the exact fact is present in the supplied context. ` +
     `Distinguish total tuition, admission-time payment, semester fee, and other charges; never present one as another. ` +
     `For notices and time-sensitive facts, prefer the newest dated source and mention the date. If official sources conflict, say so and identify both values instead of silently choosing one. ` +
@@ -8470,7 +8900,7 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
     langInstruction = "Reply in friendly, clear Banglish matching the student's conversational style.";
   }
 
-  const isWebSearchActive = webResults.length > 0;
+  const isWebSearchActive = Boolean(wantsWebSearch) || webResults.length > 0;
   const requestedMarks = requestedExamMarks(message);
   const marksGuidance = requestedMarks
     ? `The question explicitly carries ${requestedMarks} marks. Calibrate the answer to that mark value: include approximately ${requestedMarks} distinct, relevant scoring points (fewer for very small mark values), with enough explanation to earn those marks. Do not give a one-line answer or an unnecessarily long essay. State the answer in an exam-ready format.\n`
@@ -9277,6 +9707,13 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
 
 export {
   directActivePersonAnswer,
+  directNewFacultyAnswer,
+  directFacultyLivePresenceAnswer,
+  directCampusLiveOpenClosedAnswer,
+  directAcademicProgramFeaturesAnswer,
+  isNewFacultyInquiry,
+  isFacultyLivePresenceInquiry,
+  isCampusLiveOpenClosedInquiry,
   directAnswer,
   directClubAnswer,
   directFacultyDesignationCountAnswer,

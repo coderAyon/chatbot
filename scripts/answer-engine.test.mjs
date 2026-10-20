@@ -1436,3 +1436,88 @@ test("GBIEMS student portal, Banglish queries, admit card, and campus directions
   assert.match(g9.text, /সাভার|নলাম|বাইপাইল/);
 });
 
+test("yes/no queries, new faculty inquiries, and live operational status resolve directly without dump answers", () => {
+  const cseKnowledge = {
+    ...fixture,
+    faculty: [
+      { name: "Tania Akter", department: "Department of Computer Science and Engineering (CSE)", designation: "Associate Professor & Head", source: root },
+      { name: "Dr. Md. Hanif Ali", department: "Department of Computer Science and Engineering (CSE)", designation: "Professor", source: root },
+      { name: "Md. Atikur Rahman", department: "Department of Computer Science and Engineering (CSE)", designation: "Assistant Professor", phone: "01912288599", email: "atikhasan.cse@gmail.com", source: root },
+      { name: "Md. Rasel Mia", department: "Department of Computer Science and Engineering (CSE)", designation: "Assistant Professor", source: root },
+      { name: "Farzana Tasnim", department: "Department of Computer Science and Engineering (CSE)", designation: "Assistant Professor", email: "rekha.tasnim@gmail.com", source: root },
+      { name: "Shatabdee Bala", department: "Department of Computer Science and Engineering (CSE)", designation: "Assistant Professor", source: root },
+    ],
+    notices: [
+      { title: "January 2027 Admission Notice", source: `${root}admission/`, publishedAt: "2026-09-24" },
+    ],
+  };
+
+  const cseHistory = [
+    { role: "user", text: "cse department somporke bolo" },
+    { role: "assistant", text: "Department of Computer Science and Engineering (CSE)..." },
+  ];
+
+  // 1. Exact query from user screenshot: "notun kono sir asche??"
+  const qNewSir = directAnswer("notun kono sir asche??", cseKnowledge, cseHistory);
+  assert.equal(qNewSir?.mode, "structured");
+  assert.match(qNewSir.text, /^\*\*না\*\*/);
+  assert.match(qNewSir.text, /নতুন কোনো শিক্ষক \(স্যার\) যোগদানের অফিসিয়াল কোনো তথ্য বা নোটিশ নেই/);
+  assert.doesNotMatch(qNewSir.text, /স্যারদের তালিকা:/);
+
+  // 2. New madam inquiry
+  const qNewMadam = directAnswer("notun kono madam asche??", cseKnowledge, cseHistory);
+  assert.equal(qNewMadam?.mode, "structured");
+  assert.match(qNewMadam.text, /^\*\*না\*\*/);
+  assert.match(qNewMadam.text, /নতুন কোনো শিক্ষক \(ম্যাডাম\) যোগদানের/);
+
+  // 3. New general teacher inquiry
+  const qNewTeacher = directAnswer("notun kono teacher asche?", cseKnowledge, cseHistory);
+  assert.equal(qNewTeacher?.mode, "structured");
+  assert.match(qNewTeacher.text, /^\*\*না\*\*/);
+
+  // 4. Live presence / class attendance: "sir ki campus e ache?"
+  const qLivePresence = directAnswer("sir ki campus e ache?", cseKnowledge, cseHistory);
+  assert.equal(qLivePresence?.mode, "structured");
+  assert.match(qLivePresence.text, /দৈনিক উপস্থিতি বা রিয়েল-টাইম ক্লাস/);
+  assert.match(qLivePresence.text, /আমি এই রিয়েল-টাইম তথ্য জানি না/);
+
+  // 5. Named teacher live presence: "Atikur sir ki ajke campus e ache?"
+  const qNamedPresence = directAnswer("Atikur sir ki ajke campus e ache?", cseKnowledge, cseHistory);
+  assert.equal(qNamedPresence?.mode, "structured");
+  assert.match(qNamedPresence.text, /Md\. Atikur Rahman/);
+  assert.match(qNamedPresence.text, /আমি রিয়েল-টাইম উপস্থিতি জানি না/);
+  assert.match(qNamedPresence.text, /01912288599/);
+
+  // 6. Evening batch yes/no: "CSE te ki evening batch ache?"
+  const qEvening = directAnswer("CSE te ki evening batch ache?", cseKnowledge, []);
+  assert.equal(qEvening?.mode, "structured");
+  assert.match(qEvening.text, /^\*\*না\*\*/);
+  assert.match(qEvening.text, /কোনো সান্ধ্যকালীন \(Evening\) বা উইকেন্ড \(Weekend\) ব্যাচ নেই/);
+
+  // 7. Diploma holders admission: "Diploma holder ra ki CSE te vorti hote parbe?"
+  const qDiploma = directAnswer("Diploma holder ra ki CSE te vorti hote parbe?", cseKnowledge, []);
+  assert.equal(qDiploma?.mode, "structured");
+  assert.match(qDiploma.text, /^\*\*হ্যাঁ\*\*/);
+  assert.match(qDiploma.text, /ডিপ্লোমা ইন ইঞ্জিনিয়ারিং/);
+  assert.match(qDiploma.text, /CGPA ২\.৫০/);
+
+  // 8. Friday schedule: "Campus ki Friday te khola thake?"
+  const qFriday = directAnswer("Campus ki Friday te khola thake?", cseKnowledge, []);
+  assert.equal(qFriday?.mode, "structured");
+  assert.match(qFriday.text, /^\*\*না\*\*/);
+  assert.match(qFriday.text, /শুক্রবার ও শনিবার/);
+
+  // 9. Permanent campus: "Permanent campus ki ache?"
+  const qPermanent = directAnswer("Permanent campus ki ache?", cseKnowledge, []);
+  assert.equal(qPermanent?.mode, "structured");
+  assert.match(qPermanent.text, /^\*\*হ্যাঁ\*\*/);
+  assert.match(qPermanent.text, /স্থায়ী ক্যাম্পাস/);
+
+  // 10. Notice yes/no: "notun kono notice asche?"
+  const qNotice = directAnswer("notun kono notice asche?", cseKnowledge, []);
+  assert.equal(qNotice?.mode, "structured");
+  assert.match(qNotice.text, /^\*\*হ্যাঁ\*\*/);
+  assert.match(qNotice.text, /January 2027 Admission Notice/);
+});
+
+
