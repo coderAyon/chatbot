@@ -8,7 +8,29 @@ export function isInformationalMessage(text) {
     /[?？]/u.test(value);
 }
 
-export function isWebSearchIntent(text) {
+export function isUniversityUpdateIntent(text) {
+  const value = String(text || "").trim();
+  const mentionsUniversity =
+    /\b(?:gono|gonouniversity|gono\s+bishwabidyalay|bishwabidyalay|bishwabidyalaya|university|universities|uni|varsity|versity|campus|amader\s+(?:uni(?:versity)?|varsity|versity)|amar\s+(?:uni(?:versity)?|varsity|versity)|our\s+(?:uni(?:versity)?|varsity|campus))\b/i.test(value) ||
+    /(?:গণ\s*বিশ্ববিদ্যালয়|গণ\s*বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|ভার্সিটি|ক্যাম্পাস|আমাদের\s*বিশ্ববিদ্যালয়|আমাদের\s*বিশ্ববিদ্যালয়|আমার\s*ভার্সিটি|আমার\s*বিশ্ববিদ্যালয়|আমার\s*বিশ্ববিদ্যালয়)/u.test(value);
+  const asksForUpdate =
+    /\b(?:latest|recent|today|today'?s|ajke|ajker|current|now|new|update|updates|news|post|posts|announcement|announcements|notice|notices|event|events|seminar|job|circular|result|schedule|closed|holiday|happening|happened|going\s+on|what'?s\s+new|ki\s+(?:hocche|hochhe|cholche|khobor|obostha|hoyeche)|kono\s+(?:update|news)|chhuti|bondho|khobor|notish|onusthan|niyog)\b/i.test(value) ||
+    /(?:সর্বশেষ|সাম্প্রতিক|আজকে|আজকের|আজ|এখন|বর্তমানে|নতুন|আপডেট|খবর|সংবাদ|পোস্ট|ঘোষণা|নোটিশ|অনুষ্ঠান|প্রোগ্রাম|সেমিনার|ভর্তি|চাকরি|নিয়োগ|নিয়োগ|ফলাফল|রুটিন|বন্ধ|ছুটি|কি\s*হচ্ছে|কী\s*হচ্ছে|কি\s*চলছে|কী\s*চলছে|কী\s*খবর|কি\s*খবর|কেমন\s*চলছে)/u.test(value);
+  return mentionsUniversity && asksForUpdate;
+}
+
+export function isSocialMediaSearchIntent(text) {
+  const value = String(text || "").trim();
+  const mentionsSocialMedia =
+    /\b(?:facebook|fb|instagram|insta|linkedin|social\s+media|social\s+network|facebook\s+group|fb\s+group|group\s+post)\b/i.test(value) ||
+    /(?:ফেসবুক|এফবি|ইনস্টাগ্রাম|লিংকডইন|সোশ্যাল\s*মিডিয়া|সোশ্যাল\s*মিডিয়া|গ্রুপে?\s*পোস্ট)/u.test(value);
+  const asksToSearchOrGetPosts =
+    /\b(?:latest|recent|today'?s|current|new|update|updates|news|post|posts|announcement|notice|event|search|find|show|what|ki|dekhao|dekho|khuje|khobor|notish|ajker)\b/i.test(value) ||
+    /(?:সর্বশেষ|সাম্প্রতিক|আজকের|নতুন|আপডেট|খবর|পোস্ট|ঘোষণা|নোটিশ|অনুষ্ঠান|সার্চ|খুঁজে|দেখাও|দেখো|কি|কী)/u.test(value);
+  return mentionsSocialMedia && asksToSearchOrGetPosts;
+}
+
+export function isWebSearchIntent(text, history = []) {
   const t = String(text || "").trim();
   if (!t) return false;
 
@@ -17,6 +39,12 @@ export function isWebSearchIntent(text) {
     /\b(web\s*search|search\s+(?:the\s+)?web|search\s+online|search\s+(?:the\s+)?internet|google\s+(?:it|this|koro|kore|kori)|look\s+it\s+up|khuje\s+(?:dao|dau|dekho)|search\s+koro|net\s*e\s*khujo)\b/i.test(t) ||
     /(?:ওয়েব\s*সার্চ|ওয়েব\s*সার্চ|গুগল\s*কর|সার্চ\s*কর|ইন্টারনেট\s*থেকে|খুঁজে\s*দাও|অনুসন্ধান)/u.test(t)
   ) return true;
+
+  if (isUniversityUpdateIntent(t) || isSocialMediaSearchIntent(t)) return true;
+  const recentUniversityContext = history.slice(-8).some((turn) =>
+    /\b(?:gono|bishwabidyalay|university|varsity|versity|campus|gbcdc|baksu)\b|(?:গণ\s*বিশ্ববিদ্যালয়|গণ\s*বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|ভার্সিটি|ক্যাম্পাস)/iu.test(String(turn?.text || "")),
+  );
+  if (recentUniversityContext && isUniversityUpdateIntent(`${t} university`)) return true;
 
   // 2. News, live updates, current affairs
   if (
@@ -60,7 +88,7 @@ export function isWebSearchIntent(text) {
 export function inferMessageMedium(text, attachments = [], history = [], webSearchEnabled = false, currentSelectedMedium = null) {
   const value = String(text || "").trim();
   const normalized = value.toLowerCase();
-  if (attachments.length > 0 || webSearchEnabled || isWebSearchIntent(value)) return "gb-ai";
+  if (attachments.length > 0 || webSearchEnabled || isWebSearchIntent(value, history)) return "gb-ai";
   if (currentSelectedMedium === "gb-ai") return "gb-ai";
 
   const creationIntent =

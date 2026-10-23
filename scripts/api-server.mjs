@@ -5,7 +5,11 @@ import { existsSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as cheerio from "cheerio";
-import { isInformationalMessage } from "../src/medium-router.js";
+import {
+  isInformationalMessage,
+  isSocialMediaSearchIntent,
+  isUniversityUpdateIntent,
+} from "../src/medium-router.js";
 
 const DIST_DIR = new URL("../dist/", import.meta.url);
 const DATA_DIR = new URL("../data/", import.meta.url);
@@ -16,7 +20,7 @@ const SETTINGS_FILE = new URL("../data/settings.json", import.meta.url);
 const CACHE_FILE = new URL("../data/response-cache.json", import.meta.url);
 const CONVERSATION_FILE = new URL("../data/conversation-memory.json", import.meta.url);
 const NOT_VERIFIED = "I couldn't find verified information from the official university data.";
-const ANSWER_ENGINE_VERSION = "2026-10-09-image-followup-v52";
+const ANSWER_ENGINE_VERSION = "2026-10-23-bilingual-voice-v54";
 
 async function loadLocalEnv() {
   try {
@@ -49,7 +53,7 @@ function positiveIntegerEnv(name, fallback, maximum = Number.MAX_SAFE_INTEGER) {
   return Number.isSafeInteger(value) && value > 0 ? Math.min(value, maximum) : fallback;
 }
 
-const maxRequestBytes = positiveIntegerEnv("MAX_REQUEST_BYTES", 400 * 1024 * 1024, 450 * 1024 * 1024);
+const maxRequestBytes = positiveIntegerEnv("MAX_REQUEST_BYTES", 440 * 1024 * 1024, 450 * 1024 * 1024);
 const maxAttachmentBytes = positiveIntegerEnv("MAX_ATTACHMENT_BYTES", 20 * 1024 * 1024, 25 * 1024 * 1024);
 const rateWindowMs = positiveIntegerEnv("RATE_WINDOW_MS", 60_000, 24 * 60 * 60 * 1000);
 const rateLimit = positiveIntegerEnv("RATE_LIMIT", 60, 10_000);
@@ -7681,7 +7685,7 @@ function aiSystemInstruction(question) {
     ? `This is a general academic/course explainer question. You may use general educational knowledge when official context is missing, but clearly say when the answer is general and not a verified Gono Bishwabidyalay-specific fact. `
     : "";
   return (
-    `You are GB Knowledge Assistant, a capable conversational AI for Gono Bishwabidyalay students. Use the supplied official context and conversation for university-specific facts, and answer ordinary general-knowledge or academic questions normally. ` +
+    `You are GB Knowledge Assistant, a capable conversational AI for Gono Bishwabidyalay students. Use the supplied official context and conversation for university-specific facts, and answer ordinary general-knowledge or academic questions normally. For a clear basic question, answer the exact question in the first sentence, explain it at the user's level, and give one useful example when it improves understanding; do not divert to Gono-specific information unless asked. ` +
     `Infer the user's real intent from fragments, common typos, shorthand, omitted words, and conversation context. Silently repair obvious wording mistakes. If one interpretation is clearly most likely, answer it directly; ask one short clarification only when two materially different interpretations remain plausible. ` +
     `Keep continuity with earlier turns, remember which person/program/topic pronouns refer to, and sound natural rather than like a search engine or form. ${languageHint} ` +
     academicHint +
@@ -8597,7 +8601,7 @@ function isImageCreationIntent(text) {
   return /(ছবি আঁকো|ছবি আকো|ছবি বানাও|ছবি তৈরি করো|ছবি এঁকে দাও|ছবি একে দাও|ছবি বানিয়ে দাও|ছবি তৈরি করে দাও|image create koro|image banao|image draw koro|chobi banao|chobi ako|chobi create(?: koro)?|photo banao|picture banao|logo banao|generate an? image|create an? image|draw an? image|draw a\b|generate image|create image|draw image)/i.test(t);
 }
 
-async function performWebSearch(query, { maxResults = 5 } = {}) {
+async function performWebSearch(query, { maxResults = 5, history = [] } = {}) {
   const cleanQuery = String(query || "")
     .replace(/^(web\s*search|search\s+the\s+web\s+for|search\s+the\s+web|search\s+for|search|google|khuje\s+dao|খুঁজে\s*দাও)[:\s]*/i, "")
     .trim();
@@ -8605,6 +8609,100 @@ async function performWebSearch(query, { maxResults = 5 } = {}) {
 
   const results = [];
   const seenUrls = new Set();
+
+  const recentUniversityTurn = [...history].slice(-8).reverse().find((turn) =>
+    turn?.role === "user" && isUniversityUpdateIntent(String(turn?.text || "")),
+  );
+  const recentUniversityContext = history.slice(-8).some((turn) =>
+    /\b(?:gono|bishwabidyalay|university|varsity|versity|campus|gbcdc|baksu)\b|(?:গণ\s*বিশ্ববিদ্যালয়|গণ\s*বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|ভার্সিটি|ক্যাম্পাস)/iu.test(String(turn?.text || "")),
+  );
+  const hasUniversityAnchor = /\b(?:gono|gonouniversity|bishwabidyalay|university|universities|uni|varsity|versity|campus|amader|amar|our)\b|(?:গণ\s*বিশ্ববিদ্যালয়|গণ\s*বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|ভার্সিটি|ক্যাম্পাস|আমাদের|আমার)/iu.test(cleanQuery);
+  const hasGonoAnchor = /\b(?:gono|gonouniversity|bishwabidyalay|gbcdc|baksu)\b|(?:গণ\s*বিশ্ববিদ্যালয়|গণ\s*বিশ্ববিদ্যালয়)/iu.test(cleanQuery + " " + String(recentUniversityTurn?.text || ""));
+  const contextualUniversityUpdate = recentUniversityContext && isUniversityUpdateIntent(cleanQuery + " university");
+  const doSocialSearch =
+    isSocialMediaSearchIntent(cleanQuery) ||
+    isUniversityUpdateIntent(cleanQuery) ||
+    contextualUniversityUpdate;
+
+  if (doSocialSearch) {
+    const isContextualFollowup = !hasUniversityAnchor && recentUniversityContext;
+    const priorTopic = isContextualFollowup ? String(recentUniversityTurn?.text || "") : "";
+    const searchQuery = [
+      hasGonoAnchor ? "" : "Gono Bishwabidyalay",
+      priorTopic,
+      cleanQuery,
+    ].filter(Boolean).join(" ");
+    const searchPlans = [
+      { query: "site:facebook.com/groups " + searchQuery, platform: "Facebook groups" },
+      { query: "site:facebook.com " + searchQuery, platform: "Facebook" },
+      { query: "site:instagram.com " + searchQuery, platform: "Instagram" },
+      { query: "site:linkedin.com/posts " + searchQuery, platform: "LinkedIn" },
+      { query: "site:gonouniversity.edu.bd " + searchQuery, platform: "Official university website" },
+    ];
+    const requestResults = await Promise.all(searchPlans.map(async (plan) => {
+      try {
+        const response = await fetch("https://html.duckduckgo.com/html/?q=" + encodeURIComponent(plan.query), {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9,bn;q=0.8",
+          },
+          signal: AbortSignal.timeout(6500),
+        });
+        if (!response.ok) return [];
+        const $ = cheerio.load(await response.text());
+        const matches = [];
+        $(".result__body").each((_, element) => {
+          const title = $(element).find(".result__title a").text().trim();
+          const rawUrl = $(element).find(".result__title a").attr("href") || "";
+          const snippet = $(element).find(".result__snippet").text().trim();
+          let parsedUrl;
+          try {
+            const redirect = new URL(rawUrl, "https://duckduckgo.com");
+            parsedUrl = new URL(redirect.searchParams.get("uddg") || redirect.href);
+          } catch {
+            return;
+          }
+          if (!title || !/^https?:$/i.test(parsedUrl.protocol)) return;
+          for (const key of [...parsedUrl.searchParams.keys()]) {
+            if (/^(?:fbclid|gclid|mc_cid|mc_eid|utm_.+)$/i.test(key)) parsedUrl.searchParams.delete(key);
+          }
+          parsedUrl.hash = "";
+          const url = parsedUrl.href;
+          const isExpectedDomain =
+            (plan.platform === "Facebook groups" && /(^|\.)facebook\.com$/i.test(parsedUrl.hostname) && /\/groups\//i.test(parsedUrl.pathname)) ||
+            (plan.platform === "Facebook" && /(^|\.)facebook\.com$/i.test(parsedUrl.hostname)) ||
+            (plan.platform === "Instagram" && /(^|\.)instagram\.com$/i.test(parsedUrl.hostname)) ||
+            (plan.platform === "LinkedIn" && /(^|\.)linkedin\.com$/i.test(parsedUrl.hostname)) ||
+            (plan.platform === "Official university website" && /(^|\.)gonouniversity\.edu\.bd$/i.test(parsedUrl.hostname));
+          if (!isExpectedDomain) return;
+          const canonical = url.replace(/\/+$/, "").toLowerCase();
+          if (matches.some((item) => item.canonical === canonical)) return;
+          matches.push({
+            canonical,
+            title,
+            url,
+            snippet: snippet || "Open this public result to view its post or page details.",
+            sourceType: plan.platform,
+          });
+        });
+        return matches.slice(0, 5);
+      } catch {
+        return [];
+      }
+    }));
+
+    for (let rank = 0; rank < 5 && results.length < maxResults; rank += 1) {
+      for (const matches of requestResults) {
+        const item = matches[rank];
+        if (!item || seenUrls.has(item.canonical) || results.length >= maxResults) continue;
+        seenUrls.add(item.canonical);
+        const { canonical, ...result } = item;
+        results.push(result);
+      }
+    }
+    return results;
+  }
 
   // Public social posts are often indexed only when the platform is included
   // explicitly in the search query. Search the three requested platforms
@@ -8680,7 +8778,7 @@ async function performWebSearch(query, { maxResults = 5 } = {}) {
   return results;
 }
 
-function isWebSearchIntent(text) {
+function isWebSearchIntent(text, history = []) {
   const t = String(text || "").trim();
   if (!t) return false;
 
@@ -8695,6 +8793,11 @@ function isWebSearchIntent(text) {
     /\b(latest\s+news|recent\s+news|today'?s\s+news|current\s+news|breaking\s+news|live\s+score|current\s+affairs|ajker\s+(?:news|khobor)|taza\s+khobor|somprotik?\s+khobor)\b/i.test(t) ||
     /(?:সাম্প্রতিক\s*খবর|তাজা\s*খবর|আজকের\s*খবর|লাইভ\s*স্কোর|সর্বশেষ\s*সংবাদ|ব্রেকিং\s*নিউজ)/u.test(t)
   ) return true;
+  if (isUniversityUpdateIntent(t) || isSocialMediaSearchIntent(t)) return true;
+  const recentUniversityContext = history.slice(-8).some((turn) =>
+    /\b(?:gono|bishwabidyalay|university|varsity|versity|campus|gbcdc|baksu)\b|(?:গণ\s*বিশ্ববিদ্যালয়|গণ\s*বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|ভার্সিটি|ক্যাম্পাস)/iu.test(String(turn?.text || "")),
+  );
+  if (recentUniversityContext && isUniversityUpdateIntent(`${t} university`)) return true;
 
   // 3. Current leaders, heads of state, national governance (rastropoti, president, prime minister, etc.)
   // (Exclude Gono university specific leadership inquiries which belong to university knowledge)
@@ -8849,7 +8952,7 @@ function isUniversityInquiry(message, knowledge, history = []) {
 async function handleGbAiQuestion(message, attachments = [], history = [], sessionId = "", options = {}) {
   const hasAttachments = Array.isArray(attachments) && attachments.length > 0;
   const isBangla = /[\u0980-\u09ff]/.test(message) || prefersBanglish(message);
-  const wantsWebSearch = Boolean(options.webSearch) || (!hasAttachments && isWebSearchIntent(message));
+  const wantsWebSearch = Boolean(options.webSearch) || (!hasAttachments && isWebSearchIntent(message, history));
 
   if (hasAttachments) {
     const hasAnyText = attachments.some(
@@ -8876,10 +8979,34 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
   }
 
   let webResults = [];
+  const socialSearchRequested =
+    isSocialMediaSearchIntent(message) ||
+    isUniversityUpdateIntent(message) ||
+    (history.slice(-8).some((turn) => /\b(?:gono|bishwabidyalay|university|varsity|campus)\b|(?:গণ\s*বিশ্ববিদ্যালয়|গণ\s*বিশ্ববিদ্যালয়|বিশ্ববিদ্যালয়|ক্যাম্পাস)/iu.test(String(turn?.text || ""))) &&
+      isUniversityUpdateIntent(message + " university"));
   if (wantsWebSearch && message && message !== "Read this attachment and answer from it.") {
     try {
-      webResults = await performWebSearch(message, { maxResults: 5 });
+      webResults = await performWebSearch(message, { maxResults: socialSearchRequested ? 8 : 5, history });
     } catch {}
+  }
+  if (wantsWebSearch && webResults.length === 0) {
+    const text = prefersBanglish(message)
+      ? "Ei query-r jonno kono public web ba social-media result retrieve kora jayni. Private Facebook group ba search engine-e index na howa post dekhte parbo na. University/department-er naam, event, ba approximate date diye abar search korte paro."
+      : /[\u0980-\u09ff]/.test(message)
+      ? "এই মুহূর্তে প্রশ্নটির জন্য কোনো public web বা social media result পাওয়া যায়নি। Private Facebook group বা search engine-এ index না হওয়া post দেখা যায় না। বিশ্ববিদ্যালয়/বিভাগের নাম, অনুষ্ঠান বা আনুমানিক তারিখ দিয়ে আবার খুঁজে দেখতে পারেন।"
+      : "I couldn't retrieve a matching public web or social media result right now. Private Facebook group content and posts that search engines have not indexed are unavailable to this search. Try the university or department name, event, or approximate date.";
+    return {
+      text,
+      mode: "gb_ai_web_search_empty",
+      medium: "gb-ai",
+      webSearchUsed: true,
+      aiModel: "GB AI (Public Web Search)",
+      profile: { label: "No public results", confidence: "No matching pages retrieved" },
+      sources: [],
+      suggestions: isBangla
+        ? ["বিভাগ বা ক্লাবের নাম যোগ করো", "আনুমানিক তারিখ যোগ করো", "অফিশিয়াল ওয়েবসাইট খুঁজে দেখো"]
+        : ["Add the department or club name", "Add an approximate date", "Search the official website"],
+    };
   }
 
   let universityContexts = [];
@@ -8900,7 +9027,13 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
     langInstruction = "Reply in friendly, clear Banglish matching the student's conversational style.";
   }
 
-  const isWebSearchActive = Boolean(wantsWebSearch) || webResults.length > 0;
+  if (options.voiceInput && options.voiceLanguage === "en-US") {
+    langInstruction = "Reply in natural spoken English. Keep the phrasing clear and easy to follow.";
+  } else if (options.voiceInput && (options.voiceLanguage === "bn-BD" || (options.voiceLanguage === "auto" && prefersBanglish(message)))) {
+    langInstruction = "Reply in natural Bengali using Bengali script (বাংলা), not Romanized Banglish, so the spoken answer is clear.";
+  }
+
+  const isWebSearchActive = webResults.length > 0;
   const requestedMarks = requestedExamMarks(message);
   const marksGuidance = requestedMarks
     ? `The question explicitly carries ${requestedMarks} marks. Calibrate the answer to that mark value: include approximately ${requestedMarks} distinct, relevant scoring points (fewer for very small mark values), with enough explanation to earn those marks. Do not give a one-line answer or an unnecessarily long essay. State the answer in an exam-ready format.\n`
@@ -8910,12 +9043,12 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
   if (isWebSearchActive) {
     systemInstruction =
       `You are GB AI, an expert academic and real-time knowledge assistant with live web search capability.\n` +
-      `You have searched the web and received fresh, live results for the user's query.\n` +
+      `You have public web-search results for the user's query. Search-index snippets can be incomplete or older than they appear.\n` +
       `Instructions:\n` +
-      `1. Provide an up-to-date, highly accurate, and comprehensive answer synthesized from the live search results.\n` +
+      `1. Answer from the retrieved results. For latest/current questions, claim something is current only when the source shows a relevant original date; otherwise say the posting date could not be confirmed.\n` +
       `2. Reference key facts, entities, and sources directly from the retrieved web information.\n` +
       `3. Be direct, clear, and well-structured using markdown formatting (bullet points, bolding, headings).\n` +
-      `4. If the results contain specific statistics, dates, or official announcements, highlight them clearly.\n` +
+      `4. If a result only has a title or short snippet, do not infer the full post or article; say what is visible and link to the source for details. Highlight dates only when the source itself shows them.\n` +
       `5. ${langInstruction}`;
   } else {
     systemInstruction =
@@ -8940,6 +9073,19 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
       `4. For Screenshots: Carefully read the extracted OCR text from the student's screenshot. Identify the specific problem(s) and solve them completely.\n` +
       `5. Formatting: Use markdown bolding, numbered steps, bullet points, and headers for high readability.\n` +
       `6. ${langInstruction}`;
+  }
+
+  systemInstruction +=
+    `\n\nAnswer the actual question first. For a clear everyday or basic academic question, give a direct answer in simple language, then add a short explanation or example only when useful. Infer obvious spelling mistakes, shorthand, and Banglish phrasing from context; do not ask the student to restate a question whose meaning is clear. Keep general knowledge distinct from verified Gono-specific facts, and never invent university policy or live updates.`;
+
+  if (options.voiceInput) {
+    systemInstruction +=
+      `\n\nThis is a spoken conversation. Keep the default reply concise and natural to hear (usually 1-3 short sentences), with no tables or decorative markdown. Give a longer spoken answer when the student asks for details or specifies marks.`;
+  }
+
+  if (isWebSearchActive && socialSearchRequested) {
+    systemInstruction +=
+      `\n\nThese results may include public, user-generated social posts. Label Facebook group/page, Instagram, and LinkedIn reports as community posts unless the result is clearly from an official university account. Do not present student claims as verified university policy. Use a post date only when the source itself shows it, distinguish it from search-index dates, attribute claims to the visible page/group, and do not fill gaps with guesses.`;
   }
 
   const isFormatFollowup = isFollowupFormatInstruction(message);
@@ -8987,7 +9133,7 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
   if (isWebSearchActive) {
     userPrompt += "### Live Web Search Results (Current Web Information):\n";
     webResults.forEach((res, idx) => {
-      userPrompt += `[Source ${idx + 1}: ${res.title}]\nURL: ${res.url}\nSummary: ${res.snippet}\n\n`;
+      userPrompt += `[Source ${idx + 1}: ${res.title}]\n${res.sourceType ? `Source type: ${res.sourceType}\n` : ""}URL: ${res.url}\nSummary: ${res.snippet}\n\n`;
     });
   }
 
@@ -9088,7 +9234,7 @@ async function handleGbAiQuestion(message, attachments = [], history = [], sessi
   }
 
   const effectiveSources = isWebSearchActive
-    ? webResults.map((c) => ({ title: c.title, url: c.url || "" }))
+    ? webResults.map((c) => ({ title: c.sourceType ? `${c.sourceType}: ${c.title}` : c.title, url: c.url || "" }))
     : universityContexts.map((c) => ({ title: c.title, url: c.url || "" }));
 
   return {
@@ -9151,7 +9297,7 @@ async function handleChat(req, res) {
     return json(res, 200, lookupResponse);
   }
 
-  const wantsWebSearch = Boolean(body.webSearch) || (!hasAttachments && isWebSearchIntent(message));
+  const wantsWebSearch = Boolean(body.webSearch) || (!hasAttachments && isWebSearchIntent(message, history));
   const knowledge = await loadKnowledge();
 
   // GB AI mode or Live Web Search query: Image creation if requested or refinement, otherwise University Routing, Web Search or Academic Solver
@@ -9224,6 +9370,8 @@ async function handleChat(req, res) {
 
     const aiResponse = await handleGbAiQuestion(message, uploadedAttachments, history, sessionId, {
       webSearch: wantsWebSearch,
+      voiceInput: body.voiceInput === true,
+      voiceLanguage: ["auto", "bn-BD", "en-US"].includes(body.voiceLanguage) ? body.voiceLanguage : "auto",
     });
     rememberConversationExchange(sessionId, history, message, aiResponse.text);
     return json(res, 200, aiResponse);
@@ -9396,15 +9544,18 @@ async function handleTranscription(req, res) {
   const apiKey = envSecret("OPENAI_API_KEY");
   if (!apiKey) return json(res, 503, { error: "Voice transcription is not configured" });
 
-  const mimeType = /^audio\/[a-z0-9.+-]+$/i.test(String(body.mimeType || "")) ? String(body.mimeType) : "audio/webm";
-  const extension = mimeType.includes("ogg") ? "ogg" : mimeType.includes("mp4") ? "m4a" : "webm";
+  const requestedMimeType = String(body.mimeType || "").split(";")[0].trim();
+  const mimeType = /^audio\/[a-z0-9.+-]+$/i.test(requestedMimeType) ? requestedMimeType : "audio/webm";
+  const extension = mimeType.includes("ogg") ? "ogg" : mimeType.includes("mp4") ? "m4a" : mimeType.includes("wav") ? "wav" : mimeType.includes("mpeg") ? "mp3" : "webm";
   const form = new FormData();
   form.append("file", new Blob([audio], { type: mimeType }), `voice.${extension}`);
-  form.append("model", process.env.STT_MODEL || (openAiBaseUrl.includes("groq.com") ? "whisper-large-v3-turbo" : "whisper-1"));
+  form.append("model", process.env.STT_MODEL || (openAiBaseUrl.includes("groq.com") ? "whisper-large-v3" : "whisper-1"));
   form.append(
     "prompt",
-    "Gono Bishwabidyalay (Gono University), গণ বিশ্ববিদ্যালয়, admission, tuition fee, department, faculty, CSE, Pharmacy, EEE, BBA, LLB, credits, semester, syllabus, teacher, notice, library, campus. Preserve the speaker's words and language; do not translate.",
+    "Transcribe exactly what is spoken. The speaker may use English, Bengali (বাংলা), Banglish, or mix English and Bengali in one sentence. Preserve the spoken language; do not translate or answer the question. Write Bengali words in Bengali script, retain English names and technical terms as spoken, and use the surrounding university context only to recognize names such as Gono Bishwabidyalay (Gono University), গণ বিশ্ববিদ্যালয়, CSE, Pharmacy, EEE, BBA, LLB, admission, tuition fee, department, faculty, credits, semester, syllabus, teacher, notice, library, and campus.",
   );
+  form.append("response_format", "verbose_json");
+  form.append("temperature", "0");
   if (body.language === "en-US") form.append("language", "en");
   if (body.language === "bn-BD") form.append("language", "bn");
 

@@ -162,20 +162,34 @@ const VOICE_LANGUAGE_KEY = "university-voice-language";
 function preferredVoiceLanguage() {
   if (typeof window === "undefined") return "bn-BD";
   const saved = window.localStorage?.getItem(VOICE_LANGUAGE_KEY);
-  if (saved === "bn-BD" || saved === "en-US") return saved;
-  return "bn-BD";
+  if (saved === "bn-BD" || saved === "en-US" || saved === "auto") return saved;
+  return "auto";
+}
+
+function browserRecognitionLanguage(language) {
+  if (language === "bn-BD" || language === "en-US") return language;
+  const browserLanguage = typeof navigator !== "undefined" ? String(navigator.language || "en-US") : "en-US";
+  if (browserLanguage.toLowerCase().startsWith("bn")) return "bn-BD";
+  if (browserLanguage.toLowerCase().startsWith("en")) return "en-US";
+  return browserLanguage;
 }
 
 function bestRecognitionTranscript(result, lang) {
   if (!result || !result.length) return "";
-  const alternatives = Array.from(result).map((item) => String(item?.transcript || "").trim()).filter(Boolean);
-  if (!alternatives.length) return "";
   const wantsBangla = String(lang || "").startsWith("bn");
-  if (wantsBangla) {
-    const banglaAlternative = alternatives.find((text) => /[\u0980-\u09FF]/.test(text));
-    if (banglaAlternative) return banglaAlternative;
-  }
-  return alternatives[0];
+  const alternatives = Array.from(result)
+    .map((item) => {
+      const transcript = String(item?.transcript || "").trim();
+      const isBanglaScript = /[\u0980-\u09FF]/.test(transcript);
+      const confidence = Number(item?.confidence);
+      const confidenceScore = Number.isFinite(confidence) ? confidence : 0;
+      const languageMatch = lang === "auto" ? 0 : (isBanglaScript === wantsBangla ? 0.12 : 0);
+      return { transcript, score: confidenceScore + languageMatch };
+    })
+    .filter((item) => item.transcript)
+    .sort((a, b) => b.score - a.score);
+  if (!alternatives.length) return "";
+  return alternatives[0].transcript;
 }
 
 function preferredSynthesisVoice(voices, lang) {
@@ -379,10 +393,10 @@ function App() {
       composerRecognitionRef.current = recognition;
       // Use the language selected in Voice Mode (or the browser language on
       // first use) instead of forcing every English utterance through bn-BD.
-      recognition.lang = preferredVoiceLanguage();
+      recognition.lang = browserRecognitionLanguage(preferredVoiceLanguage());
       recognition.interimResults = true;
       recognition.continuous = true;
-      recognition.maxAlternatives = 3;
+      recognition.maxAlternatives = 5;
 
       let finalCaptured = "";
       let silenceTimer = null;
@@ -657,14 +671,16 @@ function App() {
       target = { ...target, messages: options.baseMessages };
     }
 
-    const isWebSearch = Boolean(webSearchEnabled || isWebSearchIntent(outgoingText));
-    const effectiveMedium = inferMessageMedium(
-      outgoingText,
-      selectedAttachments,
-      target.messages,
-      isWebSearch,
-      currentMedium,
-    );
+    const isWebSearch = Boolean(webSearchEnabled || isWebSearchIntent(outgoingText, target.messages));
+    const effectiveMedium = options.voiceInput
+      ? "gb-ai"
+      : inferMessageMedium(
+          outgoingText,
+          selectedAttachments,
+          target.messages,
+          isWebSearch,
+          currentMedium,
+        );
     setCurrentMedium(effectiveMedium);
 
     const isFirstMessage = target.messages.length === 0;
@@ -711,6 +727,8 @@ function App() {
           history: nextMessages.slice(-10).map(({ role, text }) => ({ role, text })),
           medium: effectiveMedium,
           webSearch: isWebSearch,
+          voiceInput: Boolean(options.voiceInput),
+          voiceLanguage: options.voiceLanguage || "",
           replaceHistory: options.replaceHistory === true,
         }),
       });
@@ -2146,7 +2164,11 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
       : null;
 
     if (!SpeechRecognition) {
-      setErrorMessage(unsupportedVoiceMessage);
+      setErrorMessage(microphoneSupported && typeof window !== "undefined" && window.MediaRecorder
+        ? voiceLang === "bn-BD"
+          ? "এই ব্রাউজারে Live speech recognition নেই। Clearer input/Auto transcribe রেকর্ড বাটন ব্যবহার করুন।"
+          : "Live browser speech recognition is unavailable. Use the Clearer input / Auto transcribe record button."
+        : unsupportedVoiceMessage);
       setVoiceStatus("idle");
       return;
     }
@@ -2158,7 +2180,6 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
     }
 
     if (voiceStatus !== "listening" || isMuted) {
-      clearSilenceTimer();
       recognitionRef.current?.abort();
       return;
     }
@@ -2171,10 +2192,10 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
     try {
       recognition = new SpeechRecognition();
       recognitionRef.current = recognition;
-      recognition.lang = voiceLang;
+      recognition.lang = browserRecognitionLanguage(voiceLang);
       recognition.interimResults = true;
       recognition.continuous = true;
-      recognition.maxAlternatives = 3;
+      recognition.maxAlternatives = 5;
 
       let finalCaptured = "";
       let latestInterim = "";
@@ -2282,7 +2303,10 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
 
       recognition.start();
     } catch {
-      // Ignore start errors
+      setErrorMessage(voiceLang === "bn-BD"
+        ? "ভয়েস রিকগনিশন শুরু হয়নি। আবার চেষ্টা করুন বা Auto transcribe ব্যবহার করুন।"
+        : "Voice recognition could not start. Try again or use Auto transcribe.");
+      setVoiceStatus("idle");
     }
 
     return () => {
@@ -2302,7 +2326,8 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
     setUserTranscript(text.trim());
     setAssistantReply("");
     try {
-      const result = await onSendMessage(text.trim());
+      const result = await onSendMessage(text.trim(), { voiceInput: true, voiceLanguage: voiceLang });
+      if (!isComponentMounted.current) return;
       if (result && result.text) {
         setAssistantReply(result.text);
         setVoiceStatus("speaking");
@@ -2321,10 +2346,15 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
           },
         });
       } else {
-        setVoiceStatus("listening");
+        setErrorMessage(voiceLang === "bn-BD"
+          ? "উত্তর পাওয়া যায়নি। আবার বলুন বা রেকর্ড করে চেষ্টা করুন।"
+          : "I didn't get an answer. Please try speaking again or use recorded transcription.");
+        setVoiceStatus("idle");
       }
-    } catch {
-      setVoiceStatus("listening");
+    } catch (error) {
+      if (!isComponentMounted.current) return;
+      setErrorMessage(error?.message || (voiceLang === "bn-BD" ? "ভয়েস অনুরোধটি সম্পন্ন হয়নি। আবার চেষ্টা করুন।" : "The voice request did not complete. Please try again."));
+      setVoiceStatus("idle");
     }
   }
 
@@ -2347,9 +2377,10 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
         fallbackStreamRef.current?.getTracks().forEach((track) => track.stop());
         fallbackStreamRef.current = null;
         setFallbackRecording(false);
+        if (!isComponentMounted.current) return;
         if (!blob.size) return;
         setFallbackTranscribing(true);
-        setErrorMessage(voiceLang === "bn-BD" ? "কথা থেকে লেখা তৈরি হচ্ছে..." : "Transcribing your speech...");
+        setErrorMessage(voiceLang === "bn-BD" ? "কথা থেকে লেখা তৈরি হচ্ছে..." : voiceLang === "auto" ? "Detecting English/Bengali speech and transcribing..." : "Transcribing your speech...");
         try {
           const dataUrl = await new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -2363,10 +2394,12 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
             body: JSON.stringify({ audio: dataUrl, mimeType: blob.type, language: voiceLang }),
           });
           const data = await response.json().catch(() => ({}));
+          if (!isComponentMounted.current) return;
           if (!response.ok) throw new Error(data.error || "Voice transcription failed");
           setErrorMessage("");
           await handleUserVoiceQuery(data.text);
         } catch (error) {
+          if (!isComponentMounted.current) return;
           setErrorMessage(error.message || "Voice transcription failed. Please try again.");
           setVoiceStatus("listening");
         } finally {
@@ -2417,6 +2450,10 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
     recognitionRef.current?.abort();
     if (mediaRecorderRef.current?.state === "recording") mediaRecorderRef.current.stop();
     fallbackStreamRef.current?.getTracks().forEach((track) => track.stop());
+    setFallbackRecording(false);
+    setFallbackTranscribing(false);
+    setVoiceStatus("idle");
+    setErrorMessage("");
     onClose();
   }
 
@@ -2461,6 +2498,15 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
 
         <div className="voice-mode-top-actions">
           <div className="voice-lang-switcher" role="radiogroup" aria-label="Speech language">
+            <button
+              type="button"
+              className={`voice-lang-tab ${voiceLang === "auto" ? "active" : ""}`}
+              onClick={() => changeVoiceLanguage("auto")}
+              title="Use your device language for browser recognition and automatic language detection for recorded speech"
+              aria-label="Automatic language detection"
+            >
+              Auto
+            </button>
             <button
               type="button"
               className={`voice-lang-tab ${voiceLang === "bn-BD" ? "active" : ""}`}
@@ -2629,11 +2675,11 @@ function VoiceModeModal({ isOpen, onClose, onSendMessage, activeConversation }) 
               type="button"
               className="voice-dock-btn listening-pill"
               onClick={startFallbackRecording}
-              title={voiceLang === "bn-BD" ? "Whisper দিয়ে স্পষ্ট transcription" : "Use Whisper for clearer transcription"}
-              aria-label={voiceLang === "bn-BD" ? "স্পষ্টভাবে রেকর্ড করুন" : "Record for clearer transcription"}
+              title={voiceLang === "auto" ? "Record, then automatically detect English, Bengali, or mixed speech" : voiceLang === "bn-BD" ? "Whisper দিয়ে স্পষ্ট transcription" : "Use Whisper for clearer transcription"}
+              aria-label={voiceLang === "auto" ? "Record and automatically detect speech language" : voiceLang === "bn-BD" ? "স্পষ্টভাবে রেকর্ড করুন" : "Record for clearer transcription"}
             >
               <Headphones size={18} />
-              <span>{voiceLang === "bn-BD" ? "স্পষ্ট রেকর্ড" : "Clearer input"}</span>
+              <span>{voiceLang === "auto" ? "Auto transcribe" : voiceLang === "bn-BD" ? "স্পষ্ট রেকর্ড" : "Clearer input"}</span>
             </button>
           )}
 

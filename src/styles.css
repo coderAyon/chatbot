@@ -4869,6 +4869,61 @@ body,
   min-height: 64px;
 }
 
+@media (max-width: 540px) {
+  .voice-mode-overlay {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+
+  .voice-mode-header {
+    gap: 8px;
+  }
+
+  .voice-mode-brand {
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .voice-mode-logo {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  .voice-mode-title {
+    font-size: 13px;
+  }
+
+  .voice-mode-status-badge {
+    gap: 4px;
+    padding: 2px 6px;
+    font-size: 9.5px;
+  }
+
+  .voice-mode-top-actions {
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .voice-lang-switcher {
+    gap: 2px;
+    padding: 2px;
+  }
+
+  .voice-lang-tab {
+    gap: 3px;
+    padding: 6px 7px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .voice-mode-close-btn {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+  }
+}
+
 .voice-dock {
   display: flex;
   align-items: center;

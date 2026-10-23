@@ -10,6 +10,8 @@ Production-oriented hybrid RAG + AI chatbot for Gono Bishwabidyalay. It separate
 - Stores indexed knowledge in `data/knowledge.json`.
 - Serves a REST chat API with hybrid retrieval: keyword, fuzzy matching, synonym expansion, and vector-style lexical similarity.
 - Uses Gemini first when configured, then a server-side OpenAI-compatible provider such as Groq/OpenRouter, or an available local Ollama model. Visitors never need a separate AI account or login.
+- Searches public, search-engine-indexed university updates across Facebook groups/pages, Instagram, LinkedIn, and the official university site; results identify their source type, and community posts are kept distinct from official notices.
+- Supports voice input in English and Bengali, with browser recognition plus recorded transcription that can automatically detect Bengali, English, and mixed speech.
 - Applies strict evidence gates to exact numbers, fees, credits, contacts, dates, roles, and campus facts. A weak keyword match cannot become a verified answer.
 - Stores structured institution facts, programs, people, roles, contacts, notices, and readable PDF content alongside page chunks.
 - Keeps recent person and department context for follow-up questions such as `number please` and `does he have email?`.
@@ -17,7 +19,7 @@ Production-oriented hybrid RAG + AI chatbot for Gono Bishwabidyalay. It separate
 - Acts as a structured academic advisor: builds department profiles, compares programs, reads course codes and credits from official curricula, and reasons over comparison follow-ups such as `which one has more credits?`.
 - Filters malformed and duplicate crawler records before presenting the verified program catalog.
 - Provides dedicated source-grounded answers for mission, library, student portal, research, sports, transport, financial aid, and accommodation availability.
-- Supports PDF/image/text attachments with text extraction, OCR, and optional local image captioning.
+- Supports up to 15 PDF/image/text attachments per message, with files up to 20 MB each, text extraction, OCR, and optional local image captioning.
 - Includes responsive dark/light UI, safe rich-text answers, source chips, follow-up actions, keyboard accessibility, and an admin health panel.
 - Never fabricates unsupported facts. Unsupported answers return:
 
@@ -52,13 +54,13 @@ Open `http://127.0.0.1:5173/`. `npm start` runs both the API and Vite developmen
 - `OFFICIAL_SITE_URL`: official university website to crawl.
 - `GEMINI_API_KEY`: optional Google AI Studio key for free-tier friendly AI answer synthesis.
 - `GEMINI_MODEL`: default `gemini-2.5-flash`.
-- `OPENAI_API_KEY`: optional OpenAI-compatible API key.
+- `OPENAI_API_KEY`: optional OpenAI-compatible chat provider key; required for recorded Whisper transcription in Voice Mode.
 - `OPENAI_MODEL`: default `gpt-4o-mini`.
 - `OPENAI_BASE_URL`: default `https://api.openai.com/v1`; can point to an OpenAI-compatible gateway.
 - For Groq on Render, set `OPENAI_API_KEY`, `OPENAI_MODEL=openai/gpt-oss-120b`, `OPENAI_BASE_URL=https://api.groq.com/openai/v1`, and `OPENAI_PROVIDER_NAME=Groq`.
 - `OLLAMA_URL` and `OLLAMA_MODEL`: optional local fallback.
 - `ADMIN_TOKEN`: optional token required as `x-admin-token` for logs, settings, and rebuild APIs. Public health/status remains readable so the chat UI can report service health.
-- `MAX_REQUEST_BYTES` and `MAX_ATTACHMENT_BYTES`: request and per-file upload limits. The defaults support up to three 8 MB attachments after base64 encoding.
+- `MAX_REQUEST_BYTES` and `MAX_ATTACHMENT_BYTES`: request and per-file upload limits. Defaults support up to 15 files of 20 MB each after base64 encoding, subject to server memory and hosting-provider request-size limits.
 - `MAX_PAGES`, `MAX_PDFS`, `CRAWL_CONCURRENCY`, `PDF_CONCURRENCY`: crawler limits.
 - `FETCH_TIMEOUT_MS`, `FETCH_RETRIES`, `RECOVERY_PAGES`: transient failure handling and the reduced-concurrency recovery pass.
 
@@ -104,4 +106,4 @@ The backend prompt and retrieval pipeline require source-grounded answers. Do no
 - Configure Groq, Gemini, OpenAI/OpenRouter, or Ollama on the Render backend and set a strong `ADMIN_TOKEN`. The Vercel frontend proxies `/api/*` to Render, so provider secrets belong in Render rather than browser-visible `VITE_*` variables.
 - After changing Render environment variables, save and redeploy the Render service. Vercel visitors can then use AI without an AI-provider login.
 - Chat history and logs are JSON files intended for a single-process final-year-project deployment. Use a database before running multiple API instances.
-- The official university website remains the source of truth. Rebuild the index after material website updates and review crawler warnings in Admin.
+- The official university website remains the source of truth for university policy. Social search can only find public posts indexed by the search engine; private groups and unindexed posts are unavailable, and community posts should be treated as unverified reports. Rebuild the official index after material website updates and review crawler warnings in Admin.
